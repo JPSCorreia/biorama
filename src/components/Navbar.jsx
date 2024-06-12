@@ -29,10 +29,10 @@ const pages = [
 ];
 
 const settings = [
-    { name: 'Perfil' },
-    { name: 'Conta' },
-    { name: 'Mudar Tema', onClick: appStore.changeThemeType },
-    { name: 'Terminar Sessão' },
+    { id: 1, name: 'Perfil', link: '/perfil' },
+    { id: 2, name: 'Conta', link: '/conta' },
+    { id: 3, name: 'Mudar Tema', onClick: appStore.changeThemeType },
+    { id: 4, name: 'Terminar Sessão', onClick: () => console.log('Logging out...') },
 ];
 
 function Navbar() {
@@ -165,23 +165,23 @@ function Navbar() {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem
+                                <NavLink
                                     key={page.name}
-                                    onClick={handleCloseNavMenu}
+                                    to={page.link}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                    }}
                                 >
-                                    <NavLink
+                                    <MenuItem
                                         key={page.name}
-                                        to={page.link}
-                                        style={{
-                                            textDecoration: 'none',
-                                            color: 'inherit',
-                                        }}
+                                        onClick={handleCloseNavMenu}
                                     >
                                         <Typography textAlign="center">
                                             {page.name}
                                         </Typography>
-                                    </NavLink>
-                                </MenuItem>
+                                    </MenuItem>
+                                </NavLink>
                             ))}
                         </Menu>
                     </Box>
@@ -258,17 +258,28 @@ function Navbar() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting.name}
-                                    onClick={handleCloseUserMenu}
+                                <NavLink
+                                    key={`menu-appbar-${setting.id}`}
+                                    to={setting.link}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                    }}
                                 >
-                                    <Typography
-                                        textAlign="center"
-                                        onClick={setting.onClick}
+                                    <MenuItem
+                                        key={setting.id}
+                                        onClick={() => {
+                                            handleCloseUserMenu();
+                                            setting.onClick
+                                                ? setting.onClick()
+                                                : '';
+                                        }}
                                     >
-                                        {setting.name}
-                                    </Typography>
-                                </MenuItem>
+                                        <Typography textAlign="center">
+                                            {setting.name}
+                                        </Typography>
+                                    </MenuItem>
+                                </NavLink>
                             ))}
                         </Menu>
                     </Box>
