@@ -31,9 +31,14 @@ const pages = [
 const settings = [
     { id: 1, name: 'Perfil', link: '/perfil' },
     { id: 2, name: 'Conta', link: '/conta' },
-    { id: 3, name: 'Mudar Tema', onClick: appStore.changeThemeType },
-    { id: 4, name: 'Terminar Sessão', onClick: () => console.log('Logging out...') },
+    {
+        id: 3,
+        name: 'Terminar Sessão',
+        onClick: () => console.log('Logging out...'),
+    },
 ];
+
+const tema = { id: 4, name: 'Tema', onClick: appStore.changeThemeType };
 
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -62,7 +67,7 @@ function Navbar() {
         '&:hover': {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
-        marginLeft: 10,
+        marginLeft: 5,
         width: '30%',
         [theme.breakpoints.down('lg')]: {
             width: '100%',
@@ -176,6 +181,7 @@ function Navbar() {
                                     <MenuItem
                                         key={page.name}
                                         onClick={handleCloseNavMenu}
+                                        sx={{ height: '40px' }}
                                     >
                                         <Typography textAlign="center">
                                             {page.name}
@@ -217,7 +223,7 @@ function Navbar() {
                         ))}
                     </Box>
 
-                    <Search sx={{ marginRight: 2 }}>
+                    <Search sx={{ marginRight: 2, marginLeft: 2 }}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -226,10 +232,11 @@ function Navbar() {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </Search>
+                    <Box sx={{ display: { md: 'flex', xs: 'none' }, ml: 2, mr: 0 }}>
+                        <ThemeSwitcher />
+                    </Box>
 
-                    <ThemeSwitcher />
-
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 0, ml: 1 }}>
                         <Tooltip title="Open settings">
                             <IconButton
                                 onClick={handleOpenUserMenu}
@@ -257,6 +264,48 @@ function Navbar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
+                            <NavLink
+                                key={`menu-appbar-${tema.id}`}
+                                to={tema.link}
+                                style={{
+                                    textDecoration: 'none',
+                                    color: 'inherit',
+                                }}
+                            >
+                                <MenuItem
+                                    key={1}
+                                    onClick={() => {
+                                        handleCloseUserMenu();
+                                        tema.onClick();
+                                    }}
+                                    sx={{
+                                        height: '40px',
+                                        display: { xs: 'flex', md: 'none' },
+                                        zIndex: 9999,
+                                    }}
+                                >
+                                    <Box textAlign="center">
+                                        {tema.name === 'Tema' ? (
+                                            <Box
+                                                sx={{
+                                                    display: {
+                                                        md: 'none',
+                                                        xs: 'flex',
+                                                    },
+                                                    alignItems: 'center',
+                                                    justifyContent:
+                                                        'space-between',
+                                                }}
+                                            >
+                                                <Box sx={{ mr: 2 }}>Tema </Box>{' '}
+                                                <ThemeSwitcher />
+                                            </Box>
+                                        ) : (
+                                            tema.name
+                                        )}
+                                    </Box>
+                                </MenuItem>
+                            </NavLink>
                             {settings.map((setting) => (
                                 <NavLink
                                     key={`menu-appbar-${setting.id}`}
@@ -274,10 +323,11 @@ function Navbar() {
                                                 ? setting.onClick()
                                                 : '';
                                         }}
+                                        sx={{ height: '40px' }}
                                     >
-                                        <Typography textAlign="center">
+                                        <Box textAlign="center">
                                             {setting.name}
-                                        </Typography>
+                                        </Box>
                                     </MenuItem>
                                 </NavLink>
                             ))}

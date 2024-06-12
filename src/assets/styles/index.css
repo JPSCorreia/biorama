@@ -33,3 +33,7 @@
   a {
     text-decoration: none;
   }
+
+  .css-jzcd7z-MuiFormControlLabel-root {
+    /* margin-right: 0 !important; */
+  }

@@ -54,21 +54,17 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 const ThemeSwitcher = observer(() => {
 
   return (
-    <Box sx ={ { display: {md: 'flex', xs: 'none'}, alignItems: 'center', justifyContent: 'center'}}>
+    <Box sx ={ { display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
     {/* <h3>Toggle Dark mode</h3> */}
     {/* <Typography sx={{ m: 1 }} variant="h6" component="div"> Toggle Dark mode</Typography> */}
     {/* <Switch checked={appStore.themeType == 'dark' ? true : false} onChange={appStore.changeThemeType} /> */}
     <FormControlLabel
-        control={<MaterialUISwitch sx={{ marginLeft: 1.5 }} checked={appStore.themeType == 'dark' ? true : false} onChange={appStore.changeThemeType} />}
+        control={<MaterialUISwitch sx={{ marginLeft: 0 }} checked={appStore.themeType == 'dark' ? true : false} onChange={appStore.changeThemeType} />}
         label=""
       />
     </Box>
   );
 });
-
-// sx={{
-//   display: { xs: 'block', md: 'none' },
-// }}
 
 
 export default ThemeSwitcher;
