@@ -237,7 +237,7 @@ function Navbar() {
                             >
                                 <Avatar
                                     alt="Remy Sharp"
-                                    src="/public/assets/images/2.jpg"
+                                    src="/src/assets/images/2.jpg"
                                 />
                             </IconButton>
                         </Tooltip>
