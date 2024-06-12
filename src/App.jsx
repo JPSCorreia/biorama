@@ -1,37 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Button from '@mui/material/Button';
+import { observer } from 'mobx-react';
+import { Container } from '@mui/material';
+import UsersContainer from './components/UsersContainer';
+import ProductsContainer from './components/ProductsContainer';
+import Navbar from './components/Navbar';
+// import {
+//   createBrowserRouter,
+//   RouterProvider,
+// } from "react-router-dom";
+import { Routes, Route } from 'react-router-dom';
+import StoresContainer from './components/StoresContainer';
+import VendorsContainer from './components/VendorsContainer';
+import ContactsContainer from './components/ContactsContainer';
 
-function App() {
+const App = observer(() => {
 
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <Button variant="contained" color="error" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </Button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Container sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+        <Navbar />
+        {/* <UsersContainer /> */}
+          <Routes>
+            <Route path="/" element={<UsersContainer />} />
+            <Route path="/produtos" element={<ProductsContainer />} />
+            <Route path="/lojas" element={<StoresContainer />} />
+            <Route path="/vendedores" element={<VendorsContainer />} />
+            <Route path="/contactos" element={<ContactsContainer />} />
+          </Routes>
+    </Container>
+  );
+});
 
-export default App
+export default App;
+
