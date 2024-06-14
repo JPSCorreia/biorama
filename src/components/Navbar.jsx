@@ -17,6 +17,7 @@ import InputBase from '@mui/material/InputBase';
 import ThemeSwitcher from './ThemeSwitcher';
 import { useMediaQuery } from '@mui/material';
 import { appStore } from '../stores/appStore';
+import { cartStore } from '../stores/cartStore';
 import { useTheme } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
@@ -26,14 +27,14 @@ import ContactSupportSharpIcon from '@mui/icons-material/ContactSupportSharp';
 import ShopSharpIcon from '@mui/icons-material/ShopSharp';
 import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
 import { Badge } from '@mui/material';
+import { observer } from 'mobx-react';
 
-function Navbar() {
+const Navbar = observer( () => {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     //TODO: mudar mais tarde, provisorio enquanto não temos o estado do login e cart items
     const [loggedIn, setLoggedIn] = useState(false);
-    const [cartItems, setCartItems] = useState(3);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -352,8 +353,8 @@ function Navbar() {
                                     paddingLeft: '10px',
                                 }}
                             >
-                                <Badge  sx={{ paddingRight: '5px', marginLeft: '5px'}} badgeContent={cartItems} color="success" overlap="circular" >
-                                <ShoppingCartSharpIcon />
+                                <Badge  sx={{ paddingRight: '5px', marginLeft: '5px'}} badgeContent={cartStore.total} color="success" overlap="circular" >
+                                    <ShoppingCartSharpIcon />
                                 </Badge>
                                 
                             </Button>
@@ -492,5 +493,5 @@ function Navbar() {
             </Container>
         </AppBar>
     );
-}
+});
 export default Navbar;

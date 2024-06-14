@@ -39,11 +39,17 @@ class CartStore {
   })
 
   deleteItem = action((index) => {
-    this.cart.splice(index, 1);
+    runInAction(() => {
+        if (this.cart[index].quantity > 1) {
+          this.cart[index].quantity -= 1;
+        } else {
+          this.cart.splice(index, 1);
+        }
+    })
   });
 
   get total() {
-    return this.cart.length;
+    return this.cart.reduce((total, item) => total + item.quantity, 0);
   }
 }
 

@@ -19,6 +19,9 @@ import TableHead from '@mui/material/TableHead';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses } from '@mui/material/TableCell';
 import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
+import Tooltip from '@mui/material/Tooltip';
+import { cartStore } from '../stores/cartStore';
+import { observer } from 'mobx-react';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -115,7 +118,7 @@ const rows = [
     createData('Cupcake', 305, 4),
     createData('Donut', 452, 25),
     createData('Eclair', 262, 16),
-    createData('Frozen yoghurt ', 159, 4),
+    createData('Yoghurt', 159, 4),
     createData('Gingerbread', 356, 16),
     createData('Honeycomb', 408, 3),
     createData('Ice cream sandwich', 237, 9),
@@ -127,9 +130,9 @@ const rows = [
     createData('Oreo', 437, 18.0),
 ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
-export default function CustomPaginationActionsTable() {
+const ProductList= observer( () => {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(8);
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -185,16 +188,16 @@ export default function CustomPaginationActionsTable() {
                                 {row.fat}
                             </TableCell>
                             <TableCell style={{ width: 160 }} align="right">
-                                <>
-                                    <IconButton  color="textSecondary">
+                                <Tooltip title="Adicionar ao carrinho">
+                                    <IconButton color="textSecondary" onClick={() => cartStore.addItem(row.name, 1)}>
                                         <AddShoppingCartSharpIcon />
                                     </IconButton>
-                                </>
+                                </Tooltip>
                             </TableCell>
                         </TableRow>
                     ))}
                     {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableRow style={{ height: 54.7 * (emptyRows+1) }}>
                             <TableCell colSpan={6} />
                         </TableRow>
                     )}
@@ -203,9 +206,9 @@ export default function CustomPaginationActionsTable() {
                     <TableRow>
                         <TablePagination
                             rowsPerPageOptions={[
-                                5,
-                                10,
-                                25,
+                                8,
+                                16,
+                                32,
                                 { label: 'All', value: -1 },
                             ]}
                             colSpan={4}
@@ -230,4 +233,6 @@ export default function CustomPaginationActionsTable() {
             </Table>
         </TableContainer>
     );
-}
+});
+
+export default ProductList;
