@@ -37,12 +37,15 @@ const settings = [
         onClick: () => console.log('Logging out...'),
     },
 ];
-
 const tema = { id: 4, name: 'Tema', onClick: appStore.changeThemeType };
+const login = { id: 5, name: 'Login', link: '/login' };
 
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    //TODO: mudar mais tarde, provisorio enquanto não temos o estado do login
+    const [loggedIn, setLoggedIn] = React.useState(false);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -68,7 +71,7 @@ function Navbar() {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 5,
-        width: '30%',
+        width: loggedIn? '25%': '23%',
         [theme.breakpoints.down('lg')]: {
             width: '100%',
         },
@@ -105,8 +108,16 @@ function Navbar() {
         },
     }));
 
+    console.log(theme);
     return (
-        <AppBar position="static">
+        <AppBar
+            position="static"
+            sx={{
+                p: 0,
+                m: 0,
+                borderBottom: `1px solid ${theme.palette.primary.main}`,
+            }}
+        >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <SpaIcon
@@ -181,7 +192,7 @@ function Navbar() {
                                     <MenuItem
                                         key={page.name}
                                         onClick={handleCloseNavMenu}
-                                        sx={{ height: '40px' }}
+                                        sx={{ height: '40px', pr: 2 }}
                                     >
                                         <Typography textAlign="center">
                                             {page.name}
@@ -209,12 +220,13 @@ function Navbar() {
                                 <Button
                                     key={page.name}
                                     onClick={handleCloseNavMenu}
+                                    variant="outline"
                                     sx={{
                                         color: 'white',
                                         display: 'block',
                                         marginTop: 1.8,
                                         marginBottom: 1,
-                                        mx: 0.5,
+                                        // mx: 0.5,
                                     }}
                                 >
                                     {page.name}
@@ -232,107 +244,141 @@ function Navbar() {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </Search>
-                    <Box sx={{ display: { md: 'flex', xs: 'none' }, ml: 2, mr: 0 }}>
+                    <Box
+                        sx={{
+                            display: { md: 'flex', xs: 'none' },
+                            ml: 2,
+                            mr: 0,
+                        }}
+                    >
                         <ThemeSwitcher />
                     </Box>
 
-                    <Box sx={{ flexGrow: 0, ml: 1 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton
-                                onClick={handleOpenUserMenu}
-                                sx={{ p: 0 }}
-                            >
-                                <Avatar
-                                    alt="Remy Sharp"
-                                    src="/src/assets/images/2.jpg"
-                                />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            <NavLink
-                                key={`menu-appbar-${tema.id}`}
-                                to={tema.link}
-                                style={{
-                                    textDecoration: 'none',
-                                    color: 'inherit',
-                                }}
-                            >
-                                <MenuItem
-                                    key={1}
-                                    onClick={() => {
-                                        handleCloseUserMenu();
-                                        tema.onClick();
-                                    }}
-                                    sx={{
-                                        height: '40px',
-                                        display: { xs: 'flex', md: 'none' },
-                                        zIndex: 9999,
-                                    }}
+                    {loggedIn ? (
+                        <Box sx={{ flexGrow: 0, ml: 1}}>
+                            <Tooltip title="Open settings">
+                                <IconButton
+                                    onClick={handleOpenUserMenu}
+                                    sx={{ p: 0 }}
                                 >
-                                    <Box textAlign="center">
-                                        {tema.name === 'Tema' ? (
-                                            <Box
-                                                sx={{
-                                                    display: {
-                                                        md: 'none',
-                                                        xs: 'flex',
-                                                    },
-                                                    alignItems: 'center',
-                                                    justifyContent:
-                                                        'space-between',
-                                                }}
-                                            >
-                                                <Box sx={{ mr: 2 }}>Tema </Box>{' '}
-                                                <ThemeSwitcher />
-                                            </Box>
-                                        ) : (
-                                            tema.name
-                                        )}
-                                    </Box>
-                                </MenuItem>
-                            </NavLink>
-                            {settings.map((setting) => (
+                                    <Avatar
+                                        alt="Remy Sharp"
+                                        src="/src/assets/images/2.jpg"
+                                    />
+                                </IconButton>
+                            </Tooltip>
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
                                 <NavLink
-                                    key={`menu-appbar-${setting.id}`}
-                                    to={setting.link}
+                                    key={`menu-appbar-${tema.id}`}
+                                    to={tema.link}
                                     style={{
                                         textDecoration: 'none',
                                         color: 'inherit',
                                     }}
                                 >
                                     <MenuItem
-                                        key={setting.id}
+                                        key={1}
                                         onClick={() => {
                                             handleCloseUserMenu();
-                                            setting.onClick
-                                                ? setting.onClick()
-                                                : '';
+                                            tema.onClick();
                                         }}
-                                        sx={{ height: '40px' }}
+                                        sx={{
+                                            height: '40px',
+                                            display: { xs: 'flex', md: 'none' },
+                                            zIndex: 9999,
+                                        }}
                                     >
                                         <Box textAlign="center">
-                                            {setting.name}
+                                            {tema.name === 'Tema' ? (
+                                                <Box
+                                                    sx={{
+                                                        display: {
+                                                            md: 'none',
+                                                            xs: 'flex',
+                                                        },
+                                                        alignItems: 'center',
+                                                        justifyContent:
+                                                            'space-between',
+                                                    }}
+                                                >
+                                                    <Box sx={{ mr: 2 }}>
+                                                        Tema{' '}
+                                                    </Box>{' '}
+                                                    <ThemeSwitcher />
+                                                </Box>
+                                            ) : (
+                                                tema.name
+                                            )}
                                         </Box>
                                     </MenuItem>
                                 </NavLink>
-                            ))}
-                        </Menu>
-                    </Box>
+                                {settings.map((setting) => (
+                                    <NavLink
+                                        key={`menu-appbar-${setting.id}`}
+                                        to={setting.link}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                        }}
+                                    >
+                                        <MenuItem
+                                            key={setting.id}
+                                            onClick={() => {
+                                                handleCloseUserMenu();
+                                                setting.onClick
+                                                    ? setting.onClick()
+                                                    : '';
+                                            }}
+                                            sx={{ height: '40px' }}
+                                        >
+                                            <Box textAlign="center">
+                                                {setting.name}
+                                            </Box>
+                                        </MenuItem>
+                                    </NavLink>
+                                ))}
+                            </Menu>
+                        </Box>
+                    ) : (
+                        <NavLink
+                        key={login.name}
+                        to={login.link}
+                        style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                        }}
+                    >
+                        <Button
+                            key={login.name}
+                            onClick={handleCloseNavMenu}
+                            variant="outline"
+                            sx={{
+                                color: 'white',
+                                display: 'block',
+                                marginTop: 1.8,
+                                marginBottom: 1,
+                                // mx: 0.5,
+                            }}
+                        >
+                            {login.name}
+                        </Button>
+                    </NavLink>
+                    )}
                 </Toolbar>
             </Container>
         </AppBar>

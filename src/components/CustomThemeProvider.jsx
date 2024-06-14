@@ -20,8 +20,8 @@ const CustomThemeProvider = observer(({ appStore }) => {
                 main: green[600],
             },
             background: {
-                default: appStore.themeType === 'dark' ? '#242424' : '#fff',
-                paper: appStore.themeType === 'dark' ? '#242424' : '#fff',
+                default: appStore.themeType === 'dark' ? '#242424' : '#FDFDF9',
+                paper: appStore.themeType === 'dark' ? '#242424' : '#FDFDF9',
             },
         },
     });

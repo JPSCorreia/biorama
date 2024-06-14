@@ -13,26 +13,41 @@ import VendorsContainer from './components/VendorsContainer';
 import ContactsContainer from './components/ContactsContainer';
 import ProfileContainer from './components/ProfileContainer';
 import AccountContainer from './components/AccountContainer';
+import Footer from './components/Footer';
 
 const App = observer(() => {
-
-
-  return (
-    <Container sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-        <Navbar />
-        {/* <UsersContainer /> */}
-          <Routes>
-            <Route path="/" element={<UsersContainer />} />
-            <Route path="/produtos" element={<ProductsContainer />} />
-            <Route path="/lojas" element={<StoresContainer />} />
-            <Route path="/vendedores" element={<VendorsContainer />} />
-            <Route path="/contactos" element={<ContactsContainer />} />
-            <Route path="/perfil" element={<ProfileContainer />} />
-            <Route path="/conta" element={<AccountContainer />} />
-          </Routes>
-    </Container>
-  );
+    return (
+        <Container
+            className="App"
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+            }}
+        >
+            <Container
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    padding: '0 !important',
+                }}
+            >
+                <Navbar />
+                <Routes>
+                    <Route path="/" element={<UsersContainer />} />
+                    <Route path="/produtos" element={<ProductsContainer />} />
+                    <Route path="/lojas" element={<StoresContainer />} />
+                    <Route path="/vendedores" element={<VendorsContainer />} />
+                    <Route path="/contactos" element={<ContactsContainer />} />
+                    <Route path="/perfil" element={<ProfileContainer />} />
+                    <Route path="/conta" element={<AccountContainer />} />
+                </Routes>
+            </Container>
+            <Footer />
+        </Container>
+    );
 });
 
 export default App;
-
