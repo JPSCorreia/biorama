@@ -157,13 +157,13 @@ function Navbar() {
     const login = {
         id: 5,
         name: 'Login',
-        link: '/login',
+        // link: '/',
         onClick: () => setLoggedIn(true),
     };
 
     const cart = {
         name: 'Carrinho de Compras',
-        link: '/cart',
+        link: '/carrinho',
         icon: (
             <ShoppingCartSharpIcon
                 sx={{
@@ -348,9 +348,11 @@ function Navbar() {
                                     alignItems: 'center',
                                     height: '40px',
                                     minWidth: '45px',
+                                    paddingRight: '10px',
+                                    paddingLeft: '10px',
                                 }}
                             >
-                                <Badge  badgeContent={cartItems} color="success">
+                                <Badge  sx={{ paddingRight: '5px', marginLeft: '5px'}} badgeContent={cartItems} color="success" overlap="circular" >
                                 <ShoppingCartSharpIcon />
                                 </Badge>
                                 
