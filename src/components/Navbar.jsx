@@ -1,4 +1,3 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,36 +15,22 @@ import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import ThemeSwitcher from './ThemeSwitcher';
+import { useMediaQuery } from '@mui/material';
 import { appStore } from '../stores/appStore';
 import { useTheme } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
-
-const pages = [
-    { name: 'Home', link: '/' },
-    { name: 'Produtos', link: '/produtos' },
-    { name: 'Lojas', link: '/lojas' },
-    { name: 'Vendedores', link: '/vendedores' },
-    { name: 'Contactos', link: '/contactos' },
-];
-
-const settings = [
-    { id: 1, name: 'Perfil', link: '/perfil' },
-    { id: 2, name: 'Conta', link: '/conta' },
-    {
-        id: 3,
-        name: 'Terminar Sessão',
-        onClick: () => console.log('Logging out...'),
-    },
-];
-const tema = { id: 4, name: 'Tema', onClick: appStore.changeThemeType };
-const login = { id: 5, name: 'Login', link: '/login' };
+import { useState } from 'react';
+import HomeSharpIcon from '@mui/icons-material/HomeSharp';
+import StoreSharpIcon from '@mui/icons-material/StoreSharp';
+import ContactSupportSharpIcon from '@mui/icons-material/ContactSupportSharp';
+import ShopSharpIcon from '@mui/icons-material/ShopSharp';
 
 function Navbar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     //TODO: mudar mais tarde, provisorio enquanto não temos o estado do login
-    const [loggedIn, setLoggedIn] = React.useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -71,7 +56,7 @@ function Navbar() {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 5,
-        width: loggedIn? '25%': '23%',
+        width: loggedIn ? '31%' : '31%',
         [theme.breakpoints.down('lg')]: {
             width: '100%',
         },
@@ -108,17 +93,77 @@ function Navbar() {
         },
     }));
 
-    console.log(theme);
+    const pages = [
+        {
+            name: 'Home',
+            link: '/',
+            icon: (
+                <HomeSharpIcon
+                    sx={
+                        {
+                            mb: 0.25,
+                        }
+                    }
+                />
+            ),
+        },
+        { name: 'Produtos', link: '/produtos',             icon: (
+            <ShopSharpIcon
+                sx={
+                    {
+                        mb: 0.25,
+                    }
+                }
+            />
+        ), },
+        { name: 'Lojas', link: '/lojas',             icon: (
+            <StoreSharpIcon
+                sx={
+                    {
+                        mb: 0.25,
+                    }
+                }
+            />
+        ), },
+        { name: 'Contactos', link: '/contactos',             icon: (
+            <ContactSupportSharpIcon
+                sx={
+                    {
+                        mb: 0.25,
+                    }
+                }
+            />
+        ), },
+    ];
+
+    const settings = [
+        { id: 1, name: 'Perfil', link: '/perfil' },
+        { id: 2, name: 'Conta', link: '/conta' },
+        {
+            id: 3,
+            name: 'Terminar Sessão',
+            onClick: () => setLoggedIn(false),
+        },
+    ];
+
+    const tema = { id: 4, name: 'Tema', onClick: appStore.changeThemeType };
+    const login = {
+        id: 5,
+        name: 'Login',
+        link: '/login',
+        onClick: () => setLoggedIn(true),
+    };
+
+    const isLg = useMediaQuery(theme.breakpoints.up('lg'));
+
     return (
         <AppBar
             position="static"
             sx={{
-                p: 0,
-                m: 0,
                 borderBottom: `1px solid ${theme.palette.primary.main}`,
             }}
         >
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" sx={{ pr: '0.6rem !important' }}>
                 <Toolbar disableGutters>
                     <SpaIcon
                         sx={{
@@ -159,6 +204,9 @@ function Navbar() {
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
                             color="inherit"
+                            sx={{
+                                ml: 2 ,
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>
@@ -177,7 +225,7 @@ function Navbar() {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: 'block', md: 'none' },
+                                display: { xs: 'block', md: 'none'},
                             }}
                         >
                             {pages.map((page) => (
@@ -205,6 +253,7 @@ function Navbar() {
                     <Box
                         sx={{
                             flexGrow: 1,
+                            marginLeft: 2,
                             display: { xs: 'none', md: 'flex' },
                         }}
                     >
@@ -226,16 +275,19 @@ function Navbar() {
                                         display: 'block',
                                         marginTop: 1.8,
                                         marginBottom: 1,
-                                        // mx: 0.5,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        height: '40px',
                                     }}
                                 >
-                                    {page.name}
+                                    {isLg? page.name : page.icon }
+
                                 </Button>
                             </NavLink>
                         ))}
                     </Box>
 
-                    <Search sx={{ marginRight: 2, marginLeft: 2 }}>
+                    <Search sx={{ marginRight: 4, marginLeft: 2.5 }}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -255,7 +307,7 @@ function Navbar() {
                     </Box>
 
                     {loggedIn ? (
-                        <Box sx={{ flexGrow: 0, ml: 1}}>
+                        <Box sx={{ flexGrow: 0, ml: 3, mr: 1.25 }}>
                             <Tooltip title="Open settings">
                                 <IconButton
                                     onClick={handleOpenUserMenu}
@@ -356,28 +408,31 @@ function Navbar() {
                         </Box>
                     ) : (
                         <NavLink
-                        key={login.name}
-                        to={login.link}
-                        style={{
-                            textDecoration: 'none',
-                            color: 'inherit',
-                        }}
-                    >
-                        <Button
                             key={login.name}
-                            onClick={handleCloseNavMenu}
-                            variant="outline"
-                            sx={{
-                                color: 'white',
-                                display: 'block',
-                                marginTop: 1.8,
-                                marginBottom: 1,
-                                // mx: 0.5,
+                            to={login.link}
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit',
                             }}
                         >
-                            {login.name}
-                        </Button>
-                    </NavLink>
+                            <Button
+                                key={login.name}
+                                onClick={() => {
+                                    handleCloseNavMenu();
+                                    login.onClick ? login.onClick() : '';
+                                }}
+                                variant="outline"
+                                sx={{
+                                    color: 'white',
+                                    display: 'block',
+                                    marginTop: 1.8,
+                                    marginBottom: 1,
+                                    // mx: 0.5,
+                                }}
+                            >
+                                {login.name}
+                            </Button>
+                        </NavLink>
                     )}
                 </Toolbar>
             </Container>
