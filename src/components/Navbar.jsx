@@ -24,13 +24,16 @@ import HomeSharpIcon from '@mui/icons-material/HomeSharp';
 import StoreSharpIcon from '@mui/icons-material/StoreSharp';
 import ContactSupportSharpIcon from '@mui/icons-material/ContactSupportSharp';
 import ShopSharpIcon from '@mui/icons-material/ShopSharp';
+import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
+import { Badge } from '@mui/material';
 
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
-    //TODO: mudar mais tarde, provisorio enquanto não temos o estado do login
+    //TODO: mudar mais tarde, provisorio enquanto não temos o estado do login e cart items
     const [loggedIn, setLoggedIn] = useState(false);
+    const [cartItems, setCartItems] = useState(3);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -56,7 +59,7 @@ function Navbar() {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 5,
-        width: loggedIn ? '31%' : '31%',
+        width: loggedIn ? '425px' : '425px',
         [theme.breakpoints.down('lg')]: {
             width: '100%',
         },
@@ -99,41 +102,45 @@ function Navbar() {
             link: '/',
             icon: (
                 <HomeSharpIcon
-                    sx={
-                        {
-                            mb: 0.25,
-                        }
-                    }
+                    sx={{
+                        mb: 0.25,
+                    }}
                 />
             ),
         },
-        { name: 'Produtos', link: '/produtos',             icon: (
-            <ShopSharpIcon
-                sx={
-                    {
+        {
+            name: 'Produtos',
+            link: '/produtos',
+            icon: (
+                <ShopSharpIcon
+                    sx={{
                         mb: 0.25,
-                    }
-                }
-            />
-        ), },
-        { name: 'Lojas', link: '/lojas',             icon: (
-            <StoreSharpIcon
-                sx={
-                    {
+                    }}
+                />
+            ),
+        },
+        {
+            name: 'Lojas',
+            link: '/lojas',
+            icon: (
+                <StoreSharpIcon
+                    sx={{
                         mb: 0.25,
-                    }
-                }
-            />
-        ), },
-        { name: 'Contactos', link: '/contactos',             icon: (
-            <ContactSupportSharpIcon
-                sx={
-                    {
+                    }}
+                />
+            ),
+        },
+        {
+            name: 'Contactos',
+            link: '/contactos',
+            icon: (
+                <ContactSupportSharpIcon
+                    sx={{
                         mb: 0.25,
-                    }
-                }
-            />
-        ), },
+                    }}
+                />
+            ),
+        },
     ];
 
     const settings = [
@@ -154,6 +161,19 @@ function Navbar() {
         onClick: () => setLoggedIn(true),
     };
 
+    const cart = {
+        name: 'Carrinho de Compras',
+        link: '/cart',
+        icon: (
+            <ShoppingCartSharpIcon
+                sx={{
+                    mb: 0.25,
+                }}
+            />
+        ),
+    };
+
+    // larger than lg (900px?)
     const isLg = useMediaQuery(theme.breakpoints.up('lg'));
 
     return (
@@ -180,7 +200,7 @@ function Navbar() {
                         noWrap
                         component="a"
                         sx={{
-                            mr: 2,
+                            mr: 1,
                             display: { xs: 'none', md: 'none', lg: 'flex' },
                             fontFamily: 'monospace',
                             fontWeight: 700,
@@ -205,7 +225,7 @@ function Navbar() {
                             onClick={handleOpenNavMenu}
                             color="inherit"
                             sx={{
-                                ml: 2 ,
+                                ml: 2,
                             }}
                         >
                             <MenuIcon />
@@ -225,7 +245,7 @@ function Navbar() {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: 'block', md: 'none'},
+                                display: { xs: 'block', md: 'none' },
                             }}
                         >
                             {pages.map((page) => (
@@ -266,28 +286,29 @@ function Navbar() {
                                     color: 'inherit',
                                 }}
                             >
-                                <Button
-                                    key={page.name}
-                                    onClick={handleCloseNavMenu}
-                                    variant="outline"
-                                    sx={{
-                                        color: 'white',
-                                        display: 'block',
-                                        marginTop: 1.8,
-                                        marginBottom: 1,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        height: '40px',
-                                    }}
-                                >
-                                    {isLg? page.name : page.icon }
-
-                                </Button>
+                                <Tooltip title={!isLg ? page.name : ''}>
+                                    <Button
+                                        key={page.name}
+                                        onClick={handleCloseNavMenu}
+                                        variant="outline"
+                                        sx={{
+                                            color: 'white',
+                                            display: 'block',
+                                            marginTop: 1.7,
+                                            marginBottom: 1,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            height: '40px',
+                                        }}
+                                    >
+                                        {isLg ? page.name : page.icon}
+                                    </Button>
+                                </Tooltip>
                             </NavLink>
                         ))}
                     </Box>
 
-                    <Search sx={{ marginRight: 4, marginLeft: 2.5 }}>
+                    <Search sx={{ marginRight: 2.5, marginLeft: 2.5 }}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -296,7 +317,7 @@ function Navbar() {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </Search>
-                    <Box
+                    {/* <Box
                         sx={{
                             display: { md: 'flex', xs: 'none' },
                             ml: 2,
@@ -304,11 +325,41 @@ function Navbar() {
                         }}
                     >
                         <ThemeSwitcher />
-                    </Box>
-
+                    </Box> */}
+                    <NavLink
+                        key={cart.name}
+                        to={cart.link}
+                        style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                        }}
+                    >
+                        <Tooltip title={cart.name}>
+                            <Button
+                                key={cart.name}
+                                onClick={handleCloseNavMenu}
+                                variant="outline"
+                                sx={{
+                                    color: 'white',
+                                    display: 'block',
+                                    marginTop: 1.7,
+                                    marginBottom: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    height: '40px',
+                                    minWidth: '45px',
+                                }}
+                            >
+                                <Badge  badgeContent={cartItems} color="success">
+                                <ShoppingCartSharpIcon />
+                                </Badge>
+                                
+                            </Button>
+                        </Tooltip>
+                    </NavLink>
                     {loggedIn ? (
                         <Box sx={{ flexGrow: 0, ml: 3, mr: 1.25 }}>
-                            <Tooltip title="Open settings">
+                            <Tooltip title="Definições">
                                 <IconButton
                                     onClick={handleOpenUserMenu}
                                     sx={{ p: 0 }}
@@ -351,7 +402,7 @@ function Navbar() {
                                         }}
                                         sx={{
                                             height: '40px',
-                                            display: { xs: 'flex', md: 'none' },
+                                            // display: { xs: 'flex', md: 'none' },
                                             zIndex: 9999,
                                         }}
                                     >
@@ -360,7 +411,7 @@ function Navbar() {
                                                 <Box
                                                     sx={{
                                                         display: {
-                                                            md: 'none',
+                                                            md: 'flex',
                                                             xs: 'flex',
                                                         },
                                                         alignItems: 'center',
@@ -425,8 +476,9 @@ function Navbar() {
                                 sx={{
                                     color: 'white',
                                     display: 'block',
-                                    marginTop: 1.8,
+                                    marginTop: 1.7,
                                     marginBottom: 1,
+                                    height: '40px',
                                     // mx: 0.5,
                                 }}
                             >
