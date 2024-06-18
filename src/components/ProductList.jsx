@@ -1,4 +1,3 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -22,6 +21,7 @@ import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 import Tooltip from '@mui/material/Tooltip';
 import { cartStore } from '../stores/cartStore';
 import { observer } from 'mobx-react';
+import { useEffect, useState } from 'react';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -128,15 +128,45 @@ const rows = [
     createData('Marshmallow', 318, 0),
     createData('Nougat', 360, 19.0),
     createData('Oreo', 437, 18.0),
+    createData('KitKat 2', 518, 26),
+    createData('Lollipop 2', 392, 0),
+    createData('Marshmallow 2', 318, 0),
+    createData('Nougat 2', 360, 19.0),
+    createData('Oreo 2', 437, 18.0),
+    createData('KitKat 3', 518, 26),
+    createData('Lollipop 3', 392, 0),
+    createData('Marshmallow 3', 318, 0),
+    createData('Nougat 3', 360, 19.0),
+    createData('Oreo 3', 437, 18.0),
 ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
-const ProductList= observer( () => {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(8);
+const ProductList = observer(() => {
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(8);
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+    useEffect(() => {
+        const updateRowsPerPage = () => {
+            const rowHeight = 72; // Approximate row height in px
+            const footerHeight = 80; // Approximate TableFooter height in px
+            const headerHeight = 240; // Approximate TableHead height in px
+            const availableHeight =
+                window.innerHeight - headerHeight - footerHeight;
+            const newRowsPerPage = Math.floor(availableHeight / rowHeight);
+            setRowsPerPage(newRowsPerPage);
+        };
+
+        // Initial calculation
+        updateRowsPerPage();
+
+        // Update on window resize
+        window.addEventListener('resize', updateRowsPerPage);
+        return () => {
+            window.removeEventListener('resize', updateRowsPerPage);
+        };
+    }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -189,27 +219,32 @@ const ProductList= observer( () => {
                             </TableCell>
                             <TableCell style={{ width: 160 }} align="right">
                                 <Tooltip title="Adicionar ao carrinho">
-                                    <IconButton color="textSecondary" onClick={() => cartStore.addItem(row.name, 1)}>
+                                    <IconButton
+                                        color="textSecondary"
+                                        onClick={() =>
+                                            cartStore.addItem(row.name, 1)
+                                        }
+                                    >
                                         <AddShoppingCartSharpIcon />
                                     </IconButton>
                                 </Tooltip>
                             </TableCell>
                         </TableRow>
                     ))}
-                    {emptyRows > 0 && (
-                        <TableRow style={{ height: 54.7 * (emptyRows+1) }}>
+                    {/* {emptyRows > 0 && (
+                        <TableRow style={{ height: (2.3 * (emptyRows + 1)) + 'rem' }}>
                             <TableCell colSpan={6} />
                         </TableRow>
-                    )}
+                    )} */}
                 </TableBody>
                 <TableFooter>
                     <TableRow>
                         <TablePagination
                             rowsPerPageOptions={[
-                                8,
-                                16,
-                                32,
-                                { label: 'All', value: -1 },
+                                rowsPerPage,
+                                // 16,
+                                // 32,
+                                // { label: 'All', value: -1 },
                             ]}
                             colSpan={4}
                             count={rows.length}

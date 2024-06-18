@@ -12,18 +12,17 @@ const CustomThemeProvider = observer(({ appStore }) => {
             mode: appStore.themeType, // dark or light toggle
             primary: {
                 main: green[600],
-                // light: 'rgba(255, 255, 255, 0.87)',
-                // dark: '#242424',
-                // contrastText: '#fff',
-            },
-            secondary: {
-                main: green[600],
             },
             background: {
                 default: appStore.themeType === 'dark' ? '#242424' : '#FDFDF9',
                 paper: appStore.themeType === 'dark' ? '#242424' : '#FDFDF9',
             },
-        },
+            footer: {
+                background: appStore.themeType === 'dark' ? '#242424' : green[600],
+                text: 'white',
+            },
+
+        }
     });
 
     return (

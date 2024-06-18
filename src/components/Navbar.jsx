@@ -28,13 +28,11 @@ import ShopSharpIcon from '@mui/icons-material/ShopSharp';
 import ShoppingCartSharpIcon from '@mui/icons-material/ShoppingCartSharp';
 import { Badge } from '@mui/material';
 import { observer } from 'mobx-react';
+import { authStore } from '../stores/authStore';
 
 const Navbar = observer( () => {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
-
-    //TODO: mudar mais tarde, provisorio enquanto não temos o estado do login e cart items
-    const [loggedIn, setLoggedIn] = useState(false);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -60,7 +58,7 @@ const Navbar = observer( () => {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 5,
-        width: loggedIn ? '425px' : '425px',
+        width: authStore.authenticated ? '425px' : '425px',
         [theme.breakpoints.down('lg')]: {
             width: '100%',
         },
@@ -150,7 +148,7 @@ const Navbar = observer( () => {
         {
             id: 3,
             name: 'Terminar Sessão',
-            onClick: () => setLoggedIn(false),
+            onClick: () => authStore.logout(),
         },
     ];
 
@@ -159,7 +157,7 @@ const Navbar = observer( () => {
         id: 5,
         name: 'Login',
         // link: '/',
-        onClick: () => setLoggedIn(true),
+        onClick: () => authStore.login(),
     };
 
     const cart = {
@@ -182,6 +180,7 @@ const Navbar = observer( () => {
             position="static"
             sx={{
                 borderBottom: `1px solid ${theme.palette.primary.main}`,
+                borderRadius: '0 0 5px 5px',
             }}
         >
             <Container maxWidth="xl" sx={{ pr: '0.6rem !important' }}>
@@ -226,7 +225,7 @@ const Navbar = observer( () => {
                             onClick={handleOpenNavMenu}
                             color="inherit"
                             sx={{
-                                ml: 2,
+                                ml: 0,
                             }}
                         >
                             <MenuIcon />
@@ -274,8 +273,9 @@ const Navbar = observer( () => {
                     <Box
                         sx={{
                             flexGrow: 1,
-                            marginLeft: 2,
+                            // marginLeft: 2,
                             display: { xs: 'none', md: 'flex' },
+                            justifyContent: 'center',
                         }}
                     >
                         {pages.map((page) => (
@@ -309,7 +309,7 @@ const Navbar = observer( () => {
                         ))}
                     </Box>
 
-                    <Search sx={{ marginRight: 2.5, marginLeft: 2.5 }}>
+                    <Search sx={{ marginRight: 2, marginLeft: 0.75 }}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -360,7 +360,7 @@ const Navbar = observer( () => {
                             </Button>
                         </Tooltip>
                     </NavLink>
-                    {loggedIn ? (
+                    {authStore.authenticated ? (
                         <Box sx={{ flexGrow: 0, ml: 3, mr: 1.25 }}>
                             <Tooltip title="Definições">
                                 <IconButton
