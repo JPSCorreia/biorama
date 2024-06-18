@@ -28,7 +28,7 @@ const App = observer(() => {
                 alignItems: 'center',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                backgroundImage: `url(../../public/assets/images/background.jpg)`,
+                backgroundImage: `url(../../assets/images/background.jpg)`,
                 backgroundSize: 'cover', // Cover the entire area
                 backgroundPosition: 'center', // Center the image
                 backgroundRepeat: 'no-repeat', // No repeating of the image

@@ -369,7 +369,7 @@ const Navbar = observer( () => {
                                 >
                                     <Avatar
                                         alt="Remy Sharp"
-                                        src="/src/assets/images/2.jpg"
+                                        src="/assets/images/2.jpg"
                                     />
                                 </IconButton>
                             </Tooltip>
