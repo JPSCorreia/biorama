@@ -2,7 +2,6 @@ import { action, makeObservable, observable } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 
 class AuthStore {
-
     authenticated = false;
 
     constructor() {
@@ -23,10 +22,8 @@ class AuthStore {
     });
 
     logout = action(() => {
-      this.authenticated = false;
-  });
-
-
+        this.authenticated = false;
+    });
 }
 
 export const authStore = new AuthStore();

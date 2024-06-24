@@ -3,7 +3,6 @@ import { action, makeObservable, observable } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 
 class AppStore {
-
     themeType = 'light';
 
     constructor() {
@@ -25,11 +24,10 @@ class AppStore {
             : (this.themeType = 'light');
     });
 
-    // Não estamos a usar, boa prática usar 
-  //   get currentThemeType() {
-  //     return this.themeType;
-  // }
-
+    // Não estamos a usar, boa prática usar
+    //   get currentThemeType() {
+    //     return this.themeType;
+    // }
 }
 
 export const appStore = new AppStore();

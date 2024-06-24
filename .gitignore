@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node modules and dist folders
 node_modules
 dist
 dist-ssr
@@ -23,6 +24,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Ignore all .env files
+# All .env files
 .env
 .env.*
+
+# Backup files
+*.bak
