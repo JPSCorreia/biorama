@@ -18,6 +18,7 @@ import CartContainer from './components/CartContainer';
 import Footer from './components/Footer';
 import { Box } from '@mui/system';
 import { appStore } from './stores/appStore';
+import 'leaflet/dist/leaflet.css';
 
 const App = observer(() => {
     return (
@@ -44,7 +45,10 @@ const App = observer(() => {
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    backgroundColor: appStore.themeType === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)' , // Semi-transparent black
+                    backgroundColor:
+                        appStore.themeType === 'dark'
+                            ? 'rgba(0, 0, 0, 0.6)'
+                            : 'rgba(0, 0, 0, 0.3)', // Semi-transparent black
                     zIndex: 1,
                 }}
             />
@@ -55,6 +59,7 @@ const App = observer(() => {
                     flexDirection: 'column',
                     padding: '0 !important',
                     zIndex: 1,
+                    height: '100%'
                 }}
             >
                 <Navbar />
@@ -69,9 +74,15 @@ const App = observer(() => {
                     <Route path="/conta" element={<AccountContainer />} />
                 </Routes>
             </Container>
-            <Container sx={{ zIndex: 1, width: '100%', p: '0 !important', m: '0 !important' }}>
-            <Footer />
-
+            <Container
+                sx={{
+                    zIndex: 1,
+                    width: '100%',
+                    p: '0 !important',
+                    m: '0 !important',
+                }}
+            >
+                <Footer />
             </Container>
         </Container>
     );

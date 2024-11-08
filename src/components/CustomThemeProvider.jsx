@@ -22,7 +22,12 @@ const CustomThemeProvider = observer(({ appStore }) => {
                 text: 'white',
             },
 
-        }
+        },
+        // typography: {
+        //     allVariants: {
+        //         color: '#ffffff',
+        //     },
+        // },
     });
 
     return (

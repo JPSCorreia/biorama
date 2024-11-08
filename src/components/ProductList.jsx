@@ -110,39 +110,36 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-    return { name, calories, fat };
-}
-
 const rows = [
-    createData('Cupcake', 305, 4),
-    createData('Donut', 452, 25),
-    createData('Eclair', 262, 16),
-    createData('Yoghurt', 159, 4),
-    createData('Gingerbread', 356, 16),
-    createData('Honeycomb', 408, 3),
-    createData('Ice cream sandwich', 237, 9),
-    createData('Jelly Bean', 375, 0),
-    createData('KitKat', 518, 26),
-    createData('Lollipop', 392, 0),
-    createData('Marshmallow', 318, 0),
-    createData('Nougat', 360, 19.0),
-    createData('Oreo', 437, 18.0),
-    createData('KitKat 2', 518, 26),
-    createData('Lollipop 2', 392, 0),
-    createData('Marshmallow 2', 318, 0),
-    createData('Nougat 2', 360, 19.0),
-    createData('Oreo 2', 437, 18.0),
-    createData('KitKat 3', 518, 26),
-    createData('Lollipop 3', 392, 0),
-    createData('Marshmallow 3', 318, 0),
-    createData('Nougat 3', 360, 19.0),
-    createData('Oreo 3', 437, 18.0),
+    { name: 'Cupcake', calories: 305, fat: 4 },
+    { name: 'Donut', calories: 452, fat: 25 },
+    { name: 'Eclair', calories: 262, fat: 16 },
+    { name: 'Yoghurt', calories: 159, fat: 4 },
+    { name: 'Gingerbread', calories: 356, fat: 16 },
+    { name: 'Honeycomb', calories: 408, fat: 3 },
+    { name: 'Ice cream sandwich', calories: 237, fat: 9 },
+    { name: 'Jelly Bean', calories: 375, fat: 0 },
+    { name: 'KitKat', calories: 518, fat: 26 },
+    { name: 'Lollipop', calories: 392, fat: 0 },
+    { name: 'Marshmallow', calories: 318, fat: 0 },
+    { name: 'Nougat', calories: 360, fat: 19.0 },
+    { name: 'Oreo', calories: 437, fat: 18.0 },
+    { name: 'KitKat 2', calories: 518, fat: 26 },
+    { name: 'Lollipop 2', calories: 392, fat: 0 },
+    { name: 'Marshmallow 2', calories: 318, fat: 0 },
+    { name: 'Nougat 2', calories: 360, fat: 19.0 },
+    { name: 'Oreo 2', calories: 437, fat: 18.0 },
+    { name: 'KitKat 3', calories: 518, fat: 26 },
+    { name: 'Lollipop 3', calories: 392, fat: 0 },
+    { name: 'Marshmallow 3', calories: 318, fat: 0 },
+    { name: 'Nougat 3', calories: 360, fat: 19.0 },
+    { name: 'Oreo 3', calories: 437, fat: 18.0 },
 ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+
 
 const ProductList = observer(() => {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(8);
+    const [rowsPerPage, setRowsPerPage] = useState(6);
 
     // Avoid a layout jump when reaching the last page with empty rows.
     // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -155,7 +152,7 @@ const ProductList = observer(() => {
             const availableHeight =
                 window.innerHeight - headerHeight - footerHeight;
             const newRowsPerPage = Math.floor(availableHeight / rowHeight);
-            setRowsPerPage(newRowsPerPage);
+            setRowsPerPage(newRowsPerPage - 1);
         };
 
         // Initial calculation
@@ -180,93 +177,98 @@ const ProductList = observer(() => {
     const StyledTableHead = styled(TableHead)(({ theme }) => ({
         backgroundColor: theme.palette.primary.main,
         '& th': {
-            color: theme.palette.common.white, // Set the text color to white for better contrast
+            color: theme.palette.common.white,
         },
     }));
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-                <StyledTableHead>
-                    <TableRow>
-                        <StyledTableCell>Produto</StyledTableCell>
-                        <StyledTableCell align="right">
-                            Calorias
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                            Quantidade
-                        </StyledTableCell>
-                        <StyledTableCell align="right"></StyledTableCell>
-                    </TableRow>
-                </StyledTableHead>
-                <TableBody>
-                    {(rowsPerPage > 0
-                        ? rows.slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                          )
-                        : rows
-                    ).map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell component="th" scope="row">
-                                {row.name}
-                            </TableCell>
-                            <TableCell style={{ width: 160 }} align="right">
-                                {row.calories}
-                            </TableCell>
-                            <TableCell style={{ width: 160 }} align="right">
-                                {row.fat}
-                            </TableCell>
-                            <TableCell style={{ width: 160 }} align="right">
-                                <Tooltip title="Adicionar ao carrinho">
-                                    <IconButton
-                                        color="textSecondary"
-                                        onClick={() =>
-                                            cartStore.addItem(row.name, 1)
-                                        }
-                                    >
-                                        <AddShoppingCartSharpIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </TableCell>
+        <Box style={{ height: '100%', width: '100%'}}>
+            <TableContainer component={Paper}>
+                <Table
+                    sx={{ minWidth: 500 }}
+                    aria-label="custom pagination table"
+                >
+                    <StyledTableHead>
+                        <TableRow>
+                            <StyledTableCell>Produto</StyledTableCell>
+                            <StyledTableCell align="right">
+                                Calorias
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                                Quantidade
+                            </StyledTableCell>
+                            <StyledTableCell align="right"></StyledTableCell>
                         </TableRow>
-                    ))}
-                    {/* {emptyRows > 0 && (
+                    </StyledTableHead>
+                    <TableBody>
+                        {(rowsPerPage > 0
+                            ? rows.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                              )
+                            : rows
+                        ).map((row) => (
+                            <TableRow key={row.name}>
+                                <TableCell component="th" scope="row">
+                                    {row.name}
+                                </TableCell>
+                                <TableCell style={{ width: 160 }} align="right">
+                                    {row.calories}
+                                </TableCell>
+                                <TableCell style={{ width: 160 }} align="right">
+                                    {row.fat}
+                                </TableCell>
+                                <TableCell style={{ width: 160 }} align="right">
+                                    <Tooltip title="Adicionar ao carrinho">
+                                        <IconButton
+                                            color="textSecondary"
+                                            onClick={() =>
+                                                cartStore.addItem(row.name, 1)
+                                            }
+                                        >
+                                            <AddShoppingCartSharpIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {/* {emptyRows > 0 && (
                         <TableRow style={{ height: (2.3 * (emptyRows + 1)) + 'rem' }}>
                             <TableCell colSpan={6} />
                         </TableRow>
                     )} */}
-                </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TablePagination
-                            rowsPerPageOptions={[
-                                rowsPerPage,
-                                // 16,
-                                // 32,
-                                // { label: 'All', value: -1 },
-                            ]}
-                            colSpan={4}
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            labelRowsPerPage="Produtos por página"
-                            slotProps={{
-                                select: {
-                                    inputProps: {
-                                        'aria-label': 'Produtos por página',
+                    </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                rowsPerPageOptions={[
+                                    rowsPerPage,
+                                    // 16,
+                                    // 32,
+                                    // { label: 'All', value: -1 },
+                                ]}
+                                colSpan={4}
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                labelRowsPerPage="Produtos por página"
+                                slotProps={{
+                                    select: {
+                                        inputProps: {
+                                            'aria-label': 'Produtos por página',
+                                        },
+                                        native: true,
                                     },
-                                    native: true,
-                                },
-                            }}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActions}
-                        />
-                    </TableRow>
-                </TableFooter>
-            </Table>
-        </TableContainer>
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+        </Box>
     );
 });
 
