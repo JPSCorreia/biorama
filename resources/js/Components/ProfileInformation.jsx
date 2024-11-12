@@ -1,5 +1,5 @@
 import { Avatar, Button, Paper, Typography, Box } from "@mui/material";
-import testProfileImage from "../../images/1.jpg";
+import testProfileImage from "../../images/2.jpg";
 import { authStore } from "../Stores";
 import { observer } from "mobx-react";
 
@@ -78,14 +78,14 @@ const ProfileInformation = observer(() => {
                     }}
                 >
                     <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
-                        Data de Registo:
+                        Data de Nascimento:
                     </Typography>
                     <Typography
                         variant="body1"
                         gutterBottom
                         sx={{ mt: 1, ml: 1 }}
                     >
-                        15/01/2025
+                        20/01/1990
                     </Typography>
                 </Box>
                 <Box
@@ -124,6 +124,25 @@ const ProfileInformation = observer(() => {
                         sx={{ mt: 1, ml: 1 }}
                     >
                         Setúbal
+                    </Typography>
+                </Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "baseline",
+                    }}
+                >
+                    <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
+                        Data de Registo:
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        sx={{ mt: 1, ml: 1 }}
+                    >
+                        15/01/2025
                     </Typography>
                 </Box>
                 <Box sx={{ alignSelf: "flex-end", height: "50px" }}>
