@@ -142,7 +142,7 @@ const Navbar = observer(() => {
 
     const settings = [
         { id: 1, name: "Perfil", link: "/perfil" },
-        { id: 2, name: "Conta", link: "/conta" },
+        { id: 2, name: "Definições", link: "/definições" },
         {
             id: 3,
             name: "Terminar Sessão",
@@ -356,7 +356,7 @@ const Navbar = observer(() => {
                                     sx={{ p: 0 }}
                                 >
                                     <Avatar
-                                        alt="Remy Sharp"
+                                        alt="Profile avatar"
                                         src={testProfileImage}
                                     />
                                 </IconButton>
