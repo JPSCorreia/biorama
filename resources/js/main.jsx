@@ -1,12 +1,10 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { Provider } from 'mobx-react';
+import { appStore } from './Stores';
 import CustomThemeProvider from './CustomThemeProvider';
-import { appStore } from './Stores/appStore';
 import App from './App';
-// import '../css/main.css';
 
 createInertiaApp({
     resolve: name => {

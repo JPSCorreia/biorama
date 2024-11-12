@@ -1,8 +1,6 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import { Container, Box } from '@mui/material';
-import Navbar from './Components/Navbar';
-import Footer from './Components/Footer';
+import { Navbar, Footer } from './Components';
 import backgroundImage from '../images/background.jpg';
 import 'leaflet/dist/leaflet.css';
 

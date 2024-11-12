@@ -1,5 +1,4 @@
 import { action, makeObservable, observable } from 'mobx';
-// import { computed } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 
 class AppStore {
@@ -9,7 +8,6 @@ class AppStore {
         makeObservable(this, {
             themeType: observable,
             changeThemeType: action,
-            // currentThemeType: computed,
         });
         makePersistable(this, {
             name: 'AppStore',
@@ -23,11 +21,6 @@ class AppStore {
             ? (this.themeType = 'dark')
             : (this.themeType = 'light');
     });
-
-    // Não estamos a usar, boa prática usar
-    //   get currentThemeType() {
-    //     return this.themeType;
-    // }
 }
 
 export const appStore = new AppStore();

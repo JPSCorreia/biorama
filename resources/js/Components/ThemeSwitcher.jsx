@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import { Box, Switch } from '@mui/material';
-import { appStore } from '../Stores/appStore';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { appStore } from '../Stores';
+import { FormControlLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -61,7 +61,7 @@ const ThemeSwitcher = observer(() => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
     <FormControlLabel
-        onClick={(e) => e.preventDefault()} // Previne click event
+        onClick={(e) => e.preventDefault()}
         control={
             <MaterialUISwitch 
                 sx={{ marginLeft: 0 }} 

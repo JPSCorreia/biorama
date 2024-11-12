@@ -1,33 +1,34 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import SpaIcon from "@mui/icons-material/Spa";
-import SearchIcon from "@mui/icons-material/Search";
-import { styled, alpha } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
-import ThemeSwitcher from "./ThemeSwitcher";
-import { useMediaQuery } from "@mui/material";
-import { appStore } from "../Stores/appStore";
-import { cartStore } from "../Stores/cartStore";
-import { useTheme } from "@mui/material/styles";
+import {
+    AppBar,
+    Box,
+    Toolbar,
+    IconButton,
+    Typography,
+    Menu,
+    Container,
+    Avatar,
+    Button,
+    Tooltip,
+    MenuItem,
+    Badge,
+    useMediaQuery,
+    InputBase,
+} from "@mui/material";
+import {
+    Menu as MenuIcon,
+    Spa as SpaIcon,
+    Search as SearchIcon,
+    HomeSharp as HomeSharpIcon,
+    StoreSharp as StoreSharpIcon,
+    ContactSupportSharp as ContactSupportSharpIcon,
+    ShopSharp as ShopSharpIcon,
+    ShoppingCartSharp as ShoppingCartSharpIcon,
+} from "@mui/icons-material";
+import { styled, alpha, useTheme } from "@mui/material/styles";
+import { ThemeSwitcher } from "./";
+import { appStore, cartStore, authStore } from "../Stores";
 import { useState } from "react";
-import HomeSharpIcon from "@mui/icons-material/HomeSharp";
-import StoreSharpIcon from "@mui/icons-material/StoreSharp";
-import ContactSupportSharpIcon from "@mui/icons-material/ContactSupportSharp";
-import ShopSharpIcon from "@mui/icons-material/ShopSharp";
-import ShoppingCartSharpIcon from "@mui/icons-material/ShoppingCartSharp";
-import { Badge } from "@mui/material";
 import { observer } from "mobx-react";
-import { authStore } from "../Stores/authStore";
 import { router } from "@inertiajs/react";
 import testProfileImage from "../../images/2.jpg";
 
@@ -63,10 +64,6 @@ const Navbar = observer(() => {
         [theme.breakpoints.down("lg")]: {
             width: "100%",
         },
-        // [theme.breakpoints.up('sm')]: {
-        //   marginLeft: theme.spacing(1),
-        //   width: 'auto',
-        // },
     }));
 
     const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -276,13 +273,15 @@ const Navbar = observer(() => {
                     <Box
                         sx={{
                             flexGrow: 1,
-                            // marginLeft: 2,
                             display: { xs: "none", md: "flex" },
                             justifyContent: "center",
                         }}
                     >
                         {pages.map((page) => (
-                            <Tooltip key={page.name} title={!isLg ? page.name : ""}>
+                            <Tooltip
+                                key={page.name}
+                                title={!isLg ? page.name : ""}
+                            >
                                 <Button
                                     key={page.name}
                                     onClick={() => {
@@ -315,49 +314,40 @@ const Navbar = observer(() => {
                             inputProps={{ "aria-label": "search" }}
                         />
                     </Search>
-                    {/* <Box
-                        sx={{
-                            display: { md: 'flex', xs: 'none' },
-                            ml: 2,
-                            mr: 0,
-                        }}
-                    >
-                        <ThemeSwitcher />
-                    </Box> */}
-                        <Tooltip title={cart.name}>
-                            <Button
-                                key={cart.name}
-                                onClick={() => {
-                                    handleCloseNavMenu();
-                                    navigate(cart.link);
-                                }}
-                                variant="outline"
+                    <Tooltip title={cart.name}>
+                        <Button
+                            key={cart.name}
+                            onClick={() => {
+                                handleCloseNavMenu();
+                                navigate(cart.link);
+                            }}
+                            variant="outline"
+                            sx={{
+                                color: "white",
+                                display: "block",
+                                marginTop: 1.7,
+                                marginBottom: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "40px",
+                                minWidth: "45px",
+                                paddingRight: "10px",
+                                paddingLeft: "10px",
+                            }}
+                        >
+                            <Badge
                                 sx={{
-                                    color: "white",
-                                    display: "block",
-                                    marginTop: 1.7,
-                                    marginBottom: 1,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: "40px",
-                                    minWidth: "45px",
-                                    paddingRight: "10px",
-                                    paddingLeft: "10px",
+                                    paddingRight: "5px",
+                                    marginLeft: "5px",
                                 }}
+                                badgeContent={cartStore.total}
+                                color="success"
+                                overlap="circular"
                             >
-                                <Badge
-                                    sx={{
-                                        paddingRight: "5px",
-                                        marginLeft: "5px",
-                                    }}
-                                    badgeContent={cartStore.total}
-                                    color="success"
-                                    overlap="circular"
-                                >
-                                    <ShoppingCartSharpIcon />
-                                </Badge>
-                            </Button>
-                        </Tooltip>
+                                <ShoppingCartSharpIcon />
+                            </Badge>
+                        </Button>
+                    </Tooltip>
                     {authStore.authenticated ? (
                         <Box sx={{ flexGrow: 0, ml: 3, mr: 1.25 }}>
                             <Tooltip title="Definições">
@@ -387,81 +377,78 @@ const Navbar = observer(() => {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
+                                <MenuItem
+                                    key={1}
+                                    onClick={() => {
+                                        handleCloseUserMenu();
+                                        tema.onClick();
+                                    }}
+                                    sx={{
+                                        height: "40px",
+                                        zIndex: 9999,
+                                    }}
+                                >
+                                    <Box textAlign="center">
+                                        {tema.name === "Tema" ? (
+                                            <Box
+                                                sx={{
+                                                    display: {
+                                                        md: "flex",
+                                                        xs: "flex",
+                                                    },
+                                                    alignItems: "center",
+                                                    justifyContent:
+                                                        "space-between",
+                                                }}
+                                            >
+                                                <Box sx={{ mr: 2 }}>Tema </Box>{" "}
+                                                <ThemeSwitcher />
+                                            </Box>
+                                        ) : (
+                                            tema.name
+                                        )}
+                                    </Box>
+                                </MenuItem>
+                                {settings.map((setting) => (
                                     <MenuItem
-                                        key={1}
+                                        key={setting.id}
                                         onClick={() => {
                                             handleCloseUserMenu();
-                                            tema.onClick();
+                                            if (setting.onClick) {
+                                                setting.onClick();
+                                            } else {
+                                                navigate(setting.link);
+                                            }
                                         }}
-                                        sx={{
-                                            height: "40px",
-                                            // display: { xs: 'flex', md: 'none' },
-                                            zIndex: 9999,
-                                        }}
+                                        sx={{ height: "40px" }}
                                     >
                                         <Box textAlign="center">
-                                            {tema.name === "Tema" ? (
-                                                <Box
-                                                    sx={{
-                                                        display: {
-                                                            md: "flex",
-                                                            xs: "flex",
-                                                        },
-                                                        alignItems: "center",
-                                                        justifyContent:
-                                                            "space-between",
-                                                    }}
-                                                >
-                                                    <Box sx={{ mr: 2 }}>
-                                                        Tema{" "}
-                                                    </Box>{" "}
-                                                    <ThemeSwitcher />
-                                                </Box>
-                                            ) : (
-                                                tema.name
-                                            )}
+                                            {setting.name}
                                         </Box>
                                     </MenuItem>
-                                {settings.map((setting) => (
-
-                                        <MenuItem
-                                            key={setting.id}
-                                            onClick={() => {
-                                                handleCloseUserMenu();
-                                                if (setting.onClick) {
-                                                    setting.onClick();
-                                                } else {
-                                                    navigate(setting.link);
-                                                }
-                                            }}
-                                            sx={{ height: "40px" }}
-                                        >
-                                            <Box textAlign="center">
-                                                {setting.name}
-                                            </Box>
-                                        </MenuItem>
                                 ))}
                             </Menu>
                         </Box>
                     ) : (
-                            <Button
-                                key={login.name}
-                                onClick={() => {
-                                    handleCloseNavMenu();
-                                    login.onClick ? login.onClick() : navigate(login.link);
-                                }}
-                                variant="outline"
-                                sx={{
-                                    color: "white",
-                                    display: "block",
-                                    marginTop: 1.7,
-                                    marginBottom: 1,
-                                    height: "40px",
-                                    // mx: 0.5,
-                                }}
-                            >
-                                {login.name}
-                            </Button>
+                        <Button
+                            key={login.name}
+                            onClick={() => {
+                                handleCloseNavMenu();
+                                login.onClick
+                                    ? login.onClick()
+                                    : navigate(login.link);
+                            }}
+                            variant="outline"
+                            sx={{
+                                color: "white",
+                                display: "block",
+                                marginTop: 1.7,
+                                marginBottom: 1,
+                                height: "40px",
+                            }}
+                        >
+                            {login.name}
+                        </Button>
                     )}
                 </Toolbar>
             </Container>

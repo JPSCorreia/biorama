@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import { Box, Typography } from '@mui/material';
-import ProductList from '../Components/ProductList.jsx';
+import { ProductList } from '../Components';
 
 const Products = observer(() => {
     return (

@@ -1,53 +1,53 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import ReactDOMServer from "react-dom/server";
+import { Box, CircularProgress, useTheme } from "@mui/material";
+import { StoreSharp as StoreSharpIcon } from "@mui/icons-material";
 import {
     MapContainer,
     TileLayer,
     Marker,
     Tooltip,
     useMap,
-} from 'react-leaflet';
-import { Box, CircularProgress, useTheme } from '@mui/material';
-import StoreSharpIcon from '@mui/icons-material/StoreSharp';
-import ReactDOMServer from 'react-dom/server';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import PropTypes from 'prop-types';
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import PropTypes from "prop-types";
 
-// Função para criar um ícone customizado com StoreSharpIcon e a cor do tema
+// Create custom leaflet store icon function.
 const createCustomIcon = (color) => {
     const iconHtml = ReactDOMServer.renderToString(
         <div
             style={{
-                fontSize: '24px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                fontSize: "24px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
                 border: `1px solid ${color}`,
-                borderRadius: '50%',
-                padding: '4px',
+                borderRadius: "50%",
+                padding: "4px",
                 boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`,
             }}
         >
             <StoreSharpIcon
                 fontSize="inherit"
-                style={{ fill: color, width: '1em', height: '1em' }}
+                style={{ fill: color, width: "1em", height: "1em" }}
             />
         </div>
     );
 
     return L.divIcon({
         html: iconHtml,
-        className: 'custom-marker-icon',
+        className: "custom-marker-icon",
         iconSize: [36, 36],
         iconAnchor: [18, 18],
     });
 };
 
-// Função para recentrar o mapa na posição
+// Recenter map function.
 const SetViewOnPosition = ({ position }) => {
     const map = useMap();
     if (position) {
-        map.setView(position, 12); // Ajusta o zoom para o nível desejado
+        map.setView(position, 12); // Zoom level
     }
     return null;
 };
@@ -69,85 +69,83 @@ const HomeMap = () => {
                     clearTimeout(timeoutId);
                 },
                 () => {
-                    console.error('Não foi possível obter a localização.');
+                    console.error("Não foi possível obter a localização.");
                     setLoadMap(true);
                 }
             );
         } else {
-            console.error('Geolocalização não é suportada neste navegador.');
+            console.error("Geolocalização não é suportada neste navegador.");
             setLoadMap(true);
         }
 
         return () => clearTimeout(timeoutId);
     }, []);
 
-    // Gera três posições fictícias próximas
-// Gera cinco posições fictícias próximas
-const generateNearbyStores = (center) => {
-    const offset = 0.04; // Pequeno desvio para criar lojas próximas
-    return [
-        {
-            position: [center[0] + offset, center[1] + offset],
-            name: 'Loja Fictícia 1',
-            description: 'Especializada em produtos locais e orgânicos.',
-        },
-        {
-            position: [center[0] - offset, center[1] - offset],
-            name: 'Loja Fictícia 2',
-            description: 'Grande variedade de produtos artesanais.',
-        },
-        {
-            position: [center[0] + offset, center[1] - offset],
-            name: 'Loja Fictícia 3',
-            description: 'Conhecida pelos seus alimentos frescos e sustentáveis.',
-        },
-        {
-            position: [center[0] - offset * 1.5, center[1] + offset * 0.5],
-            name: 'Loja Fictícia 4',
-            description: 'Oferece uma variedade de frutas e vegetais frescos.',
-        },
-        {
-            position: [center[0] + offset * 1.5, center[1] - offset * 0.5],
-            name: 'Loja Fictícia 5',
-            description: 'Loja local com produtos artesanais de alta qualidade.',
-        },
-    ];
-};
-
+    // Generate 5 fictious stores (//TODO: remove later).
+    const generateNearbyStores = (center) => {
+        const offset = 0.04; // Pequeno desvio para criar lojas próximas
+        return [
+            {
+                position: [center[0] + offset, center[1] + offset],
+                name: "Loja Fictícia 1",
+                description: "Especializada em produtos locais e orgânicos.",
+            },
+            {
+                position: [center[0] - offset, center[1] - offset],
+                name: "Loja Fictícia 2",
+                description: "Grande variedade de produtos artesanais.",
+            },
+            {
+                position: [center[0] + offset, center[1] - offset],
+                name: "Loja Fictícia 3",
+                description:
+                    "Conhecida pelos seus alimentos frescos e sustentáveis.",
+            },
+            {
+                position: [center[0] - offset * 1.5, center[1] + offset * 0.5],
+                name: "Loja Fictícia 4",
+                description:
+                    "Oferece uma variedade de frutas e vegetais frescos.",
+            },
+            {
+                position: [center[0] + offset * 1.5, center[1] - offset * 0.5],
+                name: "Loja Fictícia 5",
+                description:
+                    "Loja local com produtos artesanais de alta qualidade.",
+            },
+        ];
+    };
 
     const nearbyStores = position ? generateNearbyStores(position) : [];
 
     return (
         <Box
-            style={{
-                height: '85%',
-                width: '85%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+            sx={{
+                height: "85%",
+                width: "85%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
             }}
         >
             {!loadMap ? (
                 <CircularProgress
                     size={60}
-                    style={{ color: theme.palette.primary.main }}
+                    sx={{ color: theme.palette.primary.main }}
                 />
             ) : (
                 <MapContainer
-                    center={position || [38.7071, -9.1355]} // Default para Lisboa enquanto espera a localização
+                    center={position || [38.7071, -9.1355]} // Default to Lisbon without location.
                     zoom={13}
-                    style={{ height: '100%', width: '100%' }}
+                    style={{ height: "100%", width: "100%" }}
                 >
-                    <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {position && (
                         <>
-                            {/* Marcador para a posição do utilizador */}
+                            {/* Geolocation Marker */}
                             {/* <Marker
                                 position={position}
                             /> */}
-                            {/* Marcadores para as lojas fictícias */}
                             {nearbyStores.map((store, index) => (
                                 <Marker
                                     key={index}
@@ -168,7 +166,7 @@ const generateNearbyStores = (center) => {
                                         </div>
                                     </Tooltip>
                                 </Marker>
-                            ))}    
+                            ))}
                             <SetViewOnPosition position={position} />
                         </>
                     )}
@@ -180,7 +178,6 @@ const generateNearbyStores = (center) => {
 
 export default HomeMap;
 
-// propTypes
 SetViewOnPosition.propTypes = {
     position: PropTypes.arrayOf(PropTypes.number),
 };

@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import HomeMap from '../Components/HomeMap';
+import { HomeMap } from '../Components';
 
 const Home = () => {
     return (
