@@ -13,6 +13,7 @@ const ProfileInformation = observer(() => {
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    height: "100%",
                 }}
             >
                 <Box

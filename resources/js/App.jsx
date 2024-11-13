@@ -1,10 +1,15 @@
 import { observer } from 'mobx-react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, useMediaQuery } from '@mui/material';
 import { Navbar, Footer } from './Components';
 import backgroundImage from '../images/background.jpg';
 import 'leaflet/dist/leaflet.css';
+import { useTheme } from '@mui/material/styles';
 
 const App = observer(({ appStore, children }) =>  {
+
+    const theme = useTheme();
+    const biggerThanSm= useMediaQuery(theme.breakpoints.up("sm"));
+
     return (
         <Container
             className="App"
@@ -17,18 +22,20 @@ const App = observer(({ appStore, children }) =>  {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
-                height: '100vh',
+                backgroundAttachment: 'fixed',
+                minHeight: '100vh',
                 width: '100%',
                 maxWidth: '100% !important',
+                overflow: 'hidden',
             }}
         >
             <Box
                 sx={{
-                    position: 'absolute',
+                    position: 'fixed',
                     top: 0,
                     left: 0,
                     width: '100%',
-                    height: '100%',
+                    minHeight: '100vh',
                     backgroundColor:
                         appStore.themeType === 'dark'
                             ? 'rgba(0, 0, 0, 0.6)'
@@ -43,7 +50,7 @@ const App = observer(({ appStore, children }) =>  {
                     flexDirection: 'column',
                     padding: '0 !important',
                     zIndex: 1,
-                    height: '100%',
+                    // height: '100%',
                 }}
             >
                 <Navbar />
@@ -57,7 +64,7 @@ const App = observer(({ appStore, children }) =>  {
                     m: '0 !important',
                 }}
             >
-                <Footer />
+                { biggerThanSm && <Footer /> }
             </Container>
         </Container>
     );

@@ -121,7 +121,7 @@ const HomeMap = () => {
     return (
         <Box
             sx={{
-                height: "85%",
+                height: "70vh",
                 width: "85%",
                 display: "flex",
                 alignItems: "center",

@@ -191,6 +191,10 @@ const Navbar = observer(() => {
         >
             <Container maxWidth="xl" sx={{ pr: "0.6rem !important" }}>
                 <Toolbar disableGutters>
+                    <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}                         onClick={() => {
+                            handleCloseNavMenu();
+                            navigate('/');
+                        }}>
                     <SpaIcon
                         sx={{
                             mb: 0.2,
@@ -200,6 +204,7 @@ const Navbar = observer(() => {
                                     ? theme.palette.primary.main
                                     : "white",
                         }}
+
                     />
                     <Typography
                         variant="h6"
@@ -217,6 +222,7 @@ const Navbar = observer(() => {
                     >
                         BIORAMA
                     </Typography>
+                    </Box>
                     <Box
                         sx={{
                             flexGrow: 1,
