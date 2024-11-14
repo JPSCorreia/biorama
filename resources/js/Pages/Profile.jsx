@@ -12,6 +12,7 @@ const Profile = observer(() => {
                 width: "100%",
                 marginTop: "5%",
                 marginBottom: "5%",
+
             }}
         >
             <Typography variant="h3" gutterBottom>Perfil</Typography>

@@ -2,6 +2,8 @@ import { Avatar, Button, Paper, Typography, Box } from "@mui/material";
 import testProfileImage from "../../images/2.jpg";
 import { authStore } from "../Stores";
 import { observer } from "mobx-react";
+import { alpha } from '@mui/material/styles';
+
 
 const ProfileInformation = observer(() => {
     return (
@@ -14,6 +16,7 @@ const ProfileInformation = observer(() => {
                     display: "flex",
                     flexDirection: "column",
                     height: "100%",
+                    backgroundColor: (theme) => alpha(theme.palette.background.default, 0.85),
                 }}
             >
                 <Box

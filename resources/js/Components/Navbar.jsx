@@ -177,7 +177,7 @@ const Navbar = observer(() => {
         router.visit(path, {
             preserveState: true,
             preserveScroll: true,
-            replace: true,
+            // replace: true,
         });
     };
 
@@ -189,7 +189,7 @@ const Navbar = observer(() => {
                 borderRadius: "0 0 5px 5px",
             }}
         >
-            <Container maxWidth="xl" sx={{ pr: "0.6rem !important" }}>
+            <Container maxWidth="xl" sx={{ pr: "0.5rem !important", pl: "1.25rem !important" }}>
                 <Toolbar disableGutters>
                     <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}                         onClick={() => {
                             handleCloseNavMenu();
@@ -197,7 +197,7 @@ const Navbar = observer(() => {
                         }}>
                     <SpaIcon
                         sx={{
-                            mb: 0.2,
+                            mb: 0,
                             mr: 1,
                             color:
                                 theme.palette.mode === "dark"

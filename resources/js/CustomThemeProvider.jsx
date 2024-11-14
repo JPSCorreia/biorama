@@ -1,10 +1,9 @@
-import { CssBaseline } from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { green } from '@mui/material/colors';
-import { observer } from 'mobx-react';
+import { CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { green } from "@mui/material/colors";
+import { observer } from "mobx-react";
 
 const CustomThemeProvider = observer(({ appStore, children }) => {
-
     const theme = createTheme({
         palette: {
             mode: appStore.themeType,
@@ -12,12 +11,18 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 main: green[600],
             },
             background: {
-                default: appStore.themeType === 'dark' ? '#242424' : '#FDFDF9',
-                paper: appStore.themeType === 'dark' ? '#242424' : '#FDFDF9',
+                default: appStore.themeType === "dark" ? "#242424" : "#FDFDF9",
+                paper: appStore.themeType === "dark" ? "#242424" : "#FDFDF9",
+            },
+            navbar: {
+                background:
+                    appStore.themeType === "dark" ? "#242424" : green[600],
+                text: "white",
             },
             footer: {
-                background: appStore.themeType === 'dark' ? '#242424' : green[600],
-                text: 'white',
+                background:
+                    appStore.themeType === "dark" ? "#242424" : green[600],
+                text: "white",
             },
         },
     });

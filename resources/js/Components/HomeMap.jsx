@@ -12,6 +12,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
+import { router } from "@inertiajs/react";
 
 // Create custom leaflet store icon function.
 const createCustomIcon = (color) => {
@@ -87,28 +88,33 @@ const HomeMap = () => {
         return [
             {
                 position: [center[0] + offset, center[1] + offset],
+                id: 1,
                 name: "Loja Fictícia 1",
                 description: "Especializada em produtos locais e orgânicos.",
             },
             {
                 position: [center[0] - offset, center[1] - offset],
+                id: 2,
                 name: "Loja Fictícia 2",
                 description: "Grande variedade de produtos artesanais.",
             },
             {
                 position: [center[0] + offset, center[1] - offset],
+                id: 3,
                 name: "Loja Fictícia 3",
                 description:
                     "Conhecida pelos seus alimentos frescos e sustentáveis.",
             },
             {
                 position: [center[0] - offset * 1.5, center[1] + offset * 0.5],
+                id: 4,
                 name: "Loja Fictícia 4",
                 description:
                     "Oferece uma variedade de frutas e vegetais frescos.",
             },
             {
                 position: [center[0] + offset * 1.5, center[1] - offset * 0.5],
+                id: 5,
                 name: "Loja Fictícia 5",
                 description:
                     "Loja local com produtos artesanais de alta qualidade.",
@@ -118,61 +124,88 @@ const HomeMap = () => {
 
     const nearbyStores = position ? generateNearbyStores(position) : [];
 
+    const navigate = (path) => {
+        router.visit(path, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     return (
-        <Box
-            sx={{
-                height: "70vh",
-                width: "85%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-        >
+        <>
             {!loadMap ? (
-                <CircularProgress
-                    size={60}
-                    sx={{ color: theme.palette.primary.main }}
-                />
-            ) : (
-                <MapContainer
-                    center={position || [38.7071, -9.1355]} // Default to Lisbon without location.
-                    zoom={13}
-                    style={{ height: "100%", width: "100%" }}
+                <Box
+                    sx={{
+                        height: "70vh",
+                        width: "80%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
                 >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    {position && (
-                        <>
-                            {/* Geolocation Marker */}
-                            {/* <Marker
+                    <CircularProgress
+                        size={60}
+                        sx={{ color: theme.palette.primary.main }}
+                    />
+                </Box>
+            ) : (
+                <Box
+                    sx={{
+                        height: "70vh",
+                        width: "80%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "2px",
+                        padding: "1px",
+                        border: `1px solid ${theme.palette.primary.main}`,
+                    }}
+                >
+                    <MapContainer
+                        center={position || [38.7071, -9.1355]} // Default to Lisbon without location.
+                        zoom={13}
+                        style={{ height: "100%", width: "100%" }}
+                    >
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        {position && (
+                            <>
+                                {/* Geolocation Marker */}
+                                {/* <Marker
                                 position={position}
                             /> */}
-                            {nearbyStores.map((store, index) => (
-                                <Marker
-                                    key={index}
-                                    position={store.position}
-                                    icon={createCustomIcon(
-                                        theme.palette.primary.main
-                                    )}
-                                >
-                                    <Tooltip
-                                        direction="top"
-                                        offset={[0, -10]}
-                                        opacity={1}
+                                {nearbyStores.map((store, index) => (
+                                    <Marker
+                                        key={index}
+                                        position={store.position}
+                                        icon={createCustomIcon(
+                                            theme.palette.primary.main
+                                        )}
+                                        eventHandlers={{
+                                            click: () => {
+                                                navigate(`/loja/${store.id}`);
+                                            },
+                                        }}
                                     >
-                                        <div>
-                                            <strong>{store.name}</strong>
-                                            <br />
-                                            {store.description}
-                                        </div>
-                                    </Tooltip>
-                                </Marker>
-                            ))}
-                            <SetViewOnPosition position={position} />
-                        </>
-                    )}
-                </MapContainer>
+                                        <Tooltip
+                                            direction="top"
+                                            offset={[0, -10]}
+                                            opacity={1}
+                                        >
+                                            <div>
+                                                <strong>{store.name}</strong>
+                                                <br />
+                                                {store.description}
+                                            </div>
+                                        </Tooltip>
+                                    </Marker>
+                                ))}
+                                <SetViewOnPosition position={position} />
+                            </>
+                        )}
+                    </MapContainer>
+                </Box>
             )}
-        </Box>
+        </>
     );
 };
 
