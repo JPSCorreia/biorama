@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps(); //created_at updated_at
             $table->softDeletes(); //deleted_at
 
-            $table->string('category_name', 100); //categories name
+            $table->string('name', 100); //categories name
         });
     }
 

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('street_name', 100); //Name of the street
             $table->string('number', 10); //Number of the house
             $table->string('address_name', 50); //Name of the person's house
+            $table->string('city', 50); //City of the address
+            $table->string('zip_code', 9); //Zip code of the address
             $table->string('comment', 300)->nullable(); //Comment of the address
 
             $table->foreignId('user_id')->constrained();

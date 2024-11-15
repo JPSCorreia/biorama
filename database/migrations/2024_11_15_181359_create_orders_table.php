@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id(); // auto increment primary key
             $table->timestamps(); // created_at and updated_at columns
 
+            $table->decimal('total_price', 8, 2); // total price column
+
             $table->foreignId('user_id')->constrained(); // foreign key to users table
             $table->foreignId('order_status_id')->constrained(); // foreign key to order_statuses table
             $table->foreignId('store_id')->constrained(); // foreign key to stores table
@@ -24,6 +26,11 @@ return new class extends Migration
             $table->string('street_number', 10)->nullable(); // street number column
             $table->string('postal_code', 10)->nullable(); // postal code column
             $table->string('city', 100)->nullable(); // city column
+            $table->string('costumer_name', 100)->nullable(); // costumer name column
+            $table->string('costumer_phone', 9)->nullable(); // costumer phone column
+            $table->string('costumer_nif', 9)->nullable(); // costumer nif column
+
+
             $table->string('comment', 500)->nullable(); // comment column
 
 

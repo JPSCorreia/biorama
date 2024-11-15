@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->string('name', 50); //name of the product
             $table->boolean('is_unit'); //if the product is sold by unit
-            $table->string('image_link', 500); //link to the image of the product
+            $table->string('image_link', 500)->nullable(); //link to the image of the product
 
         });
     }
