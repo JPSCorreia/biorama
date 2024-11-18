@@ -33,3 +33,8 @@ Route::get('/loja/{id}', function ($id) {
         'store' => $store
     ]);
 });
+
+// .env load testing
+Route::get('/dotenv', fn () => (
+dd(['APP_NAME' => env('APP_NAME')])
+));
