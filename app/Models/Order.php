@@ -26,7 +26,7 @@ class Order extends Model
         return $this->belongsTo(Store::class);
     }
 
-    public function homeAddress()
+    public function status()
     {
         return $this->belongsTo(HomeAddress::class);
     }

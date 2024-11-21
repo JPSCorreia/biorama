@@ -12,9 +12,7 @@ class StatusFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->randomElement(['Pending', 'Completed', 'Cancelled', 'In Progress']),
-            'created_at' => now(),
-            'updated_at' => now(),
+
         ];
     }
 }

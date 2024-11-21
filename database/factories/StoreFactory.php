@@ -13,8 +13,10 @@ class StoreFactory extends Factory
 
     public function definition()
     {
+        $vendor_id = Vendor::all()->random()->id;
+
         return [
-            'vendor_id' => Vendor::factory(),
+            'vendor_id' => $vendor_id,
             'name' => $this->faker->unique()->company(),
             'phone_number' => $this->faker->numerify('#########'),
             'email' => $this->faker->unique()->safeEmail(),

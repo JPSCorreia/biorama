@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\HomeAddress;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,7 +13,7 @@ class HomeAddressSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\HomeAddress::factory()->count(100)->create();
+        HomeAddress::factory()->count(100)->create();
     }
 
 }

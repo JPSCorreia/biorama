@@ -12,8 +12,9 @@ class VendorFactory extends Factory
 
     public function definition()
     {
+        $user_id = User::all()->random()->id;
         return [
-            'user_id' => User::factory(),
+            'user_id' => $user_id,
             'nif' => $this->faker->numerify('#########'),
             'created_at' => now(),
             'updated_at' => now(),

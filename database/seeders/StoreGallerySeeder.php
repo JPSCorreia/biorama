@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\StoreGallery;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,7 +13,7 @@ class StoreGallerySeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\StoreGallery::factory()->count(100)->create();
+        StoreGallery::factory()->count(100)->create();
     }
 
 }

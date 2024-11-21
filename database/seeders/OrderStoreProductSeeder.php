@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\OrderStoreProduct;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,7 +13,7 @@ class OrderStoreProductSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\OrderStoreProduct::factory()->count(100)->create();
+        OrderStoreProduct::factory()->count(100)->create();
     }
 
 }

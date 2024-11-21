@@ -10,9 +10,11 @@ class CategoryProductFactory extends Factory
 {
     public function definition()
     {
+        $category_id = Category::all()->random()->id;
+        $product_id = Product::all()->random()->id;
         return [
-            'category_id' => Category::factory(), // Creates a new Category and assigns its ID
-            'product_id' => Product::factory(),  // Creates a new Product and assigns its ID
+            'category_id' => $category_id,
+            'product_id' => $product_id,
         ];
     }
 }

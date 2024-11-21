@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('store_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('store_id')->constrained('stores');
+            $table->foreignId('product_id')->constrained('products');
             $table->mediumText('description')->nullable();
             $table->decimal('price', 8, 2);
             $table->decimal('discount', 8, 2)->default(0.0);

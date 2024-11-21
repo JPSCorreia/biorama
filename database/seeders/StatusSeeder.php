@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Status;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +16,7 @@ class StatusSeeder extends Seeder
         $statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
         foreach ($statuses as $status) {
-            \App\Models\Status::create(['name' => $status]);
+            Status::create(['name' => $status]);
         }
     }
 

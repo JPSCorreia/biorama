@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
+            $table->foreignId('vendor_id')->constrained('vendors');
             $table->string('name', 100)->unique();
             $table->string('phone_number', 15)->nullable();
             $table->string('email', 255)->nullable()->unique();

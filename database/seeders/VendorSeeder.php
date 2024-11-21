@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Vendor;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,7 +13,7 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Vendor::factory()->count(20)->create();
+        Vendor::factory()->count(20)->create();
     }
 
 }

@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
-            $table->foreignId('home_address_id')->constrained('home_addresses')->onDelete('cascade');
-            $table->decimal('total_price', 10, 2);
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('store_id')->constrained('stores');
+            $table->foreignId('statuses_id')->constrained('statuses');
+
+            $table->string('street_name');
+            $table->string('city');
+            $table->string('postal_code');
+            $table->string('phone_number');
+            $table->string('address_name');
+            $table->string('comment')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

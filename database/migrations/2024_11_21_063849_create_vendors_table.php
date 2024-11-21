@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users');
             $table->char('nif', 9)->unique();
             $table->timestamps();
             $table->softDeletes();
