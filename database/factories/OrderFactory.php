@@ -49,8 +49,7 @@ class OrderFactory extends Factory
             'comment' => isset($address) && !empty($address->comment)
                 ? $address->comment
                 : $this->faker->sentence,
-
-
+            
             'created_at' => now(),
             'updated_at' => now(),
         ];
