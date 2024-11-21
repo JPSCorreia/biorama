@@ -9,19 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('vendor_reviews', function (Blueprint $table) {
-            $table->id(); //Auto increment primary key
-            $table->timestamps(); //Created_at and updated_at columns
-
-            $table->foreignId('vendor_id')->constrained(); //Foreign key to vendors table
-            $table->foreignId('user_id')->constrained(); //Foreign key to users table
-
-            $table->integer('rating'); //Review rating
-            $table->string('comment', 1000); //Review comment
+            $table->id();
+            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->integer('rating');
+            $table->mediumText('comment')->nullable();
+            $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

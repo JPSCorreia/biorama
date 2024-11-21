@@ -9,18 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('vendors', function (Blueprint $table) {
-            $table->id(); //Auto increment primary key
-            $table->timestamps(); //Created_at and updated_at columns
-            $table->softDeletes(); //Deleted_at column for soft deletes
-
-            $table->string('nif', 9)->unique(); //Unique NIF
-
-            $table->foreignId('user_id')->constrained(); //Foreign key to users table
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->char('nif', 9)->unique();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.

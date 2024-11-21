@@ -9,21 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('order_statuses', function (Blueprint $table) {
-            $table->id(); // auto increment primary key
-            $table->timestamps(); // created_at and updated_at columns
-
-            $table->string('name', 100); // status name
+        Schema::create('statuses', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 100);
+            $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_statuses');
+        Schema::dropIfExists('statuses');
     }
 };

@@ -2,19 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Vendor;
-use App\Models\User;
+use App\Models\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class VendorFactory extends Factory
+class StatusFactory extends Factory
 {
-    protected $model = Vendor::class;
+    protected $model = Status::class;
 
     public function definition()
     {
         return [
-            'user_id' => User::factory(),
-            'nif' => $this->faker->numerify('#########'),
+            'name' => $this->faker->randomElement(['Pending', 'Completed', 'Cancelled', 'In Progress']),
             'created_at' => now(),
             'updated_at' => now(),
         ];

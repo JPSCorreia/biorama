@@ -2,22 +2,26 @@
 
 namespace Database\Factories;
 
+use App\Models\StoreProduct;
+use App\Models\Store;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StoreProduct>
- */
 class StoreProductFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $model = StoreProduct::class;
+
+    public function definition()
     {
         return [
-            //
+            'store_id' => Store::factory(),
+            'product_id' => Product::factory(),
+            'description' => $this->faker->sentence(),
+            'price' => $this->faker->randomFloat(2, 1, 100),
+            'discount' => $this->faker->randomFloat(2, 0, 0.5),
+            'stock' => $this->faker->numberBetween(0, 100),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

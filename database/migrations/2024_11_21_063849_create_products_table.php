@@ -9,19 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->timestamps(); //created_at, updated_at
-            $table->softDeletes(); //deleted_at
-
-            $table->string('name', 50); //name of the product
-            $table->boolean('is_unit'); //if the product is sold by unit
-            $table->string('image_link', 500)->nullable(); //link to the image of the product
-
+            $table->string('name', 100);
+            $table->string('image_link', 255)->nullable();
+            $table->boolean('sold_at_unit')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.

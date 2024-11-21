@@ -5,24 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StoreReview extends Model
+class StoreGallery extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'store_id',
-        'user_id',
-        'rating',
-        'comment',
+        'image_link',
+        'image_name',
     ];
 
     public function store()
     {
         return $this->belongsTo(Store::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
     }
 }

@@ -9,16 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->id(); //autoincrement primary key
-            $table->timestamps(); //created_at updated_at
-            $table->softDeletes(); //deleted_at
-
-            $table->string('name', 100); //categories name
+            $table->id();
+            $table->string('name', 100);
+            $table->string('image_link', 255)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.

@@ -7,6 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'image_link',
+        'sold_at_unit',
+    ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_product');
+    }
+
+    public function storeProducts()
+    {
+        return $this->hasMany(StoreProduct::class);
+    }
 }
