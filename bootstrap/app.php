@@ -17,7 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->statefulApi(); // Sanctum configuration
         //TODO: nao sei até que ponto estao a funcionar
         $middleware->web([ // Web middlewares
             \App\Http\Middleware\VerifyCsrfToken::class, // CSRF Middleware
