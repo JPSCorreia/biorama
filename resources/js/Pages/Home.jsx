@@ -1,17 +1,18 @@
-import { Box, Typography } from '@mui/material';
-import { HomeMap } from '../Components';
+import { Box, Typography } from "@mui/material";
+import { HomeMap } from "../Components";
 
 const Home = () => {
+
     return (
         <Box
             sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                width: '100%',
-                alignItems: 'center',
-                marginTop: '5%',
-                marginBottom: '5%',
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                width: "100%",
+                alignItems: "center",
+                marginTop: "5%",
+                marginBottom: "5%",
             }}
         >
             <Typography variant="h4" gutterBottom>

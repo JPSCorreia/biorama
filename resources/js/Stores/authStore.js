@@ -1,29 +1,28 @@
-import { action, makeObservable, observable } from 'mobx';
-import { makePersistable } from 'mobx-persist-store';
+import { makeAutoObservable } from "mobx";
 
 class AuthStore {
     authenticated = false;
+    user = null;
 
     constructor() {
-        makeObservable(this, {
-            authenticated: observable,
-            login: action,
-            logout: action,
-        });
-        makePersistable(this, {
-            name: 'AuthStore',
-            properties: ['authenticated'],
-            storage: window.localStorage,
-        });
+        makeAutoObservable(this);
+        this.initializeAuth();
     }
 
-    login = action(() => {
-        this.authenticated = true;
-    });
+    initializeAuth() {
+        if (typeof window !== 'undefined' && window.initialAuth) {
+            this.setAuth(!!window.initialAuth.user);
+            this.setUser(window.initialAuth.user);
+        }
+    }
 
-    logout = action(() => {
-        this.authenticated = false;
-    });
+    setAuth(status) {
+        this.authenticated = status;
+    }
+
+    setUser(user) {
+        this.user = user;
+    }
 }
 
 export const authStore = new AuthStore();

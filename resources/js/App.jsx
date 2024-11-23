@@ -6,9 +6,8 @@ import 'leaflet/dist/leaflet.css';
 import { useTheme } from '@mui/material/styles';
 
 const App = observer(({ appStore, children }) =>  {
-
     const theme = useTheme();
-    const biggerThanSm= useMediaQuery(theme.breakpoints.up("sm"));
+    const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
     return (
         <Container
@@ -50,7 +49,6 @@ const App = observer(({ appStore, children }) =>  {
                     flexDirection: 'column',
                     padding: '0 !important',
                     zIndex: 1,
-                    // height: '100%',
                 }}
             >
                 <Navbar />
@@ -64,7 +62,7 @@ const App = observer(({ appStore, children }) =>  {
                     m: '0 !important',
                 }}
             >
-                { biggerThanSm && <Footer /> }
+                {biggerThanSm && <Footer />}
             </Container>
         </Container>
     );

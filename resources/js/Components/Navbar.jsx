@@ -146,7 +146,15 @@ const Navbar = observer(() => {
         {
             id: 3,
             name: "Terminar Sessão",
-            onClick: () => authStore.logout(),
+            onClick: () => {
+                router.post('/logout', {}, {
+                    onSuccess: () => {
+                        authStore.setAuth(false);
+                        authStore.setUser(null);
+                        handleCloseUserMenu();
+                    },
+                });
+            },
         },
     ];
 
@@ -154,8 +162,7 @@ const Navbar = observer(() => {
     const login = {
         id: 5,
         name: "Login",
-        // link: '/',
-        onClick: () => authStore.login(),
+        link: '/login',
     };
 
     const cart = {
@@ -440,9 +447,7 @@ const Navbar = observer(() => {
                             key={login.name}
                             onClick={() => {
                                 handleCloseNavMenu();
-                                login.onClick
-                                    ? login.onClick()
-                                    : navigate(login.link);
+                                navigate(login.link);
                             }}
                             variant="outline"
                             sx={{

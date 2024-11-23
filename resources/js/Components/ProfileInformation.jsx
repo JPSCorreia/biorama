@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { alpha } from '@mui/material/styles';
 
 
-const ProfileInformation = observer(() => {
+const ProfileInformation = observer(({ user }) => {
     return (
         <>
             <Paper
@@ -33,7 +33,7 @@ const ProfileInformation = observer(() => {
                         sx={{ width: 96, height: 96, mt: 2 }}
                     />
                     <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
-                        Remy Sharp
+                        {`${user.first_name} ${user.last_name}`}
                     </Typography>
                 </Box>
                 <Box
@@ -70,7 +70,7 @@ const ProfileInformation = observer(() => {
                         Email:
                     </Typography>
                     <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                        remysharp@gmail.com
+                        {user.email}
                     </Typography>
                 </Box>
                 <Box
