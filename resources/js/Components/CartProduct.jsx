@@ -1,7 +1,7 @@
-import { observer } from 'mobx-react';
-import { Delete as DeleteIcon } from '@mui/icons-material';
-import { stringAvatar } from '../utils/utils';
-import { cartStore } from '../Stores';
+import { observer } from "mobx-react";
+import { Delete as DeleteIcon } from "@mui/icons-material";
+import { stringAvatar } from "../utils/utils";
+import { cartStore } from "../Stores";
 import {
     Divider,
     ListItem,
@@ -9,11 +9,10 @@ import {
     ListItemText,
     Avatar,
     IconButton,
-    Tooltip
-} from '@mui/material';
+    Tooltip,
+} from "@mui/material";
 
 const CartProduct = observer(({ cartProduct, index }) => {
-
     const deleteUser = () => {
         cartStore.deleteItem(index);
     };
@@ -37,7 +36,10 @@ const CartProduct = observer(({ cartProduct, index }) => {
                 <ListItemAvatar>
                     <Avatar {...stringAvatar(cartProduct.name)} />
                 </ListItemAvatar>
-                <ListItemText primary={cartProduct.name} secondary={'Quantidade: ' + cartProduct.quantity} />
+                <ListItemText
+                    primary={cartProduct.name}
+                    secondary={"Quantidade: " + cartProduct.quantity}
+                />
             </ListItem>
             {index < cartStore.cart.length - 1 && <Divider component="li" />}
         </>

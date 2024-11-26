@@ -10,6 +10,9 @@ export default defineConfig({
         }),
         react({ include: "**/*.jsx", fastRefresh: true }),
     ],
+    define: {
+        "process.env": process.env, // environment variables
+    },
     server: {
         host: "127.0.0.1",
         port: 5173,

@@ -2,21 +2,21 @@ import { Avatar, Button, Paper, Typography, Box } from "@mui/material";
 import testProfileImage from "../../images/2.jpg";
 import { authStore } from "../Stores";
 import { observer } from "mobx-react";
-import { alpha } from '@mui/material/styles';
-
+import { alpha } from "@mui/material/styles";
 
 const ProfileInformation = observer(({ user }) => {
     return (
         <>
             <Paper
-                elevation={1}
+                elevation={4}
                 sx={{
                     p: 2,
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
                     height: "100%",
-                    backgroundColor: (theme) => alpha(theme.palette.background.default, 0.85),
+                    backgroundColor: (theme) =>
+                        alpha(theme.palette.background.default, 0.85),
                 }}
             >
                 <Box
@@ -45,16 +45,16 @@ const ProfileInformation = observer(({ user }) => {
                     }}
                 >
                     <Typography variant="body1" gutterBottom sx={{ mt: 2 }}>
-                        Sou um apaixonado pela sustentabilidade e pelo apoio ao
-                        comércio local. Acredito que pequenas ações podem ter um
-                        grande impacto no ambiente e na nossa comunidade. Gosto
-                        de descobrir novos produtos locais e apoiar produtores e
-                        agricultores regionais. Na Biorama, procuro inspirar
-                        outras pessoas a fazer escolhas mais conscientes e a
-                        valorizar o que é nosso. Quando não estou a explorar
-                        mercados e feiras locais, gosto de passar tempo na
-                        natureza e aprender mais sobre práticas de vida
-                        sustentável.
+                        Sou um apaixonado pela sustentabilidade, ideias
+                        sustentáveis e pelo apoio ao comércio local. Acredito
+                        que pequenas ações podem ter um grande impacto no
+                        ambiente e na nossa comunidade. Gosto de descobrir novos
+                        produtos locais e apoiar produtores e agricultores
+                        regionais. Na Biorama, procuro inspirar outras pessoas a
+                        fazer escolhas mais conscientes e a valorizar o que é
+                        nosso. Quando não estou a explorar mercados e feiras
+                        locais, gosto de passar tempo na natureza e aprender
+                        mais sobre práticas de vida sustentável.
                     </Typography>
                 </Box>
                 <Box
@@ -157,7 +157,9 @@ const ProfileInformation = observer(({ user }) => {
                         >
                             Editar Perfil
                         </Button>
-                    ) : '' }
+                    ) : (
+                        ""
+                    )}
                 </Box>
             </Paper>
         </>

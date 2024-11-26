@@ -147,13 +147,17 @@ const Navbar = observer(() => {
             id: 3,
             name: "Terminar Sessão",
             onClick: () => {
-                router.post('/logout', {}, {
-                    onSuccess: () => {
-                        authStore.setAuth(false);
-                        authStore.setUser(null);
-                        handleCloseUserMenu();
-                    },
-                });
+                router.post(
+                    "/sair",
+                    {},
+                    {
+                        onSuccess: () => {
+                            authStore.setAuth(false);
+                            authStore.setUser(null);
+                            handleCloseUserMenu();
+                        },
+                    }
+                );
             },
         },
     ];
@@ -161,8 +165,8 @@ const Navbar = observer(() => {
     const tema = { id: 4, name: "Tema", onClick: appStore.changeThemeType };
     const login = {
         id: 5,
-        name: "Login",
-        link: '/login',
+        name: "Entrar",
+        link: "/entrar",
     };
 
     const cart = {
@@ -196,39 +200,48 @@ const Navbar = observer(() => {
                 borderRadius: "0 0 5px 5px",
             }}
         >
-            <Container maxWidth="xl" sx={{ pr: "0.5rem !important", pl: "1.25rem !important" }}>
+            <Container
+                maxWidth="xl"
+                sx={{ pr: "0.5rem !important", pl: "1.25rem !important" }}
+            >
                 <Toolbar disableGutters>
-                    <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}                         onClick={() => {
-                            handleCloseNavMenu();
-                            navigate('/');
-                        }}>
-                    <SpaIcon
+                    <Box
                         sx={{
-                            mb: 0,
-                            mr: 1,
-                            color:
-                                theme.palette.mode === "dark"
-                                    ? theme.palette.primary.main
-                                    : "white",
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
                         }}
-
-                    />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        sx={{
-                            mr: 1,
-                            display: { xs: "none", md: "none", lg: "flex" },
-                            fontFamily: "monospace",
-                            fontWeight: 700,
-                            letterSpacing: ".3rem",
-                            color: "inherit",
-                            textDecoration: "none",
+                        onClick={() => {
+                            handleCloseNavMenu();
+                            navigate("/");
                         }}
                     >
-                        BIORAMA
-                    </Typography>
+                        <SpaIcon
+                            sx={{
+                                mb: 0,
+                                mr: 1,
+                                color:
+                                    theme.palette.mode === "dark"
+                                        ? theme.palette.primary.main
+                                        : "white",
+                            }}
+                        />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="a"
+                            sx={{
+                                mr: 1,
+                                display: { xs: "none", md: "none", lg: "flex" },
+                                fontFamily: "monospace",
+                                fontWeight: 700,
+                                letterSpacing: ".3rem",
+                                color: "inherit",
+                                textDecoration: "none",
+                            }}
+                        >
+                            BIORAMA
+                        </Typography>
                     </Box>
                     <Box
                         sx={{
@@ -318,7 +331,7 @@ const Navbar = observer(() => {
                         ))}
                     </Box>
 
-                    <Search sx={{ marginRight: 2, marginLeft: 0.75 }}>
+                    <Search sx={{ marginRight: 1.75, marginLeft: 0.75 }}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -362,7 +375,15 @@ const Navbar = observer(() => {
                         </Button>
                     </Tooltip>
                     {authStore.authenticated ? (
-                        <Box sx={{ flexGrow: 0, ml: 3, mr: 1.25 }}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexGrow: 0,
+                                minWidth: "80px",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                        >
                             <Tooltip title="Definições">
                                 <IconButton
                                     onClick={handleOpenUserMenu}
@@ -371,6 +392,7 @@ const Navbar = observer(() => {
                                     <Avatar
                                         alt="Profile avatar"
                                         src={testProfileImage}
+                                        sx={{ width: 40, height: 40 }}
                                     />
                                 </IconButton>
                             </Tooltip>
@@ -455,7 +477,9 @@ const Navbar = observer(() => {
                                 display: "block",
                                 marginTop: 1.7,
                                 marginBottom: 1,
-                                height: "40px",
+                                // height: "40px",
+                                minWidth: "90px",
+                                // p: "10px",
                             }}
                         >
                             {login.name}

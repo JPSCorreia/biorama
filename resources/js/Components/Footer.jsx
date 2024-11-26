@@ -1,9 +1,4 @@
-import {
-    Box,
-    Container,
-    Typography,
-    IconButton,
-} from "@mui/material";
+import { Box, Container, Typography, IconButton } from "@mui/material";
 import {
     Facebook as FacebookIcon,
     Twitter as TwitterIcon,
@@ -28,16 +23,20 @@ const Footer = () => {
         >
             <Container>
                 <Box
-                    sx={ {display: "flex", justifyContent: "space-between", alignItems: "center"} }
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
                 >
-                        <Typography
-                            variant="body2"
-                            color="footer.text"
-                            sx={{ mt: 0.2, display: { xs: "none", sm: "block" } }}
-                        >
-                            &copy; {new Date().getFullYear()} Biorama. Todos os
-                            direitos reservados.
-                        </Typography>
+                    <Typography
+                        variant="body2"
+                        color="footer.text"
+                        sx={{ mt: 0.2, display: { xs: "none", sm: "block" } }}
+                    >
+                        &copy; {new Date().getFullYear()} Biorama. Todos os
+                        direitos reservados.
+                    </Typography>
                     <Box>
                         <IconButton href="#" sx={{ color: "footer.text" }}>
                             <FacebookIcon />

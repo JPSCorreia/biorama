@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { useTheme, styled } from '@mui/material/styles';
+import PropTypes from "prop-types";
+import { useTheme, styled } from "@mui/material/styles";
 import {
     Box,
     Table,
@@ -13,18 +13,18 @@ import {
     Paper,
     IconButton,
     TableHead,
-    Tooltip
-} from '@mui/material';
+    Tooltip,
+} from "@mui/material";
 import {
     FirstPage as FirstPageIcon,
     KeyboardArrowLeft,
     KeyboardArrowRight,
     LastPage as LastPageIcon,
-    AddShoppingCartSharp as AddShoppingCartSharpIcon
-} from '@mui/icons-material';
-import { cartStore } from '../Stores/';
-import { observer } from 'mobx-react';
-import { useEffect, useState } from 'react';
+    AddShoppingCartSharp as AddShoppingCartSharpIcon,
+} from "@mui/icons-material";
+import { cartStore } from "../Stores/";
+import { observer } from "mobx-react";
+import { useEffect, useState } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -63,7 +63,7 @@ function TablePaginationActions(props) {
                 disabled={page === 0}
                 aria-label="first page"
             >
-                {theme.direction === 'rtl' ? (
+                {theme.direction === "rtl" ? (
                     <LastPageIcon />
                 ) : (
                     <FirstPageIcon />
@@ -74,7 +74,7 @@ function TablePaginationActions(props) {
                 disabled={page === 0}
                 aria-label="previous page"
             >
-                {theme.direction === 'rtl' ? (
+                {theme.direction === "rtl" ? (
                     <KeyboardArrowRight />
                 ) : (
                     <KeyboardArrowLeft />
@@ -85,7 +85,7 @@ function TablePaginationActions(props) {
                 disabled={page >= Math.ceil(count / rowsPerPage) - 1}
                 aria-label="next page"
             >
-                {theme.direction === 'rtl' ? (
+                {theme.direction === "rtl" ? (
                     <KeyboardArrowLeft />
                 ) : (
                     <KeyboardArrowRight />
@@ -96,7 +96,7 @@ function TablePaginationActions(props) {
                 disabled={page >= Math.ceil(count / rowsPerPage) - 1}
                 aria-label="last page"
             >
-                {theme.direction === 'rtl' ? (
+                {theme.direction === "rtl" ? (
                     <FirstPageIcon />
                 ) : (
                     <LastPageIcon />
@@ -114,31 +114,30 @@ TablePaginationActions.propTypes = {
 };
 
 const rows = [
-    { name: 'Cupcake', calories: 305, fat: 4 },
-    { name: 'Donut', calories: 452, fat: 25 },
-    { name: 'Eclair', calories: 262, fat: 16 },
-    { name: 'Yoghurt', calories: 159, fat: 4 },
-    { name: 'Gingerbread', calories: 356, fat: 16 },
-    { name: 'Honeycomb', calories: 408, fat: 3 },
-    { name: 'Ice cream sandwich', calories: 237, fat: 9 },
-    { name: 'Jelly Bean', calories: 375, fat: 0 },
-    { name: 'KitKat', calories: 518, fat: 26 },
-    { name: 'Lollipop', calories: 392, fat: 0 },
-    { name: 'Marshmallow', calories: 318, fat: 0 },
-    { name: 'Nougat', calories: 360, fat: 19.0 },
-    { name: 'Oreo', calories: 437, fat: 18.0 },
-    { name: 'KitKat 2', calories: 518, fat: 26 },
-    { name: 'Lollipop 2', calories: 392, fat: 0 },
-    { name: 'Marshmallow 2', calories: 318, fat: 0 },
-    { name: 'Nougat 2', calories: 360, fat: 19.0 },
-    { name: 'Oreo 2', calories: 437, fat: 18.0 },
-    { name: 'KitKat 3', calories: 518, fat: 26 },
-    { name: 'Lollipop 3', calories: 392, fat: 0 },
-    { name: 'Marshmallow 3', calories: 318, fat: 0 },
-    { name: 'Nougat 3', calories: 360, fat: 19.0 },
-    { name: 'Oreo 3', calories: 437, fat: 18.0 },
+    { name: "Cupcake", calories: 305, fat: 4 },
+    { name: "Donut", calories: 452, fat: 25 },
+    { name: "Eclair", calories: 262, fat: 16 },
+    { name: "Yoghurt", calories: 159, fat: 4 },
+    { name: "Gingerbread", calories: 356, fat: 16 },
+    { name: "Honeycomb", calories: 408, fat: 3 },
+    { name: "Ice cream sandwich", calories: 237, fat: 9 },
+    { name: "Jelly Bean", calories: 375, fat: 0 },
+    { name: "KitKat", calories: 518, fat: 26 },
+    { name: "Lollipop", calories: 392, fat: 0 },
+    { name: "Marshmallow", calories: 318, fat: 0 },
+    { name: "Nougat", calories: 360, fat: 19.0 },
+    { name: "Oreo", calories: 437, fat: 18.0 },
+    { name: "KitKat 2", calories: 518, fat: 26 },
+    { name: "Lollipop 2", calories: 392, fat: 0 },
+    { name: "Marshmallow 2", calories: 318, fat: 0 },
+    { name: "Nougat 2", calories: 360, fat: 19.0 },
+    { name: "Oreo 2", calories: 437, fat: 18.0 },
+    { name: "KitKat 3", calories: 518, fat: 26 },
+    { name: "Lollipop 3", calories: 392, fat: 0 },
+    { name: "Marshmallow 3", calories: 318, fat: 0 },
+    { name: "Nougat 3", calories: 360, fat: 19.0 },
+    { name: "Oreo 3", calories: 437, fat: 18.0 },
 ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
-
 
 const ProductList = observer(() => {
     const [page, setPage] = useState(0);
@@ -162,9 +161,9 @@ const ProductList = observer(() => {
         updateRowsPerPage();
 
         // Update on window resize
-        window.addEventListener('resize', updateRowsPerPage);
+        window.addEventListener("resize", updateRowsPerPage);
         return () => {
-            window.removeEventListener('resize', updateRowsPerPage);
+            window.removeEventListener("resize", updateRowsPerPage);
         };
     }, []);
 
@@ -179,13 +178,13 @@ const ProductList = observer(() => {
 
     const StyledTableHead = styled(TableHead)(({ theme }) => ({
         backgroundColor: theme.palette.primary.main,
-        '& th': {
+        "& th": {
             color: theme.palette.common.white,
         },
     }));
 
     return (
-        <Box style={{ height: '100%', width: '100%'}}>
+        <Box style={{ height: "100%", width: "100%" }}>
             <TableContainer component={Paper}>
                 <Table
                     sx={{ minWidth: 500 }}
@@ -258,7 +257,7 @@ const ProductList = observer(() => {
                                 slotProps={{
                                     select: {
                                         inputProps: {
-                                            'aria-label': 'Produtos por página',
+                                            "aria-label": "Produtos por página",
                                         },
                                         native: true,
                                     },

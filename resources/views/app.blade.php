@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"/>
         <title>Biorama</title>
         @viteReactRefresh
-        @vite('resources/js/main.jsx') <!-- Load main.jsx -->
+        @vite('resources/js/main.jsx')
         @inertiaHead 
     </head>
     <body>

@@ -1,9 +1,23 @@
-import { observer } from 'mobx-react';
+import { observer } from "mobx-react";
+import { Container, Typography } from "@mui/material";
 
 const Settings = observer(() => {
-    return <>
-        <h1>Definições</h1>
-    </>;
+    return (
+        <Container
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                width: "100%",
+                marginTop: "5%",
+                marginBottom: "5%",
+            }}
+        >
+            <Typography variant="h3" gutterBottom>
+                Definições
+            </Typography>
+        </Container>
+    );
 });
 
 export default Settings;

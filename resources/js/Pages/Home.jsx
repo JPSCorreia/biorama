@@ -1,25 +1,30 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { HomeMap } from "../Components";
 
 const Home = () => {
-
     return (
-        <Box
+        <Container
             sx={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: "row",
                 height: "100%",
                 width: "100%",
-                alignItems: "center",
                 marginTop: "5%",
                 marginBottom: "5%",
             }}
         >
-            <Typography variant="h4" gutterBottom>
-                Descubra as lojas mais perto de si!
-            </Typography>
-            <HomeMap />
-        </Box>
+            <Box sx={{ width: "60%" }}>
+                <Typography variant="h4" gutterBottom>
+                    Descubra as lojas mais perto de si!
+                </Typography>
+                <HomeMap />
+            </Box>
+            <Box sx={{ width: "40%" }}>
+                <Typography variant="h4" gutterBottom textAlign="center">
+                    Conteudo extra
+                </Typography>
+            </Box>
+        </Container>
     );
 };
 
