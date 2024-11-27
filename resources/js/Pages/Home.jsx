@@ -6,20 +6,39 @@ const Home = () => {
         <Container
             sx={{
                 display: "flex",
-                flexDirection: "row",
-                height: "100%",
+                flexDirection: "column",
                 width: "100%",
+                height: "100%",
                 marginTop: "5%",
                 marginBottom: "5%",
             }}
         >
-            <Box sx={{ width: "60%" }}>
-                <Typography variant="h4" gutterBottom>
-                    Descubra as lojas mais perto de si!
-                </Typography>
-                <HomeMap />
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    width: "100%",
+                    justifyContent: "space-between",
+                }}
+            >
+                <Box sx={{ bgcolor: "primary.main" }}>
+                    <Typography variant="h4" gutterBottom textAlign="center">
+                        Conteudo extra
+                    </Typography>
+                </Box>
+                <Box>
+                    <Typography variant="h4" gutterBottom>
+                        Descubra as lojas mais perto de si!
+                    </Typography>
+                    <HomeMap />
+                </Box>
+                <Box  sx={{ bgcolor: "primary.main" }}>
+                    <Typography variant="h4" gutterBottom textAlign="center">
+                        Conteudo extra
+                    </Typography>
+                </Box>
             </Box>
-            <Box sx={{ width: "40%" }}>
+            <Box sx={{ bgcolor: "primary.main", mt: 4 }}>
                 <Typography variant="h4" gutterBottom textAlign="center">
                     Conteudo extra
                 </Typography>

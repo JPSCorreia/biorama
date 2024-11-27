@@ -10,45 +10,33 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
-import { authStore } from "../Stores";
 
-const Login = () => {
+const ForgotPassword = () => {
+
     const [formData, setFormData] = useState({
-        email: "",
-        password: "",
+        email: ""
     });
 
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleForgotPassword = (e) => {
         e.preventDefault();
 
-        router.post("/entrar", formData, {
+        router.post("/recuperar-palavra-passe", formData, {
             onSuccess: (page) => {
-                console.log("Login response:", page);
-
-                if (page.props.auth && page.props.auth.user) {
-                    authStore.setAuth(true);
-                    authStore.setUser(page.props.auth.user);
-                    console.log(
-                        "Login successful with user:",
-                        page.props.auth.user
-                    );
-                } else {
-                    console.log("Login successful but no user data received");
-                }
+                // TODO: talvez redirecionar para uma página de sucesso
             },
             onError: (errors) => {
                 console.error("Registration errors:", errors);
 
-                // Verify if the error is due to an email already registered
+                // Verify if the error is due to an email not existing
                 if (
                     errors.email ===
-                    "The provided credentials do not match our records."
+                    "email nao existe" // TODO: alterar para o erro correto
                 ) {
                     setError(
-                        "Erro ao iniciar sessão. Verifique o email e a palavra-passe."
+                        "Erro ao enviar email. Verifique o email inserido."
                     );
                     setShowError(true);
                 } else {
@@ -130,9 +118,32 @@ const Login = () => {
                         gutterBottom
                         sx={{ mb: 2 }}
                     >
-                        Iniciar Sessão
+                        Recuperar Palavra-Passe
                     </Typography>
-                    <form onSubmit={handleLogin}>
+                    <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: 1,
+                            }}
+                        >
+                    <Typography
+                            variant="body2"
+                        color="text.secondary"
+                        sx={{ fontSize: "16px"}}
+                    >
+                        Esqueceu-se da palavra-passe?
+                    </Typography>
+                    <Typography
+                            variant="body2"
+                        color="text.secondary"
+                        sx={{  mb:2, fontSize: "16px"}}
+                    >
+                       Insira o seu email para recuperar a sua conta.
+                        </Typography>
+                    </Box>
+                    <form onSubmit={handleForgotPassword}>
                         <Box
                             sx={{
                                 display: "flex",
@@ -156,21 +167,6 @@ const Login = () => {
                                     })
                                 }
                             />
-                            <TextField
-                                fullWidth
-                                sx={{ maxWidth: "360px" }}
-                                label="Password"
-                                type="password"
-                                variant="outlined"
-                                required
-                                value={formData.password}
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        password: e.target.value,
-                                    })
-                                }
-                            />
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -178,29 +174,7 @@ const Login = () => {
                                 type="submit"
                                 sx={{ pt: 1, maxWidth: "360px" }}
                             >
-                                Login
-                            </Button>
-                            <Button
-                                variant="text"
-                                size="small"
-                                onClick={() => router.visit("/recuperar-palavra-passe")}
-                                sx={{
-                                    mt: 0.5,
-                                    fontSize: "16px",
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    textDecoration: "underline",
-                                    textTransform: "none",
-                                    color: "text.secondary",
-                                    maxWidth: "200px",
-                                    padding: "0.1rem 0.5rem !important",
-                                    "&:hover": {
-                                        textDecoration: "underline",
-                                        color: "primary.main",
-                                    },
-                                }}
-                            >
-                                Recuperar Password
+                                Mandar Email
                             </Button>
                         </Box>
                     </form>
@@ -255,4 +229,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default ForgotPassword;

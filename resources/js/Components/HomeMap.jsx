@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
-import { Box, CircularProgress, useTheme } from "@mui/material";
+import { Box, CircularProgress, useTheme, Container } from "@mui/material";
 import { StoreSharp as StoreSharpIcon } from "@mui/icons-material";
 import {
     MapContainer,
@@ -136,8 +136,8 @@ const HomeMap = () => {
             {!loadMap ? (
                 <Box
                     sx={{
-                        height: "70vh",
-                        width: "80%",
+                        height: "400px",
+                        width: "100%",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -151,8 +151,8 @@ const HomeMap = () => {
             ) : (
                 <Box
                     sx={{
-                        height: "70vh",
-                        width: "80%",
+                        height: "400px",
+                        width: "100%",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

@@ -8,7 +8,7 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
         palette: {
             mode: appStore.themeType,
             primary: {
-                main: green[600],
+                main: green[700],
             },
             background: {
                 default: appStore.themeType === "dark" ? "#242424" : "#FDFDF9",
@@ -16,12 +16,17 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             },
             navbar: {
                 background:
-                    appStore.themeType === "dark" ? "#242424" : green[600],
+                    appStore.themeType === "dark" ? "#242424" : green[700],
                 text: "white",
             },
             footer: {
                 background:
-                    appStore.themeType === "dark" ? "#242424" : green[600],
+                    appStore.themeType === "dark" ? "#242424" : green[700],
+                text: "white",
+            },
+            card: {
+                background:
+                    appStore.themeType === "dark" ? "#121212" : "#FDFDF9",
                 text: "white",
             },
         },

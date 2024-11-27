@@ -356,7 +356,7 @@ const Navbar = observer(() => {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 height: "40px",
-                                minWidth: "45px",
+                                minWidth: "55px",
                                 paddingRight: "10px",
                                 paddingLeft: "10px",
                             }}
@@ -393,7 +393,7 @@ const Navbar = observer(() => {
                                     <Avatar
                                         alt="Profile avatar"
                                         src={testProfileImage}
-                                        sx={{ width: 36, height: 36 }}
+                                        sx={{ width: 45, height: 45 }}
                                     />
                                 </IconButton>
                             </Tooltip>

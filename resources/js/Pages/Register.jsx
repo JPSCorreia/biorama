@@ -121,14 +121,13 @@ const Register = () => {
                 }}
             >
                 <Paper
-                    elevation={4}
+                    elevation={8}
                     sx={{
                         p: 2,
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
-                        backgroundColor: (theme) =>
-                            alpha(theme.palette.background.default, 0.85),
+                        backgroundColor: "card.background",
                     }}
                 >
                     <Typography

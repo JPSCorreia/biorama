@@ -36,6 +36,8 @@ Route::get('/loja/{id}', function ($id) {
 Route::middleware('guest')->group(function () {
     Route::get('/entrar', fn () => Inertia::render('Login'))->name('login');
     Route::get('/registo', fn () => Inertia::render('Register'))->name('register');
+    Route::get('/recuperar-palavra-passe', fn () => Inertia::render('ForgotPassword'))->name('forgot-password');
+
 });
 
 // Protected routes (require authentication)
@@ -49,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/entrar', [AuthController::class, 'login'])->name('login.api');
 Route::post('/registar', [AuthController::class, 'register'])->name('register.api');
 Route::post('/sair', [AuthController::class, 'logout'])->name('logout.api');
+Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'])->name('forgot-password.api');
 
 // Debug routes
 // Environment variables loaded testing route (should be removed in production)

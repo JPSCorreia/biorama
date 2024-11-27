@@ -1,4 +1,4 @@
-import { Box, Container, Typography, IconButton } from "@mui/material";
+import { Box, Container, Typography, IconButton, Paper } from "@mui/material";
 import {
     Facebook as FacebookIcon,
     Twitter as TwitterIcon,
@@ -11,7 +11,7 @@ const Footer = () => {
     const theme = useTheme();
 
     return (
-        <Box
+        <Container
             sx={{
                 bgcolor: "footer.background",
                 maxWidth: "1200px",
@@ -21,7 +21,7 @@ const Footer = () => {
                 borderRadius: "5px 5px 0 0",
             }}
         >
-            <Container>
+            <Box>
                 <Box
                     sx={{
                         display: "flex",
@@ -52,8 +52,8 @@ const Footer = () => {
                         </IconButton>
                     </Box>
                 </Box>
-            </Container>
-        </Box>
+            </Box>
+        </Container>
     );
 };
 
