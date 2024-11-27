@@ -4,8 +4,8 @@ import {
     makeObservable,
     observable,
     runInAction,
-} from 'mobx';
-import { makePersistable } from 'mobx-persist-store';
+} from "mobx";
+import { makePersistable } from "mobx-persist-store";
 
 class CartStore {
     cart = [];
@@ -19,8 +19,8 @@ class CartStore {
             total: computed,
         });
         makePersistable(this, {
-            name: 'cartStore',
-            properties: ['cart'],
+            name: "cartStore",
+            properties: ["cart"],
             storage: window.localStorage,
         });
     }

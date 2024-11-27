@@ -10,7 +10,7 @@ class AuthStore {
     }
 
     initializeAuth() {
-        if (typeof window !== 'undefined' && window.initialAuth) {
+        if (typeof window !== "undefined" && window.initialAuth) {
             this.setAuth(!!window.initialAuth.user);
             this.setUser(window.initialAuth.user);
         }

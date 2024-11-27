@@ -380,7 +380,8 @@ const Navbar = observer(() => {
                                 display: "flex",
                                 flexGrow: 0,
                                 minWidth: "80px",
-                                justifyContent: "center",
+                                paddingRight: "10px",
+                                justifyContent: "end",
                                 alignItems: "center",
                             }}
                         >
@@ -392,7 +393,7 @@ const Navbar = observer(() => {
                                     <Avatar
                                         alt="Profile avatar"
                                         src={testProfileImage}
-                                        sx={{ width: 40, height: 40 }}
+                                        sx={{ width: 36, height: 36 }}
                                     />
                                 </IconButton>
                             </Tooltip>
@@ -478,8 +479,10 @@ const Navbar = observer(() => {
                                 marginTop: 1.7,
                                 marginBottom: 1,
                                 // height: "40px",
-                                minWidth: "90px",
-                                // p: "10px",
+                                minWidth: "75px",
+                                marginLeft: "5px !important",
+                                paddingLeft: "0 !important",
+                                paddingRight: "0 !important",
                             }}
                         >
                             {login.name}
