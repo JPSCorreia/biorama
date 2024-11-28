@@ -33,6 +33,8 @@ import { router } from "@inertiajs/react";
 import testProfileImage from "../../images/2.jpg";
 
 const Navbar = observer(() => {
+    const isAuthenticated = authStore.isAuthenticated;
+
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -60,7 +62,7 @@ const Navbar = observer(() => {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 5,
-        width: authStore.authenticated ? "425px" : "425px",
+        width: true ? "425px" : "425px",
         [theme.breakpoints.down("lg")]: {
             width: "100%",
         },
@@ -152,9 +154,9 @@ const Navbar = observer(() => {
                     {},
                     {
                         onSuccess: () => {
-                            authStore.setAuth(false);
-                            authStore.setUser(null);
                             handleCloseUserMenu();
+                            authStore.updateAuth({ user: null });
+                            console.log("Logout successful");
                         },
                     }
                 );
@@ -374,7 +376,7 @@ const Navbar = observer(() => {
                             </Badge>
                         </Button>
                     </Tooltip>
-                    {authStore.authenticated ? (
+                    {isAuthenticated ? (
                         <Box
                             sx={{
                                 display: "flex",

@@ -7,6 +7,8 @@ import {
     Alert,
     Paper,
     Fade,
+    Checkbox,
+    FormControlLabel,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
@@ -16,6 +18,7 @@ const Login = () => {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        remember: false,
     });
 
     const [error, setError] = useState("");
@@ -25,36 +28,18 @@ const Login = () => {
         e.preventDefault();
 
         router.post("/entrar", formData, {
-            onSuccess: (page) => {
-                console.log("Login response:", page);
-
-                if (page.props.auth && page.props.auth.user) {
-                    authStore.setAuth(true);
-                    authStore.setUser(page.props.auth.user);
-                    console.log(
-                        "Login successful with user:",
-                        page.props.auth.user
-                    );
-                } else {
-                    console.log("Login successful but no user data received");
-                }
+            onSuccess: () => {
+                console.log("Login successful");
             },
             onError: (errors) => {
-                console.error("Registration errors:", errors);
+                console.error("Login errors:", errors);
 
-                // Verify if the error is due to an email already registered
-                if (
-                    errors.email ===
-                    "The provided credentials do not match our records."
-                ) {
-                    setError(
-                        "Erro ao iniciar sessão. Verifique o email e a palavra-passe."
-                    );
-                    setShowError(true);
+                if (errors.email === "The provided credentials do not match our records.") {
+                    setError("Erro ao iniciar sessão. Verifique o email e a palavra-passe.");
                 } else {
                     setError("Ocorreu um erro inesperado. Tente novamente.");
-                    setShowError(true);
                 }
+                setShowError(true);
             },
         });
     };
@@ -171,6 +156,18 @@ const Login = () => {
                                     })
                                 }
                             />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={formData.remember}
+                                        onChange={(e) => 
+                                            setFormData({ ...formData, remember: e.target.checked })
+                                        }
+                                        name="remember"
+                                    />
+                                }
+                                label="Manter-me ligado"
+                            />
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -183,7 +180,9 @@ const Login = () => {
                             <Button
                                 variant="text"
                                 size="small"
-                                onClick={() => router.visit("/recuperar-palavra-passe")}
+                                onClick={() =>
+                                    router.visit("/recuperar-palavra-passe")
+                                }
                                 sx={{
                                     mt: 0.5,
                                     fontSize: "16px",
@@ -221,11 +220,6 @@ const Login = () => {
                         >
                             Ainda não tem conta?
                         </Typography>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mt: 0.5, fontSize: "14px" }}
-                        ></Typography>
                         <Button
                             variant="text"
                             size="small"

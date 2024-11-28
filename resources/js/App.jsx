@@ -4,8 +4,7 @@ import { Navbar, Footer } from "./Components";
 import backgroundImage from "../images/background.jpg";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
-
-const App = observer(({ appStore, children }) => {
+const App = observer(({ appStore, children, auth }) => {
     const theme = useTheme();
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -51,7 +50,7 @@ const App = observer(({ appStore, children }) => {
                     zIndex: 1,
                 }}
             >
-                <Navbar />
+                <Navbar auth={auth} />
                 {children}
             </Container>
             <Container

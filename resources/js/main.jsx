@@ -12,31 +12,23 @@ if (process.env.APP_ENV === "production") {
     console.log = () => {};
 }
 
-// Update authentication state on navigation
+// Atualiza o authStore quando houver navegação
 router.on("navigate", (event) => {
     const auth = event.detail.page.props.auth;
-    if (auth) {
-        authStore.setAuth(!!auth.user);
-        authStore.setUser(auth.user);
-    }
+    authStore.updateAuth(auth);
 });
 
-// Inertia application setup
 createInertiaApp({
     resolve: (name) => {
         const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
         return pages[`./Pages/${name}.jsx`];
     },
     setup({ el, App: InertiaApp, props }) {
-        // Initiate authentication state
-        const auth = props.initialPage.props.auth;
-        if (auth) {
-            authStore.setAuth(!!auth.user);
-            authStore.setUser(auth.user);
-        }
-        // Render the application
+        // Inicializa o authStore com os dados iniciais
+        authStore.updateAuth(props.initialPage.props.auth);
+
         createRoot(el).render(
-            <Provider appStore={appStore}>
+            <Provider appStore={appStore} authStore={authStore}>
                 <StyledEngineProvider injectFirst>
                     <CustomThemeProvider appStore={appStore}>
                         <App appStore={appStore}>

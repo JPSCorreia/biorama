@@ -20,7 +20,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Criar o usuário
+        // Create user
         $user = User::create([
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
@@ -28,13 +28,13 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Fazer login automático
+        // Auto login
         Auth::login($user);
 
-        // Regenerar a sessão
+        // Regenerate session
         $request->session()->regenerate();
 
-        // Redirecionar com mensagem de sucesso
+        // Redirect with success message
         return redirect()->route('home')
             ->with('success', 'Registro realizado com sucesso!');
     }
@@ -46,12 +46,21 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
+            
+            Log::info('Login attempt:', [
+                'user' => Auth::user()->email,
+                'remember' => $remember,
+                'via_remember' => Auth::viaRemember(),
+                'session_id' => session()->getId(),
+                'remember_token' => Auth::user()->remember_token,
+                'cookies' => array_keys($request->cookies->all())
+            ]);
+            // Regenerate session
             $request->session()->regenerate();
-            
-            // Log para debug
-            Log::info('User logged in:', ['user' => Auth::user()]);
-            
+
             return redirect()->intended(route('home'));
         }
 
@@ -62,19 +71,20 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+
+        Log::info('Logout attempt:', [
+            'user' => Auth::user()?->email,
+            'via_remember' => Auth::viaRemember(),
+            'cookies' => array_keys($request->cookies->all())
+        ]);
+
         Auth::logout();
         
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
         
         return redirect()->route('home');
     }
 
-    public function getUser()
-    {
-        // Log para debug
-        Log::info('Getting user data:', ['user' => Auth::user()]);
-        
-        return Auth::user();
-    }
 }

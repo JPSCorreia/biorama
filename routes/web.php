@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Middleware\CheckRememberToken;
 
 // Public page routes accessible to all users
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
@@ -37,7 +38,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/entrar', fn () => Inertia::render('Login'))->name('login');
     Route::get('/registo', fn () => Inertia::render('Register'))->name('register');
     Route::get('/recuperar-palavra-passe', fn () => Inertia::render('ForgotPassword'))->name('forgot-password');
-
 });
 
 // Protected routes (require authentication)
@@ -56,3 +56,6 @@ Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'
 // Debug routes
 // Environment variables loaded testing route (should be removed in production)
 Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
+});

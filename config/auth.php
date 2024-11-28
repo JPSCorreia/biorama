@@ -112,4 +112,17 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Remember Me Lifetime
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define the amount of seconds before a remember me cookie expires.
+    |
+    */
+    'remember' => [
+        'lifetime' => 43200, // In minutes (30 days)
+    ],
+
+
 ];

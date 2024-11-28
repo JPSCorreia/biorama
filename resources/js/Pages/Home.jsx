@@ -1,7 +1,11 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Typography, Button } from "@mui/material";
 import { HomeMap } from "../Components";
+import { usePage } from "@inertiajs/react";
 
 const Home = () => {
+    const { auth } = usePage().props;
+    const isAuthenticated = !!auth?.user;
+
     return (
         <Container
             sx={{
@@ -32,7 +36,7 @@ const Home = () => {
                     </Typography>
                     <HomeMap />
                 </Box>
-                <Box  sx={{ bgcolor: "primary.main" }}>
+                <Box sx={{ bgcolor: "primary.main" }}>
                     <Typography variant="h4" gutterBottom textAlign="center">
                         Conteudo extra
                     </Typography>
@@ -43,6 +47,15 @@ const Home = () => {
                     Conteudo extra
                 </Typography>
             </Box>
+            <Button
+                sx={{ mt: 4 }}
+                variant="contained"
+                onClick={() => {
+                    console.log("Auth state:", isAuthenticated);
+                }}
+            >
+                Testar User Auth
+            </Button>
         </Container>
     );
 };
