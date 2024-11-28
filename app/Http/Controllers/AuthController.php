@@ -49,18 +49,17 @@ class AuthController extends Controller
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
+            // Regenerate session
+            $request->session()->regenerate();
             
             Log::info('Login attempt:', [
                 'user' => Auth::user()->email,
                 'remember' => $remember,
                 'via_remember' => Auth::viaRemember(),
                 'session_id' => session()->getId(),
-                'remember_token' => Auth::user()->remember_token,
-                'cookies' => array_keys($request->cookies->all())
+                'is_authenticated' => Auth::check()
             ]);
-            // Regenerate session
-            $request->session()->regenerate();
-
+            
             return redirect()->intended(route('home'));
         }
 
@@ -71,17 +70,13 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-
         Log::info('Logout attempt:', [
-            'user' => Auth::user()?->email,
-            'via_remember' => Auth::viaRemember(),
-            'cookies' => array_keys($request->cookies->all())
+            'user' => Auth::user()?->email
         ]);
 
         Auth::logout();
-        
-        $request->session()->invalidate();
 
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
         
         return redirect()->route('home');

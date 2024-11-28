@@ -393,10 +393,19 @@ const Navbar = observer(() => {
                                     sx={{ p: 0 }}
                                 >
                                     <Avatar
-                                        alt="Profile avatar"
-                                        src={testProfileImage}
-                                        sx={{ width: 45, height: 45 }}
-                                    />
+                                        alt="User Avatar"
+                                        // src={testProfileImage}
+                                        sx={{
+                                            width: 45,
+                                            height: 45,
+                                            bgcolor: "background.default",
+                                            color: "primary.main",
+                                            fontSize: "1.5rem",
+                                        }}
+                                    >
+                                        {authStore.user?.first_name[0]}
+                                        {authStore.user?.last_name[0]}
+                                    </Avatar>
                                 </IconButton>
                             </Tooltip>
                             <Menu

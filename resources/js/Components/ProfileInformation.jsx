@@ -29,9 +29,19 @@ const ProfileInformation = observer(({ user }) => {
                 >
                     <Avatar
                         alt="Profile Image"
-                        src={testProfileImage}
-                        sx={{ width: 96, height: 96, mt: 2 }}
-                    />
+                        // src={testProfileImage}
+                        sx={{
+                            mt: 2,
+                            width: 96,
+                            height: 96,
+                            color: "background.default",
+                            bgcolor: "primary.main",
+                            fontSize: "3rem",
+                        }}
+                    >
+                        {authStore.user?.first_name[0]}
+                        {authStore.user?.last_name[0]}
+                    </Avatar>
                     <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
                         {`${user.first_name} ${user.last_name}`}
                     </Typography>
@@ -150,7 +160,7 @@ const ProfileInformation = observer(({ user }) => {
                     </Typography>
                 </Box>
                 <Box sx={{ alignSelf: "flex-end", height: "50px" }}>
-                    {authStore.authenticated ? (
+                    {authStore.isAuthenticated ? (
                         <Button
                             variant="contained"
                             sx={{ mt: 2, width: "140px" }}

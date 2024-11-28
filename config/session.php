@@ -219,5 +219,13 @@ return [
     */
     'expire_on_close' => true,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Expire at Browser Close
+    |--------------------------------------------------------------------------
+    |
+    | Setting this value to true will expire the session when the browser is closed.
+    */
+    'expire_at_browser_close' => true,
 
 ];

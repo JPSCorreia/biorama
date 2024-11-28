@@ -15,6 +15,7 @@ if (process.env.APP_ENV === "production") {
 // Atualiza o authStore quando houver navegação
 router.on("navigate", (event) => {
     const auth = event.detail.page.props.auth;
+    console.log("Navigation event:", event.detail.page.url, auth);
     authStore.updateAuth(auth);
 });
 
