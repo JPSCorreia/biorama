@@ -42,8 +42,7 @@ const Register = () => {
         router.post("/registar", formData, {
             onSuccess: (page) => {
                 if (page.props.auth && page.props.auth.user) {
-                    authStore.setAuth(true);
-                    authStore.setUser(page.props.auth.user);
+                    authStore.updateAuth(page.props.auth);
                     console.log("Registration and login successful!");
                 }
             },

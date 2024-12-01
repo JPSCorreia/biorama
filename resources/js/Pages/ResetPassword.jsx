@@ -9,50 +9,49 @@ import {
     Fade,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 
-const ForgotPassword = () => {
-
+const ResetPassword = () => {
+    const { token, email } = usePage().props;
     const [formData, setFormData] = useState({
-        email: ""
+        email: email || "",
+        password: "",
+        password_confirmation: "",
+        token: token,
     });
 
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
-    const [success, setSuccess] = useState(false);
 
-    const handleForgotPassword = (e) => {
+    const handleResetPassword = (e) => {
         e.preventDefault();
 
-        router.post("/recuperar-palavra-passe", formData, {
+        router.post("/reset-password", formData, {
             onSuccess: () => {
-                setSuccess(true);
-                setFormData({ email: "" });
-                setError("");
-                setShowError(false);
+                router.visit("/entrar");
             },
             onError: (errors) => {
                 if (errors.email) {
                     setError(errors.email);
+                } else if (errors.password) {
+                    setError(errors.password);
                 } else {
-                    setError("Ocorreu um erro ao enviar o email de recuperação.");
+                    setError("Ocorreu um erro ao redefinir a palavra-passe.");
                 }
                 setShowError(true);
-                setSuccess(false);
             },
         });
     };
 
-    // Clear the error message automatically after 5 seconds
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => {
-                setShowError(false); // Start the fade-out
-            }, 4500); // After 4.5 seconds, start the fade
+                setShowError(false);
+            }, 4500);
 
             const clearTimer = setTimeout(() => {
-                setError(""); // Clear the error message
-            }, 5000); // After 5 seconds, clear the error message completely
+                setError("");
+            }, 5000);
 
             return () => {
                 clearTimeout(timer);
@@ -71,8 +70,8 @@ const ForgotPassword = () => {
                 marginTop: "40px !important",
             }}
         >
-            {error ? (
-                <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
+            <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
+                {error ? (
                     <Alert
                         severity="error"
                         variant="filled"
@@ -85,23 +84,10 @@ const ForgotPassword = () => {
                     >
                         {error}
                     </Alert>
-                </Fade>
-            ) : success ? (
-                <Alert
-                    severity="success"
-                    variant="filled"
-                    sx={{
-                        mb: 2,
-                        height: "48px",
-                        width: "100%",
-                        maxWidth: "470px",
-                    }}
-                >
-                    Email de recuperação enviado com sucesso!
-                </Alert>
-            ) : (
-                <Box sx={{ mb: 2, height: "48px" }}></Box>
-            )}
+                ) : (
+                    <Box sx={{ mb: 2, height: "48px" }}></Box>
+                )}
+            </Fade>
             <Box
                 sx={{
                     display: "flex",
@@ -127,32 +113,25 @@ const ForgotPassword = () => {
                         gutterBottom
                         sx={{ mb: 2 }}
                     >
-                        Recuperar Palavra-Passe
+                        Redefinir Palavra-passe
                     </Typography>
                     <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                gap: 1,
-                            }}
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                    >
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mb: 2, fontSize: "16px" }}
                         >
-                    <Typography
-                            variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "16px"}}
-                    >
-                        Esqueceu-se da palavra-passe?
-                    </Typography>
-                    <Typography
-                            variant="body2"
-                        color="text.secondary"
-                        sx={{  mb:2, fontSize: "16px"}}
-                    >
-                       Insira o seu email para recuperar a sua conta.
+                            Insira a sua nova palavra-passe
                         </Typography>
                     </Box>
-                    <form onSubmit={handleForgotPassword}>
+                    <form onSubmit={handleResetPassword}>
                         <Box
                             sx={{
                                 display: "flex",
@@ -176,6 +155,36 @@ const ForgotPassword = () => {
                                     })
                                 }
                             />
+                            <TextField
+                                fullWidth
+                                sx={{ maxWidth: "360px" }}
+                                label="Nova Palavra-passe"
+                                type="password"
+                                variant="outlined"
+                                required
+                                value={formData.password}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        password: e.target.value,
+                                    })
+                                }
+                            />
+                            <TextField
+                                fullWidth
+                                sx={{ maxWidth: "360px" }}
+                                label="Confirmar Palavra-passe"
+                                type="password"
+                                variant="outlined"
+                                required
+                                value={formData.password_confirmation}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        password_confirmation: e.target.value,
+                                    })
+                                }
+                            />
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -183,7 +192,7 @@ const ForgotPassword = () => {
                                 type="submit"
                                 sx={{ pt: 1, maxWidth: "360px" }}
                             >
-                                Mandar Email
+                                Redefinir Palavra-passe
                             </Button>
                         </Box>
                     </form>
@@ -197,22 +206,10 @@ const ForgotPassword = () => {
                             textAlign: "center",
                         }}
                     >
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mt: 0.5, fontSize: "16px" }}
-                        >
-                            Ainda não tem conta?
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mt: 0.5, fontSize: "14px" }}
-                        ></Typography>
                         <Button
                             variant="text"
                             size="small"
-                            onClick={() => router.visit("/registo")}
+                            onClick={() => router.visit("/entrar")}
                             sx={{
                                 mt: 0.5,
                                 fontSize: "16px",
@@ -229,7 +226,7 @@ const ForgotPassword = () => {
                                 },
                             }}
                         >
-                            Faça aqui o seu registo
+                            Voltar para o login
                         </Button>
                     </Box>
                 </Paper>
@@ -238,4 +235,4 @@ const ForgotPassword = () => {
     );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

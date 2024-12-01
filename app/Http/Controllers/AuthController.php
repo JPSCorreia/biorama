@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
@@ -36,7 +38,8 @@ class AuthController extends Controller
 
         // Redirect with success message
         return redirect()->route('home')
-            ->with('success', 'Registro realizado com sucesso!');
+            ->with('message', 'Registro realizado com sucesso!')
+            ->with('type', 'success');
     }
 
     public function login(Request $request)
@@ -60,7 +63,10 @@ class AuthController extends Controller
                 'is_authenticated' => Auth::check()
             ]);
             
-            return redirect()->intended(route('home'));
+            return redirect()
+                ->intended(route('home'))
+                ->with('message', 'Palavra-passe alterada com sucesso!')
+                ->with('type', 'success');
         }
 
         return back()
@@ -80,6 +86,64 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         
         return redirect()->route('home');
+
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'Não encontramos nenhuma conta com este email.'
+        ]);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Link de recuperação enviado para o seu email!');
+        }
+
+        return back()->withErrors(['email' => __($status)]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email|exists:users',
+            'password' => 'required|min:8|confirmed',
+        ], [
+            'email.exists' => 'Email inválido.',
+            'password.confirmed' => 'As palavras-passe não coincidem.'
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ]);
+
+                $user->save();
+
+                event(new PasswordReset($user));
+                
+                Auth::login($user);
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            $response = redirect()
+                ->route('home')
+                ->with('message', 'Palavra-passe alterada com sucesso!')
+                ->with('type', 'success');
+            
+            return $response;
+        }
+
+        return back()->withErrors(['email' => [__($status)]]);
     }
 
 }

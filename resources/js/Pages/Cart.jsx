@@ -11,7 +11,7 @@ const Cart = observer(() => {
                 flexDirection: "column",
                 height: "100%",
                 width: "100%",
-                marginTop: "5%",
+                marginTop: "88px !important",
                 marginBottom: "5%",
             }}
         >

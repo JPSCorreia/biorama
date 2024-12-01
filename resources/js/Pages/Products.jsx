@@ -10,8 +10,8 @@ const Products = observer(() => {
                 flexDirection: "column",
                 height: "100%",
                 width: "100%",
-                marginTop: "5%",
-                marginBottom: "5%",
+                marginTop: "88px !important",
+                // marginBottom: "5%",
             }}
         >
             <Typography variant="h3" gutterBottom>

@@ -3,7 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Middleware\CheckRememberToken;
+use Illuminate\Http\Request;
 
 // Public page routes accessible to all users
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
@@ -37,7 +37,24 @@ Route::get('/loja/{id}', function ($id) {
 Route::middleware('guest')->group(function () {
     Route::get('/entrar', fn () => Inertia::render('Login'))->name('login');
     Route::get('/registo', fn () => Inertia::render('Register'))->name('register');
-    Route::get('/recuperar-palavra-passe', fn () => Inertia::render('ForgotPassword'))->name('forgot-password');
+    
+    // Password Reset Routes
+    Route::get('/recuperar-palavra-passe', fn () => 
+        Inertia::render('ForgotPassword')
+    )->name('password.request');
+    
+    Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'])
+        ->name('password.email');
+    
+    Route::get('/reset-password/{token}', function (Request $request, $token) {
+        return Inertia::render('ResetPassword', [
+            'token' => $token,
+            'email' => $request->email
+        ]);
+    })->name('password.reset');
+    
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+        ->name('password.update');
 });
 
 // Protected routes (require authentication)
