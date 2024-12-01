@@ -31,8 +31,8 @@ class ResetPasswordNotification extends Notification
         ], false));
 
         return (new MailMessage)
-            ->subject('Biorama: Recuperar Palavra-passe')
-            ->greeting('Olá!')
+            ->subject('Recuperação de Palavra-passe')
+            ->greeting('Olá ' . $notifiable->first_name . '!')
             ->line('Recebeu este email porque foi solicitada uma recuperação de palavra-passe para a sua conta.')
             ->action('Recuperar Palavra-passe', $url)
             ->line('Este link expira em ' . config('auth.passwords.users.expire') . ' minutos.')

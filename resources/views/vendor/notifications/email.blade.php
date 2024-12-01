@@ -1,13 +1,7 @@
 @component('mail::message')
-{{-- Greeting --}}
+{{-- Conteúdo Principal --}}
 @if (! empty($greeting))
 # {{ $greeting }}
-@else
-@if ($level === 'error')
-# @lang('Whoops!')
-@else
-# @lang('Olá!')
-@endif
 @endif
 
 {{-- Intro Lines --}}
@@ -38,8 +32,6 @@
 {{-- Salutation --}}
 @if (! empty($salutation))
 {{ $salutation }}
-@else
-@lang('Cumprimentos, A equipa da Biorama')
 @endif
 
 {{-- Subcopy --}}
