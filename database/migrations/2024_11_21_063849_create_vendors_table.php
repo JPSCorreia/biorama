@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->char('nif', 9)->unique();
+            $table->string('iban', 25)->unique();
+
             $table->timestamps();
             $table->softDeletes();
         });

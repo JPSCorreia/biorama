@@ -59,4 +59,48 @@ class StoreController extends Controller
         $store->delete();
         return response()->json(null, 204);
     }
+
+    /**
+     * Retorna as lojas próximas com base na localização do utilizador.
+     */
+    public function getNearbyStores(Request $request)
+    {
+
+        $longitude = $request->input('longitude');
+        $latitude = $request->input('latitude');
+        $radius = $request->input('radius', 10000);
+        $stores = Store::selectRaw("
+            id,
+            name,
+            description,
+            ST_X(coordinates) AS longitude,
+            ST_Y(coordinates) AS latitude,
+            ST_Distance_Sphere(
+                coordinates,
+                POINT(?, ?)
+            ) AS distance
+        ", [$longitude, $latitude])
+            ->whereRaw("ST_Distance_Sphere(coordinates, POINT(?, ?)) <= ?", [$longitude, $latitude, $radius])
+            ->orderBy('distance')
+            ->get();
+
+        // Opcionalmente transforma os dados em um formato JSON-friendly
+        $stores = $stores->map(function ($store) {
+            return [
+                'id' => $store->id,
+                'name' => $store->name,
+                'description' => mb_convert_encoding($store->description, 'UTF-8', 'ISO-8859-1'),
+                'longitude' => $store->longitude,
+                'latitude' => $store->latitude,
+                'distance' => $store->distance,
+            ];
+        });
+
+        return response()->json($stores);
+
+
+    }
+
+
+
 }

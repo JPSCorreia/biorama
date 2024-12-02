@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\StoreController;
+use App\Http\Controllers\VendorController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -37,22 +39,22 @@ Route::get('/loja/{id}', function ($id) {
 Route::middleware('guest')->group(function () {
     Route::get('/entrar', fn () => Inertia::render('Login'))->name('login');
     Route::get('/registo', fn () => Inertia::render('Register'))->name('register');
-    
+
     // Password Reset Routes
-    Route::get('/recuperar-palavra-passe', fn () => 
+    Route::get('/recuperar-palavra-passe', fn () =>
         Inertia::render('ForgotPassword')
     )->name('password.request');
-    
+
     Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'])
         ->name('password.email');
-    
+
     Route::get('/reset-password/{token}', function (Request $request, $token) {
         return Inertia::render('ResetPassword', [
             'token' => $token,
             'email' => $request->email
         ]);
     })->name('password.reset');
-    
+
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])
         ->name('password.update');
 });
@@ -61,6 +63,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', fn () => Inertia::render('Profile'))->name('profile');
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
+    Route::get('/vendors/register', fn()=>Inertia::render('RegisterVendor'))->name('registerVendor');
 });
 
 // API routes
@@ -76,3 +79,7 @@ Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('doten
 Route::middleware(['auth'])->group(function () {
     Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
 });
+
+
+
+Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);

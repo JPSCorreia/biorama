@@ -24,6 +24,10 @@ class Store extends Model
         'coordinates',
     ];
 
+    protected $casts = [
+        'coordinates' => 'string', // Mantém como string para trabalhar com POINT
+    ];
+
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);

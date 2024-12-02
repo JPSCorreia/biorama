@@ -4,10 +4,15 @@ import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { alertStore } from "../Stores/alertStore";
+import { NearbyStores } from "../Components/NearbyStores";
 
 const Home = observer(() => {
     const { auth, flash = {} } = usePage().props;
     const isAuthenticated = !!auth?.user;
+
+    const vendorRegister = () => {
+      router.push("/vendors/register");
+    };
 
     useEffect(() => {
         // Reset alert store on navigation
@@ -63,10 +68,10 @@ const Home = observer(() => {
                 flexDirection: "column",
                 width: "100%",
                 height: "100%",
-                // marginBottom: "5%",
                 marginTop: "40px !important",
             }}
         >
+            {/* Alerta */}
             {alertStore.message ? (
                 <Fade
                     in={alertStore.show}
@@ -94,36 +99,44 @@ const Home = observer(() => {
                 <Box sx={{ mb: 2, height: "48px" }} />
             )}
 
+            {/* Caixa "Click" no topo */}
             <Box
                 sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    justifyContent: "space-between",
+                    bgcolor: "primary.main",
+                    color: "white",
+                    p: 2,
+                    textAlign: "center",
+                    mb: 4,
                 }}
             >
-                <Box sx={{ bgcolor: "primary.main" }}>
-                    <Typography variant="h4" gutterBottom textAlign="center">
-                        Conteudo extra
-                    </Typography>
-                </Box>
-                <Box>
-                    <Typography variant="h4" gutterBottom>
-                        Descubra as lojas mais perto de si!
-                    </Typography>
-                    <HomeMap />
-                </Box>
-                <Box sx={{ bgcolor: "primary.main" }}>
-                    <Typography variant="h4" gutterBottom textAlign="center">
-                        Conteudo extra
-                    </Typography>
-                </Box>
-            </Box>
-            <Box sx={{ bgcolor: "primary.main", mt: 4 }}>
-                <Typography variant="h4" gutterBottom textAlign="center">
-                    Conteudo extra
+                <Typography variant="h4">
+                    Queres divulgar o teu negócio?
+                    <Button
+                        variant="contained"
+                        onClick={vendorRegister}
+                    >
+                        Cria agora o teu espaço!
+                    </Button>
                 </Typography>
             </Box>
+
+            {/* Mapa */}
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h4" gutterBottom>
+                    Descubra as lojas mais perto de si!
+                </Typography>
+                <HomeMap />
+            </Box>
+
+            {/* Lojas próximas */}
+            <Box sx={{ bgcolor: "primary.main", mt: 4, p: 2 }}>
+                <Typography variant="h4" gutterBottom textAlign="center" color="white">
+                    Lojas Próximas
+                </Typography>
+                <NearbyStores radius={10000} />
+            </Box>
+
+            {/* Botão de Teste */}
             <Button
                 sx={{ mt: 4 }}
                 variant="contained"
