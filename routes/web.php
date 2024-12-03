@@ -63,7 +63,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', fn () => Inertia::render('Profile'))->name('profile');
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
-    Route::get('/vendors/register', fn()=>Inertia::render('RegisterVendor'))->name('registerVendor');
+    Route::resource('vendors', VendorController::class);
+    //Route::get('/vendors/register', fn()=>Inertia::render('RegisterVendor'))->name('registerVendor');
 });
 
 // API routes

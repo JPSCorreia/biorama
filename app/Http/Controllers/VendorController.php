@@ -2,25 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VendorRequest;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 
 class VendorController extends Controller
 {
+
     public function index()
     {
         return response()->json(Vendor::with('user')->get());
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nif' => 'required|digits:9|unique:vendors',
-        ]);
+        return inertia('RegisterVendor');
+    }
 
-        $vendor = Vendor::create($validated);
-        return response()->json($vendor, 201);
+    public function store(VendorRequest $request)
+    {
+
+        $validatedData = $request->validated();
+
+        if ($validatedData->hasFile('vendor_photo')) {
+            $image = $validatedData->file('vendor_photo');
+            $imageName = 'vendor_' . $validatedData->id . '.' . $image->getClientOriginalExtension();
+            $image_path = $image->storeAs('vendor_photos', $imageName, 'public');
+            $validatedData['vendor_photo'] = 'storage/' . $image_path;
+        }
+
+        try {
+            $vendor = Vendor::create($validatedData);
+            return response()->json($vendor, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao criar o vendedor'], 500);
+        }
     }
 
     public function show(Vendor $vendor)

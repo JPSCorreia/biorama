@@ -11,7 +11,7 @@ const Home = observer(() => {
     const isAuthenticated = !!auth?.user;
 
     const vendorRegister = () => {
-      router.push("/vendors/register");
+      router.get("/vendors/create");
     };
 
     useEffect(() => {
