@@ -22,6 +22,8 @@ class VendorController extends Controller
     public function store(VendorRequest $request)
     {
 
+        dd($request->validated());
+
         $validatedData = $request->validated();
 
         if ($validatedData->hasFile('vendor_photo')) {

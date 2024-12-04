@@ -248,6 +248,7 @@ const Register = () => {
                         >
                             Já tem uma conta?
                         </Typography>
+
                         <Button
                             variant="text"
                             size="small"

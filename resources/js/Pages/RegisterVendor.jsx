@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
+import axios from "axios";
 
 
 const RegisterVendor = () => {
@@ -39,18 +40,9 @@ const RegisterVendor = () => {
         for (const key in formData) {
             formDataToSend.append(key, formData[key]);
         }
-
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-        if (!csrfMetaTag) {
-            console.error("Meta tag CSRF não encontrada no DOM.");
-        } else {
-            const csrfToken = csrfMetaTag.content;
-        }
-
+        
         router.post('/vendors', formData, {
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-            },
+
             onSuccess: () => {
                 console.log("Vendor registration successful!");
             },
