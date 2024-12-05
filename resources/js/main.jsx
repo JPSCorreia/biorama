@@ -6,11 +6,13 @@ import { appStore, authStore } from "./Stores";
 import CustomThemeProvider from "./CustomThemeProvider";
 import App from "./App";
 import { router } from "@inertiajs/react";
+import axios from "axios";
 
 // Supress console.log in production
 if (process.env.APP_ENV === "production") {
     console.log = () => {};
 }
+
 
 // Atualiza o authStore quando houver navegação
 router.on("navigate", (event) => {

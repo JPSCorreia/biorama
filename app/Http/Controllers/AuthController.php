@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VendorRequest;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -54,7 +56,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             // Regenerate session
             $request->session()->regenerate();
-            
+
             Log::info('Login attempt:', [
                 'user' => Auth::user()->email,
                 'remember' => $remember,
@@ -62,7 +64,7 @@ class AuthController extends Controller
                 'session_id' => session()->getId(),
                 'is_authenticated' => Auth::check()
             ]);
-            
+
             return redirect()
                 ->intended(route('home'))
                 ->with('message', 'Palavra-passe alterada com sucesso!')
@@ -84,7 +86,7 @@ class AuthController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return redirect()->route('home');
 
     }
@@ -129,7 +131,7 @@ class AuthController extends Controller
                 $user->save();
 
                 event(new PasswordReset($user));
-                
+
                 Auth::login($user);
             }
         );
@@ -139,11 +141,34 @@ class AuthController extends Controller
                 ->route('home')
                 ->with('message', 'Palavra-passe alterada com sucesso!')
                 ->with('type', 'success');
-            
+
             return $response;
         }
 
         return back()->withErrors(['email' => [__($status)]]);
+    }
+
+    public function vendorRegister(VendorRequest $request)
+    {
+        dd('VHEGUEI AQUI');
+        // Adicionar o user_id ao request antes de criar o vendedor
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = auth()->user->id;
+
+
+        if ($validatedData->hasFile('vendor_photo')) {
+            $image = $validatedData->file('vendor_photo');
+            $imageName = 'vendor_' . $validatedData->id . '.' . $image->getClientOriginalExtension();
+            $image_path = $image->storeAs('vendor_photos', $imageName, 'public');
+            $validatedData['vendor_photo'] = 'storage/' . $image_path;
+        }
+
+        try {
+            $vendor = Vendor::create($validatedData);
+            return inertia('Home', ['vendor' => $vendor]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao criar o vendedor'], 500);
+        }
     }
 
 }

@@ -10,51 +10,70 @@ import {
     Switch,
     FormControlLabel,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-import { router } from "@inertiajs/react";
+import {router, usePage} from "@inertiajs/react";
+import {useEffect, useState} from "react";
 import axios from "axios";
+import {route} from "ziggy-js";
 
 
 const RegisterVendor = () => {
+
+    const props = usePage().props;
+    const csrfToken = props.csrf_token;
+
+    useEffect(() => {
+        console.log("CSRF Token:", csrfToken);
+    }, [csrfToken]);
+
     const [formData, setFormData] = useState({
-        tax_id: "",
+        nif: "",
         phone: "",
         address: "",
+        postal_code: '',
         date_of_birth: "",
         iban: "",
         is_company: false,
         company_name: "",
-        company_tax_id: "",
+        company_nif: "",
         company_address: "",
+        company_postal_code: "",
         company_phone: "",
         company_email: "",
+        vendor_photo: null, // Adicionado para o upload de ficheiros
     });
 
-    const [error, setError] = useState("");
+    const [errors, setError] = useState("");
     const [showError, setShowError] = useState(false);
+    const [processing, setProcessing] = useState(false); // Adiciona o estado processing
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
 
+
+        console.log("Token CSRF:",csrfToken)
+        setProcessing(true);
+
+        // Prepara os dados do formulário
         const formDataToSend = new FormData();
         for (const key in formData) {
             formDataToSend.append(key, formData[key]);
         }
-        
-        router.post('/vendors', formData, {
 
-            onSuccess: () => {
-                console.log("Vendor registration successful!");
-            },
-            onError: (errors) => {
-                console.error("Registration errors:", errors);
-            },
-        });
+
+            router.post('/vendedores', formDataToSend, {
+                headers: {
+                    'X-CSRF-TOKEN': props.csrf_token,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
     };
+
+
 
     // Clear the error message automatically after 5 seconds
     useEffect(() => {
-        if (error) {
+        if (errors) {
             const timer = setTimeout(() => {
                 setShowError(false); // Start the fade-out
             }, 4500); // After 4.5 seconds, start the fade
@@ -68,7 +87,7 @@ const RegisterVendor = () => {
                 clearTimeout(clearTimer);
             };
         }
-    }, [error]);
+    }, [errors]);
 
     return (
         <Container
@@ -80,8 +99,8 @@ const RegisterVendor = () => {
                 marginTop: "40px !important",
             }}
         >
-            <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
-                {error ? (
+            {errors && Object.keys(errors).length > 0 && (
+                <Fade in timeout={{ enter: 50, exit: 500 }}>
                     <Alert
                         severity="error"
                         variant="filled"
@@ -92,12 +111,10 @@ const RegisterVendor = () => {
                             maxWidth: "470px",
                         }}
                     >
-                        {error}
+                        {Object.values(errors).join(", ")}
                     </Alert>
-                ) : (
-                    <Box sx={{ mb: 2, height: "48px" }}></Box>
-                )}
-            </Fade>
+                </Fade>
+            )}
             <Box
                 sx={{
                     display: "flex",
@@ -126,7 +143,11 @@ const RegisterVendor = () => {
                         Torne-se um vendedor
                     </Typography>
 
-                    <form onSubmit={handleRegister}>
+                    <form
+                        onSubmit={handleRegister}
+                        method="POST"
+                        encType="multipart/form-data"
+                    >
                         <Box
                             sx={{
                                 display: "flex",
@@ -141,11 +162,10 @@ const RegisterVendor = () => {
                                 label="NIF"
                                 variant="outlined"
                                 required
-                                value={formData.tax_id}
-                                onChange={(e) =>
-                                    setFormData({
+                                value={formData.nif}
+                                onChange={(e) => setFormData({
                                         ...formData,
-                                        tax_id: e.target.value,
+                                        "nif": e.target.value,
                                     })
                                 }
                             />
@@ -155,25 +175,38 @@ const RegisterVendor = () => {
                                 variant="outlined"
                                 required
                                 value={formData.phone}
-                                onChange={(e) =>
-                                    setFormData({
+                                onChange={(e) => setFormData({
                                         ...formData,
-                                        phone: e.target.value,
+                                        "phone": e.target.value,
                                     })
                                 }
                             />
+
                             <TextField
                                 fullWidth
                                 label="Morada"
                                 variant="outlined"
                                 value={formData.address}
-                                onChange={(e) =>
-                                    setFormData({
+                                onChange={(e) =>setFormData({
+                                    ...formData,
+                                    "address": e.target.value,
+                                })
+                            }
+                            />
+
+                            <TextField
+                                fullWidth
+                                label="Código-Postal"
+                                variant="outlined"
+                                required
+                                value={formData.postal_code}
+                                onChange={(e) => setFormData({
                                         ...formData,
-                                        address: e.target.value,
+                                        "postal_code": e.target.value,
                                     })
                                 }
                             />
+
                             <TextField
                                 fullWidth
                                 label="Data de nascimento"
@@ -184,10 +217,9 @@ const RegisterVendor = () => {
                                     shrink: true,
                                 }}
                                 value={formData.date_of_birth}
-                                onChange={(e) =>
-                                    setFormData({
+                                onChange={(e) => setFormData({
                                         ...formData,
-                                        date_of_birth: e.target.value,
+                                        "date_of_birth": e.target.value,
                                     })
                                 }
                             />
@@ -197,10 +229,9 @@ const RegisterVendor = () => {
                                 variant="outlined"
                                 required
                                 value={formData.iban}
-                                onChange={(e) =>
-                                    setFormData({
+                                onChange={(e) => setFormData({
                                         ...formData,
-                                        iban: e.target.value,
+                                        "iban": e.target.value,
                                     })
                                 }
                             />
@@ -208,10 +239,9 @@ const RegisterVendor = () => {
                                 control={
                                     <Switch
                                         checked={formData.is_company}
-                                        onChange={(e) =>
-                                            setFormData({
+                                        onChange={(e) => setFormData({
                                                 ...formData,
-                                                is_company: e.target.checked,
+                                                "is_company": e.target.checked,
                                             })
                                         }
                                     />
@@ -219,19 +249,18 @@ const RegisterVendor = () => {
                                 label="É uma empresa?"
                             />
 
-                            {/*Campos relativos à empresa (condicional)*/}
+                            {/* Campos relativos à empresa (condicional) */}
                             {formData.is_company && (
                                 <>
                                     <TextField
                                         fullWidth
                                         label="Nome da empresa"
                                         variant="outlined"
-                                        required={formData.is_company}
+                                        required
                                         value={formData.company_name}
-                                        onChange={(e) =>
-                                            setFormData({
+                                        onChange={(e) => setFormData({
                                                 ...formData,
-                                                company_name: e.target.value,
+                                                "company_name": e.target.value,
                                             })
                                         }
                                     />
@@ -239,12 +268,11 @@ const RegisterVendor = () => {
                                         fullWidth
                                         label="NIF da empresa"
                                         variant="outlined"
-                                        required={formData.is_company}
-                                        value={formData.company_tax_id}
-                                        onChange={(e) =>
-                                            setFormData({
+                                        required
+                                        value={formData.company_nif}
+                                        onChange={(e) => setFormData({
                                                 ...formData,
-                                                company_tax_id: e.target.value,
+                                                "company_nif": e.target.value,
                                             })
                                         }
                                     />
@@ -253,35 +281,46 @@ const RegisterVendor = () => {
                                         label="Morada da empresa"
                                         variant="outlined"
                                         value={formData.company_address}
-                                        onChange={(e) =>
-                                            setFormData({
+                                        onChange={(e) => setFormData({
                                                 ...formData,
-                                                company_address: e.target.value,
+                                                "company_address": e.target.value,
                                             })
                                         }
                                     />
+
+                                    <TextField
+                                        fullWidth
+                                        label="Código Postal da empresa"
+                                        variant="outlined"
+                                        value={formData.company_postal_code}
+                                        onChange={(e) => setFormData({
+                                                ...formData,
+                                                "company_postal_code": e.target.value,
+                                            })
+                                        }
+                                    />
+
                                     <TextField
                                         fullWidth
                                         label="Telefone da empresa"
                                         variant="outlined"
                                         value={formData.company_phone}
-                                        onChange={(e) =>
-                                            setFormData({
+                                        onChange={(e) => setFormData({
                                                 ...formData,
-                                                company_phone: e.target.value,
+                                                "company_phone": e.target.value,
                                             })
                                         }
                                     />
+
                                     <TextField
                                         fullWidth
                                         label="Email da empresa"
                                         type="email"
                                         variant="outlined"
                                         value={formData.company_email}
-                                        onChange={(e) =>
-                                            setFormData({
+                                        onChange={(e) => setFormData({
                                                 ...formData,
-                                                company_email: e.target.value,
+                                                "company_email": e.target.value,
                                             })
                                         }
                                     />
@@ -293,10 +332,9 @@ const RegisterVendor = () => {
                                 inputProps={{ accept: "image/*" }}
                                 fullWidth
                                 variant="outlined"
-                                onChange={(e) =>
-                                    setFormData({
+                                onChange={(e) => setFormData({
                                         ...formData,
-                                        vendor_photo: e.target.files[0], // Salva o ficheiro no estado
+                                        "company_email": e.target.value,
                                     })
                                 }
                             />
@@ -306,9 +344,10 @@ const RegisterVendor = () => {
                                 variant="contained"
                                 color="primary"
                                 type="submit"
+                                disabled={processing}
                                 sx={{ pt: 1, maxWidth: "360px" }}
                             >
-                                Registar como vendedor
+                                {processing ? "A processar..." : "Registar como vendedor"}
                             </Button>
                         </Box>
                     </form>

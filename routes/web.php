@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
 Route::get('/produtos', fn () => Inertia::render('Products'))->name('products');
 Route::get('/lojas', fn () => Inertia::render('Stores'))->name('stores');
-Route::get('/vendedores', fn () => Inertia::render('Vendors'))->name('vendors');
+//Route::get('/vendedores', fn () => Inertia::render('Vendors'))->name('vendors');
 Route::get('/contactos', fn () => Inertia::render('Contacts'))->name('contacts');
 Route::get('/carrinho', fn () => Inertia::render('Cart'))->name('cart');
 Route::get('/loja/{id}', function ($id) {
@@ -63,7 +63,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', fn () => Inertia::render('Profile'))->name('profile');
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
-    Route::resource('vendors', VendorController::class);
+    //Route::resource('vendedores', VendorController::class);
+    Route::get('/vendedores', [VendorController::class, 'index'])->name('vendedores');
+    Route::post('/vendedores', [AuthController::class, 'vendorRegister'])->name('registarVendedor');
+    Route::get('/vendedores/registar', [VendorController::class, 'create'])->name('criarVendedor');
     //Route::get('/vendors/register', fn()=>Inertia::render('RegisterVendor'))->name('registerVendor');
 });
 
