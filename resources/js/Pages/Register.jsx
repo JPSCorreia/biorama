@@ -14,6 +14,7 @@ import { router } from "@inertiajs/react";
 import { authStore } from "../Stores";
 
 const Register = () => {
+
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",

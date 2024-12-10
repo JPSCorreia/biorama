@@ -63,11 +63,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', fn () => Inertia::render('Profile'))->name('profile');
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
-    //Route::resource('vendedores', VendorController::class);
-    Route::get('/vendedores', [VendorController::class, 'index'])->name('vendedores');
-    Route::post('/vendedores', [AuthController::class, 'vendorRegister'])->name('registarVendedor');
-    Route::get('/vendedores/registar', [VendorController::class, 'create'])->name('criarVendedor');
-    //Route::get('/vendors/register', fn()=>Inertia::render('RegisterVendor'))->name('registerVendor');
+    Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
 });
 
 // API routes
@@ -76,7 +72,6 @@ Route::post('/entrar', [AuthController::class, 'login'])->name('login.api');
 Route::post('/registar', [AuthController::class, 'register'])->name('register.api');
 Route::post('/sair', [AuthController::class, 'logout'])->name('logout.api');
 Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'])->name('forgot-password.api');
-
 // Debug routes
 // Environment variables loaded testing route (should be removed in production)
 Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
@@ -84,6 +79,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
 });
 
+Route::post('/registarVendedor', [AuthController::class, 'vendorRegister'])
+    ->middleware('auth')
+    ->name('registarVendedor.api');
 
+Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
 
 Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);

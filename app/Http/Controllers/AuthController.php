@@ -150,25 +150,48 @@ class AuthController extends Controller
 
     public function vendorRegister(VendorRequest $request)
     {
-        dd('VHEGUEI AQUI');
-        // Adicionar o user_id ao request antes de criar o vendedor
-        $validatedData = $request->validated();
-        $validatedData['user_id'] = auth()->user->id;
-
-
-        if ($validatedData->hasFile('vendor_photo')) {
-            $image = $validatedData->file('vendor_photo');
-            $imageName = 'vendor_' . $validatedData->id . '.' . $image->getClientOriginalExtension();
-            $image_path = $image->storeAs('vendor_photos', $imageName, 'public');
-            $validatedData['vendor_photo'] = 'storage/' . $image_path;
-        }
-
         try {
-            $vendor = Vendor::create($validatedData);
-            return inertia('Home', ['vendor' => $vendor]);
+            // Obter o utilizador autenticado
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json(['error' => 'Utilizador não autenticado'], 403);
+            }
+
+            // Validar os dados recebidos no request
+            $validatedData = $request->validated();
+
+            if (!isset($validatedData['phone'])) {
+                return response()->json(['error' => 'O campo phone é obrigatório e não foi enviado'], 422);
+            }
+
+            // Adicionar o user_id manualmente ao array de dados validados
+            $validatedData['user_id'] = $user->id;
+
+            // Debug: Verificar os dados recebidos
+            //dd($validatedData);
+
+            // Se houver um ficheiro de foto do vendedor
+            if ($request->hasFile('vendor_photo')) {
+                $image = $request->file('vendor_photo');
+                $imageName = 'vendor_' . $user->id . '.' . $image->getClientOriginalExtension();
+                $imagePath = $image->storeAs('vendor_photos', $imageName, 'public');
+                $validatedData['vendor_photo'] = 'storage/' . $imagePath;
+            }
+
+            // Criar o registro do vendedor na base de dados
+            Vendor::create($validatedData);
+
+            return redirect()->route('home')
+                ->with('message', 'Vendedor criado com sucesso!')
+                ->with('type', 'success');
+
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao criar o vendedor'], 500);
+            return response()->json(['error' => 'Erro ao criar o vendedor', 'details' => $e->getMessage()], 500);
         }
     }
+
+
+
 
 }

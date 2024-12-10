@@ -17,7 +17,10 @@ class VendorController extends Controller
 
     public function create()
     {
-        return inertia('RegisterVendor');
+        $user = Auth::user();
+        return inertia('RegisterVendor', [
+            'user' => $user
+        ]);
     }
 
     public function store(VendorRequest $request)

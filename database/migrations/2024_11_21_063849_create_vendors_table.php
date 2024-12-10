@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->string('nif', 20)->nullable(); // NIF (máx. 20 caracteres)
+            $table->string('nif', 20); // NIF (máx. 20 caracteres)
             $table->string('phone', 25); // Telefone com suporte a formatos internacionais
             $table->string('address', 255); // Morada
             $table->string('city', 255); // Cidade opcional

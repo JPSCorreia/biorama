@@ -31,9 +31,9 @@ class User extends Authenticatable implements CanResetPasswordContract
         'password' => 'hashed',
     ];
 
-    public function vendors()
+    public function vendor()
     {
-        return $this->hasMany(Vendor::class);
+        return $this->hasOne(Vendor::class);
     }
 
     public function homeAddresses()

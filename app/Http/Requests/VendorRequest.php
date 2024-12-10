@@ -11,7 +11,7 @@ class VendorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,11 +22,13 @@ class VendorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            // Remova esta linha:
+            // 'user_id' => 'required|exists:users,id',
+
             'nif' => 'required|max:20|unique:vendors',
             'phone' => 'required|string|max:25',
             'address' => 'required|string|max:255',
-            'city' => 'nullable|string|max:255',
+            'city' => 'string|max:255',
             'postal_code' => 'nullable|string|max:10',
             'date_of_birth' => 'required|date',
             'iban' => 'required|string|max:25',
@@ -41,6 +43,7 @@ class VendorRequest extends FormRequest
             'company_email' => 'nullable|email',
         ];
     }
+
 
     /**
      * Get the error messages for the defined validation rules.
@@ -61,7 +64,7 @@ class VendorRequest extends FormRequest
             'address.required' => 'O campo address é obrigatório',
             'address.string' => 'O campo address deve ser uma string',
             'address.max' => 'O campo address deve ter no máximo 255 caracteres',
-            'city.string' => 'O campo city deve ser uma string',
+            'city.required' => 'O campo city é obrigatório',
             'city.max' => 'O campo city deve ter no máximo 255 caracteres',
             'postal_code.string' => 'O campo postal_code deve ser uma string',
             'postal_code.max' => 'O campo postal_code deve ter no máximo 10 caracteres',
