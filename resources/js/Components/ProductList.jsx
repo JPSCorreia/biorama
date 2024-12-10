@@ -25,6 +25,7 @@ import {
 import { cartStore } from "../Stores/";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -113,58 +114,23 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-const rows = [
-    { name: "Cupcake", calories: 305, fat: 4 },
-    { name: "Donut", calories: 452, fat: 25 },
-    { name: "Eclair", calories: 262, fat: 16 },
-    { name: "Yoghurt", calories: 159, fat: 4 },
-    { name: "Gingerbread", calories: 356, fat: 16 },
-    { name: "Honeycomb", calories: 408, fat: 3 },
-    { name: "Ice cream sandwich", calories: 237, fat: 9 },
-    { name: "Jelly Bean", calories: 375, fat: 0 },
-    { name: "KitKat", calories: 518, fat: 26 },
-    { name: "Lollipop", calories: 392, fat: 0 },
-    { name: "Marshmallow", calories: 318, fat: 0 },
-    { name: "Nougat", calories: 360, fat: 19.0 },
-    { name: "Oreo", calories: 437, fat: 18.0 },
-    { name: "KitKat 2", calories: 518, fat: 26 },
-    { name: "Lollipop 2", calories: 392, fat: 0 },
-    { name: "Marshmallow 2", calories: 318, fat: 0 },
-    { name: "Nougat 2", calories: 360, fat: 19.0 },
-    { name: "Oreo 2", calories: 437, fat: 18.0 },
-    { name: "KitKat 3", calories: 518, fat: 26 },
-    { name: "Lollipop 3", calories: 392, fat: 0 },
-    { name: "Marshmallow 3", calories: 318, fat: 0 },
-    { name: "Nougat 3", calories: 360, fat: 19.0 },
-    { name: "Oreo 3", calories: 437, fat: 18.0 },
-].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
-const ProductList = observer(() => {
+const ProductList = observer(() =>{
+    const [products, setproducts] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(6);
 
-    // Avoid a layout jump when reaching the last page with empty rows.
-    // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
+    //Fecth product from API and mount
     useEffect(() => {
-        const updateRowsPerPage = () => {
-            const rowHeight = 72; // Approximate row height in px
-            const footerHeight = 80; // Approximate TableFooter height in px
-            const headerHeight = 240; // Approximate TableHead height in px
-            const availableHeight =
-                window.innerHeight - headerHeight - footerHeight;
-            const newRowsPerPage = Math.floor(availableHeight / rowHeight);
-            setRowsPerPage(newRowsPerPage - 1);
+        const fechtProducts = async () =>{
+            try {
+                const response = await axios.get("http://localhost:8000/api/products");
+                setproducts(response.data);
+            }catch (error){
+                console.error("Error ao pesquisar produtos", error);
+            }
         };
-
-        // Initial calculation
-        updateRowsPerPage();
-
-        // Update on window resize
-        window.addEventListener("resize", updateRowsPerPage);
-        return () => {
-            window.removeEventListener("resize", updateRowsPerPage);
-        };
+        fechtProducts();
     }, []);
 
     const handleChangePage = (event, newPage) => {
@@ -186,47 +152,39 @@ const ProductList = observer(() => {
     return (
         <Box style={{ height: "100%", width: "100%" }}>
             <TableContainer component={Paper}>
-                <Table
-                    sx={{ minWidth: 500 }}
-                    aria-label="custom pagination table"
-                >
+                <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
                     <StyledTableHead>
                         <TableRow>
                             <StyledTableCell>Produto</StyledTableCell>
-                            <StyledTableCell align="right">
-                                Calorias
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                                Quantidade
-                            </StyledTableCell>
+                            <StyledTableCell align="right">Stock</StyledTableCell>
+                            <StyledTableCell align="right">Imagem</StyledTableCell>
                             <StyledTableCell align="right"></StyledTableCell>
                         </TableRow>
                     </StyledTableHead>
                     <TableBody>
                         {(rowsPerPage > 0
-                            ? rows.slice(
-                                  page * rowsPerPage,
-                                  page * rowsPerPage + rowsPerPage
-                              )
-                            : rows
-                        ).map((row) => (
-                            <TableRow key={row.name}>
+                                ? products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : products
+                        ).map((product) => (
+                            <TableRow key={product.id}>
                                 <TableCell component="th" scope="row">
-                                    {row.name}
+                                    {product.name}
                                 </TableCell>
                                 <TableCell style={{ width: 160 }} align="right">
-                                    {row.calories}
+                                    10
                                 </TableCell>
                                 <TableCell style={{ width: 160 }} align="right">
-                                    {row.fat}
+                                    <img
+                                        src={product.image_link}
+
+                                        style={{width: "50px", height: "50px", objectFit: "cover"}}
+                                    />
                                 </TableCell>
-                                <TableCell style={{ width: 160 }} align="right">
+                                <TableCell style={{width: 160}} align="right">
                                     <Tooltip title="Adicionar ao carrinho">
                                         <IconButton
                                             color="textSecondary"
-                                            onClick={() =>
-                                                cartStore.addItem(row.name, 1)
-                                            }
+                                            onClick={() => cartStore.addItem(product.name, 1)}
                                         >
                                             <AddShoppingCartSharpIcon />
                                         </IconButton>
@@ -234,34 +192,15 @@ const ProductList = observer(() => {
                                 </TableCell>
                             </TableRow>
                         ))}
-                        {/* {emptyRows > 0 && (
-                        <TableRow style={{ height: (2.3 * (emptyRows + 1)) + 'rem' }}>
-                            <TableCell colSpan={6} />
-                        </TableRow>
-                    )} */}
                     </TableBody>
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                                rowsPerPageOptions={[
-                                    rowsPerPage,
-                                    // 16,
-                                    // 32,
-                                    // { label: 'All', value: -1 },
-                                ]}
+                                rowsPerPageOptions={[6, 12, 24]}
                                 colSpan={4}
-                                count={rows.length}
+                                count={products.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
-                                labelRowsPerPage="Produtos por página"
-                                slotProps={{
-                                    select: {
-                                        inputProps: {
-                                            "aria-label": "Produtos por página",
-                                        },
-                                        native: true,
-                                    },
-                                }}
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                                 ActionsComponent={TablePaginationActions}

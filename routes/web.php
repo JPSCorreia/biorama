@@ -2,10 +2,14 @@
 
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\ProductController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+
+//Teste
+
 
 // Public page routes accessible to all users
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
