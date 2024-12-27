@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
 import { ProfileInformation } from "../Components";
-import { Box, Typography } from "@mui/material";
+import {Alert, Box, Typography} from "@mui/material";
 import { usePage } from "@inertiajs/react";
 
 const Profile = observer(() => {
-    const { auth } = usePage().props;
-
+    const { auth, flash = {} } = usePage().props;
+    console.log("Auth:", auth);
+    console.log("Flash:", flash);
     return (
         <Box
             sx={{
@@ -20,7 +21,13 @@ const Profile = observer(() => {
             <Typography variant="h3" gutterBottom>
                 Perfil
             </Typography>
+            {flash.message && (
+                <Box sx={{ mb: 2 }}>
+                    <Alert severity={flash.type || "success"}>{flash.message}</Alert>
+                </Box>
+            )}
             <ProfileInformation user={auth.user} />
+            {/*console.log(auth.user)*/}
         </Box>
     );
 });

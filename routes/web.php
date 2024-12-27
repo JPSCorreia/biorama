@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ProductController;
 use Inertia\Inertia;
@@ -65,9 +66,15 @@ Route::middleware('guest')->group(function () {
 
 // Protected routes (require authentication)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/perfil', fn () => Inertia::render('Profile'))->name('profile');
+    //Rotas para o Perfil de User
+    Route::get('/perfil', [UserController::class, 'show'])->name('profile');
+    Route::get('/perfil/edit', [UserController::class, 'edit'])->name('edit_profile_user');
+    Route::put('/perfil/{user}/edit', [UserController::class, 'update'])->name('update_profile_user');
+
+
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
+    Route::post('/registarVendedor', [AuthController::class, 'vendorRegister'])->name('registarVendedor.api');
 });
 
 // API routes
@@ -82,10 +89,6 @@ Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('doten
 Route::middleware(['auth'])->group(function () {
     Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
 });
-
-Route::post('/registarVendedor', [AuthController::class, 'vendorRegister'])
-    ->middleware('auth')
-    ->name('registarVendedor.api');
 
 Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
 

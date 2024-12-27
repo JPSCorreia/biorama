@@ -3,6 +3,8 @@ import testProfileImage from "../../images/2.jpg";
 import { authStore } from "../Stores";
 import { observer } from "mobx-react";
 import { alpha } from "@mui/material/styles";
+import {router} from "@inertiajs/react";
+
 
 const ProfileInformation = observer(({ user }) => {
     return (
@@ -19,6 +21,7 @@ const ProfileInformation = observer(({ user }) => {
                         alpha(theme.palette.background.default, 0.85),
                 }}
             >
+
                 <Box
                     sx={{
                         display: "flex",
@@ -30,6 +33,7 @@ const ProfileInformation = observer(({ user }) => {
                     <Avatar
                         alt="Profile Image"
                         // src={testProfileImage}
+                        variant = "square"
                         sx={{
                             mt: 2,
                             width: 96,
@@ -42,30 +46,6 @@ const ProfileInformation = observer(({ user }) => {
                         {authStore.user?.first_name[0]}
                         {authStore.user?.last_name[0]}
                     </Avatar>
-                    <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
-                        {`${user.first_name} ${user.last_name}`}
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        width: "100%",
-                        flexDirection: "row",
-                        alignItems: "baseline",
-                    }}
-                >
-                    <Typography variant="body1" gutterBottom sx={{ mt: 2 }}>
-                        Sou um apaixonado pela sustentabilidade, ideias
-                        sustentáveis e pelo apoio ao comércio local. Acredito
-                        que pequenas ações podem ter um grande impacto no
-                        ambiente e na nossa comunidade. Gosto de descobrir novos
-                        produtos locais e apoiar produtores e agricultores
-                        regionais. Na Biorama, procuro inspirar outras pessoas a
-                        fazer escolhas mais conscientes e a valorizar o que é
-                        nosso. Quando não estou a explorar mercados e feiras
-                        locais, gosto de passar tempo na natureza e aprender
-                        mais sobre práticas de vida sustentável.
-                    </Typography>
                 </Box>
                 <Box
                     sx={{
@@ -83,7 +63,41 @@ const ProfileInformation = observer(({ user }) => {
                         {user.email}
                     </Typography>
                 </Box>
+
                 <Box
+                    sx={{
+                        display: "flex",
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "baseline",
+                        mt: 2,
+                    }}
+                >
+                    <Typography variant="h6" gutterBottom>
+                        Primeiro Nome:
+                    </Typography>
+                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                        {user.first_name}
+                    </Typography>
+                </Box>
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "baseline",
+                        mt: 2,
+                    }}
+                >
+                    <Typography variant="h6" gutterBottom>
+                        Apelido:
+                    </Typography>
+                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                        {user.last_name}
+                    </Typography>
+                </Box>
+               <Box
                     sx={{
                         display: "flex",
                         width: "100%",
@@ -99,7 +113,9 @@ const ProfileInformation = observer(({ user }) => {
                         gutterBottom
                         sx={{ mt: 1, ml: 1 }}
                     >
-                        20/01/1990
+                        {
+                            user.date_of_birth === null ? "Não Fornecida" : user.date_of_birth
+                        }
                     </Typography>
                 </Box>
                 <Box
@@ -118,28 +134,12 @@ const ProfileInformation = observer(({ user }) => {
                         gutterBottom
                         sx={{ mt: 1, ml: 1 }}
                     >
-                        +351 123 456 789
+                        {
+                            user.phone === null ? "Não Fornecido" : user.phone
+                        }
                     </Typography>
                 </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        width: "100%",
-                        flexDirection: "row",
-                        alignItems: "baseline",
-                    }}
-                >
-                    <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
-                        Cidade:
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        gutterBottom
-                        sx={{ mt: 1, ml: 1 }}
-                    >
-                        Setúbal
-                    </Typography>
-                </Box>
+
                 <Box
                     sx={{
                         display: "flex",
@@ -156,7 +156,7 @@ const ProfileInformation = observer(({ user }) => {
                         gutterBottom
                         sx={{ mt: 1, ml: 1 }}
                     >
-                        15/01/2025
+                        {user.created_at}
                     </Typography>
                 </Box>
                 <Box sx={{ alignSelf: "flex-end", height: "50px" }}>
@@ -164,6 +164,7 @@ const ProfileInformation = observer(({ user }) => {
                         <Button
                             variant="contained"
                             sx={{ mt: 2, width: "140px" }}
+                            onClick={() => router.get('/perfil/edit')}
                         >
                             Editar Perfil
                         </Button>

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -30,27 +33,41 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    public function show(User $user)
+    public function show()
     {
-        return response()->json($user);
-    }
-
-    public function edit(User $user)
-    {
-        //
-    }
-
-    public function update(Request $request, User $user)
-    {
-        $validated = $request->validate([
-            'first_name' => 'sometimes|string|max:100',
-            'last_name' => 'sometimes|string|max:100',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+        return Inertia::render('Profile', [
+            'user' => Auth::user(),
         ]);
-
-        $user->update($validated);
-        return response()->json($user);
     }
+
+    public function edit()
+    {
+        return Inertia::render('ProfileEdit', [
+            'user' => Auth::user(),
+
+        ]);
+    }
+
+    public function update(UserRequest $request)
+    {
+        $user = Auth::user();
+        try {
+            $data = $request->validated();
+            if ($request->hasFile('photo')) {
+                $photo = $request->file('photo');
+                $photoName = 'user_' . $user->id . '.' . $photo->getClientOriginalExtension();
+                $photoPath = $photo->storeAs('vendor_photos', $photoName, 'public');
+                $data['photo'] = 'storage/' . $photoPath;
+            }
+
+            $user->update($data);
+
+            return redirect()->route('profile')->with('success', 'Perfil atualizado com sucesso!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['Erro ao atualizar perfil.'])->withInput();
+        }
+    }
+
 
     public function destroy(User $user)
     {

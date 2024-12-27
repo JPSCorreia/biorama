@@ -143,8 +143,12 @@ const Navbar = observer(() => {
     ];
 
     const settings = [
-        { id: 1, name: "Perfil", link: "/perfil" },
-        { id: 2, name: "Definições", link: "/definições" },
+        { id: 1, name: "Perfil",
+            onClick: () => {
+                router.get(
+                    "/perfil");
+            },  },
+        { id: 2, name: "Definições", link: "/definições"},
         {
             id: 3,
             name: "Terminar Sessão",

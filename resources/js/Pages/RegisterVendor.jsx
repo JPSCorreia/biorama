@@ -11,7 +11,6 @@ import {
     FormControlLabel
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import {router} from "@inertiajs/react";
 
 const VendorRegister = () => {
@@ -48,7 +47,6 @@ const VendorRegister = () => {
 
         const data = createFormData(formData);
 
-        console.log(data);
         router.post('/registarVendedor', data, {
             withCredentials: true,
             headers: {
