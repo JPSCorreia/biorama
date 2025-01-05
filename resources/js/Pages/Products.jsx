@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
-import { Container, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ProductList } from "../Components";
 
 const Products = observer(() => {
     return (
-        <Container
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -18,7 +18,7 @@ const Products = observer(() => {
                 Produtos
             </Typography>
             <ProductList />
-        </Container>
+        </Box>
     );
 });
 

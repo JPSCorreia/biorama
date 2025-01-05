@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
-import { Container, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const Settings = observer(() => {
     return (
-        <Container
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -16,7 +16,7 @@ const Settings = observer(() => {
             <Typography variant="h3" gutterBottom>
                 Definições
             </Typography>
-        </Container>
+        </Box>
     );
 });
 

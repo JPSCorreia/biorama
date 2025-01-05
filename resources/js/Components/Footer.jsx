@@ -14,8 +14,9 @@ const Footer = () => {
         <Container
             sx={{
                 bgcolor: "footer.background",
-                maxWidth: "1200px",
+                // maxWidth: "1200px",
                 width: "100%",
+                minWidth: "100% !important",
                 pt: 0.25,
                 borderTop: `1px solid ${theme.palette.primary.main}`,
                 borderRadius: "5px 5px 0 0",

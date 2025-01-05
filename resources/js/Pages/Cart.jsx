@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 import { cartStore } from "../Stores/cartStore";
 import { CartList } from "../Components";
-import { Container, Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 const Cart = observer(() => {
     return (
-        <Container
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -50,7 +50,7 @@ const Cart = observer(() => {
                     </Typography>{" "}
                 </Box>
             )}
-        </Container>
+        </Box>
     );
 });
 

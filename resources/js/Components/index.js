@@ -6,5 +6,6 @@ export { default as Navbar } from './Navbar';
 export { default as ProductList } from './ProductList';
 export { default as ProfileInformation } from './ProfileInformation';
 export { default as ThemeSwitcher } from './ThemeSwitcher';
+export { default as HomeStoreCard } from './HomeStoreCard';
 
 

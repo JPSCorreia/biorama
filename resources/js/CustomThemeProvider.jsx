@@ -10,9 +10,13 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             primary: {
                 main: green[700],
             },
+            secondary: {
+                main: green[400],
+                dark: green[700],
+            },
             background: {
-                default: appStore.themeType === "dark" ? "#242424" : "#FDFDF9",
-                paper: appStore.themeType === "dark" ? "#242424" : "#FDFDF9",
+                default: appStore.themeType === "dark" ? "#242424" : "#F5F5F0",
+                paper: appStore.themeType === "dark" ? "#242424" : "#F5F5F0",
             },
             navbar: {
                 background:

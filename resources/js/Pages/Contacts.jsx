@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
-import { Container, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const Contacts = observer(() => {
     return (
-        <Container
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -16,7 +16,7 @@ const Contacts = observer(() => {
             <Typography variant="h3" gutterBottom>
                 Contactos
             </Typography>
-        </Container>
+        </Box>
     );
 });
 

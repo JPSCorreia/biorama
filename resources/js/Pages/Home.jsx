@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button, Alert, Fade } from "@mui/material";
+import { Box, Container, Typography, Button, Alert, Fade, useTheme, useMediaQuery } from "@mui/material";
 import { HomeMap } from "../Components";
 import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
@@ -9,6 +9,8 @@ import { NearbyStores } from "../Components/NearbyStores";
 const Home = observer(() => {
     const { auth, flash = {} } = usePage().props;
     const isAuthenticated = !!auth?.user;
+    const theme = useTheme();
+    const isNotLargeScreen = useMediaQuery(theme.breakpoints.down("lg"));
 
     const vendorRegister = () => {
       router.get("/vendedores/registo");
@@ -66,8 +68,10 @@ const Home = observer(() => {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
+                // width: "100%",
+                minWidth: "100%",
                 height: "100%",
+
                 marginTop: "40px !important",
             }}
         >
@@ -102,6 +106,10 @@ const Home = observer(() => {
             {/* Caixa "Click" no topo */}
             <Box
                 sx={{
+                    display: "flex",
+                    flexDirection: isNotLargeScreen ? "column" : "row",
+                    alignItems: "center",
+                    justifyContent: "center",
                     bgcolor: "primary.main",
                     color: "white",
                     p: 2,
@@ -109,15 +117,18 @@ const Home = observer(() => {
                     mb: 4,
                 }}
             >
-                <Typography variant="h4">
+                <Typography variant="h4" sx={{ mr: 3 }}>
                     Queres divulgar o teu negócio?
-                    <Button
+                </Typography>
+                <Button
                         variant="contained"
                         onClick={vendorRegister}
+                        sx={{ backgroundColor: theme.palette.secondary.main,         '&:hover': { // Hover state
+                            backgroundColor: theme.palette.secondary.dark, // Darker shade on hover
+                        }, }}
                     >
                         Cria agora o teu espaço!
-                    </Button>
-                </Typography>
+                </Button>
             </Box>
 
             {/* Mapa */}
@@ -135,17 +146,6 @@ const Home = observer(() => {
                 </Typography>
                 <NearbyStores radius={10000} />
             </Box>
-
-            {/* Botão de Teste */}
-            <Button
-                sx={{ mt: 4 }}
-                variant="contained"
-                onClick={() => {
-                    console.log("Auth state:", isAuthenticated);
-                }}
-            >
-                Testar User Auth
-            </Button>
         </Container>
     );
 });

@@ -1,5 +1,4 @@
 import { Avatar, Button, Paper, Typography, Box } from "@mui/material";
-import testProfileImage from "../../images/2.jpg";
 import { authStore } from "../Stores";
 import { observer } from "mobx-react";
 import { alpha } from "@mui/material/styles";

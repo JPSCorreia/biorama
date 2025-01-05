@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
-import { Box, CircularProgress, useTheme, Container } from "@mui/material";
+import { Box, CircularProgress, useTheme } from "@mui/material";
 import { StoreSharp as StoreSharpIcon } from "@mui/icons-material";
 import {
     MapContainer,
