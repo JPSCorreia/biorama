@@ -3,7 +3,7 @@ import { Container, Box, useMediaQuery } from "@mui/material";
 import { Navbar, Footer } from "./Components";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
-const App = observer(({ appStore, children, auth }) => {
+const App = observer(({ children, auth }) => {
     const theme = useTheme();
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -25,7 +25,6 @@ const App = observer(({ appStore, children, auth }) => {
                     position: "fixed",
                     top: 0,
                     left: 0,
-                    width: "100%",
                     minHeight: "100vh",
                     zIndex: 1,
                     width: "100% !important",

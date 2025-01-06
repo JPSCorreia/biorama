@@ -8,6 +8,7 @@ import {router} from "@inertiajs/react";
 const ProfileInformation = observer(({ user }) => {
     return (
         <>
+        {console.log(user)}
             <Paper
                 elevation={4}
                 sx={{

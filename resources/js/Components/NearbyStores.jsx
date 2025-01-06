@@ -17,8 +17,6 @@ export const NearbyStores = ({ radius }) => {
 
     useEffect(() => {
         const fetchNearbyStores = async (latitude, longitude) => {
-            console.log("Latitude:", latitude);
-            console.log("Longitude:", longitude);
             try {
                 const response = await axios.get("/stores/nearby", {
                     params: { latitude, longitude, radius: radius },
@@ -41,13 +39,11 @@ export const NearbyStores = ({ radius }) => {
                     fetchNearbyStores(latitude, longitude);
                 },
                 () => {
-                    console.error("Não foi possível obter a localização.");
                     setError("Não foi possível obter a localização.");
                     setLoading(false);
                 }
             );
         } else {
-            console.error("Geolocalização não é suportada neste navegador.");
             setError("Geolocalização não é suportada neste navegador.");
             setLoading(false);
         }
@@ -55,7 +51,6 @@ export const NearbyStores = ({ radius }) => {
 
     if (loading) {
         return (
-            console.log("Loading"),
             (
                 <Box
                     sx={{
@@ -76,7 +71,6 @@ export const NearbyStores = ({ radius }) => {
 
     if (error) {
         return (
-            console.log("Error"),
             (
                 <Box
                     sx={{
@@ -93,7 +87,6 @@ export const NearbyStores = ({ radius }) => {
 
     if (!nearbyStores.length) {
         return (
-            console.log("No stores"),
             (
                 <Box sx={{ textAlign: "center", padding: 2 }}>
                     <Typography variant="body1">
@@ -105,7 +98,6 @@ export const NearbyStores = ({ radius }) => {
     }
 
     return (
-        console.log("Stores"),
         (
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "space-between" }}>

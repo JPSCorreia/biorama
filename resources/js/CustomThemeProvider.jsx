@@ -25,7 +25,7 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             },
             footer: {
                 background:
-                    appStore.themeType === "dark" ? "#242424" : green[700],
+                    appStore.themeType === "dark" ? "#373737" : green[700],
                 text: "white",
             },
             card: {

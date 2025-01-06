@@ -1,4 +1,13 @@
-import { Box, Container, Typography, Button, Alert, Fade, useTheme, useMediaQuery } from "@mui/material";
+import {
+    Box,
+    Container,
+    Typography,
+    Button,
+    Alert,
+    Fade,
+    useTheme,
+    useMediaQuery,
+} from "@mui/material";
 import { HomeMap } from "../Components";
 import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
@@ -8,12 +17,12 @@ import { NearbyStores } from "../Components/NearbyStores";
 
 const Home = observer(() => {
     const { auth, flash = {} } = usePage().props;
-    const isAuthenticated = !!auth?.user;
     const theme = useTheme();
     const isNotLargeScreen = useMediaQuery(theme.breakpoints.down("lg"));
+    const isVendor = auth.isVendor;
 
     const vendorRegister = () => {
-      router.get("/vendedores/registo");
+        router.get("/vendedores/registo");
     };
 
     useEffect(() => {
@@ -117,18 +126,25 @@ const Home = observer(() => {
                     mb: 4,
                 }}
             >
+                {console.log(auth.user)}
                 <Typography variant="h4" sx={{ mr: 3 }}>
-                    Queres divulgar o teu negócio?
+                    {isVendor ? `Bemvindo, ${auth.user.first_name} ${auth.user.last_name}!` : "Queres divulgar o teu negócio?"}
                 </Typography>
-                <Button
+                {isVendor ? null : (
+                    <Button
                         variant="contained"
                         onClick={vendorRegister}
-                        sx={{ backgroundColor: theme.palette.secondary.main,         '&:hover': { // Hover state
-                            backgroundColor: theme.palette.secondary.dark, // Darker shade on hover
-                        }, }}
+                        sx={{
+                            backgroundColor: theme.palette.secondary.main,
+                            "&:hover": {
+                                // Hover state
+                                backgroundColor: theme.palette.secondary.dark, // Darker shade on hover
+                            },
+                        }}
                     >
                         Cria agora o teu espaço!
-                </Button>
+                    </Button>
+                )}
             </Box>
 
             {/* Mapa */}
@@ -140,8 +156,13 @@ const Home = observer(() => {
             </Box>
 
             {/* Lojas próximas */}
-            <Box sx={{ bgcolor: "primary.main", mt: 4, p: 2 }}>
-                <Typography variant="h4" gutterBottom textAlign="center" color="white">
+            <Box sx={{ bgcolor: "primary.main", mt: 3, p: 2, mb: 4 }}>
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    textAlign="center"
+                    color="white"
+                >
                     Lojas Próximas
                 </Typography>
                 <NearbyStores radius={10000} />

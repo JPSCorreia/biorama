@@ -32,6 +32,8 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        $user->assignRole('user');
+
         // Auto login
         Auth::login($user);
 
@@ -152,7 +154,7 @@ class AuthController extends Controller
     {
         try {
             // Obter o utilizador autenticado
-            $user = auth()->user();
+            $user = Auth::user();
 
             if (!$user) {
                 return response()->json(['error' => 'Utilizador não autenticado'], 403);
@@ -181,6 +183,9 @@ class AuthController extends Controller
 
             // Criar o registro do vendedor na base de dados
             Vendor::create($validatedData);
+
+            // Atribuir o papel de vendedor ao utilizador
+            $user->assignRole('vendor');
 
             return redirect()->route('home')
                 ->with('message', 'Vendedor criado com sucesso!')

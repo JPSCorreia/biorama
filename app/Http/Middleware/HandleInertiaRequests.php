@@ -12,6 +12,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
+                'isVendor' => $request->user() ? $request->user()->hasRole('vendor') : false,
             ],
             'initialAuth' => [
                 'user' => $request->user(),
@@ -22,4 +23,4 @@ class HandleInertiaRequests extends Middleware
             ],
         ]);
     }
-} 
+}

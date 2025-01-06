@@ -30,7 +30,6 @@ import { appStore, cartStore, authStore } from "../Stores";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { router } from "@inertiajs/react";
-import testProfileImage from "../../images/2.jpg";
 
 const Navbar = observer(() => {
     const isAuthenticated = authStore.isAuthenticated;
@@ -62,7 +61,7 @@ const Navbar = observer(() => {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 5,
-        width: true ? "425px" : "425px",
+        width: true ? "750px" : "425px",
         [theme.breakpoints.down("lg")]: {
             width: "100%",
         },
