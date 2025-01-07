@@ -94,6 +94,13 @@ const Navbar = observer(() => {
         },
     }));
 
+    const [query, setQuery] = useState("");
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault(); // Evita refresh da página
+        router.get("/pesquisa", { query });
+    };
+
     const pages = [
         {
             name: "Home",
@@ -335,16 +342,18 @@ const Navbar = observer(() => {
                             </Tooltip>
                         ))}
                     </Box>
-
-                    <Search sx={{ marginRight: 1.75, marginLeft: 0.75 }}>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{ "aria-label": "search" }}
-                        />
-                    </Search>
+                    <Box component="form" onSubmit={handleSearchSubmit}>
+                        <Search sx={{ marginRight: 1.75, marginLeft: 0.75 }}>
+                            <SearchIconWrapper>
+                                <SearchIcon />
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                placeholder="Pesquisar..."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                            />
+                        </Search>
+                    </Box>
                     <Tooltip title={cart.name}>
                         <Button
                             key={cart.name}
