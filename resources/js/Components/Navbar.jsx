@@ -401,7 +401,7 @@ const Navbar = observer(() => {
                                         sx={{
                                             width: 45,
                                             height: 45,
-                                            bgcolor: "background.default",
+                                            bgcolor: "background.secondary",
                                             color: "primary.main",
                                             fontSize: "1.5rem",
                                         }}

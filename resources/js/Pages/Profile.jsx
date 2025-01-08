@@ -18,16 +18,12 @@ const Profile = observer(() => {
                 // marginBottom: "5%",
             }}
         >
-            <Typography variant="h3" gutterBottom>
-                Perfil
-            </Typography>
             {flash.message && (
                 <Box sx={{ mb: 2 }}>
                     <Alert severity={flash.type || "success"}>{flash.message}</Alert>
                 </Box>
             )}
             <ProfileInformation user={auth.user} />
-            {/*console.log(auth.user)*/}
         </Box>
     );
 });

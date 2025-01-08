@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeAddressController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
@@ -75,6 +76,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
     Route::post('/registarVendedor', [AuthController::class, 'vendorRegister'])->name('registarVendedor.api');
+
+    Route::post('/adicionar-morada', [HomeAddressController::class, 'store'])->name('add_address');
+    Route::post('/editar-morada/{morada_id}', [HomeAddressController::class, 'update'])->name('edit_address');
+
+    Route::patch('/addresses/{id}/set-morada-fav', [HomeAddressController::class, 'setPrimary']);
+
+
 });
 
 // API routes

@@ -35,8 +35,10 @@ class UserController extends Controller
 
     public function show()
     {
+        $user = Auth::user();
+        $user->load('home_addresses');
         return Inertia::render('Profile', [
-            'user' => Auth::user(),
+            'user' => $user,
         ]);
     }
 

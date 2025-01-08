@@ -40,7 +40,7 @@ class User extends Authenticatable implements CanResetPasswordContract
         return $this->hasOne(Vendor::class);
     }
 
-    public function homeAddresses()
+    public function home_addresses()
     {
         return $this->hasMany(HomeAddress::class);
     }
