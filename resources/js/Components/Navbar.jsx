@@ -30,6 +30,7 @@ import { appStore, cartStore, authStore } from "../Stores";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { router } from "@inertiajs/react";
+import SearchBar from "./SearchBar";
 
 const Navbar = observer(() => {
     const isAuthenticated = authStore.isAuthenticated;
@@ -53,7 +54,7 @@ const Navbar = observer(() => {
     };
     const theme = useTheme();
 
-    const Search = styled("div")(({ theme }) => ({
+    /*const Search = styled("div")(({ theme }) => ({
         position: "relative",
         borderRadius: theme.shape.borderRadius,
         backgroundColor: alpha(theme.palette.common.white, 0.15),
@@ -75,9 +76,9 @@ const Navbar = observer(() => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-    }));
+    }));*/
 
-    const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    /*const StyledInputBase = styled(InputBase)(({ theme }) => ({
         color: "inherit",
         width: "100%",
         "& .MuiInputBase-input": {
@@ -92,7 +93,14 @@ const Navbar = observer(() => {
                 },
             },
         },
-    }));
+    }));*/
+
+    /*const [query, setQuery] = useState("");
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault(); // Evita refresh da página
+        router.get("/pesquisa", { query });
+    };*/
 
     const pages = [
         {
@@ -335,16 +343,9 @@ const Navbar = observer(() => {
                             </Tooltip>
                         ))}
                     </Box>
-
-                    <Search sx={{ marginRight: 1.75, marginLeft: 0.75 }}>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{ "aria-label": "search" }}
-                        />
-                    </Search>
+                    <Box sx={{ marginLeft: "auto", width: "300px" }}>
+                        <SearchBar />
+                    </Box>
                     <Tooltip title={cart.name}>
                         <Button
                             key={cart.name}

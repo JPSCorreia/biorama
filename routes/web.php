@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeAddressController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
@@ -29,7 +30,8 @@ Route::get('/loja/{id}', function ($id) {
         ['id' => 4, 'name' => 'Loja Fictícia 4', 'description' => 'Frutas e vegetais frescos'],
         ['id' => 5, 'name' => 'Loja Fictícia 5', 'description' => 'Produtos artesanais de alta qualidade'],
     ];
-
+//Route for searches
+Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa');
     $store = collect($stores)->firstWhere('id', $id);
 
     if (!$store) {
@@ -101,3 +103,7 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
 
 Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);
+
+
+Route::get('/pesquisa', [SearchController::class, 'index'])->name('pesquisa');
+
