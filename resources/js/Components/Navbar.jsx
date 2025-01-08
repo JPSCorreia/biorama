@@ -12,7 +12,7 @@ import {
     MenuItem,
     Badge,
     useMediaQuery,
-    InputBase,
+    InputBase, Switch,
 } from "@mui/material";
 import {
     Menu as MenuIcon,
@@ -34,6 +34,15 @@ import SearchBar from "./SearchBar";
 
 const Navbar = observer(() => {
     const isAuthenticated = authStore.isAuthenticated;
+
+    //Controlo do togle de dashboard
+    const userRoles = authStore.user?.roles || [];
+    const hasRole = (roleName) => {
+        return userRoles.some((role) => role.name === roleName); // Verifica se existe uma role com o nome fornecido
+    };
+
+
+
 
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -439,6 +448,7 @@ const Navbar = observer(() => {
                                         zIndex: 9999,
                                     }}
                                 >
+
                                     <Box textAlign="center">
                                         {tema.name === "Tema" ? (
                                             <Box
@@ -459,6 +469,12 @@ const Navbar = observer(() => {
                                             tema.name
                                         )}
                                     </Box>
+                                    {hasRole("vendor") && (
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                            <Typography>Modo Dashboard</Typography>
+                                            <Switch color="secondary" />
+                                        </Box>
+                                    )}
                                 </MenuItem>
                                 {settings.map((setting) => (
                                     <MenuItem
