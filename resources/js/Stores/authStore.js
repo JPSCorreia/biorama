@@ -17,6 +17,7 @@ class AuthStore {
         this.isAuthenticated = false;
         this.user = null;
     }
+
 }
 
 export const authStore = new AuthStore();
