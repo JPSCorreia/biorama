@@ -109,3 +109,5 @@ Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);
 
 Route::get('/pesquisa', [SearchController::class, 'index'])->name('pesquisa');
 
+Route::get('/Vendor/info', fn () => Inertia::render('Vendors'))->name('vendor.info');
+

@@ -1,7 +1,11 @@
 import { observer } from "mobx-react";
 import { Container, Typography } from "@mui/material";
 
+import { usePage } from "@inertiajs/react";
+
 const Vendors = observer(() => {
+    const { auth = {} } = usePage().props;
+    console.log("Auth:", auth);
     return (
         <Container
             sx={{
@@ -16,6 +20,7 @@ const Vendors = observer(() => {
             <Typography variant="h3" gutterBottom>
                 Vendedores
             </Typography>
+
         </Container>
     );
 });

@@ -6,13 +6,18 @@ use App\Http\Requests\VendorRequest;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class VendorController extends Controller
 {
 
     public function index()
     {
-        return response()->json(Vendor::with('user')->get());
+        $user = Auth::user();
+        return Inertia::render('Vendors', [
+            'user' => $user
+        ]);
+
     }
 
     public function create()

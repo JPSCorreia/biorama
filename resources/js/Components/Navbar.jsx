@@ -44,12 +44,26 @@ const Navbar = observer(() => {
     const[vendorMode, setVendorMode] = useState(false); //controla o estado  do toggle
 
     const handleToggleChange = (event) => {
-        console.log("Switch clicado:", event.target.checked)
-        setVendorMode(event.target.checked);
-    };//Actualiza o estado ao alterar o Toggle
+        const isChecked = event.target.checked; // Verifica se o toggle foi ativado/desativado
+
+        setVendorMode(isChecked); // Atualiza o estado local
+
+        localStorage.setItem("vendorMode", JSON.stringify(isChecked)); // Guarda o estado no localStorage
+
+        if (isChecked) {
+            // Redireciona para a página venedor
+            router.get("/Vendor/info");
+        } else {
+            // Redireciona para homr
+            router.get("/");
+        }
+    };
     useEffect(() => {
         setVendorMode(false); // Redefine para `false` quando o utilizador muda
     }, [authStore.user]);
+
+    //condição para mostrar pagina de VendorInfo
+
 
 
 
