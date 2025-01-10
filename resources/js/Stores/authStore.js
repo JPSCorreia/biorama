@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import {homeAddressStore} from "@/Stores/homeAddressStore.js";
 
 class AuthStore {
     user = null;
@@ -11,6 +12,7 @@ class AuthStore {
     updateAuth(auth) {
         this.isAuthenticated = !!auth?.user;
         this.user = auth?.user || null;
+        this.user === null ? homeAddressStore.clearAddresses() : homeAddressStore.fetchAddresses();
     }
 
     clearAuth() {

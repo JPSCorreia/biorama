@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\HomeAddressRequest;
+use App\Http\Resources\HomeAddressResource;
 use App\Models\HomeAddress;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,30 +12,22 @@ class HomeAddressController extends Controller
 {
     public function index()
     {
-        return response()->json(HomeAddress::all());
+        $user = User::with('home_addresses')->find(auth()->id());
+        $addresses = $user->home_addresses;
+        return response()->json($addresses);
     }
 
-    public function store(Request $request)
+    public function store(HomeAddressRequest $request)
     {
-        // Valida os dados recebidos
-        $validated = $request->validate([
-            'address_name' => 'required|string|max:100',
-            'phone_number' => 'nullable|string|max:15',
-            'street_address' => 'required|string|max:255',
-            'postal_code' => 'required|string|max:10',
-            'city' => 'required|string|max:50',
-            'is_primary' => 'boolean',
-            'comment' => 'nullable|string',
-        ]);
+        // Validação dos dados recebidos
+        $validated = $request->validated();
 
-        // Adiciona o `user_id` automaticamente
-        $validated['user_id'] = auth()->id();
+        $address = HomeAddress::create($validated);
 
-        // Cria a morada
-        HomeAddress::create($validated);
-        $user = User::with('home_addresses')->find(auth()->id());
-
-        return response()->json(['message' => 'Morada criada com sucesso!', 'data' => $user], 201);
+        return response()->json([
+            'message' => 'Morada criada com sucesso!',
+            'data' => new HomeAddressResource($address),
+        ], 201);
     }
 
     public function show(HomeAddress $homeAddress)
@@ -41,19 +35,12 @@ class HomeAddressController extends Controller
         return response()->json($homeAddress);
     }
 
-    public function update(Request $request, HomeAddress $homeAddress)
+    public function update(HomeAddressRequest $request, $id)
     {
+        $homeAddress = HomeAddress::findOrFail($id);
         // Validação dos dados recebidos
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'address_name' => 'required|string|max:100',
-            'phone_number' => 'nullable|string|max:15',
-            'street_address' => 'required|string|max:255',
-            'postal_code' => 'required|string|max:10',
-            'city' => 'required|string|max:50',
-            'is_primary' => 'nullable|boolean',
-            'comment' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
+
         // Se 'is_primary' for true, garantir que outras moradas do mesmo utilizador sejam desmarcadas
         if (!empty($validated['is_primary'])) {
             HomeAddress::where('user_id', $homeAddress->user_id)
@@ -66,16 +53,20 @@ class HomeAddressController extends Controller
         $homeAddress->save();
 
         // Retornar a morada atualizada como resposta JSON
-        return response()->json($homeAddress, 200);
+        return response()->json([
+            'message' => 'Morada atualizada com sucesso',
+            'data' => new HomeAddressResource($homeAddress),
+        ], 200);
     }
 
-
-
-    public function destroy(HomeAddress $homeAddress)
+    public function destroy($id)
     {
+        $homeAddress = HomeAddress::findOrFail($id);
         $homeAddress->delete();
-        return response()->json(null, 204);
+        $homeAddress->save();
+        return response()->json(null, 200);
     }
+
 
     public function setPrimary($id)
     {

@@ -1,39 +1,53 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import {useState} from "react";
+import {
+    Box,
+    Button,
+    FormControlLabel,
+    Modal,
+    Switch,
+    TextField,
+    Typography,
+    useTheme,
+    useMediaQuery,
+    IconButton
+} from "@mui/material";
+
+import CloseIcon from '@mui/icons-material/Close';
+import { useState } from "react";
 import axios from "axios";
-import {FormControlLabel, Switch} from "@mui/material";
+import { homeAddressStore } from "@/Stores/index.js";
+import {usePage} from "@inertiajs/react";
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
-
-const AddressModal = ({ open, handleClose, user }) => {
+const AddressModal = ({ open, handleClose}) => {
+    const {auth} = usePage().props;
+    const theme = useTheme();
     const [postalCode, setPostalCode] = useState('');
-    const [address_name, setAddressName] = useState('');
-    const [street_address, setStreet] = useState('');
+    const [addressName, setAddressName] = useState('');
+    const [streetAddress, setStreetAddress] = useState('');
     const [city, setCity] = useState('');
-    const [phone_number, setPhoneNumber] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [comment, setComment] = useState('');
+    const [isPrimary, setIsPrimary] = useState(false);
     const [isReadOnly, setIsReadOnly] = useState(true);
+
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+    const resetForm = () => {
+        setPostalCode('');
+        setAddressName('');
+        setStreetAddress('');
+        setCity('');
+        setPhoneNumber('');
+        setComment('');
+        setIsPrimary(false);
+        setIsReadOnly(true);
+    };
 
 
     const handlePostalCodeChange = async (e) => {
         const value = e.target.value;
         setPostalCode(value);
 
-        // Regex para validar formato ####-###
         const postalCodeRegex = /^\d{4}-\d{3}$/;
         if (postalCodeRegex.test(value)) {
             const [cp4, cp3] = value.split('-');
@@ -46,12 +60,9 @@ const AddressModal = ({ open, handleClose, user }) => {
 
                 if (response.status === 200) {
                     const data = response.data[0];
-
-                    // Verifica os dados e atualiza o estado
-                    setStreet(data.morada); // Certifica que "morada" existe
-                    console.log(data.morada);
-                    setCity(data.distrito || ''); // Certifica que "distrito" existe
-                    setIsReadOnly(false); // Permite edição se os dados forem válidos
+                    setStreetAddress(data.morada || '');
+                    setCity(data.distrito || '');
+                    setIsReadOnly(false);
                 } else {
                     console.error('Erro ao buscar dados da API:', response.status);
                 }
@@ -59,8 +70,7 @@ const AddressModal = ({ open, handleClose, user }) => {
                 console.error('Erro no pedido à API:', error);
             }
         } else {
-            // Limpar campos se o formato do código postal for inválido
-            setStreet('');
+            setStreetAddress('');
             setCity('');
             setIsReadOnly(true);
         }
@@ -70,20 +80,22 @@ const AddressModal = ({ open, handleClose, user }) => {
         event.preventDefault();
 
         const formData = {
-            address_name: address_name, // Nome da morada
-            phone_number: phone_number || null, // Telefone (opcional)
-            street_address: street_address, // Altera para `street_address`
+            user_id: auth.user.id,
+            address_name: addressName,
+            phone_number: phoneNumber || null,
+            street_address: streetAddress,
             postal_code: postalCode,
             city: city,
-            is_primary: !!user.home_address?.is_primary, // true ou false
-            comment: comment || null, // Comentário (opcional)
+            is_primary: isPrimary,
+            comment: comment || null,
         };
 
-        console.log('Form Data:', formData);
         try {
             const response = await axios.post('/adicionar-morada', formData);
             if (response.status === 201) {
-                console.log('Morada criada com sucesso!', response.data);
+                console.log('Dados enviados para o store', response.data);
+                homeAddressStore.addAddress(response.data.data);
+                resetForm();
                 handleClose();
             }
         } catch (error) {
@@ -91,19 +103,65 @@ const AddressModal = ({ open, handleClose, user }) => {
         }
     };
 
-
     return (
-        <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
-            <Box sx={style}>
-                <Typography id="modal-title" variant="h6" component="h2">
-                    Criar Morada
-                </Typography>
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            <Box sx={{
+
+                display: 'flex',
+                flexDirection: 'column',
+                width: isSmallScreen ? '80%' : '30%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                m: 'auto',
+                padding : isSmallScreen ? '10px' : '20px',
+                borderRadius : "10px",
+                backgroundColor: 'background.paper',
+
+
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                    }}
+                >
+                    <Typography
+                        id="modal-title"
+                        variant="h5"
+                        component="h2"
+
+                        sx={{
+                            fontWeight: 'bold',
+                            fontSize: '1.5rem',
+                        }}
+                    >
+                        Criar Morada
+                    </Typography>
+                    <IconButton
+                        onClick={handleClose}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
                         margin="normal"
                         label="Código Postal"
-                        name="postal_code"
                         value={postalCode}
                         onChange={handlePostalCodeChange}
                         required
@@ -112,76 +170,111 @@ const AddressModal = ({ open, handleClose, user }) => {
                         fullWidth
                         margin="normal"
                         label="Nome da Morada"
-                        name="address_name"
-                        value={address_name} // Estado que controla este campo
-                        onChange={(e) => setAddressName(e.target.value)} // Atualiza o estado
-                        InputProps={{
-                            readOnly: isReadOnly,
+                        value={addressName}
+                        onChange={(e) => setAddressName(e.target.value)}
+                        InputProps={{ readOnly: isReadOnly }}
+                        disabled={isReadOnly}
+                        required
+
+                        sx={{
+                            backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent', // Fundo cinzento claro com opacidade
+                            '& .MuiInputBase-root': {
+                                backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+                            },
                         }}
                     />
                     <TextField
                         fullWidth
                         margin="normal"
                         label="Rua"
-                        name="street_address"
-                        value={street_address} // Estado que controla este campo
-                        InputProps={{
-                            readOnly: isReadOnly,
+                        value={streetAddress}
+                        InputProps={{ readOnly: isReadOnly }}
+                        required
+                        disabled={isReadOnly}
+
+                        sx={{
+                            backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent', // Fundo cinzento claro com opacidade
+                            '& .MuiInputBase-root': {
+                                backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+                            },
                         }}
+
                     />
                     <TextField
                         fullWidth
                         margin="normal"
                         label="Cidade"
-                        name="city"
-                        value={city} // Estado que controla este campo
-                        InputProps={{
-                            readOnly: isReadOnly,
+                        value={city}
+                        InputProps={{ readOnly: isReadOnly }}
+                        required
+                        disabled={isReadOnly}
+                        sx={{
+                            backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent', // Fundo cinzento claro com opacidade
+                            '& .MuiInputBase-root': {
+                                backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+                            },
                         }}
+
                     />
                     <TextField
                         fullWidth
                         margin="normal"
-                        label="Contacto"
-                        name="phone_number"
-                        value={phone_number} // Estado que controla este campo
-                        onChange={(e) => setPhoneNumber(e.target.value)} // Atualiza o estado
-                        InputProps={{
-                            readOnly: isReadOnly,
+                        label="Nrº Telemóvel"
+                        value={phoneNumber}
+                        InputProps={{ readOnly: isReadOnly }}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        disabled={isReadOnly}
+                        sx={{
+                            backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent', // Fundo cinzento claro com opacidade
+                            '& .MuiInputBase-root': {
+                                backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+                            },
                         }}
+
                     />
-                    {
-                        user.home_address > 1 ?? (
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={!!user.home_address?.is_primary} // true ou false
-                                        name="is_primary"
-                                        disabled={isReadOnly} // Desativa se for apenas leitura
-                                    />
-                                }
-                                label="Morada favorita?"
-                            />
-                        )
-                    }
                     <TextField
                         fullWidth
                         margin="normal"
                         label="Comentário"
-                        name="comment"
-                        value={comment} // Estado que controla este campo
-                        onChange={(e) => setComment(e.target.value)} // Atualiza o estado
-                        InputProps={{
-                            readOnly: isReadOnly,
+                        value={comment}
+                        InputProps={{ readOnly: isReadOnly }}
+                        onChange={(e) => setComment(e.target.value)}
+                        disabled={isReadOnly}
+                        sx={{
+                            backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent', // Fundo cinzento claro com opacidade
+                            '& .MuiInputBase-root': {
+                                backgroundColor: isReadOnly ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+                            },
+                            border: isReadOnly ? 'none': '1px solid #e0e0e0',
                         }}
+
                     />
-                    <Box sx={{mt: 2}}>
-                        <Button type="submit" variant="contained" color="primary" disabled={isReadOnly}>
+                    {!isReadOnly && (
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={isPrimary}
+                                    onChange={(e) => setIsPrimary(e.target.checked)}
+                                />
+                            }
+                            label="Morada Favorita?"
+                        />
+                    )}
+                    <Box sx={{ mt: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            disabled={isReadOnly}
+
+                            sx={{
+                                width: '25%',
+                            }}
+                        >
                             Criar
                         </Button>
                     </Box>
                 </form>
-
             </Box>
         </Modal>
     );
