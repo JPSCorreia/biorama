@@ -71,8 +71,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     //Rotas para o Perfil de User
     Route::get('/perfil', [UserController::class, 'show'])->name('profile');
-    Route::get('/perfil/edit', [UserController::class, 'edit'])->name('edit_profile_user');
-    Route::put('/perfil/{user}/edit', [UserController::class, 'update'])->name('update_profile_user');
+    Route::post('/editar-perfil/{user}', [UserController::class, 'update'])->name('update_profile_user');
 
 
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
@@ -83,10 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/adicionar-morada', [HomeAddressController::class, 'store'])->name('add_address');
     Route::post('/editar-morada/{morada}', [HomeAddressController::class, 'update'])->name('edit_address');
     Route::delete('/del-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
-
     Route::patch('/morada/{id}/set-morada-fav', [HomeAddressController::class, 'setPrimary']);
-
-
 });
 
 // API routes

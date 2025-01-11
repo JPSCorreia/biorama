@@ -23,7 +23,7 @@ const Profile = observer(() => {
                     <Alert severity={flash.type || "success"}>{flash.message}</Alert>
                 </Box>
             )}
-            <ProfileInformation user={auth.user} />
+            <ProfileInformation />
         </Box>
     );
 });

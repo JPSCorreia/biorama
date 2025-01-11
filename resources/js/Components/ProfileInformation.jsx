@@ -13,23 +13,34 @@ import {
 } from "@mui/material";
 import { authStore, homeAddressStore } from "../Stores";
 import { observer } from "mobx-react";
-import { router } from "@inertiajs/react";
 import AddressModal from "./AddressModal.jsx";
 import AddressCard from "./AddressCard.jsx";
+import ProfileEditModal from "./ProfileEditModal.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-const ProfileInformation = observer(({ user }) => {
+const ProfileInformation = observer(() => {
+
+    const user = authStore.user;
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
-    const [open, setOpen] = React.useState(false); // Estado para abrir o modal
+
+
+    // Estados separados para cada modal
+    const [profileModalOpen, setProfileModalOpen] = React.useState(false);
+    const [addressModalOpen, setAddressModalOpen] = React.useState(false);
+
+    // Funções para abrir/fechar modais
+    const handleProfileModalOpen = () => setProfileModalOpen(true);
+    const handleProfileModalClose = () => setProfileModalOpen(false);
+
+    const handleAddressModalOpen = () => setAddressModalOpen(true);
+    const handleAddressModalClose = () => setAddressModalOpen(false);
+
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-
-    const handleOpen = () => setOpen(true); // Abrir modal para adicionar morada
-    const handleClose = () => setOpen(false); // Fechar modal
 
     const calculateRegisterTime = (createdDate) => {
         const actualDate = new Date();
@@ -69,6 +80,7 @@ const ProfileInformation = observer(({ user }) => {
             <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", width: "100%", mb: 4 }}>
                 <Avatar
                     alt="Profile Image"
+                    src = {authStore.user?.photo || ""}
                     variant = {isSmallScreen ? "" : "rounded"}
                     sx={{
                         width: isSmallScreen ? 90 : 110,
@@ -119,16 +131,17 @@ const ProfileInformation = observer(({ user }) => {
                                     mr: 6,
                                     display: isSmallScreen ? "none" : "block",
                                 }}
-                                onClick={() => router.get("/perfil/edit")}
+                                onClick={handleProfileModalOpen}
                             >
                                 Editar Perfil
                             </Button>
                         )}
+                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} user={user}/>
                     </Box>
                 </Box>
             </Box>
 
-            {/* Dados Pessoais BOTAO SO NO ECRÃ PEQUENO*/}
+            {/* Dados Pessoais BOTAO NO ECRÃ PEQUENO*/}
             <Box
                 sx={{
                     width: isSmallScreen ? "100%" : "79%",
@@ -152,7 +165,7 @@ const ProfileInformation = observer(({ user }) => {
                         {authStore.isAuthenticated && (
                             <IconButton
                                 aria-label="edit"
-                                onClick={() => router.get("/perfil/edit")}
+                                onClick={handleProfileModalOpen}
                                 sx={{
                                     display: isSmallScreen ? "block" : "none",
                                     color: theme.palette.primary.main,
@@ -167,6 +180,7 @@ const ProfileInformation = observer(({ user }) => {
                                 />
                             </IconButton>
                         )}
+                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} user={user}/>
                     </Box>
                 </Box>
                 <Typography sx={{
@@ -272,13 +286,13 @@ const ProfileInformation = observer(({ user }) => {
                                 flexDirection: isSmallScreen ? "column" : "row",
                                 alignItems: isSmallScreen ? "baseline" : "center",
                                 flexWrap: "wrap",
-                                m: isSmallScreen ? "auto" : 0, // Margem negativa para compensar a margem do último filho
+                                m: isSmallScreen ? "auto" : 0,
                                 "& > :first-of-type": {
                                     marginRight: isSmallScreen ? "" : 5.25,
-                                    marginBottom: isSmallScreen ? 2 : "",// Margem à direita para o primeiro filho
+                                    marginBottom: isSmallScreen ? 2 : "",
                                 },
                                 "& > :last-child": {
-                                    marginLeft: isSmallScreen ? "" : 5.25, // Margem à esquerda para o último filho
+                                    marginLeft: isSmallScreen ? "" : 5.25,
                                     marginTop: isSmallScreen ? 2 : "",
                                 },
                             }}
@@ -296,7 +310,7 @@ const ProfileInformation = observer(({ user }) => {
 
                             {addresses.length < 3 && (
                                 <Box
-                                    onClick={handleOpen}
+                                    onClick={handleAddressModalOpen}
                                     sx={{
                                         display: "flex",
                                         flexDirection: "column",
@@ -304,17 +318,17 @@ const ProfileInformation = observer(({ user }) => {
                                         justifyContent: "center",
                                         ml: isSmallScreen ? "auto" : 0,
                                         mr: isSmallScreen ? "auto" : 0,
-                                        backgroundColor: "#388e3c26", // Cor de fundo do card
+                                        backgroundColor: "#388e3c26",
                                         border: "2px dashed",
-                                        borderColor: theme.palette.primary.main, // Borda estilizada
-                                        borderRadius: "10px", // Cantos arredondados
-                                        width: isSmallScreen ? "80%" : "30%", // Largura igual aos outros cards
-                                        height: isSmallScreen ? "200px" : "315px", // Altura fixa para coincidir com os outros cards
-                                        cursor: "pointer", // Indica que é clicável
-                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para parecer um card
-                                        transition: "all 0.3s ease", // Animação suave no hover
+                                        borderColor: theme.palette.primary.main,
+                                        borderRadius: "10px",
+                                        width: isSmallScreen ? "80%" : "30%",
+                                        height: isSmallScreen ? "200px" : "315px",
+                                        cursor: "pointer",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                        transition: "all 0.3s ease",
                                         "&:hover": {
-                                            transform: "scale(1.05)", // Leve aumento no hover
+                                            transform: "scale(1.05)",
                                         },
                                     }}
                                 >
@@ -338,7 +352,7 @@ const ProfileInformation = observer(({ user }) => {
                         </Box>
                     ) : (
                         <Box
-                            onClick={handleOpen} // Abre o modal para adicionar uma nova morada
+                            onClick={handleAddressModalOpen} // Abre o modal para adicionar uma nova morada
                             sx={{
                                 display: "flex",
                                 flexDirection: "column",
@@ -364,9 +378,7 @@ const ProfileInformation = observer(({ user }) => {
                             </Typography>
                         </Box>
                     )}
-
-                    {/* Modal apenas para adicionar moradas */}
-                    <AddressModal open={open} handleClose={handleClose} />
+                    <AddressModal open={addressModalOpen} handleClose={handleAddressModalClose} />
                 </Box>
             </Box>
         </Paper>
