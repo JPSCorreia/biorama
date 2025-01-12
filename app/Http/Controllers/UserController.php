@@ -12,7 +12,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        return response()->json(User::all());
+        $users = User::all();
+        return response()->json($users);
     }
 
     public function create()
@@ -35,11 +36,7 @@ class UserController extends Controller
 
     public function show()
     {
-        $user = Auth::user();
-        $user->load('home_addresses');
-        return Inertia::render('Profile', [
-            'user' => $user,
-        ]);
+        return Inertia::render('Profile');
     }
 
     public function edit()
@@ -64,7 +61,10 @@ class UserController extends Controller
 
             $user->update($data);
 
-            return redirect()->route('profile')->with('success', 'Perfil atualizado com sucesso!');
+            return response()->json([
+                'message' => 'Utilizador atualizado com sucesso',
+                'data' => $data,
+            ], 200);
         } catch (\Exception $e) {
             return back()->withErrors(['Erro ao atualizar perfil.'])->withInput();
         }
@@ -75,5 +75,12 @@ class UserController extends Controller
     {
         $user->delete();
         return response()->json(null, 204);
+    }
+
+    public function get_user()
+    {
+        $user = Auth::user();
+        $user->load('home_addresses');
+        return response()->json($user);
     }
 }

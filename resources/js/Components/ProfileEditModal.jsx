@@ -8,12 +8,23 @@ import {
     useTheme,
     Avatar, IconButton
 } from "@mui/material";
+import {
+    LocalizationProvider,
+    DatePicker,
+    MobileDatePicker,
+} from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 import React, { useState } from "react";
 import axios from "axios";
 import CloseIcon from '@mui/icons-material/Close';
 import {observer} from "mobx-react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {authStore} from "../Stores/index.js";
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt';
+import 'dayjs/locale/en';
+import 'dayjs/locale/ja';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -40,6 +51,7 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
     const [email, setEmail] = useState(user.email || '');
     const [phone, setPhone] = useState(user.phone || '');
     const [photo, setphoto] = useState(user.photo || '');
+    const [date_of_birth, setValue] = useState(user.date_of_birth || null);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -58,6 +70,7 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
         formData.append("last_name", last_name);
         formData.append("email", email);
         formData.append("phone", phone);
+        formData.append("date_of_birth", date_of_birth);
         if (photo) {
             formData.append("photo", photo);
         }
@@ -71,8 +84,9 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
 
                 });
             if (response.status === 200) {
-                console.log('User atualizado com sucesso!', response.data.data);
+                console.log('PRINT DO RESPONSE', response.data);
                 authStore.updateUserData(response.data.data);
+                console.log('Dados após a atualização:', authStore.user);
                 handleClose();
             }
         } catch (error) {
@@ -124,7 +138,7 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
                     >
                         <Avatar
                             alt="Profile Image"
-                            src={previewImage || ""}
+                            src={previewImage || photo}
                             sx={{
                                 width: isSmallScreen ? 90 : 110,
                                 height: isSmallScreen ? 90 : 110,
@@ -134,7 +148,7 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
                                 borderRadius: isSmallScreen ? "50%" : "10px", // Redondo no ecrã pequeno, arredondado no grande
                             }}
                         >
-                            {!previewImage && `${user.first_name[0]}${user.last_name[0]}`}
+                            {!previewImage && `${user?.first_name?.[0] || ''}${user?.last_name?.[0] || ''}`}
                         </Avatar>
 
                         <Button
@@ -162,9 +176,10 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
                             right: 6,
                         }}
                     >
-                        <IconButton>
-                            <CloseIcon onClick={handleClose} />
+                        <IconButton onClick={handleClose}>
+                            <CloseIcon />
                         </IconButton>
+
                     </Box>
                 </Box>
                 <form onSubmit={handleSubmit}>
@@ -201,6 +216,36 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                     />
+                    <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                        adapterLocale={dayjs.locale(navigator.language) || dayjs.locale('pt')}
+                    >
+                        <MobileDatePicker
+                            sx={{
+                                mt: 2,
+                                display: isSmallScreen ? 'block' : 'none',
+                            }}
+                            label="Data de Nascimento"
+                            name="date_of_birth"
+                            value={date_of_birth}
+                            onChange={(newValue) => setValue(newValue)}
+                        />
+                    </LocalizationProvider>
+                    <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                        adapterLocale={dayjs.locale(navigator.language) || dayjs.locale('pt')}
+                    >
+                        <DatePicker
+                            sx={{
+                                mt: 2,
+                                display: isSmallScreen ? 'none' : 'block',
+                            }}
+                            label="Data de Nascimento"
+                            name="date_of_birth"
+                            value={date_of_birth}
+                            onChange={(newValue) => setValue(newValue)}
+                        />
+                    </LocalizationProvider>
                     <Box sx={{ mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
                             Atualizar

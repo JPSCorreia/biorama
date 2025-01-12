@@ -72,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
     //Rotas para o Perfil de User
     Route::get('/perfil', [UserController::class, 'show'])->name('profile');
     Route::post('/editar-perfil/{user}', [UserController::class, 'update'])->name('update_profile_user');
+    Route::get('/get-user', [UserController::class, 'get_user'])->name('get_user');
 
 
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');

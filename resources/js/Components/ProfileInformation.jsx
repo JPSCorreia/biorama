@@ -20,9 +20,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-const ProfileInformation = observer(() => {
+const ProfileInformation = observer(({user}) => {
 
-    const user = authStore.user;
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 
@@ -80,8 +79,8 @@ const ProfileInformation = observer(() => {
             <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", width: "100%", mb: 4 }}>
                 <Avatar
                     alt="Profile Image"
-                    src = {authStore.user?.photo || ""}
                     variant = {isSmallScreen ? "" : "rounded"}
+                    src={user?.photo}
                     sx={{
                         width: isSmallScreen ? 90 : 110,
                         height: isSmallScreen ? 90 : 110,
@@ -91,8 +90,8 @@ const ProfileInformation = observer(() => {
                         fontSize: isSmallScreen ? "1.5rem" : "3rem",
                     }}
                 >
-                    {authStore.user?.first_name[0]}
-                    {authStore.user?.last_name[0]}
+                    {user?.first_name[0]}
+                    {user?.last_name[0]}
                 </Avatar>
                 <Box sx={{
                     display:  "flex",
@@ -111,7 +110,7 @@ const ProfileInformation = observer(() => {
                             fontSize: "2.3rem"
                         }}
                         >
-                            {user.first_name} {user.last_name}
+                            {authStore.user.first_name} {authStore.user.last_name}
                         </Typography>
                     </Box>
                     <Box
@@ -361,7 +360,7 @@ const ProfileInformation = observer(() => {
                                 backgroundColor: "#f5f5f5", // Cor de fundo do card
                                 border: "2px dashed #9e9e9e", // Borda estilizada
                                 borderRadius: "10px", // Cantos arredondados
-                                width: "30%", // Largura do card
+                                width: isSmallScreen? "100%" : "30%", // Largura do card
                                 height: "150px", // Altura do card
                                 cursor: "pointer", // Indica que é clicável
                                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar efeito de card

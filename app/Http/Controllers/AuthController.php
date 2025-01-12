@@ -69,7 +69,7 @@ class AuthController extends Controller
 
             return redirect()
                 ->intended(route('home'))
-                ->with('message', 'Palavra-passe alterada com sucesso!')
+                ->with('message', 'Login efetuado com sucesso!')
                 ->with('type', 'success');
         }
 

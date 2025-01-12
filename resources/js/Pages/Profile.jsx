@@ -1,10 +1,13 @@
 import { observer } from "mobx-react";
 import { ProfileInformation } from "../Components";
-import {Alert, Box, Typography} from "@mui/material";
+import {Alert, Box} from "@mui/material";
 import { usePage } from "@inertiajs/react";
+import {authStore} from "@/Stores/index.js";
 
 const Profile = observer(() => {
     const { auth, flash = {} } = usePage().props;
+    const user = authStore.user;
+    console.log("User Profile Information:", user);
     console.log("Auth:", auth);
     console.log("Flash:", flash);
     return (
@@ -23,7 +26,7 @@ const Profile = observer(() => {
                     <Alert severity={flash.type || "success"}>{flash.message}</Alert>
                 </Box>
             )}
-            <ProfileInformation />
+            <ProfileInformation user={user}/>
         </Box>
     );
 });
