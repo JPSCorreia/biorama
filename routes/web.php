@@ -6,6 +6,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -99,12 +100,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
 });
 
+//TODO: routes to sort, also change route names to be standardized
 Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
-
 Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);
-
-
 Route::get('/pesquisa', [SearchController::class, 'index'])->name('pesquisa');
-
 Route::get('/Vendor/info', fn () => Inertia::render('Vendors'))->name('vendor.info');
+
+Route::post('/send-invoice', [OrderController::class, 'sendInvoice'])->name('invoice.api'); // send invoice
+
+if (env('APP_ENV') === 'local') {
+    Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
+}
 

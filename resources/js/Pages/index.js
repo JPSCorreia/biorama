@@ -9,3 +9,4 @@ export { default as Settings } from './Settings';
 export { default as Store } from './Store';
 export { default as Stores } from './Stores';
 export { default as Vendors } from './Vendors';
+export { default as FeatureTesting } from './FeatureTesting';
