@@ -35,7 +35,7 @@ class InvoiceEmail extends Mailable
     public function build()
     {
         return $this->subject('Fatura da Compra') // Título do email
-                    ->view('emails.invoice') // View para o corpo do email
+                    ->view('pdf.invoice') // View para o corpo do email
                     ->attachData($this->data['pdf'], 'invoice.pdf', [ // Anexar o PDF
                         'mime' => 'application/pdf',
                     ]);

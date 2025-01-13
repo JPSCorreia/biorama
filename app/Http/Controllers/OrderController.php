@@ -8,6 +8,7 @@ use App\Http\Requests\SendInvoiceRequest;
 use App\Mail\InvoiceEmail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -52,18 +53,30 @@ class OrderController extends Controller
 
     public function sendInvoice(SendInvoiceRequest $request)
     {
-        // Gera o PDF
-        $pdf = Pdf::loadView('pdf.invoice', ['order' => $request->input('order')]);
+        try {
+            $invoiceData = [
+                'name' => 'Cliente Teste',
+                'total' => 123.45,
+            ];
 
-        // Dados para o email
-        $emailData = [
-            'pdf' => $pdf->output(),
-        ];
+            // Testa o conteúdo antes de gerar o PDF
+            // dd(['order' => $invoiceData]);
 
-        // Envia o email
-        Mail::to($request->input('user.email'))->send(new InvoiceEmail($emailData));
+            $pdf = Pdf::loadView('pdf.invoice', ['order' => $invoiceData]);
 
-        return response()->json(['message' => 'Email enviado com sucesso!']);
+            $emailData = [
+                'pdf' => $pdf->output(),
+            ];
+
+            Mail::to($request->input('user.email', 'jpscorreia.dev@gmail.com'))->send(new InvoiceEmail($emailData));
+
+            return response()->json(['message' => 'Email enviado com sucesso!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Erro ao enviar a fatura. Verifica os logs do servidor.'], 500);
+        }
     }
+
+
 }
 
