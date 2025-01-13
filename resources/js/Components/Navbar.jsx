@@ -264,7 +264,7 @@ const Navbar = observer(() => {
         >
             <Container
                 maxWidth="xl"
-                sx={{ pr: "0.5rem !important", pl: "1.25rem !important" }}
+                sx={{ pr: "0.5rem !important", pl: "1.25rem !important"}}
             >
                 <Toolbar disableGutters>
 
@@ -457,9 +457,9 @@ const Navbar = observer(() => {
                     ) : (
                         <Box
                             sx={{
-                                flexGrow: 1,
+                                // flexGrow: 1,
                                 display: { xs: "none", md: "flex" },
-                                justifyContent: "center",
+                                // justifyContent: "center",
                             }}
                         >
                             {pages.map((page) => (
@@ -491,13 +491,12 @@ const Navbar = observer(() => {
                         </Box>
                     )}
 
-                    <Box sx={{ marginLeft: "auto", width: "300px" }}>
                         {vendorMode ? (
                             null
                         ) : (
+
                             <SearchBar />
                         )}
-                    </Box>
                     <Tooltip title={cart.name}>
                         {vendorMode ? (
                             null
@@ -520,6 +519,7 @@ const Navbar = observer(() => {
                                     minWidth: "55px",
                                     paddingRight: "10px",
                                     paddingLeft: "10px",
+                                    marginLeft: "20px",
                                 }}
                             >
                                 <Badge
@@ -545,6 +545,7 @@ const Navbar = observer(() => {
                                 paddingRight: "10px",
                                 justifyContent: "end",
                                 alignItems: "center",
+
                             }}
                         >
                             <Tooltip title="Definições">

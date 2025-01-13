@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Http\Requests\SendInvoiceRequest;
+use App\Mail\InvoiceEmail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -44,6 +48,22 @@ class OrderController extends Controller
     {
         $order->delete();
         return response()->json(null, 204);
+    }
+
+    public function sendInvoice(SendInvoiceRequest $request)
+    {
+        // Gera o PDF
+        $pdf = Pdf::loadView('pdf.invoice', ['order' => $request->input('order')]);
+
+        // Dados para o email
+        $emailData = [
+            'pdf' => $pdf->output(),
+        ];
+
+        // Envia o email
+        Mail::to($request->input('user.email'))->send(new InvoiceEmail($emailData));
+
+        return response()->json(['message' => 'Email enviado com sucesso!']);
     }
 }
 

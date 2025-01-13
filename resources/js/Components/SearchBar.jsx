@@ -12,28 +12,19 @@ const Search = styled("div")(({ theme }) => ({
     "&:hover": {
         backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
-    marginLeft: 5,
+    display: "flex",
+    flexGrow: 1, // Ocupa todo o espaço restante
     width: "100%",
-    maxWidth: "750px", // Define um limite de largura para monitores maiores
-    [theme.breakpoints.down("lg")]: {
-        width: "100%", // Full width em dispositivos pequenos
-    },
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "white", // Texto branco no campo de pesquisa
+    color: "inherit", // Herda a cor do tema atual
     width: "100%",
     "& .MuiInputBase-input": {
         padding: theme.spacing(1, 1, 1, 0),
         paddingRight: `calc(1em + ${theme.spacing(4)})`, // Espaço para o ícone
         paddingLeft: theme.spacing(2), // Espaçamento inicial
         transition: theme.transitions.create("width"),
-        [theme.breakpoints.up("sm")]: {
-            width: "12ch",
-            "&:focus": {
-                width: "20ch",
-            },
-        },
     },
 }));
 
@@ -46,7 +37,19 @@ const SearchBar = () => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSearchSubmit} sx={{ display: "flex", justifyContent: "center" }}>
+        <Box
+            component="form"
+            onSubmit={handleSearchSubmit}
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                flexGrow: 1, // Ocupa todo o espaço restante na navbar
+                justifyContent: "center",
+                width: "100%",
+                marginTop: "4px",
+                marginLeft: { xs: 0, md: 2 }, // Ajusta a margem conforme necessário
+            }}
+        >
             <Search>
                 <StyledInputBase
                     placeholder="Pesquisar..."
@@ -55,7 +58,14 @@ const SearchBar = () => {
                     inputProps={{ "aria-label": "search" }}
                 />
                 {/* Ícone de lupa à direita */}
-                <IconButton type="submit" sx={{ position: "absolute", right: 0, color: "white" }}>
+                <IconButton
+                    type="submit"
+                    sx={{
+                        position: "absolute",
+                        right: 0,
+                        color: "white",
+                    }}
+                >
                     <SearchIcon />
                 </IconButton>
             </Search>
