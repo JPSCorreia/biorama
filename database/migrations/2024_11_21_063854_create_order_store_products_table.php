@@ -14,7 +14,16 @@ return new class extends Migration
         Schema::create('order_store_products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders');
-            $table->foreignId('store_product_id')->constrained('store_products');
+
+            // Definir store_id e product_id sem FK direta
+            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('product_id');
+
+            // Definir FK composta para store_products
+            $table->foreign(['store_id', 'product_id'])
+                ->references(['store_id', 'product_id'])
+                ->on('store_products');
+
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->nullable();
             $table->integer('quantity');

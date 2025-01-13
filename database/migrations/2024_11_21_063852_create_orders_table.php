@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('statuses_id')->constrained('statuses');
 
             $table->string('street_name');

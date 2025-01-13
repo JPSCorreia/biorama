@@ -12,15 +12,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('store_products', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('product_id')->constrained('products');
-            $table->mediumText('description')->nullable();
-            $table->decimal('price', 8, 2);
-            $table->decimal('discount', 8, 2)->default(0.0);
+            $table->primary(['store_id', 'product_id']);
             $table->integer('stock');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

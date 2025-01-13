@@ -12,7 +12,6 @@ class StoreGallery extends Model
     protected $fillable = [
         'store_id',
         'image_link',
-        'image_name',
     ];
 
     public function store()

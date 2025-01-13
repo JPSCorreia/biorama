@@ -12,11 +12,9 @@ class StoreGalleryFactory extends Factory
 
     public function definition()
     {
-        $store_id = Store::all()->random()->id;
         return [
-            'store_id' => $store_id,
-            'image_link' => $this->faker->imageUrl(640, 480, 'gallery'),
-            'image_name' => $this->faker->word(),
+            'store_id' => Store::factory(),
+            'image_link' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ];

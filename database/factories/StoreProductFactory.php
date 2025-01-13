@@ -13,8 +13,8 @@ class StoreProductFactory extends Factory
 
     public function definition()
     {
-        $store_id = Store::all()->random()->id;
         $product_id = Product::all()->random()->id;
+        $store_id = Store::all()->random()->id;
         return [
             'store_id' => $store_id,
             'product_id' => $product_id,

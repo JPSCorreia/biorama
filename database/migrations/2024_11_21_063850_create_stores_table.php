@@ -19,10 +19,6 @@ return new class extends Migration
             $table->string('phone_number', 15)->nullable();
             $table->string('email', 255)->nullable()->unique();
             $table->mediumText('description')->nullable();
-            $table->string('image_link', 255)->nullable();
-            $table->string('street_address', 255);
-            $table->string('city', 50);
-            $table->string('postal_code', 10);
             $table->decimal('rating', 3, 2)->default(0.0);
             // $table->point('coordinates')->nullable();
             $table->timestamps();

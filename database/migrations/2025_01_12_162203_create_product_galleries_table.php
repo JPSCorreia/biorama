@@ -9,26 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('product_galleries', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->mediumText('description')->nullable();
-            $table->boolean('sold_at_unit')->default(false);
-            $table->decimal('price', 8, 2);
-            $table->decimal('discount', 8, 2)->default(0.0);
+            $table->foreignId('product_id')->constrained('products');
+            $table->string('image_link', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('product_galleries');
     }
 };

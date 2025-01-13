@@ -11,15 +11,11 @@ class Store extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'vendor_id',
+        'store_id',
         'name',
         'phone_number',
         'email',
         'description',
-        'image_link',
-        'street_address',
-        'city',
-        'postal_code',
         'rating',
         'coordinates',
     ];
@@ -35,7 +31,14 @@ class Store extends Model
 
     public function products()
     {
-        return $this->hasMany(StoreProduct::class);
+        return $this->belongsToMany(Product::class, 'store_products', 'store_id', 'product_id')
+            ->withPivot('stock')
+            ->withTimestamps();
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(StoreAddress::class);
     }
 
     public function reviews()

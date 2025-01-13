@@ -14,11 +14,13 @@ class OrderStoreProductFactory extends Factory
     public function definition()
     {
         $order_id = Order::all()->random()->id; // Random Order ID
-        $store_product_id = StoreProduct::all()->random()->id; // Random StoreProduct ID
+        $store_id = StoreProduct::all()->random()->store_id; // Random Store ID
+        $product_id = StoreProduct::where('store_id', $store_id)->inRandomOrder()->first()->product_id; // Random Product ID
 
         return [
             'order_id' => $order_id, // Random Order ID
-            'store_product_id' => $store_product_id, // Creates a new StoreProduct and assigns its ID
+            'store_id' => $store_id,
+            'product_id' => $product_id,
 
             'price' => $this->faker->randomFloat(2, 1, 100), // Random price between 1.00 and 100.00
             'discount' => $this->faker->randomFloat(2, 0, 0.5), // Random discount between 0.00 and 0.50

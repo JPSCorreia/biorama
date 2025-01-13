@@ -16,14 +16,12 @@ class OrderFactory extends Factory
     public function definition()
     {
         $user_id = User::inRandomOrder()->first()->id;
-        $store_id = Store::inRandomOrder()->first()->id;
         $status_id = Status::inRandomOrder()->first()->id;
 
         $address = HomeAddress::where('user_id', $user_id)->inRandomOrder()->first();
 
         return [
-            'user_id' => $user_id,
-            'store_id' => $store_id,
+
             'statuses_id' => $status_id,
 
             'street_name' => isset($address) && !empty($address->street_name)
@@ -49,7 +47,7 @@ class OrderFactory extends Factory
             'comment' => isset($address) && !empty($address->comment)
                 ? $address->comment
                 : $this->faker->sentence,
-            
+
             'created_at' => now(),
             'updated_at' => now(),
         ];

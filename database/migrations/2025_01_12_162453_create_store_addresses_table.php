@@ -9,23 +9,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('store_galleries', function (Blueprint $table) {
+        Schema::create('store_addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('store_id')->constrained('stores');
-            $table->string('image_link', 255)->nullable();
+            $table->string('address_name', 100);
+            $table->string('street_address', 255);
+            $table->string('postal_code', 10);
+            $table->string('city', 50);
+            $table->mediumText('comment')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('store_galleries');
+        Schema::dropIfExists('vendor_addresses');
     }
 };

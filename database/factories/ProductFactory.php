@@ -13,8 +13,9 @@ class ProductFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
-            'image_link' => $this->faker->imageUrl(640, 480, 'product'),
             'sold_at_unit' => $this->faker->boolean(),
+            'price' => $this->faker->randomFloat(2, 1, 1000),
+            'discount' => $this->faker->randomFloat(2, 0, 100),
             'created_at' => now(),
             'updated_at' => now(),
         ];

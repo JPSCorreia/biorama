@@ -12,28 +12,19 @@ class Vendor extends Model
 
     protected $fillable = [
         'user_id',
-        'nif',
-        'phone',
-        'address',
-        'city',
-        'postal_code',
-        'date_of_birth',
         'iban',
-        'vendor_photo',
         'is_company',
-        'company_name',
-        'company_nif',
-        'company_address',
-        'company_city',
-        'company_postal_code',
-        'company_phone',
-        'company_email',
     ];
 
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function company()
+    {
+        return $this->hasOne(Company::class);
     }
 
     public function stores()

@@ -15,17 +15,11 @@ class DatabaseSeeder extends Seeder
             RoleAndPermissionSeeder::class,
             UserSeeder::class,
             VendorSeeder::class,
-            HomeAddressSeeder::class,
-            StoreSeeder::class,
-            StoreGallerySeeder::class,
-            StoreReviewSeeder::class,
-            VendorReviewSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
-            StoreProductSeeder::class,
+            StoreSeeder::class,
             StatusSeeder::class,
             OrderSeeder::class,
-            OrderStoreProductSeeder::class,
             CategoryProductSeeder::class,
         ]);
     }

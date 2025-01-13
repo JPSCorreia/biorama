@@ -9,9 +9,13 @@ class OrderStoreProduct extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = ['order_id', 'store_id', 'product_id']; // Chave primária composta
+
+
     protected $fillable = [
         'order_id',
-        'store_product_id',
+        'product_id',
+        'order_id',
         'price',
         'discount',
         'quantity',
@@ -22,8 +26,9 @@ class OrderStoreProduct extends Model
         return $this->belongsTo(Order::class);
     }
 
+    // Relacionamento com StoreProduct
     public function storeProduct()
     {
-        return $this->belongsTo(StoreProduct::class);
+        return $this->hasOne(StoreProduct::class, ['store_id', 'product_id'], ['store_id', 'product_id']);
     }
 }

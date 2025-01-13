@@ -2,18 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\StoreReview;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class StoreReviewSeeder extends Seeder
+class ProductGallerySeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        StoreReview::factory()->count(50)->create();
+        //
     }
-
 }

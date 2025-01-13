@@ -21,13 +21,13 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function store()
-    {
-        return $this->belongsTo(Store::class);
-    }
-
     public function status()
     {
         return $this->belongsTo(HomeAddress::class);
+    }
+
+    public function storeProducts()
+    {
+        return $this->hasMany(OrderStoreProduct::class, 'order_id', 'id');
     }
 }

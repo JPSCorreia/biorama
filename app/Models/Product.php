@@ -20,8 +20,15 @@ class Product extends Model
         return $this->belongsToMany(Category::class, 'category_product');
     }
 
-    public function storeProducts()
+    public function stores()
     {
-        return $this->hasMany(StoreProduct::class);
+        return $this->belongsToMany(Store::class, 'store_products', 'product_id', 'store_id')
+            ->withPivot('stock')
+            ->withTimestamps();
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(ProductPhoto::class);
     }
 }
