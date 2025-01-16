@@ -10,3 +10,6 @@ export { default as Store } from './Store';
 export { default as Stores } from './Stores';
 export { default as Vendors } from './Vendors';
 export { default as FeatureTesting } from './FeatureTesting';
+export  {default as DashBoard} from '../Components/DashBoard.jsx';
+
+

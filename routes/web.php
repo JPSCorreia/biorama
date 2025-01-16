@@ -112,3 +112,4 @@ if (env('APP_ENV') === 'local') {
     Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
 }
 
+Route::get('/dashboard', fn () => Inertia::render('DashBoard'))->name('dashboard');
