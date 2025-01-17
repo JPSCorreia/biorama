@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
+use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorAddress;
 use App\Models\VendorReview;
@@ -16,6 +17,22 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
+        $user = User::find(1);
+
+        if ($user) {
+            // Criar um vendor associado ao User com id 1
+            Vendor::create([
+                'user_id' => $user->id, // ID do utilizador associado
+                'is_company' => false, // Pode ser alterado para `false` se quiseres simular individual
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $this->command->info('Vendor criado com sucesso para o user com id 1.');
+        } else {
+            $this->command->error('Nenhum utilizador com id 1 encontrado.');
+        }
+
         Vendor::factory()
             ->count(10) // 10 Vendors
             ->has(

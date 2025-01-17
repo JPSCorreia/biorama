@@ -37,6 +37,10 @@ class User extends Authenticatable implements CanResetPasswordContract
         'password' => 'hashed',
     ];
 
+    public static function find(int $int)
+    {
+    }
+
     public function vendor()
     {
         return $this->hasOne(Vendor::class);

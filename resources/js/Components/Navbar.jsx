@@ -12,59 +12,41 @@ import {
     MenuItem,
     Badge,
     useMediaQuery,
-    InputBase,
 } from "@mui/material";
-import { Switch } from "@mui/material";
 import {
     Menu as MenuIcon,
     Spa as SpaIcon,
-    Search as SearchIcon,
     HomeSharp as HomeSharpIcon,
     StoreSharp as StoreSharpIcon,
     ContactSupportSharp as ContactSupportSharpIcon,
     ShopSharp as ShopSharpIcon,
     ShoppingCartSharp as ShoppingCartSharpIcon,
 } from "@mui/icons-material";
-import { styled, alpha, useTheme } from "@mui/material/styles";
-import { ThemeSwitcher } from "./";
-import { appStore, cartStore, authStore } from "../Stores";
-import { useState, useEffect  } from "react";
-import { observer } from "mobx-react";
-import { router,  } from "@inertiajs/react";
+import {useTheme} from "@mui/material/styles";
+import {ThemeSwitcher} from "./";
+import {appStore, cartStore, authStore} from "../Stores";
+import {useState} from "react";
+import {observer} from "mobx-react";
+import {router,} from "@inertiajs/react";
 import SearchBar from "./SearchBar";
 
 const Navbar = observer(() => {
+
     const isAuthenticated = authStore.isAuthenticated;
 
-    //Controlo do togle de dashboard
+    const handleDashboardNavigation = () => {
+        // Redireciona para o dashboard
+        router.get("/dashboard");
+    };
+
+
+    //Guardar as Roles a role que vem no user.
     const userRoles = authStore.user?.roles || [];
+
+    // Verifica se existe uma role com o nome fornecido
     const hasRole = (roleName) => {
-        return userRoles.some((role) => role.name === roleName); // Verifica se existe uma role com o nome fornecido
+        return userRoles.some((role) => role.name === roleName);
     };
-    const[vendorMode, setVendorMode] = useState(false); //controla o estado  do toggle
-
-    const handleToggleChange = (event) => {
-        const isChecked = event.target.checked; // Verifica se o toggle foi ativado/desativado
-
-        setVendorMode(isChecked); // Atualiza o estado local
-
-        localStorage.setItem("vendorMode", JSON.stringify(isChecked)); // Guarda o estado no localStorage
-
-        if (isChecked) {
-            // Redireciona para a página venedor
-            router.get("/Vendor/info");
-        } else {
-            // Redireciona para homr
-            router.get("/");
-        }
-    };
-    useEffect(() => {
-        setVendorMode(false); // Redefine para `false` quando o utilizador muda
-    }, [authStore.user]);
-
-    //condição para mostrar pagina de VendorInfo
-
-
 
 
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -135,7 +117,6 @@ const Navbar = observer(() => {
     };*/
 
 
-
     const pages = [
         {
             name: "Home",
@@ -183,28 +164,16 @@ const Navbar = observer(() => {
         },
     ];
 
-    const vendorPages =[
-        {id: 1, name: "My inFo",
-            onClick: () => {
-                router.get("#");
-            }, },
-        {id: 2, name: "Minhas lojas",
-            onClick: () => {
-                router.get("#");
-            }, },
-        {id: 3, name: "Meus Produtos",
-            onClick: () => {
-                router.get("#");
-            }, },
-    ];
 
     const settings = [
-        { id: 1, name: "Perfil",
+        {
+            id: 1, name: "Perfil",
             onClick: () => {
                 router.get(
                     "/perfil");
-            },  },
-        { id: 2, name: "Definições", link: "/definições"},
+            },
+        },
+        {id: 2, name: "Definições", link: "/definições"},
         {
             id: 3,
             name: "Terminar Sessão",
@@ -215,7 +184,7 @@ const Navbar = observer(() => {
                     {
                         onSuccess: () => {
                             handleCloseUserMenu();
-                            authStore.updateAuth({ user: null });
+                            authStore.updateAuth({user: null});
                             console.log("Logout successful");
                         },
                     }
@@ -224,7 +193,7 @@ const Navbar = observer(() => {
         },
     ];
 
-    const tema = { id: 4, name: "Tema", onClick: appStore.changeThemeType };
+    const tema = {id: 4, name: "Tema", onClick: appStore.changeThemeType};
     const login = {
         id: 5,
         name: "Entrar",
@@ -264,93 +233,51 @@ const Navbar = observer(() => {
         >
             <Container
                 maxWidth="xl"
-                sx={{ pr: "0.5rem !important", pl: "1.25rem !important"}}
+                sx={{pr: "0.5rem !important", pl: "1.25rem !important"}}
             >
                 <Toolbar disableGutters>
-
-                    {vendorMode ? ( //Verifica se o user mode esta activo, se sim mostra o menu VendorMode se não mostra navbar normal.
-                        <Box
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
+                        }}
+                        onClick={() => {
+                            handleCloseNavMenu();
+                            navigate("/");
+                        }}
+                    >
+                        <SpaIcon
                             sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
+                                mb: 0,
+                                mr: 1,
+                                color:
+                                    theme.palette.mode === "dark"
+                                        ? theme.palette.primary.main
+                                        : "white",
                             }}
-                            onClick={() => {
-                                handleCloseNavMenu();
-                                navigate("/");
+                        />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="a"
+                            sx={{
+                                mr: 1,
+                                display: {xs: "none", md: "none", lg: "flex"},
+                                fontFamily: "monospace",
+                                fontWeight: 700,
+                                letterSpacing: ".3rem",
+                                color: "inherit",
+                                textDecoration: "none",
                             }}
                         >
-                            <SpaIcon
-                                sx={{
-                                    mb: 0,
-                                    mr: 1,
-                                    color:
-                                        theme.palette.mode === "dark"
-                                            ? theme.palette.primary.main
-                                            : "white",
-                                }}
-                            />
-                            <Typography
-                                variant="h6"
-                                noWrap
-                                component="a"
-                                sx={{
-                                    mr: 1,
-                                    display: { xs: "none", md: "none", lg: "flex" },
-                                    fontFamily: "monospace",
-                                    fontWeight: 700,
-                                    letterSpacing: ".3rem",
-                                    color: "inherit",
-                                    textDecoration: "none",
-                                }}
-                            >
-                                BIO.DASHBOARD
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                            }}
-                            onClick={() => {
-                                handleCloseNavMenu();
-                                navigate("/");
-                            }}
-                        >
-                            <SpaIcon
-                                sx={{
-                                    mb: 0,
-                                    mr: 1,
-                                    color:
-                                        theme.palette.mode === "dark"
-                                            ? theme.palette.primary.main
-                                            : "white",
-                                }}
-                            />
-                            <Typography
-                                variant="h6"
-                                noWrap
-                                component="a"
-                                sx={{
-                                    mr: 1,
-                                    display: { xs: "none", md: "none", lg: "flex" },
-                                    fontFamily: "monospace",
-                                    fontWeight: 700,
-                                    letterSpacing: ".3rem",
-                                    color: "inherit",
-                                    textDecoration: "none",
-                                }}
-                            >
-                                BIORAMA
-                            </Typography>
-                        </Box>
-                    )}
+                            BIORAMA
+                        </Typography>
+                    </Box>
                     <Box
                         sx={{
                             flexGrow: 1,
-                            display: { xs: "flex", md: "none" },
+                            display: {xs: "flex", md: "none"},
                         }}
                     >
                         <IconButton
@@ -364,7 +291,7 @@ const Navbar = observer(() => {
                                 ml: 0,
                             }}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
 
                         <Menu
@@ -382,159 +309,94 @@ const Navbar = observer(() => {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: "block", md: "none" },
-                            }}
-                        >
-                            {vendorMode ? (
-                                vendorPages.map((vendorPages) =>(
-                                    <MenuItem
-                                        Key={vendorPages.name}
-                                        onClick={() => {
-                                            handleCloseNavMenu();
-                                            navigate(vendorPages.link);
-                                        }}
-                                    sx={{ height: "40px", pr: 2 }}
-                                    >
-                                        <Typography textAlign="center">
-                                            {vendorPages.name}
-                                        </Typography>
-                                    </MenuItem>
-                                ))
-                            ) : (
-                                pages.map((page) => (
-                                        <MenuItem
-                                            key={page.name}
-                                            onClick={() => {
-                                                handleCloseNavMenu();
-                                                navigate(page.link);
-                                            }}
-                                            sx={{ height: "40px", pr: 2 }}
-                                        >
-                                            <Typography textAlign="center">
-                                                {page.name}
-                                            </Typography>
-                                        </MenuItem>
-                                    ))
-                            )}
-
-                        </Menu>
-                    </Box>
-                    {vendorMode ? (
-                        <Box
-                            sx={{
-                                flexGrow: 1,
-                                display: { xs: "none", md: "flex" },
-                                justifyContent: "center",
-                            }}
-                        >
-                            {vendorPages.map((vendorPages) =>(
-                                <Tooltip
-                                    key={vendorPages.name}
-                                    title={!isLg ? vendorPages.name : ""}
-                                >
-                                    <Button
-                                        key={vendorPages.name}
-                                        onClick={() => {
-                                            handleCloseNavMenu();
-                                            navigate(vendorPages.link);
-                                        }}
-                                        variant="outlined"
-                                        sx={{
-                                            color: "white",
-                                            display: "block",
-                                            marginTop: 1.7,
-                                            marginBottom: 1,
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: "40px",
-                                        }}
-                                    >
-                                        {isLg ? vendorPages.name : vendorPages.icon}
-                                    </Button>
-                                </Tooltip>
-                            ))}
-                        </Box>
-                    ) : (
-                        <Box
-                            sx={{
-                                // flexGrow: 1,
-                                display: { xs: "none", md: "flex" },
-                                // justifyContent: "center",
+                                display: {xs: "block", md: "none"},
                             }}
                         >
                             {pages.map((page) => (
-                                <Tooltip
+                                <MenuItem
                                     key={page.name}
-                                    title={!isLg ? page.name : ""}
-                                >
-                                    <Button
-                                        key={page.name}
-                                        onClick={() => {
-                                            handleCloseNavMenu();
-                                            navigate(page.link);
-                                        }}
-                                        variant="outline"
-                                        sx={{
-                                            color: "white",
-                                            display: "block",
-                                            marginTop: 1.7,
-                                            marginBottom: 1,
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: "40px",
-                                        }}
-                                    >
-                                        {isLg ? page.name : page.icon}
-                                    </Button>
-                                </Tooltip>
-                            ))}
-                        </Box>
-                    )}
-
-                        {vendorMode ? (
-                            null
-                        ) : (
-
-                            <SearchBar />
-                        )}
-                    <Tooltip title={cart.name}>
-                        {vendorMode ? (
-                            null
-                        ) : (
-                            <Button
-                                key={cart.name}
-                                onClick={() => {
-                                    handleCloseNavMenu();
-                                    navigate(cart.link);
-                                }}
-                                variant="outline"
-                                sx={{
-                                    color: "white",
-                                    display: "block",
-                                    marginTop: 1.7,
-                                    marginBottom: 1,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: "40px",
-                                    minWidth: "55px",
-                                    paddingRight: "10px",
-                                    paddingLeft: "10px",
-                                    marginLeft: "20px",
-                                }}
-                            >
-                                <Badge
-                                    sx={{
-                                        paddingRight: "5px",
-                                        marginLeft: "5px",
+                                    onClick={() => {
+                                        handleCloseNavMenu();
+                                        navigate(page.link);
                                     }}
-                                    badgeContent={cartStore.total}
-                                    color="success"
-                                    overlap="circular"
+                                    sx={{height: "40px", pr: 2}}
                                 >
-                                    <ShoppingCartSharpIcon />
-                                </Badge>
-                            </Button>
-                        )}
+                                    <Typography textAlign="center">
+                                        {page.name}
+                                    </Typography>
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Box>
+                    <Box
+                        sx={{
+                            // flexGrow: 1,
+                            display: {xs: "none", md: "flex"},
+                            // justifyContent: "center",
+                        }}
+                    >
+                        {pages.map((page) => (
+                            <Tooltip
+                                key={page.name}
+                                title={!isLg ? page.name : ""}
+                            >
+                                <Button
+                                    key={page.name}
+                                    onClick={() => {
+                                        handleCloseNavMenu();
+                                        navigate(page.link);
+                                    }}
+                                    variant="outline"
+                                    sx={{
+                                        color: "white",
+                                        display: "block",
+                                        marginTop: 1.7,
+                                        marginBottom: 1,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "40px",
+                                    }}
+                                >
+                                    {isLg ? page.name : page.icon}
+                                </Button>
+                            </Tooltip>
+                        ))}
+                    </Box>
+                    <SearchBar/>
+                    <Tooltip title={cart.name}>
+                        <Button
+                            key={cart.name}
+                            onClick={() => {
+                                handleCloseNavMenu();
+                                navigate(cart.link);
+                            }}
+                            variant="outline"
+                            sx={{
+                                color: "white",
+                                display: "block",
+                                marginTop: 1.7,
+                                marginBottom: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "40px",
+                                minWidth: "55px",
+                                paddingRight: "10px",
+                                paddingLeft: "10px",
+                                marginLeft: "20px",
+                            }}
+                        >
+                            <Badge
+                                sx={{
+                                    paddingRight: "5px",
+                                    marginLeft: "5px",
+                                }}
+                                badgeContent={cartStore.total}
+                                color="success"
+                                overlap="circular"
+                            >
+                                <ShoppingCartSharpIcon/>
+                            </Badge>
+                        </Button>
                     </Tooltip>
                     {isAuthenticated ? (
                         <Box
@@ -551,7 +413,7 @@ const Navbar = observer(() => {
                             <Tooltip title="Definições">
                                 <IconButton
                                     onClick={handleOpenUserMenu}
-                                    sx={{ p: 0 }}
+                                    sx={{p: 0}}
                                 >
                                     <Avatar
                                         alt="User Avatar"
@@ -570,7 +432,7 @@ const Navbar = observer(() => {
                                 </IconButton>
                             </Tooltip>
                             <Menu
-                                sx={{ mt: "45px" }}
+                                sx={{mt: "45px"}}
                                 id="menu-appbar"
                                 anchorEl={anchorElUser}
                                 anchorOrigin={{
@@ -610,8 +472,8 @@ const Navbar = observer(() => {
                                                         "space-between",
                                                 }}
                                             >
-                                                <Box sx={{ mr: 2 }}>Tema </Box>{" "}
-                                                <ThemeSwitcher />
+                                                <Box sx={{mr: 2}}>Tema </Box>{" "}
+                                                <ThemeSwitcher/>
                                             </Box>
                                         ) : (
                                             tema.name
@@ -629,7 +491,7 @@ const Navbar = observer(() => {
                                                 navigate(setting.link);
                                             }
                                         }}
-                                        sx={{ height: "40px" }}
+                                        sx={{height: "40px"}}
                                     >
                                         <Box textAlign="center">
                                             {setting.name}
@@ -637,17 +499,24 @@ const Navbar = observer(() => {
                                     </MenuItem>
                                 ))}
                                 <MenuItem>
-                                    {hasRole("vendor") && ( // Verifica se o user Tem a Role Vender, e se sim, mostra o toggle para entrar em vendorMode
+                                    {hasRole("vendor") && ( // Verifica se o utilizador tem a role de "vendor"
                                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                            <Typography>Modo Dashboard</Typography>
-                                            <Switch
-                                                color="secondary"
-                                                checked={vendorMode}
-                                                onChange={handleToggleChange}
-                                            />
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={handleDashboardNavigation}
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: 1
+                                                }}
+                                            >
+                                                Ir para Dashboard
+                                            </Button>
                                         </Box>
                                     )}
                                 </MenuItem>
+
                             </Menu>
                         </Box>
                     ) : (

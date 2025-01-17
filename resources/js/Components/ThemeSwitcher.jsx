@@ -3,6 +3,7 @@ import { Box, Switch } from "@mui/material";
 import { appStore } from "../Stores";
 import { FormControlLabel } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { usePage } from "@inertiajs/react";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
@@ -56,6 +57,10 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const ThemeSwitcher = observer(() => {
+
+    const { component } = usePage(); // Obtém o nome do componente atual
+    const isDashboard = component === "DashBoard"; // Verifica se está no Dashboard
+
     const handleThemeChange = (e) => {
         e.stopPropagation();
         appStore.changeThemeType();
@@ -70,7 +75,7 @@ const ThemeSwitcher = observer(() => {
             }}
         >
             <FormControlLabel
-                onClick={(e) => e.preventDefault()}
+                onClick={isDashboard? "" : (e) => e.preventDefault()}
                 control={
                     <MaterialUISwitch
                         sx={{ marginLeft: 0 }}

@@ -3,60 +3,79 @@ import { Container, Box, useMediaQuery } from "@mui/material";
 import { Navbar, Footer } from "./Components";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
-const App = observer(({ children, auth }) => {
+import { usePage } from "@inertiajs/react";
+
+
+const App = observer(({ children }) => {
     const theme = useTheme();
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
+    // Usa o usePage para aceder à informação da página atual
+    const { component } = usePage();
+
+    // Verifica se a rota atual é a do Dashboard
+    const isDashboardRoute = component === "DashBoard";
+
     return (
-        <Container
-            className="App"
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                minHeight: "100vh",
-                minWidth: "60%",
-                overflow: "hidden",
-            }}
-        >
-            <Box
-                sx={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    minHeight: "100vh",
-                    zIndex: 1,
-                    width: "100% !important",
-                    minWidth: "100% !important",
-                }}
-            />
-            <Container
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexDirection: "column",
-                    padding: "0 !important",
-                    zIndex: 1,
-                    width: "100% !important",
-                    minWidth: "100% !important",
-                }}
-            >
-                <Navbar auth={auth} />
-                {children}
-            </Container>
-            <Container
-                sx={{
-                    zIndex: 1,
-                    width: "100%",
-                    p: "0 !important",
-                    m: "0 !important",
-                    minWidth: "100% !important",
-                }}
-            >
-                {biggerThanSm && <Footer />}
-            </Container>
-        </Container>
+        <>
+            {isDashboardRoute ? (
+                // Renderiza apenas o componente DashBoard sem layout
+                <>
+                    {children}
+                </>
+            ) : (
+                // Renderiza as outras páginas com o layout principal
+                <Container
+                    className="App"
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        minHeight: "100vh",
+                        minWidth: "60%",
+                        overflow: "hidden",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            position: "fixed",
+                            top: 0,
+                            left: 0,
+                            minHeight: "100vh",
+                            zIndex: 1,
+                            width: "100% !important",
+                            minWidth: "100% !important",
+                        }}
+                    />
+                    <Container
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            flexDirection: "column",
+                            padding: "0 !important",
+                            zIndex: 1,
+                            width: "100% !important",
+                            minWidth: "100% !important",
+                        }}
+                    >
+                        <Navbar />
+                        {children}
+                    </Container>
+                    <Container
+                        sx={{
+                            zIndex: 1,
+                            width: "100%",
+                            p: "0 !important",
+                            m: "0 !important",
+                            minWidth: "100% !important",
+                        }}
+                    >
+                        {biggerThanSm && <Footer />}
+                    </Container>
+                </Container>
+            )}
+        </>
     );
 });
 

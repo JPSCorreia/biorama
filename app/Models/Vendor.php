@@ -16,6 +16,10 @@ class Vendor extends Model
         'is_company',
     ];
 
+    public static function create(array $array)
+    {
+    }
+
 
     public function user()
     {
