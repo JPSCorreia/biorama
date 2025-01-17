@@ -2,7 +2,6 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
@@ -19,49 +18,54 @@ import { ThemeSwitcher } from '../Components';
 import { appStore } from '../Stores';
 import {Profile} from "@/Pages/index.js";
 
+const NAVIGATION =[
+    {
+        kind: 'header',
+        title: 'DASHBOARD'
+    },
+    {
+        segment: 'myinfo',
+        title: 'Minha Informação',
+        icon:
+            <PersonIcon/>,
+    },
+    {
+        kind: 'divider'
+    },
+    {
+        segment: 'MyStore',
+        title: 'Lojas',
+        icon: <StoreIcon/>,
+    },
+    {
+        kind: 'divider'
+    },
+    {
+        segment: 'orders',
+        title: 'Encomendas',
+        icon: <ShoppingBasketIcon/>,
+        pattern: '/orders'
+    },
+    {
+        kind: 'divider'
+    },
+    {
+        segment: 'Analytics',
+        title: 'Analises',
+        icon: <AssessmentIcon/>,
+    },
+];
 
 
 
 
-
-function DemoPageContent({ pathname, navigate }) {
+function DemoPageContent() {
     return (
-
-        {pathname.startsWith('/orders') ? (
-                <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
-                    <Button
-                        onClick={() => {
-                            navigate('/orders/1');
-                        }}
-                    >
-                        Order 1
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            navigate('/orders/2');
-                        }}
-                    >
-                        Order 2
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            navigate('/orders/3');
-                        }}
-                    >
-                        Order 3
-                    </Button>
-                </Stack>
-            ) : null}
-);
         <Profile/>
     );
 }
 
 
-DemoPageContent.propTypes = {
-    navigate: PropTypes.func.isRequired,
-    pathname: PropTypes.string.isRequired,
-};
 
 const ExitDashboard = () => {
     router.get("/");
@@ -70,6 +74,7 @@ const ExitDashboard = () => {
 DemoPageContent.propTypes = {
     pathname: PropTypes.string.isRequired,
 };
+
 
 function Dashboard() {
     const user = authStore.user;
@@ -135,60 +140,7 @@ function Dashboard() {
     return (
         // preview-start
         <AppProvider
-            NAVIGATION={[
-                {
-                    kind: 'header',
-                    title:
-                        'DASHBOARD'
-                }
-                ,
-                {
-                    segment: 'myinfo',
-                    title:
-                        'Minha Informação',
-                    icon:
-                        <PersonIcon/>,
-                }
-                ,
-                {
-                    kind: 'divider'
-                }
-                ,
-                {
-                    segment: 'MyStore',
-                    title:
-                        'Lojas',
-                    icon:
-                        <StoreIcon/>,
-                }
-                ,
-                {
-                    kind: 'divider'
-                }
-                ,
-                {
-                    segment: 'orders',
-                    title:
-                        'Encomendas',
-                    icon:
-                        <ShoppingBasketIcon/>,
-                    pattern:
-                        '/orders'
-                }
-                ,
-                {
-                    kind: 'divider'
-                }
-                ,
-                {
-                    segment: 'Analytics',
-                    title:
-                        'Analises',
-                    icon:
-                        <AssessmentIcon/>,
-                }
-                ,
-            ]}
+            navigation={NAVIGATION}
             session={session}
             authentication={authentication}
             router={router}
