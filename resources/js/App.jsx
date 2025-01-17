@@ -1,24 +1,29 @@
 import { observer } from "mobx-react";
 import { Container, Box, useMediaQuery } from "@mui/material";
-import { Navbar, Footer,} from "./Components";
+import { Navbar, Footer } from "./Components";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
-import {DashBoard} from './Pages';
-import {useState} from "react";
+import { usePage } from "@inertiajs/react";
 
-
-const App = observer(({ children, auth }) => {
+const App = observer(({ children }) => {
     const theme = useTheme();
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-    const [showDashboard, setShowDashboard] = useState(false);
+    // Usa o usePage para aceder à informação da página atual
+    const { component } = usePage();
 
+    // Verifica se a rota atual é a do Dashboard
+    const isDashboardRoute = component === "DashBoard";
 
     return (
-
         <>
-
-            {!showDashboard ? (
+            {isDashboardRoute ? (
+                // Renderiza apenas o componente DashBoard sem layout
+                <>
+                    {children}
+                </>
+            ) : (
+                // Renderiza as outras páginas com o layout principal
                 <Container
                     className="App"
                     sx={{
@@ -53,7 +58,7 @@ const App = observer(({ children, auth }) => {
                             minWidth: "100% !important",
                         }}
                     >
-                        <Navbar auth={auth} setShowDashboard={setShowDashboard} />
+                        <Navbar />
                         {children}
                     </Container>
                     <Container
@@ -68,9 +73,6 @@ const App = observer(({ children, auth }) => {
                         {biggerThanSm && <Footer />}
                     </Container>
                 </Container>
-                ) : (
-
-                <DashBoard setShowDashboard={setShowDashboard}/>
             )}
         </>
     );
