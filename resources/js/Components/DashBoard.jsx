@@ -10,6 +10,7 @@ import {useTheme} from "@mui/material/styles";
 import {authStore} from "@/Stores/index.js";
 import {Button} from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
+import {router} from "@inertiajs/react";
 
 
 
@@ -42,12 +43,14 @@ function DemoPageContent({ pathname }) {
 
 
 
-
+const ExitDashboard = () => {
+    router.get("/");
+};
 DemoPageContent.propTypes = {
     pathname: PropTypes.string.isRequired,
 };
 
-function Dashboard({setShowDashboard}) {
+function Dashboard() {
     const user = authStore.user;
     const theme = useTheme();
 
@@ -59,9 +62,7 @@ function Dashboard({setShowDashboard}) {
         },
     });
 
-    const ExitDashboard = () => {
-        setShowDashboard(false);
-    };
+
 
     //funcão para sair do modo vendedor
     function ExitButton({ mini }) {
@@ -124,7 +125,7 @@ function Dashboard({setShowDashboard}) {
         >
             <DashboardLayout
                 slots={{
-                    setShowDashboard: () => false,  sidebarFooter: ExitButton
+                      sidebarFooter: ExitButton
                 }}
 
             >

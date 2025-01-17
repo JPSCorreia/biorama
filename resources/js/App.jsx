@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
 import { usePage } from "@inertiajs/react";
 
+
 const App = observer(({ children }) => {
     const theme = useTheme();
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));

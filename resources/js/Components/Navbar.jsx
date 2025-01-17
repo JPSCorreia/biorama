@@ -30,12 +30,13 @@ import {observer} from "mobx-react";
 import {router,} from "@inertiajs/react";
 import SearchBar from "./SearchBar";
 
-const Navbar = observer(({setShowDashboard}) => {
+const Navbar = observer(() => {
 
     const isAuthenticated = authStore.isAuthenticated;
 
-    const handleDashboardToggle = () => {
-        setShowDashboard((prev) => !prev); // Alterna o estado do dashboard
+    const handleDashboardNavigation = () => {
+        // Redireciona para o dashboard
+        router.get("/dashboard");
     };
 
 
@@ -503,7 +504,7 @@ const Navbar = observer(({setShowDashboard}) => {
                                             <Button
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={handleDashboardToggle}
+                                                onClick={handleDashboardNavigation}
                                                 sx={{
                                                     display: "flex",
                                                     alignItems: "center",

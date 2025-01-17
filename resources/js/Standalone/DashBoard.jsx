@@ -10,14 +10,33 @@ import {useTheme} from "@mui/material/styles";
 import {authStore} from "@/Stores/index.js";
 import {Button} from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import {router,} from "@inertiajs/react";
+import PersonIcon from '@mui/icons-material/Person';
+import StoreIcon from '@mui/icons-material/Store';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 
 const NAVIGATION = [
     {
-        segment: 'dashboard',
-        title: 'Dashboard',
-        icon: <DashboardIcon />,
+        segment: 'myinfo',
+        title: 'Minha Informação',
+        icon: <PersonIcon />,
+    },
+    {
+        segment: 'MyStore',
+        title: 'Lojas',
+        icon: <StoreIcon />,
+    },
+    {
+        segment: 'orders',
+        title: 'Encomendas',
+        icon: <ShoppingBasketIcon />,
+    },
+    {
+        segment: 'Analytics',
+        title: 'Analises',
+        icon: <AssessmentIcon />,
     },
 ];
 
@@ -41,13 +60,15 @@ function DemoPageContent({ pathname }) {
 }
 
 
-
+const ExitDashboard = () => {
+    router.get("/");
+};
 
 DemoPageContent.propTypes = {
     pathname: PropTypes.string.isRequired,
 };
 
-function Dashboard({setShowDashboard}) {
+function Dashboard() {
     const user = authStore.user;
     const theme = useTheme();
 
@@ -59,13 +80,10 @@ function Dashboard({setShowDashboard}) {
         },
     });
 
-    const ExitDashboard = () => {
-        setShowDashboard(false);
-    };
+
 
     //funcão para sair do modo vendedor
     function ExitButton({ mini }) {
-
         return (
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: 'center', mb: 5}}>
 
@@ -124,7 +142,7 @@ function Dashboard({setShowDashboard}) {
         >
             <DashboardLayout
                 slots={{
-                    setShowDashboard: () => false,  sidebarFooter: ExitButton
+                    sidebarFooter: ExitButton
                 }}
 
             >
