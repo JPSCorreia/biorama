@@ -28,6 +28,8 @@ class UserController extends Controller
             'last_name' => 'required|string|max:100',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'nif' => 'required|string|max:9|',
+            'gender' => 'required|string',
         ]);
 
         $user = User::create($validated);

@@ -1,319 +1,135 @@
-import {
-    Box,
-    TextField,
-    Button,
-    Typography,
-    Container,
-    Alert,
-    Paper,
-    Fade,
-    Checkbox,
-    FormControlLabel
-} from "@mui/material";
-import { useState, useEffect } from "react";
-import {router} from "@inertiajs/react";
+import {useEffect, useState} from 'react';
+import { Box, LinearProgress, Button, Typography } from '@mui/material';
+import IntroStep1VendorRegister from '../Components/IntroStep1VendorRegister';
+import IntroStep2VendorRegister from '../Components/IntroStep2VendorRegister';
+import IntroStep3VendorRegister from '../Components/IntroStep3VendorRegister';
+import Step1PersonalInfo from '../Components/Step1PersonalInfo';
+import Step2StoreDetails from '../Components/Step2StoreDetails';
+import Step3CreateProduct from '../Components/Step3CreateProduct';
+import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore";
+import {usePage} from "@inertiajs/react";
 
-const VendorRegister = () => {
-    const [formData, setFormData] = useState({});
 
-    const [error, setError] = useState("");
-    const [showError, setShowError] = useState(false);
 
-    // Função para criar o FormData a partir do objeto
-    const createFormData = (data) => {
 
-        const formData = new FormData();
+const RegistorVendorPage = ({ genders }) => {
 
-        Object.keys(data).forEach((key) => {
-            if (data[key] !== null && data[key] !== undefined) {
-                // Se for a checkbox, precisa de transformar para '1' ou '0'
-                if (typeof data[key] === 'boolean') {
-                    formData.append(key, data[key] ? '1' : '0');
-                } else {
-                    formData.append(key, data[key]);
-                }
-            }
-        });
-        return formData;
-    };
+    const [currentStep, setCurrentStep] = useState(0);
+    const progress = (currentStep / 6) * 100;
+    const {auth} = usePage().props;
+    const [showWarning, setShowWarning] = useState(true);
 
-    // Função para manipular o registo
-    const handleVendorRegister = (e) => {
-        e.preventDefault();
-
-        // Clear any previous error before submitting the form
-        setError("");
-        setShowError(false);
-
-        const data = createFormData(formData);
-
-        router.post('/registarVendedor', data, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-
-    };
+    console.log('Auth', auth);
 
     useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => {
-                setShowError(false);
-            }, 4500);
-
-            const clearTimer = setTimeout(() => {
-                setError("");
-            }, 5000);
-
-            return () => {
-                clearTimeout(timer);
-                clearTimeout(clearTimer);
-            };
+        if (auth?.user) {
+            vendorRegistrationStore.initializeUser(auth.user);
+            console.log('User da store do registo', vendorRegistrationStore.user);
+            console.log('currentFormValid', vendorRegistrationStore.currentFormValid);
         }
-    }, [error]);
+    }, [auth]);
+
+    const [formikInstance, setFormikInstance] = useState(null);
+
+    const handleNext = async () => {
+        if (formikInstance) {
+            const errors = await formikInstance.validateForm();
+            const isValid = Object.keys(errors).length === 0;
+
+            if (!isValid) {
+                setShowWarning(true);
+                return;
+            }
+
+            setShowWarning(false);
+            formikInstance.handleSubmit();
+        }
+
+        setCurrentStep((prev) => prev + 1);
+    };
+
+
+
+    const handleBack = () => {
+        setCurrentStep((prev) => prev - 1);
+    };
+
+    // Lógica para renderizar o componente correto baseado no passo atual
+    const renderStepContent = () => {
+        switch (currentStep) {
+            case 0:
+                return <IntroStep1VendorRegister />;
+            case 1:
+                return <Step1PersonalInfo
+                    genders={genders}
+                    setFormikInstance={setFormikInstance}
+                    showWarning={showWarning}
+                    setShowWarning={setShowWarning}
+                />;
+            case 2:
+                return <IntroStep2VendorRegister />;
+            case 3:
+                return <Step2StoreDetails />;
+            case 4:
+                return <IntroStep3VendorRegister />;
+            case 5:
+                return <Step3CreateProduct />;
+            default:
+                return (
+                    <Typography variant="h6">
+                        Final do registo! Obrigado por completar as etapas.
+                    </Typography>
+                );
+        }
+    };
 
     return (
-        <Container
-            maxWidth="sm"
+        <Box
             sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "40px !important",
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                mt: '10vh',
+                minHeight: '70vh',
+                alignContent: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden', // Impede o scroll na página
+
             }}
         >
-            <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
-                {error ? (
-                    <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
-                        {error}
-                    </Alert>
-                ) : (
-                    <Box sx={{ mb: 2, height: "48px" }}></Box>
-                )}
-            </Fade>
+            {/* Renderiza o conteúdo baseado no passo atual */}
             <Box
                 sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                    width: "100%",
-                    maxWidth: "470px",
-                }}
-            >
-                <Paper elevation={8} sx={{p: 2, width: "100%"}}>
-                    <Typography
-                        variant="h5"
-                        align="center"
-                        gutterBottom
-                        sx={{mb: 2}}
-                    >
-                        Registo de Vendedor
-                    </Typography>
-
-                    <form onSubmit={handleVendorRegister}>
-                        <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
-                            <TextField
-                                fullWidth
-                                label="NIF"
-                                name="nif"
-                                variant="outlined"
-                                required
-                                value={formData.nif || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Telefone"
-                                name="phone"
-                                variant="outlined"
-                                required
-                                value={formData.phone || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Morada"
-                                name="address"
-                                variant="outlined"
-                                required
-                                value={formData.address || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Código Postal"
-                                name="postal_code"
-                                variant="outlined"
-                                required
-                                value={formData.postal_code || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Cidade"
-                                name="city"
-                                variant="outlined"
-                                required
-                                value={formData.city || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Data de Nascimento"
-                                name="date_of_birth"
-                                type="date"
-                                InputLabelProps={{shrink: true}}
-                                variant="outlined"
-                                required
-                                value={formData.date_of_birth || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <TextField
-                                fullWidth
-                                label="IBAN"
-                                name="iban"
-                                variant="outlined"
-                                required
-                                value={formData.iban || ""}
-                                onChange={(e) => {
-                                    const {name, value} = e.target;
-                                    setFormData((prev) => ({...prev, [name]: value}));
-                                }}
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={formData.is_company || false}
-                                        onChange={(e) => {
-                                            const {name, checked} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: checked}));
-                                        }}
-                                        name="is_company"
-                                    />
-                                }
-                                label="É uma empresa?"
-                            />
-                            {formData.is_company && (
-                                <>
-                                    <TextField
-                                        fullWidth
-                                        label="Nome da Empresa"
-                                        name="company_name"
-                                        variant="outlined"
-                                        required
-                                        value={formData.company_name || ""}
-                                        onChange={(e) => {
-                                            const {name, value} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: value}));
-                                        }}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="NIF da Empresa"
-                                        name="company_nif"
-                                        variant="outlined"
-                                        required
-                                        value={formData.company_nif || ""}
-                                        onChange={(e) => {
-                                            const {name, value} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: value}));
-                                        }}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Morada da Empresa"
-                                        name="company_address"
-                                        variant="outlined"
-                                        value={formData.company_address || ""}
-                                        onChange={(e) => {
-                                            const {name, value} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: value}));
-                                        }}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Código Postal da Empresa"
-                                        name="company_postal_code"
-                                        variant="outlined"
-                                        value={formData.company_postal_code || ""}
-                                        onChange={(e) => {
-                                            const {name, value} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: value}));
-                                        }}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Telefone da Empresa"
-                                        name="company_phone"
-                                        variant="outlined"
-                                        value={formData.company_phone || ""}
-                                        onChange={(e) => {
-                                            const {name, value} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: value}));
-                                        }}
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Email da Empresa"
-                                        name="company_email"
-                                        variant="outlined"
-                                        value={formData.company_email || ""}
-                                        onChange={(e) => {
-                                            const {name, value} = e.target;
-                                            setFormData((prev) => ({...prev, [name]: value}));
-                                        }}
-                                    />
-                                </>
-                            )}
-                            <TextField
-                                fullWidth
-                                label="Fotografia do Vendedor"
-                                name="vendor_photo"
-                                type="file"
-                                InputLabelProps={{shrink: true}}
-                                variant="outlined"
-                                onChange={(e) =>
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        vendor_photo: e.target.files[0],
-                                    }))
-                                }
-                            />
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                type="submit"
-                                sx={{pt: 1}}
-                            >
-                                Registar como Vendedor
-                            </Button>
-                        </Box>
-                    </form>
-
-                </Paper>
+                    flexGrow: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    "& > :last-child": {
+                        mb: 4,
+                    }
+                    }}>
+                {renderStepContent()}
             </Box>
-        </Container>
+
+            {/* Barra de progresso */}
+            <Box>
+                <LinearProgress variant="determinate" value={progress} sx={{ height: 8, borderRadius: 4, mb: 2 }} />
+            </Box>
+
+            {/* Botões para navegar */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Button disabled={currentStep === 0} onClick={handleBack}>
+                    Recuar
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleNext}
+                    disabled={!vendorRegistrationStore.currentFormValid}>
+                    Avançar
+                </Button>
+            </Box>
+        </Box>
     );
 };
 
-export default VendorRegister;
+export default RegistorVendorPage;

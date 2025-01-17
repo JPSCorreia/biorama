@@ -2,7 +2,6 @@ import {
     Box,
     Button,
     Modal,
-    styled,
     TextField,
     useMediaQuery,
     useTheme,
@@ -26,38 +25,27 @@ import 'dayjs/locale/pt';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
-
 const ProfileEditModal = observer(({ open, handleClose, user }) => {
 
     const theme = useTheme();
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     const [first_name, setFirstName] = useState(user.first_name || '');
     const [last_name, setLastName] = useState(user.last_name || '');
     const [previewImage, setPreviewImage] = useState(null);
     const [email, setEmail] = useState(user.email || '');
     const [phone, setPhone] = useState(user.phone || '');
-    const [photo, setphoto] = useState(user.photo || '');
+    const [image_profile, setImageProfile] = useState(user.image_profile || '');
+    const [nif, setnif] = useState(user.nif || '');
+    const [gender, setgender] = useState(user.gender || '');
     const [date_of_birth, setValue] = useState(user.date_of_birth || null);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             setPreviewImage(URL.createObjectURL(file));
-            setphoto(file);
+            setImageProfile(file);
         }
     };
 
@@ -71,8 +59,10 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
         formData.append("email", email);
         formData.append("phone", phone);
         formData.append("date_of_birth", date_of_birth);
-        if (photo) {
-            formData.append("photo", photo);
+        formData.append("nif", nif);
+        formData.append('gender', gender);
+        if (image_profile) {
+            formData.append("photo", image_profile);
         }
 
         try {
@@ -138,7 +128,7 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
                     >
                         <Avatar
                             alt="Profile Image"
-                            src={previewImage || photo}
+                            src={previewImage || image_profile}
                             sx={{
                                 width: isSmallScreen ? 90 : 110,
                                 height: isSmallScreen ? 90 : 110,
@@ -207,6 +197,22 @@ const ProfileEditModal = observer(({ open, handleClose, user }) => {
                         name="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="Género"
+                        name="gender"
+                        value={gender}
+                        onChange={(e) => setgender(e.target.value)}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="NIF"
+                        name="nif"
+                        value={nif}
+                        onChange={(e) => setnif(e.target.value)}
                     />
                     <TextField
                         fullWidth

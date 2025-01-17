@@ -16,7 +16,6 @@ class VendorFactory extends Factory
         $is_company = $this->faker->boolean;
         return [
             'user_id' => $user_id,
-            'iban' => $this->faker->iban('PT'),
             'is_company' => $is_company,
 
             'created_at' => now(),

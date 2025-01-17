@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users'); // Chave estrangeira para a tabela de utilizadores
-            $table->string('iban', 25); // IBAN com suporte a formatos internacionais
+            $table->foreignId('user_id')->constrained('users'); // Chave estrangeira para a tabela users
+
             $table->boolean('is_company')->default(false); // Se oo vendedor é uma empresa
 
             $table->timestamps(); // Campos padrão created_at e updated_at

@@ -19,6 +19,7 @@ const Register = () => {
         first_name: "",
         last_name: "",
         email: "",
+        nif: "",
         password: "",
         password_confirmation: "",
     });
@@ -194,6 +195,20 @@ const Register = () => {
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
+                                label="Nif"
+                                variant="outlined"
+                                required
+                                value={formData.nif}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        nif: e.target.value,
+                                    })
+                                }
+                            />
+                            <TextField
+                                fullWidth
+                                sx={{ maxWidth: "360px" }}
                                 label="Palavra-passe"
                                 type="password"
                                 variant="outlined"
@@ -221,6 +236,7 @@ const Register = () => {
                                     })
                                 }
                             />
+
                             <Button
                                 fullWidth
                                 variant="contained"

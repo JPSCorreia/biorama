@@ -80,7 +80,7 @@ const ProfileInformation = observer(({user}) => {
                 <Avatar
                     alt="Profile Image"
                     variant = {isSmallScreen ? "" : "rounded"}
-                    src={user?.photo}
+                    src={user?.image_profile}
                     sx={{
                         width: isSmallScreen ? 90 : 110,
                         height: isSmallScreen ? 90 : 110,
@@ -227,6 +227,40 @@ const ProfileInformation = observer(({user}) => {
                                 {user.phone || "Não Fornecido"}
                             </Typography>
                         </Box>
+                    </ListItem>
+                    <Divider
+                        variant="middle"
+                        sx={{
+                            width: "100%",
+                            mt: 1.5,
+                            background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                            border: "none",
+                            height: 1.5,
+                        }}
+                    />
+                    <ListItem
+                        sx={{
+                            display: "flex",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            justifyContent: isSmallScreen ? "" : "space-between",
+                            alignItems: isSmallScreen ? "baseline" : "",
+                            p: 0,
+                            mt: 2
+                        }}
+                    >
+                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF:</Typography>
+                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                                {user.nif || "Não Fornecido"}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
+                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Genero</Typography>
+                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
+                                {user.gender || "Não Fornecido"}
+                            </Typography>
+                        </Box>
+
                     </ListItem>
                     <Divider
                         variant="middle"

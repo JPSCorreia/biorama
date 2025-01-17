@@ -20,6 +20,8 @@ class User extends Authenticatable implements CanResetPasswordContract
         'last_name',
         'email',
         'password',
+        'gender',
+        'nif',
         'phone',
         'date_of_birth',
         'photo',
@@ -38,6 +40,11 @@ class User extends Authenticatable implements CanResetPasswordContract
     public function vendor()
     {
         return $this->hasOne(Vendor::class);
+    }
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
     }
 
     public function home_addresses()

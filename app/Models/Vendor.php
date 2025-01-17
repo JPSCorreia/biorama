@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Traits\HasRoles;
 
 class Vendor extends Model
 {
@@ -12,7 +13,6 @@ class Vendor extends Model
 
     protected $fillable = [
         'user_id',
-        'iban',
         'is_company',
     ];
 

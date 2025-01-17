@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreignId('vendor_id')->constrained('vendors'); // Chave estrangeira para a tabela vendors
 
-            $table->string('company_name', 255)->nullable(); // Nome da empresa
-            $table->string('company_nif', 20)->nullable(); // NIF da empresa
-            $table->string('company_address', 255)->nullable(); // Morada da empresa
-            $table->string('company_city', 255)->nullable(); // Cidade da empresa
-            $table->string('company_postal_code', 10)->nullable(); // Código postal da empresa
-            $table->string('company_phone', 25)->nullable(); // Telefone da empresa
-            $table->string('company_email',255)->nullable(); // Email da empresa
+            $table->string('name', 255); // Nome da empresa
+            $table->string('nif', 20)->unique(); // NIF da empresa
+            $table->date('founded_at');
+            $table->string('sector');
+            $table->text('description')->nullable();
+
 
 
         });

@@ -70,15 +70,18 @@ Route::middleware('guest')->group(function () {
 
 // Protected routes (require authentication)
 Route::middleware(['auth'])->group(function () {
+
+    //Etapas para registo vendedor
+    Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
+    Route::post('/registar-vendendor-1', [VendorController::class, 'store'])->name('registarVendedor.api');
+
+
     //Rotas para o Perfil de User
     Route::get('/perfil', [UserController::class, 'show'])->name('profile');
     Route::post('/editar-perfil/{user}', [UserController::class, 'update'])->name('update_profile_user');
     Route::get('/get-user', [UserController::class, 'get_user'])->name('get_user');
 
-
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
-    Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
-    Route::post('/registarVendedor', [AuthController::class, 'vendorRegister'])->name('registarVendedor.api');
 
     Route::get('/get-moradas', [HomeAddressController::class, 'index'])->name('get_address');
     Route::post('/adicionar-morada', [HomeAddressController::class, 'store'])->name('add_address');

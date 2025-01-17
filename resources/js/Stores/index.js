@@ -4,6 +4,7 @@ import { authStore } from "./authStore";
 import { cartStore } from "./cartStore";
 import { alertStore } from "./alertStore";
 import { homeAddressStore } from "./homeAddressStore";
+import { vendorRegistrationStore } from "./vendorRegistrationStore";
 
 // Configuração do mobx-persist-store
 configurePersistable({
@@ -16,4 +17,4 @@ configurePersistable({
 // Remova qualquer configuração de persistable do authStore
 
 // Exporte os stores
-export { appStore, authStore, cartStore, alertStore, homeAddressStore };
+export { appStore, authStore, cartStore, alertStore, homeAddressStore, vendorRegistrationStore };

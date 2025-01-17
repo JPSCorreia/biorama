@@ -16,20 +16,18 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
-        Vendor::factory()->count(20)->create();
+        Vendor::factory()
+            ->count(10) // 10 Vendors
+            ->has(
+                Company::factory() // 1 Company por Vendor
+                ->hasContacts(1) // 1 Contact por Company
+                ->hasAddresses(1) // 1 Address por Company
+            )
+            ->has(
+                VendorReview::factory()->count(5) // 5 Reviews por Vendor
+            )
+            ->create();
 
-        $vendors = Vendor::all();
-
-        foreach ($vendors as $vendor) {
-            if ($vendor->is_company) {
-                Company::factory()->create([
-                    'vendor_id' => $vendor->id,
-                ]);
-            }
-            VendorReview::factory()->count(5)->create([
-                'vendor_id' => $vendor->id,
-            ]);
-        }
     }
 
 }
