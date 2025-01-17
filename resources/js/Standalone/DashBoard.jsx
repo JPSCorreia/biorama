@@ -18,21 +18,25 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 
 
 const NAVIGATION = [
+    { kind: 'header', title: 'DASHBOARD' },
     {
         segment: 'myinfo',
         title: 'Minha Informação',
         icon: <PersonIcon />,
     },
+    { kind: 'divider' },
     {
         segment: 'MyStore',
         title: 'Lojas',
         icon: <StoreIcon />,
     },
+    { kind: 'divider' },
     {
         segment: 'orders',
         title: 'Encomendas',
         icon: <ShoppingBasketIcon />,
     },
+    { kind: 'divider' },
     {
         segment: 'Analytics',
         title: 'Analises',
@@ -136,7 +140,7 @@ function Dashboard() {
             router={router}
             theme={theme}
             branding={{
-                    title: "DASHBOARD",
+                    title: "BIORAMAgit ",
                     logo: <img src="https://github.com/JPSCorreia/biorama/blob/main/resources/images/icon_auth0.png?raw=true" alt="Biorama" />,
             }}
         >
