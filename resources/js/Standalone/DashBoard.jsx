@@ -15,6 +15,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import StoreIcon from '@mui/icons-material/Store';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import { ThemeSwitcher } from '../Components';
+import { appStore } from '../Stores';
 import {Profile} from "@/Pages/index.js";
 
 
@@ -89,7 +91,6 @@ function Dashboard() {
     function ExitButton({ mini }) {
         return (
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: 'center', mb: 5}}>
-
                 <Button
                     onClick={ExitDashboard}
                     component="label"
@@ -197,11 +198,12 @@ function Dashboard() {
                     logo: <img src="https://github.com/JPSCorreia/biorama/blob/main/resources/images/icon_auth0.png?raw=true" alt="Biorama" />,
             }}
         >
+
             <DashboardLayout
                 slots={{
-                    sidebarFooter: ExitButton
+                    sidebarFooter: ExitButton,
+                    toolbarActions: ThemeSwitcher,
                 }}
-
             >
                 <DemoPageContent pathname={router.pathname} navigate={router.navigate} />
             </DashboardLayout>

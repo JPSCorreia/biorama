@@ -24,13 +24,22 @@ createInertiaApp({
 
         // Caso especial para DashBoard (fora do layout padrão)
         if (name === "DashBoard") {
-            return import("./Standalone/DashBoard.jsx").then(
-                (module) => {
-                    const Component = module.default || module;
-                    Component.layout = null; // Sem layout para esta página
-                    return Component;
-                }
-            );
+            return import("./Standalone/DashBoard.jsx").then((module) => {
+                const Component = module.default || module;
+
+                // Envolve o Dashboard com os contextos necessários
+                Component.layout = (page) => (
+                    <Provider appStore={appStore} authStore={authStore}>
+                        <StyledEngineProvider injectFirst>
+                            <CustomThemeProvider appStore={appStore}>
+                                {page}
+                            </CustomThemeProvider>
+                        </StyledEngineProvider>
+                    </Provider>
+                );
+
+                return Component;
+            });
         }
 
         // Resolve as páginas normais
