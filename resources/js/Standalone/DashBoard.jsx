@@ -15,54 +15,51 @@ import PersonIcon from '@mui/icons-material/Person';
 import StoreIcon from '@mui/icons-material/Store';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-
-
-const NAVIGATION = [
-    { kind: 'header', title: 'DASHBOARD' },
-    {
-        segment: 'myinfo',
-        title: 'Minha Informação',
-        icon: <PersonIcon />,
-    },
-    { kind: 'divider' },
-    {
-        segment: 'MyStore',
-        title: 'Lojas',
-        icon: <StoreIcon />,
-    },
-    { kind: 'divider' },
-    {
-        segment: 'orders',
-        title: 'Encomendas',
-        icon: <ShoppingBasketIcon />,
-    },
-    { kind: 'divider' },
-    {
-        segment: 'Analytics',
-        title: 'Analises',
-        icon: <AssessmentIcon />,
-    },
-];
+import {Profile} from "@/Pages/index.js";
 
 
 
 
-function DemoPageContent({ pathname }) {
+
+
+function DemoPageContent({ pathname, navigate }) {
     return (
-        <Box
-            sx={{
-                py: 4,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-            }}
-        >
-            <Typography>Dashboard content for {pathname}</Typography>
-        </Box>
+
+        {pathname.startsWith('/orders') ? (
+                <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
+                    <Button
+                        onClick={() => {
+                            navigate('/orders/1');
+                        }}
+                    >
+                        Order 1
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            navigate('/orders/2');
+                        }}
+                    >
+                        Order 2
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            navigate('/orders/3');
+                        }}
+                    >
+                        Order 3
+                    </Button>
+                </Stack>
+            ) : null}
+);
+        <Profile/>
     );
 }
 
+
+DemoPageContent.propTypes = {
+    navigate: PropTypes.func.isRequired,
+    pathname: PropTypes.string.isRequired,
+};
 
 const ExitDashboard = () => {
     router.get("/");
@@ -74,6 +71,8 @@ DemoPageContent.propTypes = {
 
 function Dashboard() {
     const user = authStore.user;
+
+
     const theme = useTheme();
 
     const [session, setSession] = React.useState({
@@ -128,19 +127,73 @@ function Dashboard() {
         };
     }, []);
 
-    const router = useDemoRouter('/Vendor/info');
 
+    const router = useDemoRouter('/Vendor/info');
+    console.log('theme', theme);
 
     return (
         // preview-start
         <AppProvider
+            NAVIGATION={[
+                {
+                    kind: 'header',
+                    title:
+                        'DASHBOARD'
+                }
+                ,
+                {
+                    segment: 'myinfo',
+                    title:
+                        'Minha Informação',
+                    icon:
+                        <PersonIcon/>,
+                }
+                ,
+                {
+                    kind: 'divider'
+                }
+                ,
+                {
+                    segment: 'MyStore',
+                    title:
+                        'Lojas',
+                    icon:
+                        <StoreIcon/>,
+                }
+                ,
+                {
+                    kind: 'divider'
+                }
+                ,
+                {
+                    segment: 'orders',
+                    title:
+                        'Encomendas',
+                    icon:
+                        <ShoppingBasketIcon/>,
+                    pattern:
+                        '/orders'
+                }
+                ,
+                {
+                    kind: 'divider'
+                }
+                ,
+                {
+                    segment: 'Analytics',
+                    title:
+                        'Analises',
+                    icon:
+                        <AssessmentIcon/>,
+                }
+                ,
+            ]}
             session={session}
             authentication={authentication}
-            navigation={NAVIGATION}
             router={router}
             theme={theme}
             branding={{
-                    title: "BIORAMAgit ",
+                    title: "BIORAMA",
                     logo: <img src="https://github.com/JPSCorreia/biorama/blob/main/resources/images/icon_auth0.png?raw=true" alt="Biorama" />,
             }}
         >
@@ -150,7 +203,7 @@ function Dashboard() {
                 }}
 
             >
-                <DemoPageContent pathname={router.pathname} />
+                <DemoPageContent pathname={router.pathname} navigate={router.navigate} />
             </DashboardLayout>
         </AppProvider>
         // preview-end
