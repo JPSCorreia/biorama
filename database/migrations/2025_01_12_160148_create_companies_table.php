@@ -20,8 +20,8 @@ return new class extends Migration
 
             $table->string('name', 255); // Nome da empresa
             $table->string('nif', 20)->unique(); // NIF da empresa
-            $table->date('founded_at');
-            $table->string('sector');
+            $table->date('founded_at')->nullable();
+            $table->string('sector')->nullable();
             $table->text('description')->nullable();
 
 

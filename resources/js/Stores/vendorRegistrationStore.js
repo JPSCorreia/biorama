@@ -3,28 +3,58 @@ import {makePersistable} from "mobx-persist-store";
 import axios from "axios";
 
 class VendorRegistrationStore {
-    user = null; // Informações do utilizador vindas do AuthStore
+    user = null; // Informações do utilizador autenticado e que deseja ser vendedor
     isCompany = false; // Define se o utilizador vai registar uma empresa
-    company = null; // Dados da empresa, caso aplicável
+    userFormValid = false; // Validação do formulário do utilizador
+
+    company = {
+        name: "",
+        nif: "",
+        phone: "",
+        email: "",
+        street: "",
+        number: "",
+        postal_code: "",
+        district: "",
+        country: "",
+    }; // Dados da empresa, caso aplicável
+    companyFormValid = false; // Validação do formulário da empresa
+
     store = null; // Dados da loja
+    storeFormValid = false; // Validação do formulário da loja
+
     products = []; // Lista de produtos
-    currentFormValid = true; // Validação do formulário
+    productsFormValid = false; // Validação do formulário dos produtos
+
     constructor() {
         makeObservable(this, {
             user: observable,
             isCompany: observable,
+            userFormValid: observable,
+
             company: observable,
+            companyFormValid: observable,
+
             store: observable,
+            storeFormValid: observable,
+
             products: observable,
-            currentFormValid: observable,
+            productsFormValid: observable,
 
             initializeUser: action,
             updateUser: action,
             setIsCompany: action,
+            setUserFormValid: action,
+
             updateCompany: action,
+            setCompanyFormValid: action,
+
             updateStore: action,
+            setStoreFormValid: action,
+
             addProduct: action,
-            setFormValid: action,
+            setProductFormValid: action,
+
             submit: action,
         });
         makePersistable(this, {
@@ -40,16 +70,37 @@ class VendorRegistrationStore {
         this.user = userData;
     }
 
+    // Ações para definir a validade dos formulários
+    setUserFormValid(value) {
+        this.userFormValid = value
+    }
+
+    setCompanyFormValid(value) {
+        this.companyFormValid = value
+    }
+
+    setStoreFormValid(value) {
+        this.storeFormValid = value
+    }
+
+    setProductFormValid(value) {
+        this.productsFormValid = value
+    }
+
     // Ação para atualizar os dados do utilizador
     updateUser(data) {
         this.user = {...this.user, ...data};
     }
 
     // Ação para definir se é empresa
-    setIsCompany(value) {
-        this.isCompany = value;
-        if (!value) this.company = null; // Limpa os dados da empresa se não for empresa
+    setIsCompany(isCompany) {
+        console.log("setIsCompany chamado com:", isCompany);
+        this.isCompany = isCompany;
+        if (!isCompany) {
+            this.companyFormValid = false; // Redefine a validade do formulário de empresa
+        }
     }
+
 
     // Ação para atualizar os dados da empresa
     updateCompany(data) {
@@ -66,11 +117,6 @@ class VendorRegistrationStore {
     // Ação para adicionar um produto
     addProduct(product) {
         this.products.push(product);
-    }
-
-    // Ação para definir a validade do formulário
-    setFormValid(value) {
-        this.currentFormValid = value
     }
 
     // Método para enviar os dados ao servidor

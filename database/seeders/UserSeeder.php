@@ -24,8 +24,10 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456789'), // Cria uma hash segura
             'phone' => '912345678',
             'date_of_birth' => '1990-01-01',
-            'photo' => null, // Sem foto
+            'image_profile' => null, // Sem foto
             'remember_token' => Str::random(10),
+            'iban' => 'PT50000201231234567890154',
+            'gender_id' => 1, // ID do género
             'created_at' => now(),
             'updated_at' => now(),
         ]);
