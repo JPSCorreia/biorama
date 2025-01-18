@@ -58,8 +58,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 const ThemeSwitcher = observer(() => {
 
-    const { component } = usePage(); // Obtém o nome do componente atual
-    const isDashboard = component === "DashBoard"; // Verifica se está no Dashboard
+    const isDashboard = usePage().url.startsWith("/dashboard");
 
     const handleThemeChange = (e) => {
         e.stopPropagation();

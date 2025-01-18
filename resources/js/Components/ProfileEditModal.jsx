@@ -14,7 +14,7 @@ import {
 } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import CloseIcon from '@mui/icons-material/Close';
 import {observer} from "mobx-react";

@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 //Teste
 
@@ -115,8 +116,26 @@ Route::post('/send-invoice', [OrderController::class, 'sendInvoice'])->name('inv
 if (env('APP_ENV') === 'local') {
     Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
 }
-
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-    Route::get('/dashboard/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');
+
+    Route::prefix('/dashboard')->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('Dashboard/Home');
+        })->name('dashboard.home');
+
+        Route::get('/analises', function () {
+            return Inertia::render('Dashboard/Analytics');
+        })->name('dashboard.analytics');
+
+        Route::get('/encomendas', function () {
+            return Inertia::render('Dashboard/Orders');
+        })->name('dashboard.orders');
+
+        Route::get('/lojas', function () {
+            return Inertia::render('Dashboard/Stores');
+        })->name('dashboard.stores');
+    });
 });
+
+

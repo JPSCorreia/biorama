@@ -7,8 +7,8 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
-    {
-        return Inertia::render('DashBoard');
-    }
+    // public function index()
+    // {
+    //     return Inertia::render('Dashboard/Pages/Home');
+    // }
 }

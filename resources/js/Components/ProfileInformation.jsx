@@ -17,7 +17,6 @@ import AddressModal from "./AddressModal.jsx";
 import AddressCard from "./AddressCard.jsx";
 import ProfileEditModal from "./ProfileEditModal.jsx";
 import EditIcon from '@mui/icons-material/Edit';
-import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const ProfileInformation = observer(({user}) => {

@@ -14,12 +14,12 @@ const App = observer(({ children }) => {
     const { component } = usePage();
 
     // Verifica se a rota atual é a do Dashboard
-    const isDashboardRoute = component === "DashBoard";
+    const isDashboardRoute = component === "Dashboard";
 
     return (
         <>
             {isDashboardRoute ? (
-                // Renderiza apenas o componente DashBoard sem layout
+                // Renderiza apenas o componente Dashboard sem layout
                 <>
                     {children}
                 </>
