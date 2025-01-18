@@ -5,111 +5,67 @@ import {
     Paper,
     useTheme,
     useMediaQuery,
+    Button,
 } from "@mui/material";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {observer} from "mobx-react-lite";
-import Step1CompanyInfo from "./Step1CompanyInfo"; // Componente para os dados da empresa
+import FormCompanyRegistration from "./FormCompanyRegistration.jsx";
 import dayjs from "dayjs";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore.js";
 import FormVendorRegistration from "@/Components/FormVendorRegistration.jsx";
 
-const Step1PersonalInfo = observer(({genders, setFormikInstance, showWarning, setShowWarning}) => {
+const Step1PersonalInfo = observer(({genders, setUserFormik, setCompanyFormik, showWarning, onCloseCompanyForm}) => {
 
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const [companyRegister, setCompanyRegister] = useState(true);
+    console.log('É UMA EMPRESA?', vendorRegistrationStore.isCompany);
 
     return (
-        <LocalizationProvider
-            dateAdapter={AdapterDayjs}
-            adapterLocale={dayjs.locale(navigator.language) || dayjs.locale("pt")}
+
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: 'column',
+                width: "85%",
+                "& > :first-of-type": {
+                    mb: 4
+                }
+            }}
         >
+            <FormVendorRegistration
+                genders={genders}
+                showWarning={showWarning}
+                passFormik={setUserFormik} // Passa para o formulário de dados pessoais
+            />
+
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: 'column',
-                    width: "100%",
-                    "& > :first-of-type": {
-                        mb: 4
-                    }
+                    justifyContent: "left",
+                    alignItems: "center",
                 }}
             >
-                <Paper sx={{mt: 4, width: "85%", m: "auto", p: 5}}>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                        }}
-                    >
-                        <Box>
-                            <Typography
-                                sx={{
-                                    fontSize: "2.5rem",
-                                    fontWeight: "bold",
-                                    mb: 0,
-                                }}
-                            >
-                                Dados Pessoais
-                            </Typography>
-                        </Box>
-                        <Box
-                            sx={{
-                                display: showWarning ? 'none' : "flex",
-                                justifyContent: "center",
-                                ml: 2,
-                            }}
-                        >
-                            <Link
-                                component="button"
-                                variant="body2"
-                                onClick={() => setShowWarning(!showWarning)}
-                                sx={{mt: 0, display: "block"}}
-                            >
-                                {"Editar os meus dados"}
-                            </Link>
-                        </Box>
-                    </Box>
-                    {showWarning && (
-                        <Box sx={{mb: 2 }}>
-                            <Typography
-                                sx={{
-                                    color: "#757575", // Cinza subtil
-                                    fontSize: "0.875rem",
-                                    fontStyle: "italic",
-                                }}
-                            >
-                                *Certifique-se de que todos os campos obrigatórios estão preenchidos para avançar para a próxima etapa.
-                            </Typography>
-                        </Box>
-                    )}
-
-                    <FormVendorRegistration genders={genders} passFormik={setFormikInstance} showWarning={showWarning} />
-
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "left",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Link
-                            component="button"
-                            variant="body2"
-                            onClick={() => vendorRegistrationStore.setIsCompany(!vendorRegistrationStore.isCompany)}// Alterna entre empresa e pessoal
-                            sx={{mt: 2, display: vendorRegistrationStore.isCompany ? "none" : "block"}}
-                        >
-                            {"Quero registar a minha empresa"}
-                        </Link>
-                    </Box>
-                </Paper>
-                {vendorRegistrationStore.isCompany && (
-                    <Step1CompanyInfo companyData={vendorRegistrationStore.company}
-                                      setCompanyData={vendorRegistrationStore.updateCompany}/>
-                )}
+                <Button
+                    component="button"
+                    variant="outlined"
+                    onClick={() => vendorRegistrationStore.setIsCompany(true)}// Alterna entre empresa e pessoal
+                    sx={{
+                        display: vendorRegistrationStore.isCompany ? "none" : "block",
+                        color: "#000",
+                        borderColor: "#000",
+                    }}
+                >
+                    {"Quero registar a minha empresa"}
+                </Button>
             </Box>
-        </LocalizationProvider>
+            {vendorRegistrationStore.isCompany && (
+                <FormCompanyRegistration
+                    passFormik={setCompanyFormik} // Passa para o formulário de empresa
+                    onCloseCompanyForm={onCloseCompanyForm} // Corrigir o nome da prop
+                />
+            )}
+        </Box>
     );
 });
 

@@ -8,46 +8,98 @@ import Step2StoreDetails from '../Components/Step2StoreDetails';
 import Step3CreateProduct from '../Components/Step3CreateProduct';
 import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore";
 import {usePage} from "@inertiajs/react";
+import {observer} from "mobx-react";
 
 
 
 
-const RegistorVendorPage = ({ genders }) => {
+const RegistorVendorPage = observer(({ genders }) => {
 
     const [currentStep, setCurrentStep] = useState(0);
     const progress = (currentStep / 6) * 100;
     const {auth} = usePage().props;
     const [showWarning, setShowWarning] = useState(true);
+    const [userFormik, setUserFormik] = useState(null); // Formik de dados pessoais
+    const [companyFormik, setCompanyFormik] = useState(null); // Formik de empresa
 
     console.log('Auth', auth);
+
+    const handleCloseCompanyForm = async () => {
+        vendorRegistrationStore.setIsCompany(false); // Fecha o formulário de empresa
+
+        if (userFormik) {
+            // Valida explicitamente o formulário de dados pessoais
+            const errors = await userFormik.validateForm();
+            const isValid = Object.keys(errors).length === 0;
+
+            // Atualiza o estado global de validade
+            vendorRegistrationStore.setUserFormValid(isValid);
+        }
+    };
+
+
+    const enableButton = () => {
+        switch (currentStep) {
+            case 1:
+                return vendorRegistrationStore.isCompany ?
+                    !(vendorRegistrationStore.userFormValid && vendorRegistrationStore.companyFormValid) :
+                    !vendorRegistrationStore.userFormValid;
+            case 3:
+                return !vendorRegistrationStore.companyFormValid;
+            case 5:
+                return !vendorRegistrationStore.productsFormValid;
+            default:
+                return false;
+        }
+    };
 
     useEffect(() => {
         if (auth?.user) {
             vendorRegistrationStore.initializeUser(auth.user);
-            console.log('User da store do registo', vendorRegistrationStore.user);
-            console.log('currentFormValid', vendorRegistrationStore.currentFormValid);
         }
     }, [auth]);
 
-    const [formikInstance, setFormikInstance] = useState(null);
-
     const handleNext = async () => {
-        if (formikInstance) {
-            const errors = await formikInstance.validateForm();
-            const isValid = Object.keys(errors).length === 0;
+        let errors = {};
+        let isValid = true;
 
-            if (!isValid) {
-                setShowWarning(true);
-                return;
-            }
+        switch (currentStep) {
+            case 1:
+                // Valida o formulário de dados pessoais
+                if (userFormik) {
+                    const userErrors = await userFormik.validateForm();
+                    const isUserValid = Object.keys(userErrors).length === 0;
+                    if (isUserValid) {
+                        userFormik.handleSubmit(); // Submete o formulário de dados pessoais
+                    }
+                    errors = { ...errors, ...userErrors };
+                    isValid = isUserValid && isValid; // Atualiza a validade global
+                }
 
-            setShowWarning(false);
-            formikInstance.handleSubmit();
+                // Valida o formulário de empresa (se for o caso)
+                if (vendorRegistrationStore.isCompany && companyFormik) {
+                    const companyErrors = await companyFormik.validateForm();
+                    const isCompanyValid = Object.keys(companyErrors).length === 0;
+                    if (isCompanyValid) {
+                        companyFormik.handleSubmit(); // Submete o formulário de empresa
+                    }
+                    errors = { ...errors, ...companyErrors };
+                    isValid = isCompanyValid && isValid; // Atualiza a validade global
+                }
+
+                if (!isValid) {
+                    setShowWarning(true);
+                    console.log("Erros nos formulários:", errors);
+                    return;
+                }
+
+                setShowWarning(false); // Esconde o aviso se tudo estiver válido
+                return setCurrentStep((prev) => prev + 1);
+
+            default:
+                return setCurrentStep((prev) => prev + 1);
         }
-
-        setCurrentStep((prev) => prev + 1);
     };
-
 
 
     const handleBack = () => {
@@ -62,9 +114,10 @@ const RegistorVendorPage = ({ genders }) => {
             case 1:
                 return <Step1PersonalInfo
                     genders={genders}
-                    setFormikInstance={setFormikInstance}
+                    setUserFormik={setUserFormik} // Passa para o formulário de dados pessoais
+                    setCompanyFormik={setCompanyFormik} // Passa para o formulário de empresa
+                    onCloseCompanyForm={handleCloseCompanyForm}
                     showWarning={showWarning}
-                    setShowWarning={setShowWarning}
                 />;
             case 2:
                 return <IntroStep2VendorRegister />;
@@ -124,12 +177,12 @@ const RegistorVendorPage = ({ genders }) => {
                 <Button
                     variant="contained"
                     onClick={handleNext}
-                    disabled={!vendorRegistrationStore.currentFormValid}>
+                    disabled={enableButton()}>
                     Avançar
                 </Button>
             </Box>
         </Box>
     );
-};
+});
 
 export default RegistorVendorPage;
