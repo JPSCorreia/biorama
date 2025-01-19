@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
             'last_name' => 'Bonaparte',
             'email' => 'vladimiro@example.com',
+            'nif' => '123456789',
             'password' => Hash::make('123456789'), // Cria uma hash segura
             'phone' => '912345678',
             'date_of_birth' => '1990-01-01',

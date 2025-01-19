@@ -18,11 +18,13 @@ import AddressCard from "./AddressCard.jsx";
 import ProfileEditModal from "./ProfileEditModal.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import React from "react";
 
-const ProfileInformation = observer(({user}) => {
+const ProfileInformation = observer(() => {
 
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
+
 
 
     // Estados separados para cada modal
@@ -79,7 +81,7 @@ const ProfileInformation = observer(({user}) => {
                 <Avatar
                     alt="Profile Image"
                     variant = {isSmallScreen ? "" : "rounded"}
-                    src={user?.image_profile}
+                    src={authStore.user?.image_profile}
                     sx={{
                         width: isSmallScreen ? 90 : 110,
                         height: isSmallScreen ? 90 : 110,
@@ -89,8 +91,8 @@ const ProfileInformation = observer(({user}) => {
                         fontSize: isSmallScreen ? "1.5rem" : "3rem",
                     }}
                 >
-                    {user?.first_name[0]}
-                    {user?.last_name[0]}
+                    {authStore.user?.first_name[0]}
+                    {authStore.user?.last_name[0]}
                 </Avatar>
                 <Box sx={{
                     display:  "flex",
@@ -134,7 +136,7 @@ const ProfileInformation = observer(({user}) => {
                                 Editar Perfil
                             </Button>
                         )}
-                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} user={user}/>
+                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose}/>
                     </Box>
                 </Box>
             </Box>
@@ -178,7 +180,7 @@ const ProfileInformation = observer(({user}) => {
                                 />
                             </IconButton>
                         )}
-                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} user={user}/>
+                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} />
                     </Box>
                 </Box>
                 <Typography sx={{
@@ -205,7 +207,7 @@ const ProfileInformation = observer(({user}) => {
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Email</Typography>
                             <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                {user.email}
+                                {authStore.user.email}
                             </Typography>
                         </Box>
                         <Divider
@@ -223,7 +225,7 @@ const ProfileInformation = observer(({user}) => {
                         <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Nº de Telemóvel</Typography>
                             <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                {user.phone || "Não Fornecido"}
+                                {authStore.user.phone || "Não Fornecido"}
                             </Typography>
                         </Box>
                     </ListItem>
@@ -250,13 +252,13 @@ const ProfileInformation = observer(({user}) => {
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF:</Typography>
                             <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                {user.nif || "Não Fornecido"}
+                                {authStore.user.nif || "Não Fornecido"}
                             </Typography>
                         </Box>
                         <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Genero</Typography>
                             <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                {user.gender || "Não Fornecido"}
+                                {authStore.user.gender.name || "Não Fornecido"}
                             </Typography>
                         </Box>
 
@@ -284,7 +286,7 @@ const ProfileInformation = observer(({user}) => {
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Data de Nascimento:</Typography>
                             <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                {user.date_of_birth || "Não Fornecida"}
+                                {authStore.user.date_of_birth || "Não Fornecida"}
                             </Typography>
                         </Box>
                         <Divider
@@ -302,7 +304,7 @@ const ProfileInformation = observer(({user}) => {
                         <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Tempo de Registo</Typography>
                             <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                {calculateRegisterTime(user.created_at)}
+                                {calculateRegisterTime(authStore.user.created_at)}
                             </Typography>
                         </Box>
                     </ListItem>
