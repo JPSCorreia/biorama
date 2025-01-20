@@ -11,3 +11,4 @@ export { default as Stores } from "./Stores";
 export { default as Vendors } from "./Vendors";
 export { default as FeatureTesting } from "./FeatureTesting";
 export { default as Dashboard } from "../Dashboard/Dashboard";
+export {default as VendorInformation} from "./VendorInformation.jsx";

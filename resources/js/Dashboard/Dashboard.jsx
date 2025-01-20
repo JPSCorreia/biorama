@@ -141,7 +141,7 @@ const Dashboard = ({ children }) => {
                     toolbarActions: ThemeSwitcher,
                 }}
             >
-                <Box sx={{ p: 3, flexGrow: 1 }}>{children}</Box>
+                <Box sx={{ flexGrow: 1, margin:0, paddingTop:"10%" }}>{children}</Box>
             </DashboardLayout>
         </AppProvider>
     );

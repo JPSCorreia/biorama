@@ -121,7 +121,17 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/dashboard')->group(function () {
 
         Route::get('/', function () {
-            return Inertia::render('Dashboard/Home');
+            if (auth()->user()->hasRole('vendor')) {
+                $user = auth()->user()
+                    ->load([
+                        'vendor', // Relacionamento direto com a tabela 'vendors'
+                        'vendor.company', // Relacionamento entre 'vendors' e 'company'
+                        'vendor.company.addresses', // Relacionamento entre 'company' e 'companyAddress'
+                        'vendor.company.contacts' // Relacionamento entre 'company' e 'companyContacts'
+                    ]);
+                return Inertia::render('Dashboard/Home',["user"=>$user]);
+            }
+
         })->name('dashboard.home');
 
         Route::get('/analises', function () {
@@ -137,5 +147,9 @@ Route::middleware(['auth'])->group(function () {
         })->name('dashboard.stores');
     });
 });
+
+Route::get('/vendorinfo', function () {
+    return Inertia::render('VendorInformation');
+})->name('vendor.information');
 
 

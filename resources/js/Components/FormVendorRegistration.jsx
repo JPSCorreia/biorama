@@ -12,7 +12,7 @@ import {
     FormHelperText,
     Typography,
     Link,
-    Paper,
+    Paper, Grid2,
 } from "@mui/material";
 import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import {useFormik} from 'formik';
@@ -149,8 +149,8 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                     </Box>
                 )}
                 <form onSubmit={formik.handleSubmit}>
-                    <Grid container spacing={10}>
-                        <Grid item xs={12} md={6}>
+                    <Grid2 container spacing={10}>
+                        <Grid2 item xs={12} md={6}>
                             <TextField
                                 label="Nome"
                                 name="first_name"
@@ -244,8 +244,8 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                 </FormControl>
 
                             </Box>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Grid2>
+                        <Grid2 item xs={12} md={6}>
                             <TextField
                                 label="Apelido"
                                 name="last_name"
@@ -353,8 +353,8 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                     disabled={!showWarning}
                                 />
                             </Box>
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+                    </Grid2>
                 </form>
             </Paper>
 </LocalizationProvider>

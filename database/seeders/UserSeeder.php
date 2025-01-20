@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
             'last_name' => 'Bonaparte',
             'email' => 'vladimiro@example.com',
-            'password' => Hash::make('123456789'), // Cria uma hash segura
+            'nif'=> '239502051',
             'phone' => '912345678',
             'date_of_birth' => '1990-01-01',
             'image_profile' => null, // Sem foto
@@ -30,6 +30,7 @@ class UserSeeder extends Seeder
             'gender_id' => 1, // ID do género
             'created_at' => now(),
             'updated_at' => now(),
+            'password' => Hash::make('123456789'), // Cria uma hash segura
         ]);
         User::factory()->count(25)->create();
 
