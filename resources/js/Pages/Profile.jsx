@@ -6,8 +6,6 @@ import {authStore} from "@/Stores/index.js";
 
 const Profile = observer(() => {
     const { auth, flash = {} } = usePage().props;
-    const user = authStore.user;
-    console.log("User Profile Information:", user);
     console.log("Auth:", auth);
     console.log("Flash:", flash);
     return (
@@ -26,7 +24,7 @@ const Profile = observer(() => {
                     <Alert severity={flash.type || "success"}>{flash.message}</Alert>
                 </Box>
             )}
-            <ProfileInformation user={user}/>
+            <ProfileInformation/>
         </Box>
     );
 });

@@ -11,9 +11,11 @@ class AuthStore {
         makeObservable(this, {
             user: observable,
             isAuthenticated: observable,
+
             updateAuth: action,
             clearAuth: action,
             updateUserData: action,
+            submitDataUser: action,
         });
         makePersistable(this, {
             name: "authStore",
@@ -38,6 +40,7 @@ class AuthStore {
                 this.user = { ...this.user, ...updatedData }; // Atualiza os dados do utilizador
                 console.log("User da Store que foi atualizado: ", this.user);
             }
+            this.submitDataUser(updatedData); // Submete os dados do utilizador
         });
     }
 
@@ -53,6 +56,15 @@ class AuthStore {
             console.error("Erro ao carregar o user:", error);
         }
     };
+
+    submitDataUser = async (data) => {
+        try {
+            await axios.post(`/editar-perfil/${this.user.id}`, data);
+            console.log("User atualizado com sucesso", this.user);
+        } catch (error) {
+            console.error("Erro ao atualizar o user:", error);
+        }
+    }
 
     clearAuth() {
         this.isAuthenticated = false;

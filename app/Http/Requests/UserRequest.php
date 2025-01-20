@@ -24,8 +24,9 @@ class UserRequest extends FormRequest
             'last_name' => 'required|string|max:100',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:15',
+            'nif' => 'required|string|max:9',
             'date_of_birth' => 'nullable|date',
-            'photo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image_profile' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ];
     }
 
@@ -49,6 +50,10 @@ class UserRequest extends FormRequest
             'email.required' => 'O email é obrigatório.',
             'email.email' => 'O email deve ser um endereço de email válido.',
             'email.unique' => 'Este email já está registado.',
+
+            'nis.required' => 'O NIF é obrigatório.',
+            'nis.max' => 'O NIF não pode ter mais de 9 caracteres.',
+
 
             'phone.digits' => 'O número de telefone deve ter exatamente 9 dígitos.',
 
