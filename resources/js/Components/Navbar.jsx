@@ -31,39 +31,36 @@ import { router } from "@inertiajs/react";
 import SearchBar from "./SearchBar";
 
 const Navbar = observer(() => {
-    const isAuthenticated = authStore.isAuthenticated;
-
-    const handleDashboardNavigation = () => {
-        router.get("/dashboard");
-    };
-
-    // Save user roles
+    // Get user roles
     const userRoles = authStore.user?.roles || [];
 
-    // Verify if user has a role
+    // Check if the user has a specific role
     const hasRole = (roleName) => {
         return userRoles.some((role) => role.name === roleName);
     };
 
+    // State management for navigation and user menus
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
+    // Handle opening and closing of menus
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
-
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
-
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    // Access theme properties using Material UI's theme hook
     const theme = useTheme();
 
+    // Navigation pages with links and icons
     const pages = [
         {
             name: "Home",
@@ -111,6 +108,7 @@ const Navbar = observer(() => {
         },
     ];
 
+    // User account settings options
     const settings = [
         {
             id: 1,
@@ -139,14 +137,21 @@ const Navbar = observer(() => {
         },
     ];
 
-    const tema = { id: 4, name: "Tema", onClick: appStore.changeThemeType };
+    // Theme change button configuration
+    const themeChange = {
+        id: 4,
+        name: "Tema",
+        onClick: appStore.changeThemeType,
+    };
 
+    // Login button configuration
     const login = {
         id: 5,
         name: "Entrar",
         link: "/entrar",
     };
 
+    // Shopping cart button configuration
     const cart = {
         name: "Carrinho de Compras",
         link: "/carrinho",
@@ -159,12 +164,11 @@ const Navbar = observer(() => {
         ),
     };
 
-    // Verify if the screen size is larger than lg
+    // Check if the screen size is large or small
     const isLg = useMediaQuery(theme.breakpoints.up("lg"));
-
-    // Verify if the screen size is smaller than sm
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
+    // Function to handle navigation with Inertia.js preserving state and scroll position
     const navigate = (path) => {
         router.visit(path, {
             preserveState: true,
@@ -188,6 +192,7 @@ const Navbar = observer(() => {
                 }}
             >
                 <Toolbar disableGutters>
+                    {/* Logo and title */}
                     <Box
                         sx={{
                             display: "flex",
@@ -213,7 +218,6 @@ const Navbar = observer(() => {
                                 }}
                             />
                         )}
-
                         <Typography
                             variant="h6"
                             noWrap
@@ -231,6 +235,7 @@ const Navbar = observer(() => {
                             BIORAMA
                         </Typography>
                     </Box>
+                    {/* Mobile menu */}
                     <Box
                         sx={{
                             flexGrow: 1,
@@ -251,7 +256,6 @@ const Navbar = observer(() => {
                         >
                             <MenuIcon />
                         </IconButton>
-
                         <Menu
                             id="menu-appbar"
                             anchorEl={anchorElNav}
@@ -286,11 +290,10 @@ const Navbar = observer(() => {
                             ))}
                         </Menu>
                     </Box>
+                    {/* Desktop navigation menu */}
                     <Box
                         sx={{
-                            // flexGrow: 1,
                             display: { xs: "none", md: "flex" },
-                            // justifyContent: "center",
                         }}
                     >
                         {pages.map((page) => (
@@ -320,7 +323,9 @@ const Navbar = observer(() => {
                             </Tooltip>
                         ))}
                     </Box>
+                    {/* Search bar */}
                     <SearchBar />
+                    {/* Shopping cart button */}
                     <Tooltip title={cart.name}>
                         <Button
                             key={cart.name}
@@ -356,7 +361,8 @@ const Navbar = observer(() => {
                             </Badge>
                         </Button>
                     </Tooltip>
-                    {isAuthenticated ? (
+                    {/* User profile menu */}
+                    {authStore.isAuthenticated ? (
                         <Box
                             sx={{
                                 display: "flex",
@@ -408,7 +414,7 @@ const Navbar = observer(() => {
                                     key={1}
                                     onClick={() => {
                                         handleCloseUserMenu();
-                                        tema.onClick();
+                                        themeChange.onClick();
                                     }}
                                     sx={{
                                         height: "40px",
@@ -416,7 +422,7 @@ const Navbar = observer(() => {
                                     }}
                                 >
                                     <Box textAlign="center">
-                                        {tema.name === "Tema" ? (
+                                        {themeChange.name === "Tema" ? (
                                             <Box
                                                 sx={{
                                                     display: {
@@ -432,7 +438,7 @@ const Navbar = observer(() => {
                                                 <ThemeSwitcher />
                                             </Box>
                                         ) : (
-                                            tema.name
+                                            themeChange.name
                                         )}
                                     </Box>
                                 </MenuItem>
@@ -455,7 +461,8 @@ const Navbar = observer(() => {
                                     </MenuItem>
                                 ))}
                                 <MenuItem>
-                                    {hasRole("vendor") && ( // Verifica se o utilizador tem a role de "vendor"
+                                    {/* Render if the user has the "vendor" role */}
+                                    {hasRole("vendor") && (
                                         <Box
                                             sx={{
                                                 display: "flex",
@@ -466,8 +473,8 @@ const Navbar = observer(() => {
                                             <Button
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={
-                                                    handleDashboardNavigation
+                                                onClick={() =>
+                                                    router.get("/dashboard")
                                                 }
                                                 sx={{
                                                     display: "flex",
@@ -495,7 +502,6 @@ const Navbar = observer(() => {
                                 display: "block",
                                 marginTop: 1.7,
                                 marginBottom: 1,
-                                // height: "40px",
                                 minWidth: "75px",
                                 marginLeft: "5px !important",
                                 paddingLeft: "0 !important",

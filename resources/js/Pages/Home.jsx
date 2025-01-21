@@ -16,16 +16,18 @@ import { alertStore } from "../Stores/alertStore";
 import { NearbyStores } from "../Components/NearbyStores";
 
 const Home = observer(() => {
-    const { auth, flash = {} } = usePage().props;
-    const theme = useTheme();
-    const isNotLargeScreen = useMediaQuery(theme.breakpoints.down("lg"));
-    const isVendor = auth.isVendor;
 
-    const vendorRegister = () => {
-        router.get("/vendedores/registo");
-    };
+    // Get page props
+    const { auth, flash = {} } = usePage().props;
+
+    // Get theme
+    const theme = useTheme();
+
+    // Get media queries
+    const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
 
     useEffect(() => {
+
         // Reset alert store on navigation
         const handleNavigate = () => {
             alertStore.reset();
@@ -33,6 +35,7 @@ const Home = observer(() => {
 
         // Add navigation event listener
         if (typeof router?.on === "function") {
+
             router.on("navigate", handleNavigate);
 
             return () => {
@@ -45,11 +48,16 @@ const Home = observer(() => {
     }, []);
 
     useEffect(() => {
+
         // Set alert based on flash message
         if (flash?.message && flash.message !== alertStore.lastMessage) {
+
+            // Clear timers
             alertStore.clearTimers();
 
+            // Set alert timeout
             setTimeout(() => {
+
                 alertStore.setAlert(flash.message, flash.type || "success");
 
                 // Set timer to hide alert after 3 seconds
@@ -63,10 +71,12 @@ const Home = observer(() => {
                     alertStore.clearAlert();
                 }, 3500);
                 alertStore.addTimer(clearTimer);
+
             }, 150);
         }
 
         return () => {
+
             // Clear timers on unmount
             alertStore.clearTimers();
         };
@@ -77,14 +87,12 @@ const Home = observer(() => {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                // width: "100%",
                 minWidth: "100%",
                 height: "100%",
-
                 marginTop: "15px !important",
             }}
         >
-            {/* Alerta */}
+            {/* Alert */}
             {alertStore.message ? (
                 <Fade
                     in={alertStore.show}
@@ -111,12 +119,11 @@ const Home = observer(() => {
             ) : (
                 <Box sx={{ mb: 2, height: "48px" }} />
             )}
-
-            {/* Caixa "Click" no topo */}
+            {/* Banner */}
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: isNotLargeScreen ? "column" : "row",
+                    flexDirection: smallerThanLg ? "column" : "row",
                     alignItems: "center",
                     justifyContent: "center",
                     bgcolor: "primary.main",
@@ -126,19 +133,19 @@ const Home = observer(() => {
                     mb: 4,
                 }}
             >
-                {console.log(auth.user)}
                 <Typography variant="h4" sx={{ mr: 3 }}>
-                    {isVendor ? `Bemvindo, ${auth.user.first_name} ${auth.user.last_name}!` : "Queres divulgar o teu negócio?"}
+                    {auth.isVendor
+                        ? `Bemvindo, ${auth.user.first_name} ${auth.user.last_name}!`
+                        : "Queres divulgar o teu negócio?"}
                 </Typography>
-                {isVendor ? null : (
+                {auth.isVendor ? null : (
                     <Button
                         variant="contained"
-                        onClick={vendorRegister}
+                        onClick={() => router.get("/vendedores/registo")}
                         sx={{
                             backgroundColor: theme.palette.secondary.main,
                             "&:hover": {
-                                // Hover state
-                                backgroundColor: theme.palette.secondary.dark, // Darker shade on hover
+                                backgroundColor: theme.palette.secondary.dark,
                             },
                         }}
                     >
@@ -146,16 +153,14 @@ const Home = observer(() => {
                     </Button>
                 )}
             </Box>
-
-            {/* Mapa */}
+            {/* Map */}
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" gutterBottom>
                     Descubra as lojas mais perto de si!
                 </Typography>
                 <HomeMap />
             </Box>
-
-            {/* Lojas próximas */}
+            {/* Nearby Stores */}
             <Box sx={{ bgcolor: "primary.main", mt: 3, p: 2, mb: 4 }}>
                 <Typography
                     variant="h4"

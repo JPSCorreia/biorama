@@ -5,76 +5,73 @@ import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
 import { usePage } from "@inertiajs/react";
 
-
 const App = observer(({ children }) => {
+    // Access theme properties using Material UI's theme hook
     const theme = useTheme();
+
+    // Get media queries
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
-
-    // Usa o usePage para aceder à informação da página atual
-    const { component } = usePage();
-
-    // Verifica se a rota atual é a do Dashboard
-    const isDashboardRoute = component === "Dashboard";
 
     return (
         <>
-            {isDashboardRoute ? (
-                // Renderiza apenas o componente Dashboard sem layout
-                <>
-                    {children}
-                </>
-            ) : (
-                // Renderiza as outras páginas com o layout principal
-                <Container
-                    className="App"
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                        minHeight: "100vh",
-                        minWidth: "60%",
-                        overflow: "hidden",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            position: "fixed",
-                            top: 0,
-                            left: 0,
-                            minHeight: "100vh",
-                            zIndex: 1,
-                            width: "100% !important",
-                            minWidth: "100% !important",
-                        }}
-                    />
+            {
+                // When user is on dashboard, render only the children
+                usePage().component === "Dashboard" ? (
+                    <>{children}</>
+                ) : (
+                    // Else render normal app layout with navbar and footer
                     <Container
+                        className="App"
                         sx={{
                             display: "flex",
                             alignItems: "center",
                             flexDirection: "column",
-                            padding: "0 !important",
-                            zIndex: 1,
-                            width: "100% !important",
-                            minWidth: "100% !important",
+                            justifyContent: "space-between",
+                            minHeight: "100vh",
+                            minWidth: "60%",
+                            overflow: "hidden",
                         }}
                     >
-                        <Navbar />
-                        {children}
+                        <Box
+                            sx={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                minHeight: "100vh",
+                                zIndex: 1,
+                                width: "100% !important",
+                                minWidth: "100% !important",
+                            }}
+                        />
+                        <Container
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                flexDirection: "column",
+                                padding: "0 !important",
+                                zIndex: 1,
+                                width: "100% !important",
+                                minWidth: "100% !important",
+                            }}
+                        >
+                            <Navbar />
+                            {children}
+                        </Container>
+                        <Container
+                            sx={{
+                                zIndex: 1,
+                                width: "100%",
+                                p: "0 !important",
+                                m: "0 !important",
+                                minWidth: "100% !important",
+                            }}
+                        >
+                            {/* Render footer only when screen is bigger than sm */}
+                            {biggerThanSm && <Footer />}
+                        </Container>
                     </Container>
-                    <Container
-                        sx={{
-                            zIndex: 1,
-                            width: "100%",
-                            p: "0 !important",
-                            m: "0 !important",
-                            minWidth: "100% !important",
-                        }}
-                    >
-                        {biggerThanSm && <Footer />}
-                    </Container>
-                </Container>
-            )}
+                )
+            }
         </>
     );
 });
