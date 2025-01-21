@@ -45,15 +45,15 @@ class SearchController extends Controller
             ->orWhere('description', 'like', '%' . $query . '%')
             ->get();
 
-        $vendors = Vendor::select('city')
-        ->where('city', 'like', '%' . $query . '%')->take(5)->get();
+        /*$vendors = Vendor::select('city')
+        ->where('city', 'like', '%' . $query . '%')->take(5)->get();*/
 
         // Retornar uma resposta Inertia para renderizar o componente React com os resultados
         return Inertia::render('SearchPage', [
             'searchResults' => [
                 'products' => $products,
                 'stores' => $stores,
-                'vendors' => $vendors,
+                /*'vendors' => $vendors,*/
             ],
             'query' => $query,
         ]);

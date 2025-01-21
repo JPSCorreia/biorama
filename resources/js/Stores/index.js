@@ -4,7 +4,7 @@ import { authStore } from "./authStore";
 import { cartStore } from "./cartStore";
 import { alertStore } from "./alertStore";
 import { homeAddressStore } from "./homeAddressStore";
-import { vendorRegistrationStore } from "./vendorRegistrationStore";
+import { vendorRegistrationStore } from "./vendorRegistrationStore.js";
 
 // Configuração do mobx-persist-store
 configurePersistable({

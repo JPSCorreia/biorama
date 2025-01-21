@@ -1,13 +1,11 @@
-import { Typography } from "@mui/material";
+import {Box, Typography} from "@mui/material";
+import {VendorInformation} from "@/Pages/index.js";
 
 const Home = () => {
     return (
-        <div>
-            <Typography variant="h4">Home</Typography>
-            <Typography variant="body1">
-                Home !
-            </Typography>
-        </div>
+        <Box>
+            <VendorInformation/>
+        </Box>
     );
 };
 

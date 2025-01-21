@@ -6,7 +6,7 @@ import IntroStep3VendorRegister from '../Components/IntroStep3VendorRegister';
 import Step1PersonalInfo from '../Components/Step1PersonalInfo';
 import Step2StoreDetails from '../Components/Step2StoreDetails';
 import Step3CreateProduct from '../Components/Step3CreateProduct';
-import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore";
+import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore.js";
 import {usePage} from "@inertiajs/react";
 import {observer} from "mobx-react";
 
