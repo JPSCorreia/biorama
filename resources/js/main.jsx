@@ -20,33 +20,39 @@ router.on("navigate", (event) => {
 });
 
 createInertiaApp({
-    resolve: name => {
-      const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
-      const dashboardPages = import.meta.glob('./Dashboard/Pages/**/*.jsx', { eager: true });
+    resolve: (name) => {
+        const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
+        const dashboardPages = import.meta.glob("./Dashboard/Pages/**/*.jsx", {
+            eager: true,
+        });
 
-      console.log("name", name)
-      console.log("dashboardPages", dashboardPages)
-      // Verifica se o nome começa com "Dashboard/"
-      if (name.startsWith('Dashboard/')) {
-        const page = dashboardPages[`./Dashboard/Pages/${name.replace('Dashboard/', '')}.jsx`];
-        console.log("page",page)
-        if (!page) {
-          throw new Error(`Página ${name} não encontrada no Dashboard.`);
+        // Debug
+        //   console.log("name", name)
+        //   console.log("dashboardPages", dashboardPages)
+
+        // Verifica se o nome começa com "Dashboard/"
+        if (name.startsWith("Dashboard/")) {
+            const page =
+                dashboardPages[
+                    `./Dashboard/Pages/${name.replace("Dashboard/", "")}.jsx`
+                ];
+            if (!page) {
+                throw new Error(`Página ${name} não encontrada no Dashboard.`);
+            }
+            const Component = page.default || page;
+            Component.layout = (page) => <Dashboard>{page}</Dashboard>; // Usa o Dashboard.jsx como layout
+            return Component;
         }
+
+        // Pega as páginas normais
+        const page = pages[`./Pages/${name}.jsx`];
+        if (!page) {
+            throw new Error(`Página ${name} não encontrada.`);
+        }
+
         const Component = page.default || page;
-        Component.layout = page => <Dashboard>{page}</Dashboard>; // Usa o Dashboard.jsx como layout
+        Component.layout = (page) => <App>{page}</App>; // Usa o App.jsx como layout
         return Component;
-      }
-
-      // Pega as páginas normais
-      const page = pages[`./Pages/${name}.jsx`];
-      if (!page) {
-        throw new Error(`Página ${name} não encontrada.`);
-      }
-
-      const Component = page.default || page;
-      Component.layout = page => <App>{page}</App>; // Usa o App.jsx como layout
-      return Component;
     },
     setup({ el, App: InertiaApp, props }) {
         authStore.updateAuth(props.initialPage.props.auth);
@@ -58,7 +64,7 @@ createInertiaApp({
                         <InertiaApp {...props} />
                     </CustomThemeProvider>
                 </StyledEngineProvider>
-            </Provider>
+            </Provider>,
         );
     },
 });

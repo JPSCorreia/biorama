@@ -22,32 +22,28 @@ import {
     ShopSharp as ShopSharpIcon,
     ShoppingCartSharp as ShoppingCartSharpIcon,
 } from "@mui/icons-material";
-import {useTheme} from "@mui/material/styles";
-import {ThemeSwitcher} from "./";
-import {appStore, cartStore, authStore} from "../Stores";
-import {useState} from "react";
-import {observer} from "mobx-react";
-import {router,} from "@inertiajs/react";
+import { useTheme } from "@mui/material/styles";
+import { ThemeSwitcher } from "./";
+import { appStore, cartStore, authStore } from "../Stores";
+import { useState } from "react";
+import { observer } from "mobx-react";
+import { router } from "@inertiajs/react";
 import SearchBar from "./SearchBar";
 
 const Navbar = observer(() => {
-
     const isAuthenticated = authStore.isAuthenticated;
 
     const handleDashboardNavigation = () => {
-        // Redireciona para o dashboard
         router.get("/dashboard");
     };
 
-
-    //Guardar as Roles a role que vem no user.
+    // Save user roles
     const userRoles = authStore.user?.roles || [];
 
-    // Verifica se existe uma role com o nome fornecido
+    // Verify if user has a role
     const hasRole = (roleName) => {
         return userRoles.some((role) => role.name === roleName);
     };
-
 
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -67,55 +63,6 @@ const Navbar = observer(() => {
         setAnchorElUser(null);
     };
     const theme = useTheme();
-
-    /*const Search = styled("div")(({ theme }) => ({
-        position: "relative",
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
-        "&:hover": {
-            backgroundColor: alpha(theme.palette.common.white, 0.25),
-        },
-        marginLeft: 5,
-        width: true ? "750px" : "425px",
-        [theme.breakpoints.down("lg")]: {
-            width: "100%",
-        },
-    }));
-
-    const SearchIconWrapper = styled("div")(({ theme }) => ({
-        padding: theme.spacing(0, 2),
-        height: "100%",
-        position: "absolute",
-        pointerEvents: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-    }));*/
-
-    /*const StyledInputBase = styled(InputBase)(({ theme }) => ({
-        color: "inherit",
-        width: "100%",
-        "& .MuiInputBase-input": {
-            padding: theme.spacing(1, 1, 1, 0),
-            // vertical padding + font size from searchIcon
-            paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-            transition: theme.transitions.create("width"),
-            [theme.breakpoints.up("sm")]: {
-                width: "12ch",
-                "&:focus": {
-                    width: "20ch",
-                },
-            },
-        },
-    }));*/
-
-    /*const [query, setQuery] = useState("");
-
-    const handleSearchSubmit = (e) => {
-        e.preventDefault(); // Evita refresh da página
-        router.get("/pesquisa", { query });
-    };*/
-
 
     const pages = [
         {
@@ -164,16 +111,15 @@ const Navbar = observer(() => {
         },
     ];
 
-
     const settings = [
         {
-            id: 1, name: "Perfil",
+            id: 1,
+            name: "Perfil",
             onClick: () => {
-                router.get(
-                    "/perfil");
+                router.get("/perfil");
             },
         },
-        {id: 2, name: "Definições", link: "/definições"},
+        { id: 2, name: "Definições", link: "/definições" },
         {
             id: 3,
             name: "Terminar Sessão",
@@ -184,16 +130,17 @@ const Navbar = observer(() => {
                     {
                         onSuccess: () => {
                             handleCloseUserMenu();
-                            authStore.updateAuth({user: null});
+                            authStore.updateAuth({ user: null });
                             console.log("Logout successful");
                         },
-                    }
+                    },
                 );
             },
         },
     ];
 
-    const tema = {id: 4, name: "Tema", onClick: appStore.changeThemeType};
+    const tema = { id: 4, name: "Tema", onClick: appStore.changeThemeType };
+
     const login = {
         id: 5,
         name: "Entrar",
@@ -212,14 +159,16 @@ const Navbar = observer(() => {
         ),
     };
 
-    // larger than lg (900px?)
+    // Verify if the screen size is larger than lg
     const isLg = useMediaQuery(theme.breakpoints.up("lg"));
+
+    // Verify if the screen size is smaller than sm
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     const navigate = (path) => {
         router.visit(path, {
             preserveState: true,
             preserveScroll: true,
-            // replace: true,
         });
     };
 
@@ -233,7 +182,10 @@ const Navbar = observer(() => {
         >
             <Container
                 maxWidth="xl"
-                sx={{pr: "0.5rem !important", pl: "1.25rem !important"}}
+                sx={{
+                    pr: "0.5rem !important",
+                    pl: isSm ? "0.3rem !important" : "1.25rem !important",
+                }}
             >
                 <Toolbar disableGutters>
                     <Box
@@ -247,23 +199,28 @@ const Navbar = observer(() => {
                             navigate("/");
                         }}
                     >
-                        <SpaIcon
-                            sx={{
-                                mb: 0,
-                                mr: 1,
-                                color:
-                                    theme.palette.mode === "dark"
-                                        ? theme.palette.primary.main
-                                        : "white",
-                            }}
-                        />
+                        {isSm ? (
+                            ""
+                        ) : (
+                            <SpaIcon
+                                sx={{
+                                    mb: 0,
+                                    mr: 1,
+                                    color:
+                                        theme.palette.mode === "dark"
+                                            ? theme.palette.primary.main
+                                            : "white",
+                                }}
+                            />
+                        )}
+
                         <Typography
                             variant="h6"
                             noWrap
                             component="a"
                             sx={{
                                 mr: 1,
-                                display: {xs: "none", md: "none", lg: "flex"},
+                                display: { xs: "none", md: "none", lg: "flex" },
                                 fontFamily: "monospace",
                                 fontWeight: 700,
                                 letterSpacing: ".3rem",
@@ -277,7 +234,7 @@ const Navbar = observer(() => {
                     <Box
                         sx={{
                             flexGrow: 1,
-                            display: {xs: "flex", md: "none"},
+                            display: { xs: "flex", md: "none" },
                         }}
                     >
                         <IconButton
@@ -289,9 +246,10 @@ const Navbar = observer(() => {
                             color="inherit"
                             sx={{
                                 ml: 0,
+                                mr: 0.5,
                             }}
                         >
-                            <MenuIcon/>
+                            <MenuIcon />
                         </IconButton>
 
                         <Menu
@@ -309,7 +267,7 @@ const Navbar = observer(() => {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: {xs: "block", md: "none"},
+                                display: { xs: "block", md: "none" },
                             }}
                         >
                             {pages.map((page) => (
@@ -319,7 +277,7 @@ const Navbar = observer(() => {
                                         handleCloseNavMenu();
                                         navigate(page.link);
                                     }}
-                                    sx={{height: "40px", pr: 2}}
+                                    sx={{ height: "40px", pr: 2 }}
                                 >
                                     <Typography textAlign="center">
                                         {page.name}
@@ -331,7 +289,7 @@ const Navbar = observer(() => {
                     <Box
                         sx={{
                             // flexGrow: 1,
-                            display: {xs: "none", md: "flex"},
+                            display: { xs: "none", md: "flex" },
                             // justifyContent: "center",
                         }}
                     >
@@ -362,7 +320,7 @@ const Navbar = observer(() => {
                             </Tooltip>
                         ))}
                     </Box>
-                    <SearchBar/>
+                    <SearchBar />
                     <Tooltip title={cart.name}>
                         <Button
                             key={cart.name}
@@ -394,7 +352,7 @@ const Navbar = observer(() => {
                                 color="success"
                                 overlap="circular"
                             >
-                                <ShoppingCartSharpIcon/>
+                                <ShoppingCartSharpIcon />
                             </Badge>
                         </Button>
                     </Tooltip>
@@ -407,13 +365,12 @@ const Navbar = observer(() => {
                                 paddingRight: "10px",
                                 justifyContent: "end",
                                 alignItems: "center",
-
                             }}
                         >
                             <Tooltip title="Definições">
                                 <IconButton
                                     onClick={handleOpenUserMenu}
-                                    sx={{p: 0}}
+                                    sx={{ p: 0 }}
                                 >
                                     <Avatar
                                         alt="User Avatar"
@@ -432,7 +389,7 @@ const Navbar = observer(() => {
                                 </IconButton>
                             </Tooltip>
                             <Menu
-                                sx={{mt: "45px"}}
+                                sx={{ mt: "45px" }}
                                 id="menu-appbar"
                                 anchorEl={anchorElUser}
                                 anchorOrigin={{
@@ -458,7 +415,6 @@ const Navbar = observer(() => {
                                         zIndex: 9999,
                                     }}
                                 >
-
                                     <Box textAlign="center">
                                         {tema.name === "Tema" ? (
                                             <Box
@@ -472,8 +428,8 @@ const Navbar = observer(() => {
                                                         "space-between",
                                                 }}
                                             >
-                                                <Box sx={{mr: 2}}>Tema </Box>{" "}
-                                                <ThemeSwitcher/>
+                                                <Box sx={{ mr: 2 }}>Tema </Box>{" "}
+                                                <ThemeSwitcher />
                                             </Box>
                                         ) : (
                                             tema.name
@@ -491,7 +447,7 @@ const Navbar = observer(() => {
                                                 navigate(setting.link);
                                             }
                                         }}
-                                        sx={{height: "40px"}}
+                                        sx={{ height: "40px" }}
                                     >
                                         <Box textAlign="center">
                                             {setting.name}
@@ -500,15 +456,23 @@ const Navbar = observer(() => {
                                 ))}
                                 <MenuItem>
                                     {hasRole("vendor") && ( // Verifica se o utilizador tem a role de "vendor"
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 1,
+                                            }}
+                                        >
                                             <Button
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={handleDashboardNavigation}
+                                                onClick={
+                                                    handleDashboardNavigation
+                                                }
                                                 sx={{
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    gap: 1
+                                                    gap: 1,
                                                 }}
                                             >
                                                 Ir para Dashboard
@@ -516,7 +480,6 @@ const Navbar = observer(() => {
                                         </Box>
                                     )}
                                 </MenuItem>
-
                             </Menu>
                         </Box>
                     ) : (

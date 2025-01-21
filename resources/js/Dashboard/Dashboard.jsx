@@ -1,21 +1,23 @@
-import * as React from "react";
 import PropTypes from "prop-types";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { useTheme } from "@mui/material/styles";
 import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
-import PersonIcon from "@mui/icons-material/Person";
-import StoreIcon from "@mui/icons-material/Store";
-import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { router } from "@inertiajs/react";
 import { Box, Typography, Button } from "@mui/material";
-import { usePage } from "@inertiajs/react";
+import { useState, useMemo } from "react";
+import {
+    Person as PersonIcon,
+    Spa as SpaIcon,
+    Store as StoreIcon,
+    ShoppingBasket as ShoppingBasketIcon,
+    Assessment as AssessmentIcon,
+    Logout as LogoutIcon,
+} from "@mui/icons-material";
 
-const NAVIGATION = [
+// Navigation items
+const navigation = [
     {
         kind: "header",
         title: "DASHBOARD",
@@ -51,25 +53,20 @@ const NAVIGATION = [
     },
 ];
 
-const ExitDashboard = () => {
-    router.get("/");
-};
-
 const Dashboard = ({ children }) => {
-    console.log("Children in Dashboard:", children);
-
-    const user = authStore.user;
 
     const theme = useTheme();
 
-    const [session, setSession] = React.useState({
+    // User information
+    const [session, setSession] = useState({
         user: {
-            name: user.first_name,
-            email: user.email,
-            image: user.photo,
+            name: authStore.user.first_name,
+            email: authStore.user.email,
+            image: authStore.user.photo,
         },
     });
 
+    // Exit Dashboard Button
     function ExitButton({ mini }) {
         return (
             <Box
@@ -81,7 +78,7 @@ const Dashboard = ({ children }) => {
                 }}
             >
                 <Button
-                    onClick={ExitDashboard}
+                    onClick={() => router.get("/")}
                     component="label"
                     variant="outlined"
                     sx={{
@@ -98,14 +95,15 @@ const Dashboard = ({ children }) => {
         );
     }
 
-    const authentication = React.useMemo(() => {
+    // Authentication settings for AppProvider
+    const authentication = useMemo(() => {
         return {
             signIn: () => {
                 setSession({
                     user: {
                         name: "Bharat Kashyap",
                         email: "bharatkashyap@outlook.com",
-                        image: "https://avatars.githubusercontent.com/u/19550456",
+                        // image: "https://avatars.githubusercontent.com/u/19550456",
                     },
                 });
             },
@@ -113,26 +111,29 @@ const Dashboard = ({ children }) => {
         };
     }, []);
 
-    const routerDemo = useDemoRouter("/");
-
     return (
         <AppProvider
-            navigation={NAVIGATION}
+            navigation={navigation}
             session={session}
             authentication={authentication}
             router={{
-                navigate: (path) => router.get(path), // Usa o router do Inertia para navegação
+                navigate: (path) => router.get(path),
+                pathname: window.location.pathname,
+                searchParams: new URLSearchParams(window.location.search),
             }}
-            // router={routerDemo}
             theme={theme}
             branding={{
                 title: "BIORAMA",
-                logo: (
-                    <img
-                        src="https://github.com/JPSCorreia/biorama/blob/main/resources/images/icon_auth0.png?raw=true"
-                        alt="Biorama"
+                logo:
+                    <SpaIcon
+                        sx={{
+                            mt: 0.65,
+                            mr: 0.25,
+                            fontSize: 28,
+                            color: theme.palette.primary.main,
+                        }}
                     />
-                ),
+                ,
             }}
         >
             <DashboardLayout
@@ -141,12 +142,15 @@ const Dashboard = ({ children }) => {
                     toolbarActions: ThemeSwitcher,
                 }}
             >
-                <Box sx={{ flexGrow: 1, margin:0, paddingTop:"10%" }}>{children}</Box>
+                <Box sx={{ flexGrow: 1, margin: 0, paddingTop: "10%" }}>
+                    {children}
+                </Box>
             </DashboardLayout>
         </AppProvider>
     );
 };
 
+// Typechecking props for the Dashboard
 Dashboard.propTypes = {
     children: PropTypes.node.isRequired,
 };

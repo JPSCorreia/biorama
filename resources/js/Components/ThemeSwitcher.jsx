@@ -74,7 +74,7 @@ const ThemeSwitcher = observer(() => {
             }}
         >
             <FormControlLabel
-                onClick={isDashboard? "" : (e) => e.preventDefault()}
+                onClick={isDashboard? undefined : (e) => e.preventDefault()}
                 control={
                     <MaterialUISwitch
                         sx={{ marginLeft: 0 }}

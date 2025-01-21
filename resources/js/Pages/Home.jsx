@@ -81,7 +81,7 @@ const Home = observer(() => {
                 minWidth: "100%",
                 height: "100%",
 
-                marginTop: "40px !important",
+                marginTop: "15px !important",
             }}
         >
             {/* Alerta */}
