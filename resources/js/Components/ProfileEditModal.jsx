@@ -37,7 +37,9 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
         email: yup.string().email("Email inválido").required("O email é obrigatório"),
         phone: yup.string().required("O nrº de telemóvel é obrigatório"),
         nif: yup.string().required("O NIF é obrigatório"),
-        gender: yup.string().required("O género é obrigatório"),
+        gender_id: yup.number()
+            .required("O género é obrigatório.")
+            .integer("O ID deve ser um número inteiro."),
         date_of_birth: yup.date().nullable().required("A data de nascimento é obrigatória"),
     });
 
@@ -57,7 +59,6 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                     ? dayjs(formik.values.date_of_birth).format('YYYY-MM-DD')
                     : null,
             };
-
             console.log("Valores enviados para o MySQL:", formattedValues);
 
             // Atualizar authStore
@@ -77,7 +78,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
             email: authStore.user.email || '',
             phone: authStore.user.phone || '',
             nif: authStore.user.nif || '',
-            gender: authStore.user.gender || '',
+            gender_id: authStore.user.gender || '',
             date_of_birth: authStore.user.date_of_birth ? dayjs(authStore.user.date_of_birth) : null,
             image_profile: authStore.user.image_profile || '',
         },
@@ -274,34 +275,29 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                 justifyContent: 'space-between',
                                 width: '100%',
                             }}>
-                                <FormControl
-                                    sx={{mt: 2, width: isSmallScreen ? '100%' : "40%"}}
-                                    error={formik.touched.gender && Boolean(formik.errors.gender)}
+                                <TextField
+                                    select
+                                    fullWidth
+                                    margin="normal"
+                                    label="Gênero"
+                                    name="gender_id"
+                                    value={formik.values.gender_id || ""} // Garante que nunca é undefined
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.gender_id && Boolean(formik.errors.gender_id)}
+                                    helperText={formik.touched.gender_id && formik.errors.gender_id}
+                                    SelectProps={{
+                                        native: true,
+                                    }}
                                 >
-                                    <InputLabel id="gender-select-label">Género</InputLabel>
-                                    <Select
-                                        labelId="gender-select-label"
-                                        id="gender-select"
-                                        name="gender"
-                                        type="number"
-                                        value={formik.values.gender}
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        label="Género"
-                                    >
-                                        {Array.isArray(genders) &&
-                                            genders.map((gender) => (
-                                                <MenuItem key={gender.id} value={gender.id}>
-                                                    {gender.name}
-                                                </MenuItem>
-                                            ))}
-                                    </Select>
-                                    {formik.touched.gender && formik.errors.gender && (
-                                        <FormHelperText>
-                                            {formik.errors.gender}
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
+                                    <option value="" disabled>
+                                        Selecione um gênero
+                                    </option>
+                                    {genders.map((gender) => (
+                                        <option key={gender.id} value={gender.id}>
+                                            {gender.name}
+                                        </option>
+                                    ))}
+                                </TextField>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <MobileDatePicker
                                         sx={{

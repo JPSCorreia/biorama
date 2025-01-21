@@ -20,7 +20,7 @@ class User extends Authenticatable implements CanResetPasswordContract
         'last_name',
         'email',
         'password',
-        'gender',
+        'gender_id',
         'nif',
         'phone',
         'date_of_birth',

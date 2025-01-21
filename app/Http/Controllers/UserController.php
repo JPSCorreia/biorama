@@ -53,7 +53,6 @@ class UserController extends Controller
     {
         return Inertia::render('ProfileEditModal', [
             'user' => Auth::user(),
-
         ]);
     }
 

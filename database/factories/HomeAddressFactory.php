@@ -19,6 +19,7 @@ class HomeAddressFactory extends Factory
             'phone_number' => $this->faker->numerify('#########'),
             'street_address' => $this->faker->streetAddress(),
             'postal_code' => $this->faker->postcode(),
+            'number' => $this->faker->buildingNumber(),
             'city' => $this->faker->city(),
             'is_primary' => $this->faker->boolean(),
             'comment' => $this->faker->sentence(),

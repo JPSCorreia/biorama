@@ -49,9 +49,14 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
             .string()
             .required("O nrº de telemóvel é obrigatório"),
         date_of_birth: yup
-            .date()
-            .nullable()
+            .mixed()
+            .test(
+                "is-date",
+                "A data de nascimento deve ser uma data válida",
+                (value) => value === null || dayjs(value).isValid()
+            )
             .required("A data de nascimento é obrigatória"),
+
         gender: yup
             .number()
             .required("O género é obrigatório"),
@@ -68,7 +73,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
         }
     };
 
-
     const formik = useFormik({
         initialValues: {
             first_name: vendorRegistrationStore.user.first_name || "",
@@ -77,7 +81,9 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
             nif: vendorRegistrationStore.user.nif || "",
             iban: vendorRegistrationStore.user.iban || "",
             phone: vendorRegistrationStore.user.phone || "",
-            date_of_birth: vendorRegistrationStore.user.date_of_birth || null,
+            date_of_birth: vendorRegistrationStore.user.date_of_birth
+                ? dayjs(vendorRegistrationStore.user.date_of_birth)
+                : null,
             gender: vendorRegistrationStore.user.gender || ""
         },
         validationSchema: validationSchema,

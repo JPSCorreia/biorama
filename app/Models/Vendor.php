@@ -12,18 +12,26 @@ class Vendor extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
-        'is_company',
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'gender_id',
+        'nif',
+        'phone',
+        'date_of_birth',
+        'photo',
     ];
-
-    public static function create(array $array)
-    {
-    }
 
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
     }
 
     public function company()

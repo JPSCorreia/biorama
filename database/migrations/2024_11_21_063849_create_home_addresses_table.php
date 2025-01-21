@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone_number', 15)->nullable();
             $table->string('street_address', 255);
             $table->string('postal_code', 10);
+            $table->string('number');
             $table->string('city', 50);
             $table->boolean('is_primary')->default(false);
             $table->mediumText('comment')->nullable();
