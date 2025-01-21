@@ -206,7 +206,8 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                         <Box sx={{ minHeight: "20px" }}>
                                             {formik.touched.nif && formik.errors.nif}
                                         </Box>
-                                    }                                    sx={{width: "45%"}}
+                                    }
+                                    sx={{width: "45%"}}
                                     disabled={!showWarning}
                                 />
                                 <FormControl

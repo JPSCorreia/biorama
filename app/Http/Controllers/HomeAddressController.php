@@ -7,6 +7,7 @@ use App\Http\Resources\HomeAddressResource;
 use App\Models\HomeAddress;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeAddressController extends Controller
 {
@@ -22,12 +23,51 @@ class HomeAddressController extends Controller
         // Validação dos dados recebidos
         $validated = $request->validated();
 
-        $address = HomeAddress::create($validated);
+        DB::beginTransaction();
 
-        return response()->json([
-            'message' => 'Morada criada com sucesso!',
-            'data' => new HomeAddressResource($address),
-        ], 201);
+        try {
+            // Verifica se há uma morada "apagada" com o mesmo código postal
+            $deletedAddress = HomeAddress::onlyTrashed()
+                ->where('postal_code', $validated['postal_code'])
+                ->first();
+
+            if ($deletedAddress) {
+                // Restaura e atualiza a morada existente
+                $deletedAddress->restore();
+                $deletedAddress->update($validated);
+
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Morada restaurada e atualizada com sucesso!',
+                    'data' => $deletedAddress,
+                ], 201);
+            }
+
+            // Se for marcada como favorita, atualiza outras moradas
+            if ($validated['is_primary']) {
+                HomeAddress::where('user_id', $request->user()->id)
+                    ->where('is_primary', true)
+                    ->update(['is_primary' => false]);
+            }
+
+            // Cria uma nova morada
+            $newAddress = HomeAddress::create($validated);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Morada criada com sucesso!',
+                'data' => $newAddress,
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Erro ao criar a morada.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show(HomeAddress $homeAddress)

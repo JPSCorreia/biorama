@@ -1,11 +1,12 @@
 import {
     Box,
+    Typography,
     Button,
     Modal,
     TextField,
     useMediaQuery,
     useTheme,
-    Avatar, IconButton
+    Avatar, IconButton, InputLabel, Select, MenuItem, FormHelperText, FormControl, Grid
 } from "@mui/material";
 import {
     LocalizationProvider,
@@ -16,6 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { observer } from "mobx-react";
+import { usePage } from "@inertiajs/react";
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { authStore } from "../Stores/index.js";
@@ -26,6 +28,8 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const {genders} = usePage().props;
+
 
     const validationSchema = yup.object().shape({
         first_name: yup.string().required("O nome é obrigatório"),
@@ -73,7 +77,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
             email: authStore.user.email || '',
             phone: authStore.user.phone || '',
             nif: authStore.user.nif || '',
-            gender: authStore.user.gender.name || '',
+            gender: authStore.user.gender || '',
             date_of_birth: authStore.user.date_of_birth ? dayjs(authStore.user.date_of_birth) : null,
             image_profile: authStore.user.image_profile || '',
         },
@@ -96,11 +100,11 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                width: isSmallScreen ? '80%' : '30%',
+                width: isSmallScreen ? '80%' : '45%',
                 justifyContent: 'center',
                 alignItems: 'center',
                 m: 'auto',
-                padding: isSmallScreen ? '10px' : '20px',
+                padding: isSmallScreen ? '10px' : '30px',
                 borderRadius: "10px",
                 backgroundColor: 'background.paper',
             }}>
@@ -126,8 +130,8 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                             alt="Profile Image"
                             src={formik.values.image_profile}
                             sx={{
-                                width: isSmallScreen ? 90 : 110,
-                                height: isSmallScreen ? 90 : 110,
+                                width: isSmallScreen ? 90 : 125,
+                                height: isSmallScreen ? 90 : 125,
                                 color: "background.secondary",
                                 bgcolor: "primary.main",
                                 fontSize: "3rem",
@@ -166,115 +170,218 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                         </IconButton>
                     </Box>
                 </Box>
-                <form onSubmit={(e) => e.preventDefault()}>
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Primeiro Nome"
-                        name="first_name"
-                        value={formik.values.first_name}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.first_name && Boolean(formik.errors.first_name)}
-                        helperText={formik.touched.first_name && formik.errors.first_name}
-                        required
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Apelido"
-                        name="last_name"
-                        value={formik.values.last_name}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.last_name && Boolean(formik.errors.last_name)}
-                        helperText={formik.touched.last_name && formik.errors.last_name}
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Email"
-                        name="email"
-                        value={formik.values.email}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.email && Boolean(formik.errors.email)}
-                        helperText={formik.touched.email && formik.errors.email}
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Género"
-                        name="gender"
-                        value={formik.values.gender}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.gender && Boolean(formik.errors.gender)}
-                        helperText={formik.touched.gender && formik.errors.gender}
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="NIF"
-                        name="nif"
-                        value={formik.values.nif}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.nif && Boolean(formik.errors.nif)}
-                        helperText={formik.touched.nif && formik.errors.nif}
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Nrº de Telemóvel"
-                        name="phone"
-                        value={formik.values.phone}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.phone && Boolean(formik.errors.phone)}
-                        helperText={formik.touched.phone && formik.errors.phone}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale('pt')}>
-                        <MobileDatePicker
-                            sx={{ mt: 2, display: isSmallScreen ? 'block' : 'none' }}
-                            label="Data de Nascimento"
-                            name="date_of_birth"
-                            value={formik.values.date_of_birth}
-                            onChange={(value) => formik.setFieldValue('date_of_birth', value)}
-                            onBlur={() => formik.setFieldTouched('date_of_birth', true)}
-                            renderInput={(params) => (
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: isSmallScreen ? '90%' : '65%',
+                    }}
+                >
+                    <form onSubmit={formik.handleSubmit} >
+                        <Box sx={{
+                            display:'flex',
+                            flexDirection: 'column',
+                            width: '100%',
+
+                        }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: isSmallScreen ? 'column' : 'row',
+                                    justifyContent: 'space-between',
+                                    width: '100%',
+                                }}
+                            >
                                 <TextField
-                                    {...params}
-                                    error={formik.touched.date_of_birth && Boolean(formik.errors.date_of_birth)}
-                                    helperText={formik.touched.date_of_birth && formik.errors.date_of_birth}
+                                    label="Nome"
+                                    name="first_name"
+                                    sx={{width: isSmallScreen ? '100%' : "40%"}}
+                                    type="text"
+                                    margin="normal"
+                                    value={formik.values.first_name}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+                                    helperText={
+                                        <Box>
+                                            {formik.touched.first_name && formik.errors.first_name}
+                                        </Box>
+                                    }
                                 />
-                            )}
-                        />
-                        <DatePicker
-                            label="Data de Nascimento"
-                            name="date_of_birth"
-                            value={formik.values.date_of_birth} // Certifique-se de que é um objeto dayjs ou null
-                            onChange={(value) => formik.setFieldValue('date_of_birth', value)} // Atualiza o estado corretamente
-                            renderInput={(params) => (
                                 <TextField
-                                    {...params}
-                                    error={formik.touched.date_of_birth && Boolean(formik.errors.date_of_birth)}
-                                    helperText={formik.touched.date_of_birth && formik.errors.date_of_birth}
+                                    label="Apelido"
+                                    name="last_name"
+                                    type="text"
+                                    sx={{width:isSmallScreen ? '100%' : "40%"}}
+                                    margin="normal"
+                                    value={formik.values.last_name}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                                    helperText={
+                                        <Box>
+                                            {formik.touched.last_name && formik.errors.last_name}
+                                        </Box>
+                                    }
                                 />
-                            )}
-                        />
-                    </LocalizationProvider>
-                    <Box sx={{ mt: 2 }}>
-                        <Button
-                            type="button"
-                            variant="contained"
-                            color="primary"
-                            onClick={submitForm}
-                        >
-                            Atualizar
-                        </Button>
-                    </Box>
-                </form>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: isSmallScreen ? 'column' : "row",
+                                    justifyContent: 'space-between',
+                                    width: '100%',
+                                }}
+                            >
+                                <TextField
+                                    label="NIF"
+                                    name="nif"
+                                    type="text"
+                                    margin="normal"
+                                    value={formik.values.nif}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.nif && Boolean(formik.errors.nif)}
+                                    helperText={
+                                        <Box>
+                                            {formik.touched.last_name && formik.errors.last_name}
+                                        </Box>
+                                    }
+                                    sx={{width : isSmallScreen ? '100%' : "40%"}}
+                                />
+                                <TextField
+                                    label="Nrº Telemóvel"
+                                    name="phone"
+                                    type="text"
+                                    margin="normal"
+                                    value={formik.values.phone}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                                    helperText={
+                                        <Box>
+                                            {formik.touched.last_name && formik.errors.last_name}
+                                        </Box>
+                                    }
+                                    sx={{width: isSmallScreen ? '100%' : "40%"}}
+                                />
+                            </Box>
+                            <Box
+                                sx={{
+                                display: 'flex',
+                                flexDirection: isSmallScreen ? 'column' : "row",
+                                justifyContent: 'space-between',
+                                width: '100%',
+                            }}>
+                                <FormControl
+                                    sx={{mt: 2, width: isSmallScreen ? '100%' : "40%"}}
+                                    error={formik.touched.gender && Boolean(formik.errors.gender)}
+                                >
+                                    <InputLabel id="gender-select-label">Género</InputLabel>
+                                    <Select
+                                        labelId="gender-select-label"
+                                        id="gender-select"
+                                        name="gender"
+                                        type="number"
+                                        value={formik.values.gender}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        label="Género"
+                                    >
+                                        {Array.isArray(genders) &&
+                                            genders.map((gender) => (
+                                                <MenuItem key={gender.id} value={gender.id}>
+                                                    {gender.name}
+                                                </MenuItem>
+                                            ))}
+                                    </Select>
+                                    {formik.touched.gender && formik.errors.gender && (
+                                        <FormHelperText>
+                                            {formik.errors.gender}
+                                        </FormHelperText>
+                                    )}
+                                </FormControl>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <MobileDatePicker
+                                        sx={{
+                                            mt: 2,
+                                            display: isSmallScreen ? "block" : "none",
+                                            width: "100%",
+                                        }}
+                                        label="Data de Nascimento"
+                                        value={formik.values.date_of_birth}
+                                        onChange={(value) => formik.setFieldValue("date_of_birth", value)} // Atualiza o valor manualmente
+                                        onBlur={() => formik.setFieldTouched("date_of_birth", true)} // Marca o campo como tocado
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                error={formik.touched.date_of_birth && Boolean(formik.errors.date_of_birth)}
+                                                helperText={
+                                                    <Box>
+                                                        {formik.touched.last_name && formik.errors.last_name}
+                                                    </Box>
+                                                }
+                                            />
+                                        )}
+                                    />
+                                    <DatePicker
+                                        sx={{
+                                            mt: 2,
+                                            display: isSmallScreen ? "none" : "block",
+                                            textAlign: 'left',
+                                            width: "40%"
+                                        }}
+                                        label="Data de Nascimento"
+                                        value={formik.values.date_of_birth}
+                                        onChange={(value) => formik.setFieldValue("date_of_birth", value)} // Atualiza o valor manualmente
+                                        onBlur={() => formik.setFieldTouched("date_of_birth", true)} // Marca o campo como tocado
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                error={formik.touched.date_of_birth && Boolean(formik.errors.date_of_birth)}
+                                                helperText={
+                                                    <Box>
+                                                        {formik.touched.last_name && formik.errors.last_name}
+                                                    </Box>
+                                                }
+                                            />
+                                        )}
+                                    />
+                                </LocalizationProvider>
+                            </Box>
+                        </Box>
+                        <Box sx={{ mt: 2 }}>
+
+                            <TextField
+                                label="Email"
+                                name="email"
+                                type="email"
+                                fullWidth
+                                margin="normal"
+                                value={formik.values.email}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.email && Boolean(formik.errors.email)}
+                                helperText={
+                                    <Box>
+                                        {formik.touched.last_name && formik.errors.last_name}
+                                    </Box>
+                                }
+                            />
+                        </Box>
+                        <Box sx={{ mt: 2 }}>
+                            <Button
+                                type="button"
+                                variant="contained"
+                                color="primary"
+                                onClick={submitForm}
+                            >
+                                Atualizar
+                            </Button>
+                        </Box>
+                    </form>
+                </Box>
             </Box>
         </Modal>
     );

@@ -12,6 +12,9 @@ class HomeAddressStore {
             deleteAddress: action,
             updateAddress: action,
             setPrimaryAddress: action,
+            unsetPrimaryAddress: action,
+            updatePrimaryAddress: action,
+            checkDuplicatePostalCode: action,
             clearAddresses: action,
             addressCount: computed,
         });
@@ -44,21 +47,43 @@ class HomeAddressStore {
 
     addAddress = action((address) => {
         try {
-            this.validateAddress(address); // Validação
-            console.log("Validação bem-sucedida:", address);
+            // Valida a estrutura do endereço
+            this.validateAddress(address);
+
+            // Verifica se a nova morada está definida como favorita
+            if (address.is_primary) {
+                // Atualiza qualquer morada existente para não ser favorita
+                runInAction(() => {
+                    this.addresses = this.addresses.map((existingAddress) => ({
+                        ...existingAddress,
+                        is_primary: false,
+                    }));
+                });
+            }
+
+            // Adiciona a nova morada
             runInAction(() => {
                 this.addresses.push(address);
             });
+
+            console.log("Morada adicionada com sucesso:", address);
         } catch (error) {
             console.error("Erro na validação:", error.message);
         }
     });
 
-
-    deleteAddress = action((id) => {
-        runInAction(() => {
-            this.addresses = this.addresses.filter((address) => address.id !== id);
-        });
+    deleteAddress = action(async (id) => {
+        try {
+            const response = await axios.delete(`/apagar-morada/${id}`);
+            if (response.status === 200) {
+                runInAction(() => {
+                    this.addresses = this.addresses.filter((address) => address.id !== id);
+                });
+                console.log('Morada Apagada com sucesso');
+            }
+        } catch (error) {
+            console.error('Erro ao apagar a morada:', error);
+        }
     });
 
     updateAddress = action((id, updatedData) => {
@@ -73,7 +98,7 @@ class HomeAddressStore {
         });
     });
 
-    setPrimaryAddress = action((id) => {
+    setPrimaryAddress = action(async (id) => {
         // Atualiza localmente
         runInAction(() => {
             this.addresses = this.addresses.map((address) => ({
@@ -82,11 +107,7 @@ class HomeAddressStore {
             }));
         });
 
-        // Sincroniza automaticamente com o backend
-        this.syncPrimaryAddress(id);
-    });
-
-    syncPrimaryAddress = async (id) => {
+        //Sincroniza automaticamente com o backend
         try {
             const response = await axios.patch(`/morada/${id}/set-morada-fav`);
             if (response.status === 200) {
@@ -95,8 +116,45 @@ class HomeAddressStore {
         } catch (error) {
             console.error("Erro ao sincronizar a morada favorita no backend:", error);
         }
-    };
+    });
 
+    unsetPrimaryAddress = action(async(existingPrimaryId) => {
+        // Atualiza a morada antiga para não ser favorita
+        try {
+            await axios.put(`/atualizar-morada/${existingPrimaryId}`, {
+                is_primary: false,
+            });
+
+            runInAction(() => {
+                this.addresses = this.addresses.map((address) =>
+                    address.id === existingPrimaryId
+                        ? { ...address, is_primary: false }
+                        : address
+                );
+            });
+
+            console.log("Morada antiga atualizada para não favorita.");
+        } catch (error) {
+            console.error("Erro ao atualizar a morada antiga como não favorita:", error);
+        }
+    });
+
+    updatePrimaryAddress = action(async(newPrimaryId) => {
+        const existingPrimary = this.addresses.find((address) => address.is_primary);
+
+        if (existingPrimary) {
+            await this.unsetPrimaryAddress(existingPrimary.id);
+        }
+
+        await this.setPrimaryAddress(newPrimaryId);
+    });
+
+    checkDuplicatePostalCode(postalCode, excludeId = null) {
+        // Verifica se existe outra morada com o mesmo código postal, excluindo o ID especificado
+        return this.addresses.some(
+            (address) => address.postal_code === postalCode && address.id !== excludeId
+        );
+    }
 
     clearAddresses = action(() => {
         this.addresses = [];

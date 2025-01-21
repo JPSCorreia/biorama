@@ -2,12 +2,11 @@ import { observer } from "mobx-react";
 import { ProfileInformation } from "../Components";
 import {Alert, Box} from "@mui/material";
 import { usePage } from "@inertiajs/react";
-import {authStore} from "@/Stores/index.js";
 
 const Profile = observer(() => {
-    const { auth, flash = {} } = usePage().props;
-    console.log("Auth:", auth);
-    console.log("Flash:", flash);
+    const {genders, user = {} } = usePage().props;
+    console.log("Teste User Rota", user);
+    console.log("Teste genders", genders);
     return (
         <Box
             sx={{
@@ -19,12 +18,7 @@ const Profile = observer(() => {
                 // marginBottom: "5%",
             }}
         >
-            {flash.message && (
-                <Box sx={{ mb: 2 }}>
-                    <Alert severity={flash.type || "success"}>{flash.message}</Alert>
-                </Box>
-            )}
-            <ProfileInformation/>
+            <ProfileInformation />
         </Box>
     );
 });

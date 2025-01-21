@@ -88,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-moradas', [HomeAddressController::class, 'index'])->name('get_address');
     Route::post('/adicionar-morada', [HomeAddressController::class, 'store'])->name('add_address');
     Route::post('/editar-morada/{morada}', [HomeAddressController::class, 'update'])->name('edit_address');
-    Route::delete('/del-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
+    Route::delete('/apagar-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
     Route::patch('/morada/{id}/set-morada-fav', [HomeAddressController::class, 'setPrimary']);
 });
 

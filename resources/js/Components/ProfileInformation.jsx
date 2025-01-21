@@ -19,9 +19,12 @@ import ProfileEditModal from "./ProfileEditModal.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
+import {usePage} from "@inertiajs/react";
 
 const ProfileInformation = observer(() => {
-
+    const {genders, user = {} } = usePage().props;
+    console.log("Teste User Filho", user);
+    console.log("Teste Genders Filho", genders);
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 
@@ -83,8 +86,8 @@ const ProfileInformation = observer(() => {
                     variant = {isSmallScreen ? "" : "rounded"}
                     src={authStore.user?.image_profile}
                     sx={{
-                        width: isSmallScreen ? 90 : 110,
-                        height: isSmallScreen ? 90 : 110,
+                        width: isSmallScreen ? 90 : 150,
+                        height: isSmallScreen ? 90 : 150,
                         color: "background.secondary",
                         bgcolor: "primary.main",
                         borderRadius: isSmallScreen ? "50%" : "10px",
@@ -160,7 +163,7 @@ const ProfileInformation = observer(() => {
 
                     }}
                 >
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1.8rem" }}>Dados Pessoais</Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>Dados Pessoais</Typography>
                     <Box>
                         {authStore.isAuthenticated && (
                             <IconButton
@@ -193,6 +196,7 @@ const ProfileInformation = observer(() => {
                 <List
                     sx={{
                         width: "100%",
+                        p:3
                     }}
                 >
                     <ListItem
@@ -232,8 +236,10 @@ const ProfileInformation = observer(() => {
                     <Divider
                         variant="middle"
                         sx={{
+                            display : isSmallScreen ? "block" : "none",
                             width: "100%",
                             mt: 1.5,
+                            mb: 1.5,
                             background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
                             border: "none",
                             height: 1.5,
@@ -245,29 +251,41 @@ const ProfileInformation = observer(() => {
                             flexDirection: isSmallScreen ? "column" : "row",
                             justifyContent: isSmallScreen ? "" : "space-between",
                             alignItems: isSmallScreen ? "baseline" : "",
-                            p: 0,
-                            mt: 2
+                            p: 0
                         }}
                     >
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF:</Typography>
+                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF</Typography>
                             <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
                                 {authStore.user.nif || "Não Fornecido"}
                             </Typography>
                         </Box>
+                        <Divider
+                            variant="middle"
+                            sx={{
+                                display : isSmallScreen ? "block" : "none",
+                                width: "100%",
+                                mt: 1.5,
+                                mb: 1.5,
+                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                border: "none",
+                                height: 1.5,
+                            }}
+                        />
                         <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
                             <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Genero</Typography>
                             <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                {authStore.user.gender.name || "Não Fornecido"}
+                                {authStore.user.gender || "Não Fornecido"}
                             </Typography>
                         </Box>
-
                     </ListItem>
                     <Divider
                         variant="middle"
                         sx={{
+                            display : isSmallScreen ? "block" : "none",
                             width: "100%",
                             mt: 1.5,
+                            mb: 1.5,
                             background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
                             border: "none",
                             height: 1.5,
@@ -284,7 +302,7 @@ const ProfileInformation = observer(() => {
                     }}
                     >
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Data de Nascimento:</Typography>
+                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Data de Nascimento</Typography>
                             <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
                                 {authStore.user.date_of_birth || "Não Fornecida"}
                             </Typography>
@@ -312,7 +330,7 @@ const ProfileInformation = observer(() => {
 
                 {/* Gestão de Moradas */}
                 <Box sx={{ mt: 4 }}>
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1.8rem", mb: 2 }}>Gestão de Moradas</Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "2rem", mb: 2 }}>Gestão de Moradas</Typography>
                     {addresses.length > 0 ? (
                         <Box
                             sx={{
@@ -331,10 +349,10 @@ const ProfileInformation = observer(() => {
                                 },
                             }}
                         >
-                            {addresses.map((address, index) => {
+                            {addresses.map((address) => {
                                 return (
                                     <AddressCard
-                                        key={address.id || index}
+                                        key={address.id}
                                         address={address}
                                         theme={theme}
 

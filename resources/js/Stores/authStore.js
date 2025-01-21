@@ -2,6 +2,7 @@ import {action, makeObservable, observable, runInAction} from "mobx";
 import {makePersistable} from "mobx-persist-store";
 import {homeAddressStore} from "./homeAddressStore.js";
 import axios from "axios";
+import {usePage} from "@inertiajs/react";
 
 class AuthStore {
     user = null;
@@ -28,7 +29,7 @@ class AuthStore {
         this.isAuthenticated = !!auth?.user;
         this.user = auth?.user || null;
         if (this.isAuthenticated) {
-            this.fetchAddresses(); // Faz o fetch das informações do user se autenticado
+             homeAddressStore.addresses = homeAddressStore.fetchAddresses();// Faz o fetch das informações do user se autenticado
         } else {
             homeAddressStore.clearAddresses(); // Limpa moradas se não autenticado
         }
@@ -43,20 +44,6 @@ class AuthStore {
             this.submitDataUser(updatedData); // Submete os dados do utilizador
         });
     }
-
-    fetchAddresses = async () => {
-
-        try {
-            const response = await axios.get("/get-user");
-            runInAction(() => {
-                this.user = response.data;
-            });
-            console.log("User carregado com sucesso", this.user);
-        } catch (error) {
-            console.error("Erro ao carregar o user:", error);
-        }
-    };
-
     submitDataUser = async (data) => {
         try {
             await axios.post(`/editar-perfil/${this.user.id}`, data);

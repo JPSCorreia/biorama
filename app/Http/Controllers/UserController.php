@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Models\Gender;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,14 @@ class UserController extends Controller
 
     public function show()
     {
-        return Inertia::render('Profile');
+        $user = Auth::user();
+        $user->load('home_addresses', 'gender');
+        $genders = Gender::all();
+
+        return Inertia::render('Profile', [
+            'user' => $user,
+            'genders' => $genders,
+        ]);
     }
 
     public function edit()
@@ -82,7 +90,7 @@ class UserController extends Controller
     public function get_user()
     {
         $user = Auth::user();
-        $user->load('home_addresses');
+        $user->load('home_addresses', 'gender');
         return response()->json($user);
     }
 }

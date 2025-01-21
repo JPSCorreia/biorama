@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import StarIcon from '@mui/icons-material/Star';
 import EditIcon from '@mui/icons-material/Edit';
 import AddressEditModal from "./AddressEditModal.jsx";
+import React from "react";
 
 const AddressCard = observer(({ address, theme }) => {
 
@@ -21,16 +22,9 @@ const AddressCard = observer(({ address, theme }) => {
         homeAddressStore.setPrimaryAddress(address.id);
     };
 
-    const handleDeleteAddress = async (address) => {
-        try {
-            const response = await axios.delete(`/del-morada/${address.id}`);
-            if (response.status === 200) {
-                homeAddressStore.deleteAddress(address.id);
-                console.log('Morada Apagada com sucesso');
-            }
-        } catch (error) {
-            console.error('Erro ao apagar a morada:', error);
-        }
+    const handleDeleteAddress = async (id) => {
+            await homeAddressStore.deleteAddress(id);
+            console.log('Morada Apagada com sucesso');
     };
     return (
         <Box
@@ -94,7 +88,7 @@ const AddressCard = observer(({ address, theme }) => {
                         />
                     </IconButton>
                     <AddressEditModal open={open} handleClose={handleClose} address={address} />
-                    <IconButton aria-label="delete" onClick={handleDeleteAddress}>
+                    <IconButton aria-label="delete" onClick={() => handleDeleteAddress(address.id)}>
                         <DeleteIcon
                             sx={{
                                 color: theme.palette.error.main,

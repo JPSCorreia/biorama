@@ -19,7 +19,6 @@ import FormVendorRegistration from "@/Components/FormVendorRegistration.jsx";
 const Step1PersonalInfo = observer(({genders, setUserFormik, setCompanyFormik, showWarning, onCloseCompanyForm}) => {
 
     const theme = useTheme();
-    console.log('É UMA EMPRESA?', vendorRegistrationStore.isCompany);
 
     return (
 
