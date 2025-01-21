@@ -12,4 +12,9 @@ class Gender extends Model
     {
         return $this->hasOne(User::class);
     }
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
+    }
 }

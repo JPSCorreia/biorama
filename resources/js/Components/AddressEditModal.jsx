@@ -8,7 +8,8 @@ import {
     Typography,
     useTheme,
     useMediaQuery,
-    IconButton
+    IconButton,
+    Input,
 } from "@mui/material";
 
 import CloseIcon from '@mui/icons-material/Close';
@@ -23,12 +24,14 @@ const AddressEditModal = ({ open, handleClose, address }) => {
     const { auth } = usePage().props;
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const [isdisabled , setIsDisabled] = useState(true);
 
     // Valores iniciais vindos da morada para edição
     const initialValues = {
         postal_code: address.postal_code || "",
         address_name: address.address_name || "",
         street_address: address.street_address || "",
+        number: address.number || "",
         city: address.city || "",
         phone_number: address.phone_number || "",
         comment: address.comment || "",
@@ -87,10 +90,15 @@ const AddressEditModal = ({ open, handleClose, address }) => {
             city: Yup.string()
                 .max(50, "Cidade deve ter no máximo 50 caracteres")
                 .required("A Cidade é obrigatória"),
+            number: Yup.string()
+                .required("O Número é obrigatório")
+            ,
             phone_number: Yup.string()
                 .nullable()
                 .matches(/^\d{9,15}$/, "Número de telefone inválido"),
-            comment: Yup.string().nullable(),
+            comment: Yup.string().nullable()
+                .max(50, "O Comentário deve ter no máximo 50 caracteres")
+            ,
             is_primary: Yup.boolean().test(
                 "update-is-primary",
                 "Erro ao atualizar morada favorita",
@@ -131,7 +139,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                     formik.setFieldValue("street_address", data.morada || "");
                     formik.setFieldValue("city", data.distrito || "");
                 } else {
-                    formik.setFieldError("postal_code", "Código Postal não encontrado na API");
+                    formik.setFieldError("postal_code", "Código Postal não encontrado");
                 }
             } catch {
                 formik.setFieldError("postal_code", "Erro ao validar o Código Postal");
@@ -155,7 +163,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: isSmallScreen ? "80%" : "30%",
+                    width: isSmallScreen ? "80%" : "20%",
                     justifyContent: "center",
                     alignItems: "center",
                     padding: isSmallScreen ? "10px" : "20px",
@@ -171,7 +179,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         width: "100%",
                     }}
                 >
-                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
+                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold", ml:4.5 }}>
                         Editar Morada
                     </Typography>
                     <IconButton onClick={handleClose}>
@@ -179,17 +187,6 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                     </IconButton>
                 </Box>
                 <form onSubmit={formik.handleSubmit}>
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Código Postal"
-                        name="postal_code"
-                        value={formik.values.postal_code}
-                        onChange={handlePostalCodeChange}
-                        error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
-                        helperText={formik.touched.postal_code && formik.errors.postal_code}
-                        required
-                    />
                     <TextField
                         fullWidth
                         margin="normal"
@@ -201,6 +198,59 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         helperText={formik.touched.address_name && formik.errors.address_name}
                         required
                     />
+                    <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                        <TextField
+                            margin="normal"
+                            label="Código Postal"
+                            name="postal_code"
+                            value={formik.values.postal_code}
+                            onChange={handlePostalCodeChange}
+                            error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
+                            helperText={formik.touched.postal_code && formik.errors.postal_code}
+                            required
+                            sx={{ width: "40%" }}
+                        />
+
+                        <TextField
+                            margin="normal"
+                            label="Cidade"
+                            name="city"
+                            value={formik.values.city}
+                            onChange={formik.handleChange}
+                            error={formik.touched.city && Boolean(formik.errors.city)}
+                            helperText={formik.touched.city && formik.errors.city}
+                            required
+                            isDisabled={isdisabled}
+                            sx={{ width: "40%" }}
+                        />
+
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Número"
+                            name="number"
+                            value={formik.values.number}
+                            onChange={formik.handleChange}
+                            error={formik.touched.number && Boolean(formik.errors.number)}
+                            helperText={formik.touched.number && formik.errors.number}
+                            required
+                            isDisabled={isdisabled}
+                            sx={{ width: "40%" }}
+                        />
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Nrº Telemóvel"
+                            name="phone_number"
+                            value={formik.values.phone_number}
+                            onChange={formik.handleChange}
+                            error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
+                            helperText={formik.touched.phone_number && formik.errors.phone_number}
+                            sx={{ width: "40%" }}
+                        />
+                    </Box>
                     <TextField
                         fullWidth
                         margin="normal"
@@ -211,38 +261,32 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         error={formik.touched.street_address && Boolean(formik.errors.street_address)}
                         helperText={formik.touched.street_address && formik.errors.street_address}
                         required
+                        isDisabled={isdisabled}
                     />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Cidade"
-                        name="city"
-                        value={formik.values.city}
-                        onChange={formik.handleChange}
-                        error={formik.touched.city && Boolean(formik.errors.city)}
-                        helperText={formik.touched.city && formik.errors.city}
-                        required
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Nrº Telemóvel"
-                        name="phone_number"
-                        value={formik.values.phone_number}
-                        onChange={formik.handleChange}
-                        error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
-                        helperText={formik.touched.phone_number && formik.errors.phone_number}
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Comentário"
-                        name="comment"
-                        value={formik.values.comment}
-                        onChange={formik.handleChange}
-                        error={formik.touched.comment && Boolean(formik.errors.comment)}
-                        helperText={formik.touched.comment && formik.errors.comment}
-                    />
+                    <Box sx={{ display:'flex', flexDirection:'column', width: "100%",mt: 1, mb: 2 }}>
+                        <Input
+                            aria-label="Demo input"
+                            multiline
+                            placeholder="Nota sobre a morada (opcional)"
+                            name="comment"
+                            value={formik.values.comment || ""}
+                            onChange={formik.handleChange}
+                            error={formik.touched.comment && Boolean(formik.errors.comment)}
+                            fullWidth
+                        />
+                        {/* Contador de caracteres */}
+                        <Typography
+                            variant="caption"
+                            sx={{ alignSelf: "flex-end", mt: 1 }}
+                        >
+                            {formik.values.comment.length}/50
+                        </Typography>
+                        {formik.touched.comment && formik.errors.comment && (
+                            <Typography variant="caption" color="error.main">
+                                {formik.errors.comment}
+                            </Typography>
+                        )}
+                    </Box>
                     <FormControlLabel
                         control={
                             <Switch
