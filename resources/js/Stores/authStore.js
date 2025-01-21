@@ -26,14 +26,18 @@ class AuthStore {
     }
 
     updateAuth(auth) {
-        this.isAuthenticated = !!auth?.user;
-        this.user = auth?.user || null;
-        if (this.isAuthenticated) {
-             homeAddressStore.addresses = homeAddressStore.fetchAddresses();// Faz o fetch das informações do user se autenticado
-        } else {
-            homeAddressStore.clearAddresses(); // Limpa moradas se não autenticado
+        if (auth?.user) {
+            this.isAuthenticated = true;
+            this.user = auth.user;
+            homeAddressStore.addresses = homeAddressStore.fetchAddresses();
+        } else if (!this.isAuthenticated) {
+            this.isAuthenticated = false;
+            this.user = null;
+            homeAddressStore.clearAddresses();
         }
     }
+
+
 
     updateUserData(updatedData) {
         runInAction(() => {

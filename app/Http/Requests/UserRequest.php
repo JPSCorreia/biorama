@@ -25,6 +25,7 @@ class UserRequest extends FormRequest
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:15',
             'nif' => 'required|string|max:9',
+            'gender_id' => 'required|exists:genders,id',
             'date_of_birth' => 'nullable|date',
             'image_profile' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ];

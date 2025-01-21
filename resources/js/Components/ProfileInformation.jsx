@@ -23,7 +23,7 @@ import {usePage} from "@inertiajs/react";
 
 const ProfileInformation = observer(() => {
     const {genders, user = {} } = usePage().props;
-    console.log("Teste User Filho", user);
+    console.log("Teste User Filho", authStore.user);
     console.log("Teste Genders Filho", genders);
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
@@ -273,9 +273,9 @@ const ProfileInformation = observer(() => {
                             }}
                         />
                         <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Genero</Typography>
+                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Género</Typography>
                             <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                {authStore.user.gender || "Não Fornecido"}
+                                {authStore.user.gender?.name|| "Não Fornecido"}
                             </Typography>
                         </Box>
                     </ListItem>
@@ -374,8 +374,8 @@ const ProfileInformation = observer(() => {
                                         border: "2px dashed",
                                         borderColor: theme.palette.primary.main,
                                         borderRadius: "10px",
-                                        width: isSmallScreen ? "80%" : "30%",
-                                        height: isSmallScreen ? "200px" : "315px",
+                                        width: isSmallScreen ? "100%" : "30%",
+                                        height: isSmallScreen ? "200px" : "372px",
                                         cursor: "pointer",
                                         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                                         transition: "all 0.3s ease",

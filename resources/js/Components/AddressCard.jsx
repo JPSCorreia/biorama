@@ -106,6 +106,12 @@ const AddressCard = observer(({ address, theme }) => {
                 </Typography>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Número</Typography>
+                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                    {address.number || "Número não fornecido"}
+                </Typography>
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
                 <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Cidade</Typography>
                 <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
                     {address.city || "Cidade não fornecida"}

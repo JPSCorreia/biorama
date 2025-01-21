@@ -209,7 +209,8 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
                                 <Box sx={{ minHeight: "20px" }}>
                                     {formik.touched.email && formik.errors.email}
                                 </Box>
-                            }                            required
+                            }
+                            required
                         />
                         <Grid container>
                             <Grid item xs={12} md={6}>
@@ -219,7 +220,7 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
                                     typre="text"
                                     margin="normal"
                                     value={formik.values.phone}
-                                    onChange={handlePostalCodeChange}
+                                    onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.phone && Boolean(formik.errors.phone)}
                                     helperText={
