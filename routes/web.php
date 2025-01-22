@@ -122,19 +122,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/dashboard')->group(function () {
 
-        Route::get('/', function () {
-            if (auth()->user()->hasRole('vendor')) {
-                $user = auth()->user()
-                    ->load([
-                        'vendor', // Relacionamento direto com a tabela 'vendors'
-                        'vendor.company', // Relacionamento entre 'vendors' e 'company'
-                        'vendor.company.addresses', // Relacionamento entre 'company' e 'companyAddress'
-                        'vendor.company.contacts' // Relacionamento entre 'company' e 'companyContacts'
-                    ]);
-                return Inertia::render('Dashboard/Home',["user"=>$user]);
-            }
+        Route::get('/', [DashboardController::class, 'showVendorInfo'])->name('dashboard.home');
+        Route::patch('/vendor/name/{vendor}', [DashboardController::class, 'updateVendorName'])
+            ->name('vendor.update.namegit ');
 
-        })->name('dashboard.home');
 
         Route::get('/analises', function () {
             return Inertia::render('Dashboard/Analytics');
