@@ -19,21 +19,24 @@ const RegistorVendorPage = observer(({ genders }) => {
     const progress = (currentStep / 6) * 100;
     const {auth} = usePage().props;
     const [showWarning, setShowWarning] = useState(true);
-    const [userFormik, setUserFormik] = useState(null); // Formik de dados pessoais
+
+    const [vendorFormik, setVendorFormik] = useState(null); // Formik de dados pessoais
     const [companyFormik, setCompanyFormik] = useState(null); // Formik de empresa
+
+    const [storeFormik, setStoreFormik] = useState(null); // Formik de loja
 
     console.log('Auth', auth);
 
     const handleCloseCompanyForm = async () => {
         vendorRegistrationStore.setIsCompany(false); // Fecha o formulário de empresa
 
-        if (userFormik) {
+        if (vendorFormik) {
             // Valida explicitamente o formulário de dados pessoais
-            const errors = await userFormik.validateForm();
+            const errors = await vendorFormik.validateForm();
             const isValid = Object.keys(errors).length === 0;
 
             // Atualiza o estado global de validade
-            vendorRegistrationStore.setUserFormValid(isValid);
+            vendorRegistrationStore.setVendorFormValid(isValid);
         }
     };
 
@@ -42,10 +45,10 @@ const RegistorVendorPage = observer(({ genders }) => {
         switch (currentStep) {
             case 1:
                 return vendorRegistrationStore.isCompany ?
-                    !(vendorRegistrationStore.userFormValid && vendorRegistrationStore.companyFormValid) :
-                    !vendorRegistrationStore.userFormValid;
+                    !(vendorRegistrationStore.vendorFormValid && vendorRegistrationStore.companyFormValid) :
+                    !vendorRegistrationStore.vendorFormValid;
             case 3:
-                return !vendorRegistrationStore.companyFormValid;
+                return !vendorRegistrationStore.storeFormValid;
             case 5:
                 return !vendorRegistrationStore.productsFormValid;
             default:
@@ -55,7 +58,7 @@ const RegistorVendorPage = observer(({ genders }) => {
 
     useEffect(() => {
         if (auth?.user) {
-            vendorRegistrationStore.initializeUser(auth.user);
+            vendorRegistrationStore.initializeVendor(auth.user);
         }
     }, [auth]);
 
@@ -66,11 +69,11 @@ const RegistorVendorPage = observer(({ genders }) => {
         switch (currentStep) {
             case 1:
                 // Valida o formulário de dados pessoais
-                if (userFormik) {
-                    const userErrors = await userFormik.validateForm();
+                if (vendorFormik) {
+                    const userErrors = await vendorFormik.validateForm();
                     const isUserValid = Object.keys(userErrors).length === 0;
                     if (isUserValid) {
-                        userFormik.handleSubmit(); // Submete o formulário de dados pessoais
+                        vendorFormik.handleSubmit(); // Submete o formulário de dados pessoais
                     }
                     errors = { ...errors, ...userErrors };
                     isValid = isUserValid && isValid; // Atualiza a validade global
@@ -95,7 +98,21 @@ const RegistorVendorPage = observer(({ genders }) => {
 
                 setShowWarning(false); // Esconde o aviso se tudo estiver válido
                 return setCurrentStep((prev) => prev + 1);
-
+            case 3:
+                if (storeFormik) {
+                    const storeErrors = await storeFormik.validateForm();
+                    const isStoreValid = Object.keys(storeErrors).length === 0;
+                    if (isStoreValid) {
+                        storeFormik.handleSubmit(); // Submete o formulário de loja
+                    }
+                    errors = {...errors, ...storeErrors};
+                    isValid = isStoreValid && isValid; // Atualiza a validade global
+                }
+                if (!isValid) {
+                    console.log("Erros nos formulários:", errors);
+                    return;
+                }
+                    return setCurrentStep((prev) => prev + 1);
             default:
                 return setCurrentStep((prev) => prev + 1);
         }
@@ -114,7 +131,7 @@ const RegistorVendorPage = observer(({ genders }) => {
             case 1:
                 return <Step1PersonalInfo
                     genders={genders}
-                    setUserFormik={setUserFormik} // Passa para o formulário de dados pessoais
+                    setUserFormik={setVendorFormik} // Passa para o formulário de dados pessoais
                     setCompanyFormik={setCompanyFormik} // Passa para o formulário de empresa
                     onCloseCompanyForm={handleCloseCompanyForm}
                     showWarning={showWarning}
@@ -122,7 +139,9 @@ const RegistorVendorPage = observer(({ genders }) => {
             case 2:
                 return <IntroStep2VendorRegister />;
             case 3:
-                return <Step2StoreDetails />;
+                return <Step2StoreDetails
+                    setStoreFormik={setStoreFormik}
+                />;
             case 4:
                 return <IntroStep3VendorRegister />;
             case 5:
@@ -142,7 +161,7 @@ const RegistorVendorPage = observer(({ genders }) => {
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                mt: '10vh',
+                mt:9,
                 minHeight: '70vh',
                 alignContent: 'center',
                 justifyContent: 'center',

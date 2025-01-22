@@ -15,6 +15,7 @@ const Cart = observer(() => {
                 marginBottom: "5%",
             }}
         >
+            {/* Title for the cart page */}
             <Typography variant="h3" gutterBottom>
                 Carrinho de Compras
             </Typography>

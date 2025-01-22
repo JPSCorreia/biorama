@@ -9,7 +9,7 @@ import { vendorStore } from "./vendorsStore.js";
 
 // Configuração do mobx-persist-store
 configurePersistable({
-    storage: window.localStorage,
+    storage: window.sessionStorage,
     jsonify: true,
     debugMode: false,
 });

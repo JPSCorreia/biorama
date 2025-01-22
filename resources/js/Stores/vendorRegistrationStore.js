@@ -3,9 +3,9 @@ import {makePersistable} from "mobx-persist-store";
 import axios from "axios";
 
 class VendorRegistrationStore {
-    user = null; // Informações do utilizador autenticado e que deseja ser vendedor
+    vendor = null; // Informações do utilizador autenticado e que deseja ser vendedor
     isCompany = false; // Define se o utilizador vai registar uma empresa
-    userFormValid = false; // Validação do formulário do utilizador
+    vendorFormValid = false; // Validação do formulário do utilizador
 
     company = {
         name: "",
@@ -20,7 +20,15 @@ class VendorRegistrationStore {
     }; // Dados da empresa, caso aplicável
     companyFormValid = false; // Validação do formulário da empresa
 
-    store = null; // Dados da loja
+    store = {
+        vendor_id: "",
+        name: "",
+        phone: "",
+        email: "",
+        description: "",
+        rating: 0.0,
+        coordinates: "",
+    }; // Dados da loja
     storeFormValid = false; // Validação do formulário da loja
 
     products = []; // Lista de produtos
@@ -28,9 +36,9 @@ class VendorRegistrationStore {
 
     constructor() {
         makeObservable(this, {
-            user: observable,
+            vendor: observable,
             isCompany: observable,
-            userFormValid: observable,
+            vendorFormValid: observable,
 
             company: observable,
             companyFormValid: observable,
@@ -41,10 +49,10 @@ class VendorRegistrationStore {
             products: observable,
             productsFormValid: observable,
 
-            initializeUser: action,
-            updateUser: action,
+            initializeVendor: action,
+            updateVendor: action,
             setIsCompany: action,
-            setUserFormValid: action,
+            setVendorFormValid: action,
 
             updateCompany: action,
             setCompanyFormValid: action,
@@ -59,20 +67,20 @@ class VendorRegistrationStore {
         });
         makePersistable(this, {
             name: "vendorRegistrationStore",
-            properties: ["user", "isCompany", "company", "store", "products"],
+            properties: ["vendor", "isCompany", "company", "store", "products"],
             storage: window.sessionStorage,
         });
 
     }
 
     // Ação para inicializar o utilizador
-    initializeUser(userData) {
-        this.user = userData;
+    initializeVendor(vendorData) {
+        this.vendor = vendorData;
     }
 
     // Ações para definir a validade dos formulários
-    setUserFormValid(value) {
-        this.userFormValid = value
+    setVendorFormValid(value) {
+        this.vendorFormValid = value
     }
 
     setCompanyFormValid(value) {
@@ -88,7 +96,7 @@ class VendorRegistrationStore {
     }
 
     // Ação para atualizar os dados do utilizador
-    updateUser(data) {
+    updateVendor(data) {
         this.user = {...this.user, ...data};
     }
 

@@ -122,7 +122,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/', [DashboardController::class, 'showVendorInfo'])->name('dashboard.home');
         Route::patch('/vendor/name/{vendor}', [DashboardController::class, 'updateVendorName'])
-            ->name('vendor.update.name');
+            ->name('vendor.update.namegit ');
 
 
         Route::get('/analises', function () {

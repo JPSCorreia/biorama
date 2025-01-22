@@ -75,16 +75,16 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
 
     const formik = useFormik({
         initialValues: {
-            first_name: vendorRegistrationStore.user.first_name || "",
-            last_name: vendorRegistrationStore.user.last_name || "",
-            email: vendorRegistrationStore.user.email || "",
-            nif: vendorRegistrationStore.user.nif || "",
-            iban: vendorRegistrationStore.user.iban || "",
-            phone: vendorRegistrationStore.user.phone || "",
-            date_of_birth: vendorRegistrationStore.user.date_of_birth
-                ? dayjs(vendorRegistrationStore.user.date_of_birth)
+            first_name: vendorRegistrationStore.vendor.first_name || "",
+            last_name: vendorRegistrationStore.vendor.last_name || "",
+            email: vendorRegistrationStore.vendor.email || "",
+            nif: vendorRegistrationStore.vendor.nif || "",
+            iban: vendorRegistrationStore.vendor.iban || "",
+            phone: vendorRegistrationStore.vendor.phone || "",
+            date_of_birth: vendorRegistrationStore.vendor.date_of_birth
+                ? dayjs(vendorRegistrationStore.vendor.date_of_birth)
                 : null,
-            gender: vendorRegistrationStore.user.gender || ""
+            gender: vendorRegistrationStore.vendor.gender || ""
         },
         validationSchema: validationSchema,
         validateOnMount: true,
@@ -96,7 +96,7 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
         if (passFormik) {
             passFormik(formik); // Passa o formik ao componente pai
         }
-        vendorRegistrationStore.setUserFormValid(formik.isValid); // Mantém o estado sincronizado
+        vendorRegistrationStore.setVendorFormValid(formik.isValid); // Mantém o estado sincronizado
     }, [formik.isValid, passFormik]);
 
 

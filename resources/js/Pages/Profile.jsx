@@ -1,12 +1,8 @@
 import { observer } from "mobx-react";
 import { ProfileInformation } from "../Components";
-import {Alert, Box} from "@mui/material";
-import { usePage } from "@inertiajs/react";
+import {Box} from "@mui/material";
 
 const Profile = observer(() => {
-    const {genders, user = {} } = usePage().props;
-    console.log("Teste User Rota", user);
-    console.log("Teste genders", genders);
     return (
         <Box
             sx={{
