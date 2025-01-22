@@ -23,32 +23,28 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
     const [isReadOnly, setIsReadOnly] = useState(true); // Estado para controlar se os campos estão desativados
     const [loading, setLoading] = useState(false); // Estado para mostrar o carregamento da API
     const handlePostalCodeChange = async (e) => {
-        const value = e.target.value;
+        let value = event.target.value.replace(/\D/g, "");
+        if (value.length > 4) {
+            value = `${value.slice(0, 4)}-${value.slice(4, 7)}`;
+        }
         formik.setFieldValue("postal_code", value); // Atualiza o campo do código postal no Formik
 
         const postalCodeRegex = /^\d{4}-\d{3}$/; // Valida o formato do código postal
-        if (postalCodeRegex.test(value)) {
+        if (value.length === 8 && /^\d{4}-\d{3}$/.test(value)) {
             const [cp4, cp3] = value.split("-");
-            const apiKey = import.meta.env.VITE_CTT_API_KEY;
-            const apiUrl = import.meta.env.VITE_CTT_API_URL;
-
-            setLoading(true); // Mostra que a API está sendo chamada
-            setIsReadOnly(true); // Desativa os campos enquanto espera a resposta
-
             try {
-                const url = `${apiUrl}/${apiKey}/${cp4}-${cp3}`;
+                const url = `${import.meta.env.VITE_CTT_API_URL}/${import.meta.env.VITE_CTT_API_KEY}/${cp4}-${cp3}`;
                 const response = await axios.get(url);
-
                 if (response.status === 200 && response.data.length > 0) {
                     const data = response.data[0];
                     formik.setFieldValue("street", data.morada || "");
                     formik.setFieldValue("district", data.distrito || "");
-                    formik.setFieldValue("country", "Portugal"); // Assumindo que a API devolve dados de Portugal
+                    formik.setFieldValue("country", 'Portugal');
                 } else {
-                    console.error("Erro ao buscar dados da API:", response.status);
+                    formik.setFieldError("postal_code", "Código Postal não encontrado");
                 }
-            } catch (error) {
-                console.error("Erro no pedido à API:", error);
+            } catch {
+                formik.setFieldError("postal_code", "Erro ao validar o Código Postal");
             } finally {
                 setLoading(false); // Remove o estado de carregamento
                 setIsReadOnly(false); // Reativa os campos
