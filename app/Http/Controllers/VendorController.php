@@ -13,13 +13,15 @@ use Inertia\Inertia;
 class VendorController extends Controller
 {
 
+
     public function index()
     {
         $user = Auth::user();
-        return Inertia::render('Vendors', [
-            'user' => $user
-        ]);
 
+        // Renderiza a página Vendors
+        return Inertia::render('Vendors', [
+            'user' => $user,
+        ]);
     }
 
     public function create()

@@ -24,6 +24,7 @@ class VendorFactory extends Factory
             'gender_id' => Gender::all()->random()->id,
             'phone' => $this->faker->phoneNumber(),
             'date_of_birth' => $this->faker->date(),
+            'iban' => $this->faker->iban(),
             'image_profile' => null,
             'is_company' => $is_company,
             'created_at' => now(),
