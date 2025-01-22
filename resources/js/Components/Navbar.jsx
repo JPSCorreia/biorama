@@ -28,7 +28,7 @@ import { appStore, cartStore, authStore } from "../Stores";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { router } from "@inertiajs/react";
-import SearchBar from "./SearchBar";
+import { SearchBar } from "./";
 
 const Navbar = observer(() => {
     // Get user roles
