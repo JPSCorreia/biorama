@@ -1,8 +1,7 @@
-import {action, makeObservable, observable, runInAction} from "mobx";
-import {makePersistable} from "mobx-persist-store";
-import {homeAddressStore} from "./homeAddressStore.js";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { makePersistable } from "mobx-persist-store";
+import { homeAddressStore } from "./homeAddressStore.js";
 import axios from "axios";
-import {usePage} from "@inertiajs/react";
 
 class AuthStore {
     user = null;
@@ -28,16 +27,12 @@ class AuthStore {
         this.isAuthenticated = !!auth?.user;
         this.user = auth?.user || null;
         if (this.isAuthenticated) {
-            console.log(this.user)
-             homeAddressStore.addresses = homeAddressStore.fetchAddresses();// Faz o fetch das informações do user se autenticado
+            console.log(this.user);
+            homeAddressStore.addresses = homeAddressStore.fetchAddresses(); // Faz o fetch das informações do user se autenticado
         } else {
             homeAddressStore.clearAddresses(); // Limpa moradas se não autenticado
         }
     }
-
-
-
-
 
     updateUserData(updatedData) {
         runInAction(() => {
@@ -55,13 +50,12 @@ class AuthStore {
         } catch (error) {
             console.error("Erro ao atualizar o user:", error);
         }
-    }
+    };
 
     clearAuth() {
         this.isAuthenticated = false;
         this.user = null;
     }
-
 }
 
 export const authStore = new AuthStore();

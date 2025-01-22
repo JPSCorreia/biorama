@@ -6,7 +6,7 @@ import { alertStore } from "./alertStore";
 import { homeAddressStore } from "./homeAddressStore";
 import { vendorRegistrationStore } from "./vendorRegistrationStore.js";
 
-// Configuração do mobx-persist-store
+// Mobx-persist-store default configuration for all stores
 configurePersistable({
     storage: window.sessionStorage,
     jsonify: true,

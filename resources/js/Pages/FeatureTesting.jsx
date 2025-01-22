@@ -3,20 +3,22 @@ import { Box, Typography, Button, Paper } from "@mui/material";
 import axios from "axios";
 import backgroundImage from "../../images/background.jpg";
 
+// Component for feature testing in development
 const FeatureTesting = observer(() => {
+    // Function to send an invoice via API request
     const sendInvoice = async (order) => {
         try {
-            // Call the API
+            // Make a POST request to the server with order and user details
             const response = await axios.post("/send-invoice", {
                 order,
-                user: { email: "jpscorreia.dev@gmail.com" }, // Email de teste
+                user: { email: "jpscorreia.dev@gmail.com" }, // Test email
             });
 
-            // Feedback
+            // Provide feedback to the user
             alert(response.data.message);
         } catch (error) {
             console.error("Erro ao enviar a fatura:", error);
-
+            // Handle API error responses and network issues
             if (error.response) {
                 alert(
                     `Erro: ${error.response.data.message || "Ocorreu um erro inesperado."}`,
@@ -44,6 +46,8 @@ const FeatureTesting = observer(() => {
             <Typography variant="h3" gutterBottom>
                 Feature Testing
             </Typography>
+
+            {/* Button to trigger the sendInvoice function with test data */}
             <Button
                 variant="contained"
                 color="primary"
@@ -54,40 +58,42 @@ const FeatureTesting = observer(() => {
             >
                 Send Invoice
             </Button>
-            <Box
-    sx={{
-        display: "flex",
-        mt: 2,
-        backgroundColor: "white",
-        width: "100%",
-        height: "500px",
-        justifyContent: "center",
-        alignItems: "center",
-        border: "2px solid red",
-        backgroundImage: `url(${backgroundImage})`,
-        position: "relative",  // Ensures absolute positioning inside the container
-    }}
->
-    <Paper
-        sx={{
-            width: "90%",
-            height: "90%",
-            backgroundColor: "white",
-            justifyContent: "center",
-            alignItems: "center",
-            display: "flex",
-            position: "absolute",
-            bottom: "-45%",  // Moves the Paper half outside the Box
-            left: "50%",
-            transform: "translateX(-50%)",
-            boxShadow: 8,  // Elevation effect
-        }}
-        elevation={8}
-    >
-        <Typography variant="h4">Feature Testing</Typography>
-    </Paper>
-</Box>
 
+            {/* Container with a background image and bordered styling */}
+            <Box
+                sx={{
+                    display: "flex",
+                    mt: 2,
+                    backgroundColor: "white",
+                    width: "100%",
+                    height: "500px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "2px solid red",
+                    backgroundImage: `url(${backgroundImage})`,
+                    position: "relative",
+                }}
+            >
+                <Paper
+                    sx={{
+                        width: "90%",
+                        height: "90%",
+                        backgroundColor: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        display: "flex",
+                        position: "absolute",
+                        bottom: "-45%",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        boxShadow: 8,
+                    }}
+                    elevation={8}
+                >
+                    <Typography variant="h4">Feature Testing</Typography>
+                </Paper>
+
+            </Box>
         </Box>
     );
 });

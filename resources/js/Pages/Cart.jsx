@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { cartStore } from "../Stores/cartStore";
+import { cartStore } from "../Stores";
 import { CartList } from "../Components";
 import { Box, Button, Typography } from "@mui/material";
 
@@ -19,7 +19,10 @@ const Cart = observer(() => {
             <Typography variant="h3" gutterBottom>
                 Carrinho de Compras
             </Typography>
+
+            {/* Conditional rendering if there are any items in the cart or not*/}
             {cartStore.total ? (
+                // Container for the list of items in the cart
                 <Box
                     sx={{
                         mt: 1,
@@ -28,7 +31,10 @@ const Cart = observer(() => {
                         alignItems: "flex-end",
                     }}
                 >
+                    {/* List of items in the cart */}
                     <CartList />
+
+                    {/* Button to clear the cart */}
                     <Button
                         sx={{ mt: 3 }}
                         variant="contained"
@@ -38,6 +44,7 @@ const Cart = observer(() => {
                     </Button>
                 </Box>
             ) : (
+                // Message if the cart is empty
                 <Box
                     sx={{
                         mt: 8,
@@ -48,7 +55,7 @@ const Cart = observer(() => {
                 >
                     <Typography variant="h6" gutterBottom>
                         O teu carrinho de compras está vazio
-                    </Typography>{" "}
+                    </Typography>
                 </Box>
             )}
         </Box>

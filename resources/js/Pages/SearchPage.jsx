@@ -16,21 +16,27 @@ import {
 import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { alertStore } from "../Stores/alertStore";
+import { alertStore } from "../Stores";
 
-const SearchPage = observer(() =>{
-    const {searchResults = {} } = usePage().props;
-    const {products = [], stores = [], vendors = []} = searchResults;  // cconst para dividir o resultado da pesquisa em 3 categorias diferentes
-    const handleSearchTab = (event, newValue) =>{
-        setActiveTab(newValue);
-    }; // Metodo para Constrolar as tabs de resultados
+const SearchPage = observer(() => {
+    // Get search results from Inertia page props
+    const { searchResults = {} } = usePage().props;
+
+    // Split search results into different categories
+    const { products = [], stores = [], vendors = [] } = searchResults;
+
+    // State to control the active tab
     const [activeTab, setActiveTab] = useState(0); // Estate para controlar a aba ativa
 
-    const renderTable = (data, columns) =>(
+    // Function to handle tab changes
+    const handleSearchTab = (event, newValue) => {
+        setActiveTab(newValue);
+    };
 
+    // Function to render a table with given data and column headers
+    const renderTable = (data, columns) => (
         <TableContainer component={Paper}>
             <Table>
-                {console.log('Teste')}
                 <TableHead>
                     <TableRow>
                         {columns.map((column) => (
@@ -51,6 +57,7 @@ const SearchPage = observer(() =>{
         </TableContainer>
     );
 
+    // Effect to reset alert store on page navigation
     useEffect(() => {
         // Reset alert store on navigation
         const handleNavigate = () => {
@@ -70,15 +77,15 @@ const SearchPage = observer(() =>{
         }
     }, []);
 
-
-    return(
+    return (
         <Container maxWidth="lg">
             <Box sx={{ marginTop: 4 }}>
+                {/* Page Title */}
                 <Typography variant="h4" gutterBottom>
                     Resultados da Pesquisa
                 </Typography>
 
-                {/* Abas para alternar entre Produtos, Lojas e Vendedores */}
+                {/* Tabs to switch between products, stores, and vendors */}
                 <Tabs
                     value={activeTab}
                     onChange={handleSearchTab}
@@ -92,14 +99,14 @@ const SearchPage = observer(() =>{
                     <Tab label="Vendedores" />
                 </Tabs>
 
-                {/* Renderização Condicional das Abas */}
+                {/* Conditional rendering based on selected tab */}
                 {activeTab === 0 && (
                     <Box>
                         <Typography variant="h5" gutterBottom>
                             Produtos Encontrados
                         </Typography>
                         {products.length > 0
-                            ? renderTable(products, ["Nome"])
+                            ? renderTable(products, ["Nome"]) // Render products table
                             : "Nenhum produto encontrado."}
                     </Box>
                 )}
@@ -109,7 +116,7 @@ const SearchPage = observer(() =>{
                             Lojas Encontradas
                         </Typography>
                         {stores.length > 0
-                            ? renderTable(stores, ["Nome", "Localização"])
+                            ? renderTable(stores, ["Nome", "Localização"]) // Render stores table
                             : "Nenhuma loja encontrada."}
                     </Box>
                 )}
@@ -119,7 +126,7 @@ const SearchPage = observer(() =>{
                             Vendedores Encontrados
                         </Typography>
                         {vendors.length > 0
-                            ? renderTable(vendors, ["Nome", "Email", "Contato"])
+                            ? renderTable(vendors, ["Nome", "Email", "Contato"]) // Render vendors table
                             : "Nenhum vendedor encontrado."}
                     </Box>
                 )}

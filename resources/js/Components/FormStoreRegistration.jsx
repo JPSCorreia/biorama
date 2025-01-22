@@ -24,7 +24,7 @@ const CenterMapOnPostalCode = ({ position }) => {
     return null;
 };
 
-const StoreForm = observer(({passFormik}) => {
+const FormStoreRegistration = observer(({passFormik}) => {
     const theme = useTheme();
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -308,4 +308,4 @@ const StoreForm = observer(({passFormik}) => {
     );
 });
 
-export default StoreForm;
+export default FormStoreRegistration;

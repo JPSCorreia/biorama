@@ -3,8 +3,10 @@ import { Container, Typography } from "@mui/material";
 import { usePage } from "@inertiajs/react";
 
 const Vendors = observer(() => {
+
+    // Get authentication from Inertia page props
     const { auth = {} } = usePage().props;
-    console.log("Auth:", auth);
+
     return (
         <Container
             sx={{
@@ -13,7 +15,6 @@ const Vendors = observer(() => {
                 height: "100%",
                 width: "100%",
                 marginTop: "88px !important",
-                // marginBottom: "5%",
             }}
         >
             <Typography variant="h3" gutterBottom>

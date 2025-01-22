@@ -99,8 +99,7 @@ Route::post('/registar', [AuthController::class, 'register'])->name('register.ap
 Route::post('/sair', [AuthController::class, 'logout'])->name('logout.api');
 Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'])->name('forgot-password.api');
 // Debug routes
-// Environment variables loaded testing route (should be removed in production)
-Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
 });
@@ -113,9 +112,12 @@ Route::get('/Vendor/info', fn () => Inertia::render('Vendors'))->name('vendor.in
 
 Route::post('/send-invoice', [OrderController::class, 'sendInvoice'])->name('invoice.api'); // send invoice
 
+// Local development routes only for testing
 if (env('APP_ENV') === 'local') {
     Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
+    Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
 }
+
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/dashboard')->group(function () {

@@ -8,16 +8,15 @@ import {
     useTheme,
     useMediaQuery,
 } from "@mui/material";
-import { HomeMap } from "../Components";
+import { HomeMap, NearbyStores } from "../Components";
 import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { alertStore } from "../Stores/alertStore";
-import { NearbyStores } from "../Components/NearbyStores";
+import { alertStore } from "../Stores";
 
 const Home = observer(() => {
 
-    // Get page props
+    // Get authentication and flash from page props
     const { auth, flash = {} } = usePage().props;
 
     // Get theme
@@ -119,6 +118,7 @@ const Home = observer(() => {
             ) : (
                 <Box sx={{ mb: 2, height: "48px" }} />
             )}
+
             {/* Banner */}
             <Box
                 sx={{
@@ -153,6 +153,7 @@ const Home = observer(() => {
                     </Button>
                 )}
             </Box>
+
             {/* Map */}
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" gutterBottom>
@@ -160,6 +161,7 @@ const Home = observer(() => {
                 </Typography>
                 <HomeMap />
             </Box>
+
             {/* Nearby Stores */}
             <Box sx={{ bgcolor: "primary.main", mt: 3, p: 2, mb: 4 }}>
                 <Typography

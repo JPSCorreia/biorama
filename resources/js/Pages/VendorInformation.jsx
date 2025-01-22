@@ -5,33 +5,25 @@ import {
     Typography,
     Box,
     Divider,
-    ListItem,
-    List,
     useTheme,
     useMediaQuery,
-    IconButton,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails, Container, Grid2,
+    Container,
 } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
-import {authStore} from "../Stores/index.js";
-import {vendorRegistrationStore} from "../Stores/index.js";
-import {observer} from "mobx-react";
-import {router, usePage} from "@inertiajs/react";
-import {vendorStore} from "@/Stores/vendorsStore.js";
+import { authStore } from "../Stores";
+import { observer } from "mobx-react";
+import { usePage } from "@inertiajs/react";
 
 const VendorInformation = observer(() => {
+    // Get user from Inertia page props
+    const { user } = usePage().props;
 
-    const {user} = usePage().props;
-    console.log("VENDOR", user);
-
-    //verifica se tem a role vendor
+    // Check if the user has the 'vendor' role
     const isVendor = authStore.user && authStore.user.role === "vendor";
+
+    // If the user is a vendor, show a message indicating that vendor information is unavailable
     if (isVendor) {
         return (
-            <Box sx={{padding: 2}}>
+            <Box sx={{ padding: 2 }}>
                 <Typography variant="h6" color="error" align="center">
                     Informações de vendedor não disponíveis.
                 </Typography>
@@ -39,7 +31,10 @@ const VendorInformation = observer(() => {
         );
     }
 
+    // Access theme properties using Material UI's theme hook
     const theme = useTheme();
+
+    // Get media queries
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
@@ -55,19 +50,20 @@ const VendorInformation = observer(() => {
                 borderRadius: "10px",
             }}
         >
-            <Box sx={{
-                margin: "2%"
-            }}
+            <Box
+                sx={{
+                    margin: "2%",
+                }}
             >
-
                 <Box
                     sx={{
                         display: "flex", // Alinha os itens horizontalmente
                         alignItems: "center", // Centraliza verticalmente o Avatar e o Nome
                         gap: 2, // Espaço entre o Avatar e o Nome
-                        marginBottom: "2%"
+                        marginBottom: "2%",
                     }}
                 >
+                    {/* User avatar with initials */}
                     <Avatar
                         alt="Profile Image"
                         variant={isSmallScreen ? "" : "rounded"}
@@ -79,193 +75,297 @@ const VendorInformation = observer(() => {
                             borderRadius: isSmallScreen ? "50%" : "10px",
                             fontSize: isSmallScreen ? "1.5rem" : "3rem",
                         }}
-
                     >
-                        {user.first_name[0]}{user.last_name[0]}
+                        {user.first_name[0]}
+                        {user.last_name[0]}
                     </Avatar>
-                    <Box sx={{ml: 2}}>
-                        <Typography sx={{fontWeight: "bold", fontSize: "2.3rem"}}>
+
+                    {/* Display user full name */}
+                    <Box sx={{ ml: 2 }}>
+                        <Typography
+                            sx={{ fontWeight: "bold", fontSize: "2.3rem" }}
+                        >
                             {user.first_name} {user.last_name}
                         </Typography>
                     </Box>
                 </Box>
 
-                <Divider/>
+                <Divider />
 
-                <Box sx={{
-                    display: "flex",
-                    justifyContent: "space-between"
-                }}
-                >
-                    <Box sx={{
+                {/* Personal Information Section */}
+                <Box
+                    sx={{
                         display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
                         justifyContent: "space-between",
-                        width: "100%"
-                    }}>
-                        <Container sx={{marginTop: "2%"}}>
-                            <Typography sx={{
-                                marginBottom: 1,
-                                fontSize: "2rem",
-                                fontWeight: "bold"
-
-                            }}> Dados Pessoais</Typography>
-                            <Box sx={{marginBottom: "3%", p: 2}}>
-                                {/* Linha 1 - Email & Telefone */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Email:</Typography>
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            justifyContent: "space-between",
+                            width: "100%",
+                        }}
+                    >
+                        <Container sx={{ marginTop: "2%" }}>
+                            <Typography
+                                sx={{
+                                    marginBottom: 1,
+                                    fontSize: "2rem",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {" "}
+                                Dados Pessoais
+                            </Typography>
+                            <Box sx={{ marginBottom: "3%", p: 2 }}>
+                                {/* Email & Telefone */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Email:
+                                        </Typography>
                                         <Typography>{user.email}</Typography>
                                     </Box>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Telefone:</Typography>
-                                        <Typography>{user.phone || "Não disponível"}</Typography>
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Telefone:
+                                        </Typography>
+                                        <Typography>
+                                            {user.phone || "Não disponível"}
+                                        </Typography>
                                     </Box>
                                 </Box>
 
-                                {/* Linha 2 - NIF & Data de Nascimento */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">NIF:</Typography>
+                                {/* NIF & Birthdate */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            NIF:
+                                        </Typography>
                                         <Typography>{user.nif}</Typography>
                                     </Box>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Data de Nascimento:</Typography>
-                                        <Typography>{user.date_of_birth || "Não disponível"}</Typography>
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Data de Nascimento:
+                                        </Typography>
+                                        <Typography>
+                                            {user.date_of_birth ||
+                                                "Não disponível"}
+                                        </Typography>
                                     </Box>
                                 </Box>
 
-                                {/* Linha 3 - Morada & Código Postal */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Morada:</Typography>
+                                {/* Address & Postal Code */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Morada:
+                                        </Typography>
                                         <Typography>Exemplo</Typography>
                                     </Box>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Cod. Postal & Cidade:</Typography>
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Cod. Postal & Cidade:
+                                        </Typography>
                                         <Typography>2845-210 Seixal</Typography>
                                     </Box>
                                 </Box>
 
-                                {/* Linha 4 - Gênero */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Gênero:</Typography>
-                                        <Typography>{user.gender?.name || "Não disponível"}</Typography>
+                                {/* Gender */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Gênero:
+                                        </Typography>
+                                        <Typography>
+                                            {user.gender?.name ||
+                                                "Não disponível"}
+                                        </Typography>
                                     </Box>
                                 </Box>
                             </Box>
                         </Container>
 
-                        <Container sx={{marginTop: "2%"}}>
-                            <Typography sx={{
-                                marginBottom: 1,
-                                fontSize: "2rem",
-                                fontWeight: "bold"
-
-                            }}> Dados de Empresa</Typography>
-                            <Box sx={{marginBottom: "3%", p: 2}}>
-
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Nome da Empresa:</Typography>
-                                        <Typography>{user.vendor.company.name}</Typography>
-                                    </Box>
-
-                                </Box>
-
-                                {/* Linha 1 - Email & Telefone */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Email:</Typography>
-                                        <Typography>{user.vendor.company.contacts.email}</Typography>
-                                    </Box>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Telefone:</Typography>
-                                        <Typography>{user.vendor.company.contacts.phone}</Typography>
+                        {/* Company Information Section */}
+                        <Container sx={{ marginTop: "2%" }}>
+                            <Typography
+                                sx={{
+                                    marginBottom: 1,
+                                    fontSize: "2rem",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {" "}
+                                Dados de Empresa
+                            </Typography>
+                            <Box sx={{ marginBottom: "3%", p: 2 }}>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    {/* Company Name */}
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Nome da Empresa:
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.name}
+                                        </Typography>
                                     </Box>
                                 </Box>
 
-                                {/* Linha 2 - NIF & Data de Nascimento */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">NIF:</Typography>
-                                        <Typography>{user.vendor.company.nif}</Typography>
+                                {/* Email & Telephone */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Email:
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.contacts.email}
+                                        </Typography>
                                     </Box>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Sector</Typography>
-                                        <Typography>{user.vendor.company.sector}</Typography>
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Telefone:
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.contacts.phone}
+                                        </Typography>
                                     </Box>
                                 </Box>
 
-                                {/* Linha 3 - Morada & Código Postal */}
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3
-                                }}>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Morada:</Typography>
-                                        <Typography>{user.vendor.company.addresses.street + " " + user.vendor.company.addresses.number}</Typography>
+                                {/* NIF & Sector */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            NIF:
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.nif}
+                                        </Typography>
                                     </Box>
-                                    <Box sx={{flex: "1 1 45%"}}>
-                                        <Typography fontWeight="bold">Cod. Postal & Cidade:</Typography>
-                                        <Typography>{user.vendor.company.addresses.postal_code + " " + user.vendor.company.addresses.district
-                                        }</Typography>
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Sector
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.sector}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                {/* Address & Postal Code */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: isSmallScreen
+                                            ? "column"
+                                            : "row",
+                                        flexWrap: "wrap",
+                                        gap: 2,
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Morada:
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.addresses
+                                                .street +
+                                                " " +
+                                                user.vendor.company.addresses
+                                                    .number}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ flex: "1 1 45%" }}>
+                                        <Typography fontWeight="bold">
+                                            Cod. Postal & Cidade:
+                                        </Typography>
+                                        <Typography>
+                                            {user.vendor.company.addresses
+                                                .postal_code +
+                                                " " +
+                                                user.vendor.company.addresses
+                                                    .district}
+                                        </Typography>
                                     </Box>
                                 </Box>
                             </Box>
                         </Container>
                     </Box>
-
                 </Box>
             </Box>
-            {/* Botão Editar */}
-            <Box sx={{display: "flex", justifyContent: "flex-end"}}>
+            {/* Edit Button */}
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
                     variant="outlined"
                     sx={{
@@ -279,8 +379,7 @@ const VendorInformation = observer(() => {
                 </Button>
             </Box>
         </Paper>
-
-    )
-})
+    );
+});
 
 export default VendorInformation;
