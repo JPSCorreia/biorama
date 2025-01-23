@@ -12,9 +12,7 @@ class HomeAddressFactory extends Factory
 
     public function definition()
     {
-        $user_id = User::all()->random()->id;
         return [
-            'user_id' => $user_id,
             'address_name' => $this->faker->word(),
             'phone_number' => $this->faker->numerify('#########'),
             'street_address' => $this->faker->streetAddress(),

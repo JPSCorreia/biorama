@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
 
 
         foreach (User::all() as $user) {
-            if($user->id = 1)
+            if($user->id === 1)
             {
                 $user->assignRole('vendor');
             }
