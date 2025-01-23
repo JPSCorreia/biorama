@@ -17,7 +17,6 @@ import { useEffect, useState } from "react";
 import { Edit as EditIcon, Save as SaveIcon } from "@mui/icons-material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import {vendorStore} from "@/Stores/index.js";
 import VendorNameEdtitingForm from "@/Components/VendorNameEdtitingForm.jsx";
 import {VendorInfoEditingForm} from "@/Components/index.js";
 
@@ -25,11 +24,10 @@ import {VendorInfoEditingForm} from "@/Components/index.js";
 import { vendorStore } from "../Stores";
 
 const VendorInformation = observer(() => {
-    const{genders} = usePage().props;
+    const{genders, user} = usePage().props;
     console.log("Gender", genders);
-    const {user} = usePage().props; // Recebe o user como props
     // Retrieve user data from Inertia props
-    const { user } = usePage().props;
+
 
     // Load vendor data into the MobX store when component mounts or user changes
     useEffect(() => {
