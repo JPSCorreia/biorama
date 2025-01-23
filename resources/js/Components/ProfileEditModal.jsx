@@ -1,12 +1,12 @@
 import {
     Box,
-    Typography,
     Button,
     Modal,
     TextField,
     useMediaQuery,
     useTheme,
-    Avatar, IconButton, InputLabel, Select, MenuItem, FormHelperText, FormControl, Grid
+    Avatar,
+    IconButton,
 } from "@mui/material";
 import {
     LocalizationProvider,
@@ -29,6 +29,8 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const {genders} = usePage().props;
+
+    console.log("ProfileEditModal", authStore.user)
 
 
     const validationSchema = yup.object().shape({
@@ -59,10 +61,9 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                     ? dayjs(formik.values.date_of_birth).format('YYYY-MM-DD')
                     : null,
             };
-            console.log("Valores enviados para o MySQL:", formattedValues);
 
             // Atualizar authStore
-            authStore.updateUserData(formattedValues);
+            await authStore.submitDataUser(formattedValues);
 
             // Fechar modal
             handleClose();
@@ -78,7 +79,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
             email: authStore.user.email || '',
             phone: authStore.user.phone || '',
             nif: authStore.user.nif || '',
-            gender_id: authStore.user.gender || '',
+            gender_id: authStore.user.gender.id || '',
             date_of_birth: authStore.user.date_of_birth ? dayjs(authStore.user.date_of_birth) : null,
             image_profile: authStore.user.image_profile || '',
         },
@@ -101,7 +102,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                width: isSmallScreen ? '80%' : '45%',
+                width: isSmallScreen ? '80%' : '30%',
                 justifyContent: 'center',
                 alignItems: 'center',
                 m: 'auto',
@@ -197,7 +198,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                 <TextField
                                     label="Nome"
                                     name="first_name"
-                                    sx={{width: isSmallScreen ? '100%' : "40%"}}
+                                    sx={{width: isSmallScreen ? '100%' : "45%"}}
                                     type="text"
                                     margin="normal"
                                     value={formik.values.first_name}
@@ -214,7 +215,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                     label="Apelido"
                                     name="last_name"
                                     type="text"
-                                    sx={{width:isSmallScreen ? '100%' : "40%"}}
+                                    sx={{width:isSmallScreen ? '100%' : "45%"}}
                                     margin="normal"
                                     value={formik.values.last_name}
                                     onChange={formik.handleChange}
@@ -249,7 +250,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                             {formik.touched.last_name && formik.errors.last_name}
                                         </Box>
                                     }
-                                    sx={{width : isSmallScreen ? '100%' : "40%"}}
+                                    sx={{width : isSmallScreen ? '100%' : "45%"}}
                                 />
                                 <TextField
                                     label="Nrº Telemóvel"
@@ -265,7 +266,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                             {formik.touched.last_name && formik.errors.last_name}
                                         </Box>
                                     }
-                                    sx={{width: isSmallScreen ? '100%' : "40%"}}
+                                    sx={{width: isSmallScreen ? '100%' : "45%"}}
                                 />
                             </Box>
                             <Box
@@ -277,7 +278,6 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                             }}>
                                 <TextField
                                     select
-                                    fullWidth
                                     margin="normal"
                                     label="Gênero"
                                     name="gender_id"
@@ -288,6 +288,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                     SelectProps={{
                                         native: true,
                                     }}
+                                    sx={{width: isSmallScreen ? '100%' : "45%"}}
                                 >
                                     <option value="" disabled>
                                         Selecione um gênero
@@ -326,7 +327,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                             mt: 2,
                                             display: isSmallScreen ? "none" : "block",
                                             textAlign: 'left',
-                                            width: "40%"
+                                            width: "45%"
                                         }}
                                         label="Data de Nascimento"
                                         value={formik.values.date_of_birth}

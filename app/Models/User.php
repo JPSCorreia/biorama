@@ -43,7 +43,7 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     public function vendor()
     {
-        return $this->hasOne(Vendor::class);
+        return $this->hasOne(Vendor::class, 'user_id');
     }
 
     public function gender()

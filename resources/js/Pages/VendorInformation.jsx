@@ -19,28 +19,29 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import VendorNameEdtitingForm from "@/Components/VendorNameEdtitingForm.jsx";
 import {VendorInfoEditingForm} from "@/Components/index.js";
-
-
 import { vendorStore } from "../Stores";
 
 const VendorInformation = observer(() => {
     const{genders, user} = usePage().props;
     console.log("Gender", genders);
+    console.log("UsePage", usePage());
     // Retrieve user data from Inertia props
 
 
     // Load vendor data into the MobX store when component mounts or user changes
     useEffect(() => {
-        if (user?.vendor) {
+        if (user.vendor) {
             vendorStore.setVendorData(user.vendor);
         }
-    }, [user]);
+    }, [user.vendor]);
+
+    console.log("Vendor", vendorStore.currentVendor);
 
     // Get the current vendor data from the MobX store
     const vendor = vendorStore.currentVendor;
 
     // Check if the authenticated user is associated with a company
-    const isCompany = user.vendor.is_company;
+    const isCompany = vendor.is_company;
 
     // State to control which fields are currently being edited
     const [isEditing, setIsEditing] = useState({
@@ -59,7 +60,6 @@ const VendorInformation = observer(() => {
     };
 
 
-
     // Function to handle form submission for vendor's first and last name
     const handleNameSubmit = async (values, { setSubmitting }) => {
         try {
@@ -76,20 +76,18 @@ const VendorInformation = observer(() => {
     };
 
     // Ação para submeter o formns das restantes informalçoes
-    const handleInfoSubmit = async (values, { setSubmitting }) => {
+    const handleInfoSubmit = async (values) => {
         console.log("Submissão iniciada com valores:", values);
         try {
             // Atualiza os nomes do vendor
             await vendorStore.updateVendorInfo(values);
-
             // Alterna o estado de edição
             handleEditToggle("vendorPersonalInfo");
             console.log("Passou o Front end:");
         } catch (error) {
             console.error("Erro ao atualizar informações do vendor no Vendor info:", error);
-        } finally {
-            setSubmitting(false);
         }
+
     };
 
 

@@ -24,8 +24,6 @@ const ProfileInformation = observer(() => {
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 
-
-
     // Estados separados para cada modal
     const [profileModalOpen, setProfileModalOpen] = React.useState(false);
     const [addressModalOpen, setAddressModalOpen] = React.useState(false);

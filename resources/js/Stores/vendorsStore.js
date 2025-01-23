@@ -29,18 +29,20 @@ class VendorStore {
         makePersistable(this, {
             name: "vendorStore",
             properties: ["vendors", "currentVendor", "companyDetails"],
-            storage: window.localStorage,
+            storage: window.sessionStorage,
         });
     }
 
     // Ação para definir os dados iniciais do vendor recebidos do controlador
     setVendorData(vendorData) {
+        console.log("Dados do vendor recebidos na store:", vendorData);
         runInAction(() => {
             this.currentVendor = vendorData;
             this.companyDetails = vendorData.company;
             this.companyContacts = vendorData.company.addresses;
             this.companyAddresses = vendorData.company.contacts;
         });
+        console.log("Vendor depois de atualizado", this.currentVendor);
         console.log("Dados do vendor inicializados:", vendorData);
     }
 
@@ -90,16 +92,7 @@ class VendorStore {
 
         try {
             const response = await axios.patch(`/dashboard/vendor/info/${vendorId}`, updatedData);
-
-            // Atualizar o estado local com os dados retornados do backend
-            runInAction(() => {
-                this.currentVendor = {
-                    ...this.currentVendor, // Preserva os campos existentes
-                    ...updatedData, // Atualiza apenas os campos fornecidos
-                };
-            });
-            console.log("Vendor store depois de actualizar:", this.currentVendor)
-
+            this.currentVendor = response.data.vendor;
             console.log("Dados do Vendor atualizados com sucesso:", response.data);
         } catch (error) {
             console.error("Erro ao atualizar os dados do Vendor!", error);

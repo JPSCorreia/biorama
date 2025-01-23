@@ -37,7 +37,7 @@ class VendorRegistrationStore {
         description: "",
         rating: 0.0,
         coordinates: "",
-        store_images: null
+        store_images: []
     }; // Dados da loja
     storeFormValid = false; // Validação do formulário da loja
 

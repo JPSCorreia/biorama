@@ -9,9 +9,8 @@ import {
     useMediaQuery,
     IconButton,
     Switch,
-    FormControlLabel
+    FormControlLabel,
 } from "@mui/material";
-import {ImageUpload} from "./";
 import UploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
 import { useFormik } from "formik";
@@ -115,7 +114,7 @@ const CreateProductModal = ({ open, handleClose }) => {
                     <Box
                         sx={{
                             width: "50%",
-                            height: 300,
+                            height: 240,
                             border: "2px dashed",
                             borderColor: "grey.400",
                             borderRadius: "8px",
@@ -126,7 +125,6 @@ const CreateProductModal = ({ open, handleClose }) => {
                             overflow: "hidden",
                             cursor: "pointer",
                         }}
-                        onMouseEnter={() => {}}
                         onClick={() => document.getElementById("image-upload-input").click()}
                     >
                         {images.length > 0 ? (

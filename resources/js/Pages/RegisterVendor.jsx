@@ -173,7 +173,7 @@ const RegisterVendor = observer(({ genders }) => {
             case 2:
                 return <IntroStep2VendorRegister />;
             case 3:
-                return <Step2StoreDetails setStoreFormik={setStoreFormik} />;
+                return <Step2StoreDetails setStoreFormik={setStoreFormik} handleImageUpload={handleImageUpload} images={images} />;
             case 4:
                 return <IntroStep3VendorRegister />;
             case 5:

@@ -69,10 +69,11 @@ class UserController extends Controller
             }
 
             $user->update($data);
+            $user->load('gender');
 
             return response()->json([
                 'message' => 'Utilizador atualizado com sucesso',
-                'data' => $data,
+                'user' => $user,
             ], 200);
         } catch (\Exception $e) {
             return back()->withErrors(['Erro ao atualizar perfil.'])->withInput();

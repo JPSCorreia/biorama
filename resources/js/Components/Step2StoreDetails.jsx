@@ -1,12 +1,9 @@
 import { Paper, Box, Typography, IconButton, ImageList, ImageListItem } from "@mui/material";
 import FormStoreRegistration from "./FormStoreRegistration";
-import { vendorRegistrationStore } from "../Stores";
 import { PhotoCamera } from "@mui/icons-material";
-import { useState } from "react";
 import { observer } from "mobx-react";
 
 const Step2StoreDetails = observer(({ setStoreFormik, handleImageUpload, images }) => {
-
     return (
         <Box
             sx={{

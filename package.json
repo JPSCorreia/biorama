@@ -46,7 +46,9 @@
         "formik": "^2.4.6",
         "install": "^0.13.0",
         "npm": "^10.9.0",
+        "react-easy-crop": "^5.2.0",
         "react-image-crop": "^11.0.7",
+        "react-material-ui-carousel": "^3.4.2",
         "yup": "^1.6.1",
         "ziggy-js": "^2.4.1"
     }
