@@ -198,6 +198,7 @@ const Navbar = observer(() => {
                             display: "flex",
                             alignItems: "center",
                             cursor: "pointer",
+                            mt: "3px"
                         }}
                         onClick={() => {
                             handleCloseNavMenu();
@@ -316,6 +317,8 @@ const Navbar = observer(() => {
                                         justifyContent: "center",
                                         alignItems: "center",
                                         height: "40px",
+                                        fontSize: "17px",
+                                        textTransform: "none",
                                     }}
                                 >
                                     {isLg ? page.name : page.icon}
