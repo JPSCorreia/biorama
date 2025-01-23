@@ -7,60 +7,69 @@ import {
     Divider,
     useTheme,
     useMediaQuery,
-    Container, TextField, IconButton,
+    Container,
+    TextField,
+    IconButton,
 } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
-import {observer} from "mobx-react";
-import {router, usePage} from "@inertiajs/react";
-import * as React from "react";
-import {useEffect, useState} from "react";
-import SaveIcon from '@mui/icons-material/Save';
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { observer } from "mobx-react";
+import { usePage } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+import { Edit as EditIcon, Save as SaveIcon } from "@mui/icons-material";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import {vendorStore} from "@/Stores/index.js";
 import VendorNameEdtitingForm from "@/Components/VendorNameEdtitingForm.jsx";
 import {VendorInfoEditingForm} from "@/Components/index.js";
 
 
+import { vendorStore } from "../Stores";
 
 const VendorInformation = observer(() => {
     const{genders} = usePage().props;
     console.log("Gender", genders);
     const {user} = usePage().props; // Recebe o user como props
+    // Retrieve user data from Inertia props
+    const { user } = usePage().props;
+
+    // Load vendor data into the MobX store when component mounts or user changes
     useEffect(() => {
         if (user?.vendor) {
-            vendorStore.setVendorData(user.vendor)
+            vendorStore.setVendorData(user.vendor);
         }
     }, [user]);
+
+    // Get the current vendor data from the MobX store
     const vendor = vendorStore.currentVendor;
-    console.log("VENDOR", vendor);
 
-    const isCompany = user.vendor.is_company; // Verifica se o user authenticado tem Empresa ou não.
+    // Check if the authenticated user is associated with a company
+    const isCompany = user.vendor.is_company;
 
+    // State to control which fields are currently being edited
     const [isEditing, setIsEditing] = useState({
-        //informacoes do vendor
         vendorName: false,
         vendorPersonalInfo:false,
         copanyInfo:false,
+        vendorPersonaAndVendorlInfo: false,
     });
 
+    // Function to toggle the edit state for a specific field
     const handleEditToggle = (field) => {
         setIsEditing((prevState) => ({
             ...prevState,
-            [field]: !prevState[field], // Alterna o estado para editar, apenas nos campos selecionados
+            [field]: !prevState[field],
         }));
     };
 
 
-    // Ação para submeter o formns do nome
+
+    // Function to handle form submission for vendor's first and last name
     const handleNameSubmit = async (values, { setSubmitting }) => {
         try {
-            // Atualiza os nomes do vendor
+            // Update vendor's first and last name
             await vendorStore.updateVendorName(values);
 
-            // Alterna o estado de edição
+            // Toggle the edit state
             handleEditToggle("vendorName");
-            console.log("Passou o Front end:");
         } catch (error) {
             console.error("Erro ao atualizar os nomes no Vendor info:", error);
         } finally {
@@ -87,50 +96,52 @@ const VendorInformation = observer(() => {
 
 
 
+    //TODO: not being used?
     const companyvalidationSchema = Yup.object({
-
-        //Dados do vendor
         name: Yup.string()
-            .max(100,"O Primeiro nome não pode ter mais de 100 caracteres.")
+            .max(100, "O Primeiro nome não pode ter mais de 100 caracteres.")
             .required("Primeiro nome é obrigatorio."),
         email: Yup.string()
             .email("Insira um email valido")
             .required("O email é obrigatorio"),
-        website: Yup.string()
-            .required("O website é obrigatorio"),
+        website: Yup.string().required("O website é obrigatorio"),
         nif: Yup.string()
             .max(20, "Nif Pode ser mais que 20 caracteres.")
             .required("Nif é Obrigatorio"),
         phone: Yup.string()
             .min(9, "o numero não pode ser inferior a 9 caracteres.")
             .required("Numero é obrigatorio"),
-        founded_at: Yup.date().nullable()
+        founded_at: Yup.date()
+            .nullable()
             .required("A data de criação da Empresa é obrigatoria"),
-        sector:Yup.string()
-            .max(100,"O setornão pode ter mais de 100 caracteres.")
+        sector: Yup.string()
+            .max(100, "O setornão pode ter mais de 100 caracteres.")
             .required("O sector nome é obrigatorio."),
-        street:Yup.string()
-            .max(100,"O nome da ruanão pode ter mais de 100 caracteres.")
+        street: Yup.string()
+            .max(100, "O nome da ruanão pode ter mais de 100 caracteres.")
             .required("O nome da rua é obrigatorio."),
-        number:Yup.string()
-            .max(100,"O numero e o andar  não podem ter mais de 100 caracteres.")
+        number: Yup.string()
+            .max(
+                100,
+                "O numero e o andar  não podem ter mais de 100 caracteres.",
+            )
             .required("O numero e o andar obrigatorio."),
-        postal_code:Yup.string()
-            .max(100,"O codigo Postal não pode ter mais de 100 caracteres.")
+        postal_code: Yup.string()
+            .max(100, "O codigo Postal não pode ter mais de 100 caracteres.")
             .required("O codigo Postal é obrigatorio."),
-        district:Yup.string()
-            .max(100,"O distrito não pode ter mais de 100 caracteres.")
+        district: Yup.string()
+            .max(100, "O distrito não pode ter mais de 100 caracteres.")
             .required("O distrito Postal é obrigatorio."),
-        country:Yup.string()
-            .max(100,"O Pais não pode ter mais de 100 caracteres.")
+        country: Yup.string()
+            .max(100, "O Pais não pode ter mais de 100 caracteres.")
             .required("O Pais Postal é obrigatorio."),
     });
 
+    // Access theme properties using Material UI's theme hook
+    const theme = useTheme();
 
-
-    const theme = useTheme();//Carrega o thema da pagina
-
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));// Faz a query para mobile
+    // Get media queries
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
 
     return (
         <Paper
@@ -145,19 +156,20 @@ const VendorInformation = observer(() => {
                 borderRadius: "10px",
             }}
         >
-            <Box sx={{
-                margin: "2%"
-            }}
+            <Box
+                sx={{
+                    margin: "2%",
+                }}
             >
-
                 <Box
                     sx={{
-                        display: "flex", // Alinha os itens horizontalmente
-                        alignItems: "center", // Centraliza verticalmente o Avatar e o Nome
-                        gap: 2, // Espaço entre o Avatar e o Nome
-                        marginBottom: "2%"
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        marginBottom: "2%",
                     }}
                 >
+                    {/* Vendor's Avatar displaying initials */}
                     <Avatar
                         alt="Profile Image"
                         variant={isSmallScreen ? "" : "rounded"}
@@ -169,45 +181,59 @@ const VendorInformation = observer(() => {
                             borderRadius: isSmallScreen ? "50%" : "10px",
                             fontSize: isSmallScreen ? "1.5rem" : "3rem",
                         }}
-
                     >
                         {vendor.first_name[0]}{vendor.last_name[0]}
                     </Avatar>
 
+                    {/* Editable name section */}
                     {isEditing.vendorName ? (
                         <VendorNameEdtitingForm
                             handleNameSubmit= {handleNameSubmit}
                             vendor = {vendor}
                         />
                     ) : (
-                        <Box sx={{
-                            ml: 2,
-                            display: "flex",
-                            flexDirection: "row"
-
-                        }}>
+                        <Box
+                            sx={{
+                                ml: 2,
+                                display: "flex",
+                                flexDirection: "row",
+                            }}
+                        >
                             <Box>
-                                <Typography sx={{fontWeight: "bold", fontSize: "2.3rem"}}>
+                                <Typography
+                                    sx={{
+                                        fontWeight: "bold",
+                                        fontSize: "2.3rem",
+                                    }}
+                                >
                                     {vendor.first_name} {vendor.last_name}
                                 </Typography>
                             </Box>
                             <Box>
-                                <IconButton onClick={() => handleEditToggle("vendorName")} sx={{ml: 1,}}>
-                                    <EditIcon sx={{
-                                        color: theme.palette.primary.main
-                                    }}/>
+                                <IconButton
+                                    onClick={() =>
+                                        handleEditToggle("vendorName")
+                                    }
+                                    sx={{ ml: 1 }}
+                                >
+                                    <EditIcon
+                                        sx={{
+                                            color: theme.palette.primary.main,
+                                        }}
+                                    />
                                 </IconButton>
                             </Box>
                         </Box>
                     )}
                 </Box>
 
-                <Divider/>
+                <Divider />
 
-                <Box sx={{
-                    display: "flex",
-                    justifyContent: "space-between"
-                }}
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                    }}
                 >
 
                     <Box sx={{
@@ -308,81 +334,139 @@ const VendorInformation = observer(() => {
                         )}
 
                         {isCompany && (
-                            <Container sx={{marginTop: "2%"}}>
-                                <Typography sx={{
-                                    marginBottom: 1,
-                                    fontSize: "2rem",
-                                    fontWeight: "bold"
-
-                                }}> Dados de Empresa</Typography>
-                                <Box sx={{marginBottom: "3%", p: 2}}>
-
-                                    <Box sx={{
-                                        display: "flex",
-                                        flexDirection: isSmallScreen ? "column" : "row",
-                                        flexWrap: "wrap",
-                                        gap: 2,
-                                        mb: 3
-                                    }}>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">Nome da Empresa:</Typography>
-                                            <Typography>{user.vendor?.company.name}</Typography>
-                                        </Box>
-
-                                    </Box>
-
-                                    {/* Linha 1 - Email & Telefone */}
-                                    <Box sx={{
-                                        display: "flex",
-                                        flexDirection: isSmallScreen ? "column" : "row",
-                                        flexWrap: "wrap",
-                                        gap: 2,
-                                        mb: 3
-                                    }}>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">Email:</Typography>
-                                            <Typography>{user.vendor.company.contacts.email}</Typography>
-                                        </Box>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">Telefone:</Typography>
-                                            <Typography>{user.vendor.company.contacts.phone}</Typography>
+                            <Container sx={{ marginTop: "2%" }}>
+                                <Typography
+                                    sx={{
+                                        marginBottom: 1,
+                                        fontSize: "2rem",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Dados de Empresa
+                                </Typography>
+                                <Box sx={{ marginBottom: "3%", p: 2 }}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen
+                                                ? "column"
+                                                : "row",
+                                            flexWrap: "wrap",
+                                            gap: 2,
+                                            mb: 3,
+                                        }}
+                                    >
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                Nome da Empresa:
+                                            </Typography>
+                                            <Typography>
+                                                {user.vendor?.company.name}
+                                            </Typography>
                                         </Box>
                                     </Box>
 
-                                    {/* Linha 2 - NIF & Data de Nascimento */}
-                                    <Box sx={{
-                                        display: "flex",
-                                        flexDirection: isSmallScreen ? "column" : "row",
-                                        flexWrap: "wrap",
-                                        gap: 2,
-                                        mb: 3
-                                    }}>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">NIF:</Typography>
-                                            <Typography>{user.vendor.company.nif}</Typography>
+                                    {/* Email & Telephone */}
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen
+                                                ? "column"
+                                                : "row",
+                                            flexWrap: "wrap",
+                                            gap: 2,
+                                            mb: 3,
+                                        }}
+                                    >
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                Email:
+                                            </Typography>
+                                            <Typography>
+                                                {
+                                                    user.vendor.company.contacts
+                                                        .email
+                                                }
+                                            </Typography>
                                         </Box>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">Sector</Typography>
-                                            <Typography>{user.vendor.company.sector}</Typography>
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                Telefone:
+                                            </Typography>
+                                            <Typography>
+                                                {
+                                                    user.vendor.company.contacts
+                                                        .phone
+                                                }
+                                            </Typography>
                                         </Box>
                                     </Box>
 
-                                    {/* Linha 3 - Morada & Código Postal */}
-                                    <Box sx={{
-                                        display: "flex",
-                                        flexDirection: isSmallScreen ? "column" : "row",
-                                        flexWrap: "wrap",
-                                        gap: 2,
-                                        mb: 3
-                                    }}>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">Morada:</Typography>
-                                            <Typography>{user.vendor.company.addresses.street + " " + user.vendor.company.addresses.number}</Typography>
+                                    {/* NIF & Sector */}
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen
+                                                ? "column"
+                                                : "row",
+                                            flexWrap: "wrap",
+                                            gap: 2,
+                                            mb: 3,
+                                        }}
+                                    >
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                NIF:
+                                            </Typography>
+                                            <Typography>
+                                                {user.vendor.company.nif}
+                                            </Typography>
                                         </Box>
-                                        <Box sx={{flex: "1 1 45%"}}>
-                                            <Typography fontWeight="bold">Cod. Postal & Cidade:</Typography>
-                                            <Typography>{user.vendor.company.addresses.postal_code + " " + user.vendor.company.addresses.district
-                                            }</Typography>
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                Sector
+                                            </Typography>
+                                            <Typography>
+                                                {user.vendor.company.sector}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Address & Postal Code */}
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen
+                                                ? "column"
+                                                : "row",
+                                            flexWrap: "wrap",
+                                            gap: 2,
+                                            mb: 3,
+                                        }}
+                                    >
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                Morada:
+                                            </Typography>
+                                            <Typography>
+                                                {user.vendor.company.addresses
+                                                    .street +
+                                                    " " +
+                                                    user.vendor.company
+                                                        .addresses.number}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ flex: "1 1 45%" }}>
+                                            <Typography fontWeight="bold">
+                                                Cod. Postal & Cidade:
+                                            </Typography>
+                                            <Typography>
+                                                {user.vendor.company.addresses
+                                                    .postal_code +
+                                                    " " +
+                                                    user.vendor.company
+                                                        .addresses.district}
+                                            </Typography>
                                         </Box>
                                     </Box>
                                 </Box>
@@ -393,7 +477,7 @@ const VendorInformation = observer(() => {
             </Box>
 
         </Paper>
-    )
-})
+    );
+});
 
 export default VendorInformation;

@@ -12,7 +12,10 @@ import { useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 
 const ResetPassword = () => {
+    // Get token and email from Inertia page props
     const { token, email } = usePage().props;
+
+    // State to manage form data
     const [formData, setFormData] = useState({
         email: email || "",
         password: "",
@@ -20,17 +23,21 @@ const ResetPassword = () => {
         token: token,
     });
 
+    // States to manage error messages
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
 
+    // Function to handle password reset submission
     const handleResetPassword = (e) => {
         e.preventDefault();
 
         router.post("/reset-password", formData, {
             onSuccess: () => {
+                // Redirect to login page after successful password reset
                 router.visit("/entrar");
             },
             onError: (errors) => {
+                // Handle error responses from the server
                 if (errors.email) {
                     setError(errors.email);
                 } else if (errors.password) {
@@ -43,15 +50,16 @@ const ResetPassword = () => {
         });
     };
 
+    // Automatically clear the error message after 5 seconds
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => {
                 setShowError(false);
-            }, 4500);
+            }, 4500); // After 4.5 seconds, start the fade
 
             const clearTimer = setTimeout(() => {
                 setError("");
-            }, 5000);
+            }, 5000); // After 5 seconds, clear the error message completely
 
             return () => {
                 clearTimeout(timer);
@@ -70,6 +78,7 @@ const ResetPassword = () => {
                 marginTop: "40px !important",
             }}
         >
+            {/* Display error message with fade effect */}
             <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
                 {error ? (
                     <Alert
@@ -88,6 +97,7 @@ const ResetPassword = () => {
                     <Box sx={{ mb: 2, height: "48px" }}></Box>
                 )}
             </Fade>
+
             <Box
                 sx={{
                     display: "flex",
@@ -107,6 +117,7 @@ const ResetPassword = () => {
                         backgroundColor: "card.background",
                     }}
                 >
+                    {/* Page title */}
                     <Typography
                         variant="h5"
                         align="center"
@@ -131,6 +142,8 @@ const ResetPassword = () => {
                             Insira a sua nova palavra-passe
                         </Typography>
                     </Box>
+
+                    {/* Password reset form */}
                     <form onSubmit={handleResetPassword}>
                         <Box
                             sx={{
@@ -140,6 +153,7 @@ const ResetPassword = () => {
                                 gap: 2,
                             }}
                         >
+                            {/* Email input field */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -155,6 +169,8 @@ const ResetPassword = () => {
                                     })
                                 }
                             />
+
+                            {/* New password input */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -170,6 +186,8 @@ const ResetPassword = () => {
                                     })
                                 }
                             />
+
+                            {/* Confirm password input */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -185,6 +203,8 @@ const ResetPassword = () => {
                                     })
                                 }
                             />
+
+                            {/* Submit button */}
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -206,6 +226,7 @@ const ResetPassword = () => {
                             textAlign: "center",
                         }}
                     >
+                        {/* Link to login page */}
                         <Button
                             variant="text"
                             size="small"

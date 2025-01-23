@@ -3,6 +3,7 @@ import {makePersistable} from "mobx-persist-store";
 import axios from "axios";
 
 class VendorRegistrationStore {
+
     vendor = null; // Informações do utilizador autenticado e que deseja ser vendedor
     isCompany = false; // Define se o utilizador vai registar uma empresa
     vendorFormValid = false; // Validação do formulário do utilizador

@@ -1,52 +1,60 @@
-import {useEffect, useState} from 'react';
-import { Box, LinearProgress, Button, Typography } from '@mui/material';
-import IntroStep1VendorRegister from '../Components/IntroStep1VendorRegister';
-import IntroStep2VendorRegister from '../Components/IntroStep2VendorRegister';
-import IntroStep3VendorRegister from '../Components/IntroStep3VendorRegister';
-import Step1PersonalInfo from '../Components/Step1PersonalInfo';
-import Step2StoreDetails from '../Components/Step2StoreDetails';
-import Step3CreateProduct from '../Components/Step3CreateProduct';
-import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore.js";
-import {usePage} from "@inertiajs/react";
-import {observer} from "mobx-react";
+import { useEffect, useState } from "react";
+import { Box, LinearProgress, Button, Typography } from "@mui/material";
+import {
+    IntroStep1VendorRegister,
+    IntroStep2VendorRegister,
+    IntroStep3VendorRegister,
+    Step1PersonalInfo,
+    Step2StoreDetails,
+    Step3CreateProduct,
+} from "../Components";
+import { vendorRegistrationStore } from "../Stores";
+import { usePage } from "@inertiajs/react";
+import { observer } from "mobx-react";
 
-
-
-
-const RegistorVendorPage = observer(({ genders }) => {
-
+const RegisterVendor = observer(({ genders }) => {
+    // Tracks the current step in the registration process
     const [currentStep, setCurrentStep] = useState(0);
+
+    // Calculates progress percentage
     const progress = (currentStep / 6) * 100;
-    const {auth} = usePage().props;
+
+    // Get page props for authentication
+    const { auth } = usePage().props;
+
+    // Controls warning visibility
     const [showWarning, setShowWarning] = useState(true);
 
-    const [vendorFormik, setVendorFormik] = useState(null); // Formik de dados pessoais
-    const [companyFormik, setCompanyFormik] = useState(null); // Formik de empresa
+    // States to hold formik instances for different forms
+    const [vendorFormik, setVendorFormik] = useState(null); // Personal data
+    const [companyFormik, setCompanyFormik] = useState(null); // Company data
+    const [storeFormik, setStoreFormik] = useState(null); // Store data
 
-    const [storeFormik, setStoreFormik] = useState(null); // Formik de loja
-
-    console.log('Auth', auth);
-
+    // Function to close the company form and validate the personal info form
     const handleCloseCompanyForm = async () => {
-        vendorRegistrationStore.setIsCompany(false); // Fecha o formulário de empresa
+        // Close the company form
+        vendorRegistrationStore.setIsCompany(false);
 
+        // Validate the personal info form
         if (vendorFormik) {
-            // Valida explicitamente o formulário de dados pessoais
             const errors = await vendorFormik.validateForm();
             const isValid = Object.keys(errors).length === 0;
 
-            // Atualiza o estado global de validade
+            // Update the store with the validation result
             vendorRegistrationStore.setVendorFormValid(isValid);
         }
     };
 
-
+    // Function to check if the "Next" button should be active
     const enableButton = () => {
         switch (currentStep) {
             case 1:
-                return vendorRegistrationStore.isCompany ?
-                    !(vendorRegistrationStore.vendorFormValid && vendorRegistrationStore.companyFormValid) :
-                    !vendorRegistrationStore.vendorFormValid;
+                return vendorRegistrationStore.isCompany
+                    ? !(
+                          vendorRegistrationStore.vendorFormValid &&
+                          vendorRegistrationStore.companyFormValid
+                      )
+                    : !vendorRegistrationStore.vendorFormValid;
             case 3:
                 return !vendorRegistrationStore.storeFormValid;
             case 5:
@@ -56,38 +64,49 @@ const RegistorVendorPage = observer(({ genders }) => {
         }
     };
 
+    // Initialize vendor registration data if the user is authenticated
     useEffect(() => {
         if (auth?.user) {
             vendorRegistrationStore.initializeVendor(auth.user);
         }
     }, [auth]);
 
+    // Function to handle the "Next" button click
     const handleNext = async () => {
         let errors = {};
         let isValid = true;
 
         switch (currentStep) {
             case 1:
-                // Valida o formulário de dados pessoais
+                // Validate the personal info form
                 if (vendorFormik) {
                     const userErrors = await vendorFormik.validateForm();
                     const isUserValid = Object.keys(userErrors).length === 0;
+
+                    // Submit the personal info form if valid
                     if (isUserValid) {
-                        vendorFormik.handleSubmit(); // Submete o formulário de dados pessoais
+                        vendorFormik.handleSubmit();
                     }
                     errors = { ...errors, ...userErrors };
-                    isValid = isUserValid && isValid; // Atualiza a validade global
+
+                    // Update global validity
+                    isValid = isUserValid && isValid;
                 }
 
-                // Valida o formulário de empresa (se for o caso)
+                // Validate company form (if applicable)
                 if (vendorRegistrationStore.isCompany && companyFormik) {
                     const companyErrors = await companyFormik.validateForm();
-                    const isCompanyValid = Object.keys(companyErrors).length === 0;
+                    const isCompanyValid =
+                        Object.keys(companyErrors).length === 0;
+
+                    // Submit the company form if valid
                     if (isCompanyValid) {
-                        companyFormik.handleSubmit(); // Submete o formulário de empresa
+                        companyFormik.handleSubmit();
                     }
                     errors = { ...errors, ...companyErrors };
-                    isValid = isCompanyValid && isValid; // Atualiza a validade global
+
+                    // Update global validity
+                    isValid = isCompanyValid && isValid;
                 }
 
                 if (!isValid) {
@@ -96,52 +115,61 @@ const RegistorVendorPage = observer(({ genders }) => {
                     return;
                 }
 
-                setShowWarning(false); // Esconde o aviso se tudo estiver válido
+                // Hide the warning if everything is valid
+                setShowWarning(false);
+
                 return setCurrentStep((prev) => prev + 1);
+
             case 3:
+
+                // Validate the store form
                 if (storeFormik) {
                     const storeErrors = await storeFormik.validateForm();
                     const isStoreValid = Object.keys(storeErrors).length === 0;
+
+                    // Submit the store form if valid
                     if (isStoreValid) {
-                        storeFormik.handleSubmit(); // Submete o formulário de loja
+                        storeFormik.handleSubmit();
                     }
-                    errors = {...errors, ...storeErrors};
-                    isValid = isStoreValid && isValid; // Atualiza a validade global
+                    errors = { ...errors, ...storeErrors };
+
+                    // Update global validity
+                    isValid = isStoreValid && isValid;
                 }
                 if (!isValid) {
                     console.log("Erros nos formulários:", errors);
                     return;
                 }
-                    return setCurrentStep((prev) => prev + 1);
+                return setCurrentStep((prev) => prev + 1);
             default:
                 return setCurrentStep((prev) => prev + 1);
         }
     };
 
-
+    // Function to handle the "Back" button click event
     const handleBack = () => {
         setCurrentStep((prev) => prev - 1);
     };
 
-    // Lógica para renderizar o componente correto baseado no passo atual
+    // Function to render the appropriate component based on the current step
     const renderStepContent = () => {
         switch (currentStep) {
             case 0:
                 return <IntroStep1VendorRegister />;
             case 1:
-                return <Step1PersonalInfo
-                    genders={genders}
-                    setUserFormik={setVendorFormik} // Passa para o formulário de dados pessoais
-                    setCompanyFormik={setCompanyFormik} // Passa para o formulário de empresa
-                    onCloseCompanyForm={handleCloseCompanyForm}
-                    showWarning={showWarning}
-                />;
+                return (
+                    <Step1PersonalInfo
+                        genders={genders}
+                        setUserFormik={setVendorFormik}
+                        setCompanyFormik={setCompanyFormik}
+                        onCloseCompanyForm={handleCloseCompanyForm}
+                        showWarning={showWarning}
+                    />
+                );
             case 2:
                 return <IntroStep2VendorRegister />;
             case 3:
-                return <Step2StoreDetails
-                    setStoreFormik={setStoreFormik}
-                />;
+                return <Step2StoreDetails setStoreFormik={setStoreFormik} />;
             case 4:
                 return <IntroStep3VendorRegister />;
             case 5:
@@ -158,45 +186,52 @@ const RegistorVendorPage = observer(({ genders }) => {
     return (
         <Box
             sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                mt:9,
-                minHeight: '70vh',
-                alignContent: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden', // Impede o scroll na página
-
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                mt: 9,
+                minHeight: "70vh",
+                alignContent: "center",
+                justifyContent: "center",
+                overflow: "hidden", // prevent page from scrolling
             }}
         >
-            {/* Renderiza o conteúdo baseado no passo atual */}
+            {/* Render content based on current step */}
             <Box
                 sx={{
                     flexGrow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     "& > :last-child": {
                         mb: 4,
-                    }
-                    }}>
+                    },
+                }}
+            >
                 {renderStepContent()}
             </Box>
 
-            {/* Barra de progresso */}
+            {/* Progress bar */}
             <Box>
-                <LinearProgress variant="determinate" value={progress} sx={{ height: 8, borderRadius: 4, mb: 2 }} />
+                <LinearProgress
+                    variant="determinate"
+                    value={progress}
+                    sx={{ height: 8, borderRadius: 4, mb: 2 }}
+                />
             </Box>
 
-            {/* Botões para navegar */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            {/* Navigation buttons */}
+            <Box
+                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
+            >
                 <Button disabled={currentStep === 0} onClick={handleBack}>
                     Recuar
                 </Button>
                 <Button
                     variant="contained"
                     onClick={handleNext}
-                    disabled={enableButton()}>
+                    disabled={enableButton()}
+                >
                     Avançar
                 </Button>
             </Box>
@@ -204,4 +239,4 @@ const RegistorVendorPage = observer(({ genders }) => {
     );
 });
 
-export default RegistorVendorPage;
+export default RegisterVendor;
