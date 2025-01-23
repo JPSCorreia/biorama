@@ -182,23 +182,34 @@ const Navbar = observer(() => {
             sx={{
                 borderBottom: `1px solid ${theme.palette.primary.main}`,
                 borderRadius: "0 0 5px 5px",
+                width: "100%",
             }}
         >
-            <Container
+            <Box
                 maxWidth="xl"
                 sx={{
                     pr: "0.5rem !important",
                     pl: isSm ? "0.3rem !important" : "1.25rem !important",
+                    display: "flex",
+                    justifyContent: "center",
+                    minWidth: "100% !important",
                 }}
             >
-                <Toolbar disableGutters>
+                <Toolbar
+                    disableGutters
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        minWidth: "79%",
+                    }}
+                >
                     {/* Logo and title */}
                     <Box
                         sx={{
                             display: "flex",
                             alignItems: "center",
                             cursor: "pointer",
-                            mt: "3px"
+                            mt: "6px",
                         }}
                         onClick={() => {
                             handleCloseNavMenu();
@@ -294,19 +305,105 @@ const Navbar = observer(() => {
                     {/* Desktop navigation menu */}
                     <Box
                         sx={{
-                            display: { xs: "none", md: "flex" },
+                            display: {
+                                xs: "none",
+                                md: "flex",
+                                width: "80%",
+                                justifyContent: "space-around",
+                            },
                         }}
                     >
-                        {pages.map((page) => (
-                            <Tooltip
-                                key={page.name}
-                                title={!isLg ? page.name : ""}
-                            >
-                                <Button
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            {pages.map((page) => (
+                                <Tooltip
                                     key={page.name}
+                                    title={!isLg ? page.name : ""}
+                                >
+                                    <Button
+                                        key={page.name}
+                                        onClick={() => {
+                                            handleCloseNavMenu();
+                                            navigate(page.link);
+                                        }}
+                                        variant="outline"
+                                        sx={{
+                                            color: "white",
+                                            display: "block",
+                                            marginTop: 1.7,
+                                            marginBottom: 1,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            height: "40px",
+                                            fontSize: "18px",
+                                            textTransform: "none",
+                                            ml: 1,
+                                            mr: 1,
+                                        }}
+                                    >
+                                        {isLg ? page.name : page.icon}
+                                    </Button>
+                                </Tooltip>
+                            ))}
+                        </Box>
+                        {/* Search bar */}
+                        <SearchBar />
+                    </Box>
+
+                    {/* User profile menu */}
+                    {authStore.isAuthenticated ? (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexGrow: 0,
+                                paddingRight: "10px",
+                                justifyContent: "end",
+                                alignItems: "center",
+                            }}
+                        >
+                            {hasRole("vendor") && (
+                                <Button
+                                    key="dashboard"
+                                    onClick={() => {
+                                        navigate("/dashboard");
+                                    }}
+                                    variant="contained"
+                                    sx={{
+                                        color: theme.palette.navbar.background,
+                                        backgroundColor: theme.palette.navbar.text,
+                                        display: "block",
+                                        marginTop: 1.7,
+                                        marginBottom: 1,
+                                        ml: 4,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "40px",
+                                        fontSize: "18px",
+                                        textTransform: "none",
+                                        minWidth: "120px !important",
+                                        transition: "all 0.3s ease-in-out",
+                                        "&:hover": {
+                                            backgroundColor:
+                                                theme.palette.navbar.background,
+                                            color: theme.palette.navbar.text,
+                                        },
+                                    }}
+                                >
+                                    {isLg ? "Dashboard" : "icone"}
+                                </Button>
+                            )}
+                            {/* Shopping cart button */}
+                            <Tooltip title={cart.name}>
+                                <Button
+                                    key={cart.name}
                                     onClick={() => {
                                         handleCloseNavMenu();
-                                        navigate(page.link);
+                                        navigate(cart.link);
                                     }}
                                     variant="outline"
                                     sx={{
@@ -317,86 +414,54 @@ const Navbar = observer(() => {
                                         justifyContent: "center",
                                         alignItems: "center",
                                         height: "40px",
-                                        fontSize: "17px",
-                                        textTransform: "none",
+                                        minWidth: "55px",
+                                        paddingRight: "10px",
+                                        paddingLeft: "10px",
+                                        marginLeft: "20px",
                                     }}
                                 >
-                                    {isLg ? page.name : page.icon}
+                                    <Badge
+                                        sx={{
+                                            paddingRight: "5px",
+                                            marginLeft: "5px",
+                                        }}
+                                        badgeContent={cartStore.total}
+                                        color="success"
+                                        overlap="circular"
+                                    >
+                                        <ShoppingCartSharpIcon />
+                                    </Badge>
                                 </Button>
                             </Tooltip>
-                        ))}
-                    </Box>
-                    {/* Search bar */}
-                    <SearchBar />
-                    {/* Shopping cart button */}
-                    <Tooltip title={cart.name}>
-                        <Button
-                            key={cart.name}
-                            onClick={() => {
-                                handleCloseNavMenu();
-                                navigate(cart.link);
-                            }}
-                            variant="outline"
-                            sx={{
-                                color: "white",
-                                display: "block",
-                                marginTop: 1.7,
-                                marginBottom: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                height: "40px",
-                                minWidth: "55px",
-                                paddingRight: "10px",
-                                paddingLeft: "10px",
-                                marginLeft: "20px",
-                            }}
-                        >
-                            <Badge
+                            <Box
                                 sx={{
-                                    paddingRight: "5px",
-                                    marginLeft: "5px",
+                                    minWidth: "80px",
+                                    display: "flex",
+                                    justifyContent: "end",
                                 }}
-                                badgeContent={cartStore.total}
-                                color="success"
-                                overlap="circular"
                             >
-                                <ShoppingCartSharpIcon />
-                            </Badge>
-                        </Button>
-                    </Tooltip>
-                    {/* User profile menu */}
-                    {authStore.isAuthenticated ? (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexGrow: 0,
-                                minWidth: "80px",
-                                paddingRight: "10px",
-                                justifyContent: "end",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Tooltip title="Definições">
-                                <IconButton
-                                    onClick={handleOpenUserMenu}
-                                    sx={{ p: 0 }}
-                                >
-                                    <Avatar
-                                        alt="User Avatar"
-                                        // src={testProfileImage}
-                                        sx={{
-                                            width: 45,
-                                            height: 45,
-                                            bgcolor: "background.secondary",
-                                            color: "primary.main",
-                                            fontSize: "1.5rem",
-                                        }}
+                                <Tooltip title="Definições">
+                                    <IconButton
+                                        onClick={handleOpenUserMenu}
+                                        sx={{ p: 0 }}
                                     >
-                                        {authStore.user?.first_name[0]}
-                                        {authStore.user?.last_name[0]}
-                                    </Avatar>
-                                </IconButton>
-                            </Tooltip>
+                                        <Avatar
+                                            alt="User Avatar"
+                                            src={authStore.user?.image_profile}
+                                            sx={{
+                                                width: 45,
+                                                height: 45,
+                                                bgcolor: "background.secondary",
+                                                color: "primary.main",
+                                                fontSize: "1.5rem",
+                                            }}
+                                        >
+                                            {authStore.user?.first_name[0]}
+                                            {authStore.user?.last_name[0]}
+                                        </Avatar>
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                             <Menu
                                 sx={{ mt: "45px" }}
                                 id="menu-appbar"
@@ -422,7 +487,7 @@ const Navbar = observer(() => {
                                     sx={{
                                         height: "40px",
                                         zIndex: 9999,
-                                        pr: "0 !important"
+                                        pr: "0 !important",
                                     }}
                                 >
                                     <Box textAlign="center">
@@ -485,29 +550,76 @@ const Navbar = observer(() => {
                             </Menu>
                         </Box>
                     ) : (
-                        <Button
-                            key={login.name}
-                            onClick={() => {
-                                handleCloseNavMenu();
-                                navigate(login.link);
-                            }}
-                            variant="outline"
+                        <Box
                             sx={{
-                                color: "white",
-                                display: "block",
-                                marginTop: 1.7,
-                                marginBottom: 1,
-                                minWidth: "75px",
-                                marginLeft: "5px !important",
-                                paddingLeft: "0 !important",
-                                paddingRight: "0 !important",
+                                display: "flex",
+                                flexGrow: 0,
+                                minWidth: "80px",
+                                paddingRight: "10px",
+                                justifyContent: "end",
+                                alignItems: "center",
                             }}
                         >
-                            {login.name}
-                        </Button>
+                            {/* Shopping cart button */}
+                            <Tooltip title={cart.name}>
+                                <Button
+                                    key={cart.name}
+                                    onClick={() => {
+                                        handleCloseNavMenu();
+                                        navigate(cart.link);
+                                    }}
+                                    variant="outline"
+                                    sx={{
+                                        color: "white",
+                                        display: "block",
+                                        marginTop: 1.7,
+                                        marginBottom: 1,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "40px",
+                                        minWidth: "55px",
+                                        paddingRight: "10px",
+                                        paddingLeft: "10px",
+                                        marginLeft: "20px",
+                                    }}
+                                >
+                                    <Badge
+                                        sx={{
+                                            paddingRight: "5px",
+                                            marginLeft: "5px",
+                                        }}
+                                        badgeContent={cartStore.total}
+                                        color="success"
+                                        overlap="circular"
+                                    >
+                                        <ShoppingCartSharpIcon />
+                                    </Badge>
+                                </Button>
+                            </Tooltip>
+                            <Button
+                                key={login.name}
+                                onClick={() => {
+                                    handleCloseNavMenu();
+                                    navigate(login.link);
+                                }}
+                                variant="outline"
+                                sx={{
+                                    color: "white",
+                                    display: "block",
+                                    marginTop: 1.7,
+                                    marginBottom: 1,
+                                    minWidth: "75px",
+                                    marginLeft: "5px !important",
+                                    paddingLeft: "0 !important",
+                                    paddingRight: "0 !important",
+                                }}
+                            >
+                                {login.name}
+                            </Button>
+                        </Box>
                     )}
                 </Toolbar>
-            </Container>
+            </Box>
         </AppBar>
     );
 });

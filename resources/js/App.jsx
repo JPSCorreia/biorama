@@ -20,7 +20,7 @@ const App = observer(({ children }) => {
                     <>{children}</>
                 ) : (
                     // Else render normal app layout with navbar and footer
-                    <Container
+                    <Box
                         className="App"
                         sx={{
                             display: "flex",
@@ -28,7 +28,7 @@ const App = observer(({ children }) => {
                             flexDirection: "column",
                             justifyContent: "space-between",
                             minHeight: "100vh",
-                            minWidth: "60%",
+                            minWidth: "100%",
                             overflow: "hidden",
                         }}
                     >
@@ -55,7 +55,7 @@ const App = observer(({ children }) => {
                             }}
                         >
                             <Navbar />
-                            {children}
+                            <Box sx={{ width: "80%" }}>{children}</Box>
                         </Container>
                         <Container
                             sx={{
@@ -69,7 +69,7 @@ const App = observer(({ children }) => {
                             {/* Render footer only when screen is bigger than sm */}
                             {biggerThanSm && <Footer />}
                         </Container>
-                    </Container>
+                    </Box>
                 )
             }
         </>

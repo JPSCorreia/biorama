@@ -14,26 +14,20 @@ const Footer = () => {
         <Container
             sx={{
                 bgcolor: "footer.background",
-                // maxWidth: "1200px",
-                width: "100%",
                 minWidth: "100% !important",
                 pt: 0.25,
                 borderTop: `1px solid ${theme.palette.primary.main}`,
                 borderRadius: "5px 5px 0 0",
+                justifyContent: "center",
+                display: "flex",
             }}
         >
-            <Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
+            <Box sx={{ display: "flex", justifyContent: "space-between", width: "80%" }}>
+
                     <Typography
                         variant="body2"
                         color="footer.text"
-                        sx={{ mt: 0.2, display: { xs: "none", sm: "block" } }}
+                        sx={{ mt: 0.75, display: { xs: "none", sm: "block" }, alignContent: "center" }}
                     >
                         &copy; {new Date().getFullYear()} Biorama. Todos os
                         direitos reservados.
@@ -52,7 +46,6 @@ const Footer = () => {
                             <LinkedInIcon />
                         </IconButton>
                     </Box>
-                </Box>
             </Box>
         </Container>
     );
