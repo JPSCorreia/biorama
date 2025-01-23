@@ -1,11 +1,7 @@
 import { observer } from "mobx-react";
 import { Container, Typography } from "@mui/material";
-import { usePage } from "@inertiajs/react";
 
 const Vendors = observer(() => {
-
-    // Get authentication from Inertia page props
-    const { auth = {} } = usePage().props;
 
     return (
         <Container

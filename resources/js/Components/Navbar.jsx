@@ -411,7 +411,7 @@ const Navbar = observer(() => {
                                 onClose={handleCloseUserMenu}
                             >
                                 <MenuItem
-                                    key={1}
+                                    key={2}
                                     onClick={() => {
                                         handleCloseUserMenu();
                                         themeChange.onClick();
@@ -419,6 +419,7 @@ const Navbar = observer(() => {
                                     sx={{
                                         height: "40px",
                                         zIndex: 9999,
+                                        pr: "0 !important"
                                     }}
                                 >
                                     <Box textAlign="center">
@@ -434,7 +435,13 @@ const Navbar = observer(() => {
                                                         "space-between",
                                                 }}
                                             >
-                                                <Box sx={{ mr: 2 }}>Tema </Box>{" "}
+                                                <Box
+                                                    sx={{
+                                                        mr: 3.5,
+                                                    }}
+                                                >
+                                                    Tema{" "}
+                                                </Box>{" "}
                                                 <ThemeSwitcher />
                                             </Box>
                                         ) : (
@@ -442,6 +449,18 @@ const Navbar = observer(() => {
                                         )}
                                     </Box>
                                 </MenuItem>
+                                {/* Render if the user has the "vendor" role */}
+                                {hasRole("vendor") && (
+                                    <MenuItem
+                                        key={1}
+                                        onClick={() => router.get("/dashboard")}
+                                        sx={{ height: "40px" }}
+                                    >
+                                        <Box textAlign="center">
+                                            Painel de Gestão
+                                        </Box>
+                                    </MenuItem>
+                                )}
                                 {settings.map((setting) => (
                                     <MenuItem
                                         key={setting.id}
@@ -460,33 +479,6 @@ const Navbar = observer(() => {
                                         </Box>
                                     </MenuItem>
                                 ))}
-                                <MenuItem>
-                                    {/* Render if the user has the "vendor" role */}
-                                    {hasRole("vendor") && (
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: 1,
-                                            }}
-                                        >
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() =>
-                                                    router.get("/dashboard")
-                                                }
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: 1,
-                                                }}
-                                            >
-                                                Ir para Dashboard
-                                            </Button>
-                                        </Box>
-                                    )}
-                                </MenuItem>
                             </Menu>
                         </Box>
                     ) : (
