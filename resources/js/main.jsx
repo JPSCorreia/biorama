@@ -69,19 +69,13 @@ createInertiaApp({
 
         // Render Application
         createRoot(el).render(
-            <>
-                {/* Mobx Provider */}
-                <Provider appStore={appStore} authStore={authStore}>
-                    {/* MUI Provider */}
-                    <StyledEngineProvider injectFirst>
-                        {/* MUI Custom Theme Provider */}
-                        <CustomThemeProvider appStore={appStore}>
-                            {/* App wrapped in Inertia Application */}
-                            <InertiaApp {...props} />
-                        </CustomThemeProvider>
-                    </StyledEngineProvider>
-                </Provider>
-            </>,
+            <Provider appStore={appStore} authStore={authStore}>
+                <StyledEngineProvider injectFirst>
+                    <CustomThemeProvider appStore={appStore}>
+                        <InertiaApp {...props} />
+                    </CustomThemeProvider>
+                </StyledEngineProvider>
+            </Provider>,
         );
     },
 });

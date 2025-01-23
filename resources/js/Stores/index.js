@@ -14,8 +14,5 @@ configurePersistable({
     debugMode: false,
 });
 
-// NÃO persista o authStore para não interferir com o "Manter-me ligado" do Laravel
-// Remova qualquer configuração de persistable do authStore
-
-// Exporte os stores
+// Export all stores
 export { appStore, authStore, cartStore, alertStore, homeAddressStore, vendorRegistrationStore, vendorStore };
