@@ -19,12 +19,8 @@ import ProfileEditModal from "./ProfileEditModal.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
-import {usePage} from "@inertiajs/react";
 
 const ProfileInformation = observer(() => {
-    const {genders, user = {} } = usePage().props;
-    console.log("Teste User Filho", authStore.user);
-    console.log("Teste Genders Filho", genders);
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 

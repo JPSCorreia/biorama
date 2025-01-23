@@ -1,4 +1,3 @@
-import {vendorRegistrationStore} from "../Stores";
 import {
     Box,
     FormControl,
@@ -14,6 +13,7 @@ import {
     Link,
     Paper, Grid2,
 } from "@mui/material";
+import { vendorRegistrationStore, authStore } from "../Stores";
 import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -23,8 +23,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
-
-const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => {
+const FormVendorRegistration = observer(({genders, passFormik}) => {
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
 
@@ -57,7 +56,7 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
             )
             .required("A data de nascimento é obrigatória"),
 
-        gender: yup
+        gender_id: yup
             .number()
             .required("O género é obrigatório"),
     });
@@ -65,8 +64,8 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
     const handleFormSubmit = async (values) => {
         try {
             // Guarda ou envia os dados do formulário
-            vendorRegistrationStore.updateUser(values);
-            console.log("Dados do passo atual guardados:", values);
+            vendorRegistrationStore.initializeVendor(values);
+            console.log("vendorRegistrationStore.updateVendor(values)", vendorRegistrationStore.vendor);
 
         } catch (error) {
             console.error("Erro ao submeter o formulário:", error);
@@ -75,16 +74,17 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
 
     const formik = useFormik({
         initialValues: {
+            user_id: authStore.user.id || "",
             first_name: vendorRegistrationStore.vendor.first_name || "",
             last_name: vendorRegistrationStore.vendor.last_name || "",
             email: vendorRegistrationStore.vendor.email || "",
             nif: vendorRegistrationStore.vendor.nif || "",
             iban: vendorRegistrationStore.vendor.iban || "",
             phone: vendorRegistrationStore.vendor.phone || "",
-            date_of_birth: vendorRegistrationStore.vendor.date_of_birth
-                ? dayjs(vendorRegistrationStore.vendor.date_of_birth)
-                : null,
-            gender: vendorRegistrationStore.vendor.gender || ""
+            date_of_birth: vendorRegistrationStore.vendor.date_of_birth ? dayjs(vendorRegistrationStore.vendor.date_of_birth) : null,
+            gender_id: vendorRegistrationStore.vendor.gender_id || "",
+            image_profile: vendorRegistrationStore.vendor.image_profile || "",
+            is_company: vendorRegistrationStore.vendor.is_company || false,
         },
         validationSchema: validationSchema,
         validateOnMount: true,
@@ -123,37 +123,19 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                             Dados Pessoais
                         </Typography>
                     </Box>
-                    <Box
+                </Box>
+                <Box sx={{mb: 2}}>
+                    <Typography
                         sx={{
-                            display: showWarning ? 'none' : "flex",
-                            justifyContent: "center",
-                            ml: 2,
+                            color: "#757575", // Cinza subtil
+                            fontSize: "0.875rem",
+                            fontStyle: "italic",
                         }}
                     >
-                        <Link
-                            component="button"
-                            variant="body2"
-                            onClick={() => setShowWarning(!showWarning)}
-                            sx={{mt: 0, display: "block"}}
-                        >
-                            {"Editar os meus dados"}
-                        </Link>
-                    </Box>
+                        *Certifique-se de que todos os campos obrigatórios estão preenchidos para avançar para a
+                        próxima etapa.
+                    </Typography>
                 </Box>
-                {showWarning && (
-                    <Box sx={{mb: 2}}>
-                        <Typography
-                            sx={{
-                                color: "#757575", // Cinza subtil
-                                fontSize: "0.875rem",
-                                fontStyle: "italic",
-                            }}
-                        >
-                            *Certifique-se de que todos os campos obrigatórios estão preenchidos para avançar para a
-                            próxima etapa.
-                        </Typography>
-                    </Box>
-                )}
                 <form onSubmit={formik.handleSubmit}>
                     <Grid2 container spacing={10}>
                         <Grid2 item xs={12} md={6}>
@@ -172,7 +154,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                         {formik.touched.first_name && formik.errors.first_name}
                                     </Box>
                                 }
-                                disabled={!showWarning}
                             />
                             <TextField
                                 label="Email"
@@ -189,7 +170,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                         {formik.touched.email && formik.errors.email}
                                     </Box>
                                 }
-                                disabled={!showWarning}
                             />
                             <Box
                                 sx={{
@@ -214,20 +194,18 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                         </Box>
                                     }
                                     sx={{width: "45%"}}
-                                    disabled={!showWarning}
                                 />
                                 <FormControl
                                     sx={{width: "45%", mt: 2}}
-                                    error={formik.touched.gender && Boolean(formik.errors.gender)}
-                                    disabled={!showWarning}
+                                    error={formik.touched.gender_id && Boolean(formik.errors.gender_id)}
                                 >
                                     <InputLabel id="gender-select-label">Género</InputLabel>
                                     <Select
                                         labelId="gender-select-label"
                                         id="gender-select"
-                                        name="gender"
+                                        name="gender_id"
                                         type="number"
-                                        value={formik.values.gender}
+                                        value={formik.values.gender_id}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         label="Género"
@@ -239,13 +217,13 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                                 </MenuItem>
                                             ))}
                                     </Select>
-                                    {formik.touched.gender && formik.errors.gender && (
+                                    {formik.touched.gender_id && formik.errors.gender_id && (
                                         <FormHelperText
                                             sx={{
                                                 minHeight: "20px",
                                             }}
                                         >
-                                            {formik.errors.gender}
+                                            {formik.errors.gender_id}
                                         </FormHelperText>
                                     )}
                                 </FormControl>
@@ -268,7 +246,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                         {formik.touched.last_name && formik.errors.last_name}
                                     </Box>
                                 }
-                                disabled={!showWarning}
                             />
                             <TextField
                                 label="IBAN"
@@ -285,7 +262,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                         {formik.touched.iban && formik.errors.iban}
                                     </Box>
                                 }
-                                disabled={!showWarning}
                             />
                             <Box
                                 sx={{
@@ -309,7 +285,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                             {formik.touched.phone && formik.errors.phone}
                                         </Box>
                                     }
-                                    disabled={!showWarning}
                                     sx={{width: "45%"}}
                                 />
                                 <MobileDatePicker
@@ -333,7 +308,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                             }
                                         />
                                     )}
-                                    disabled={!showWarning}
                                 />
                                 <DatePicker
                                     sx={{
@@ -357,7 +331,6 @@ const FormVendorRegistration = observer(({genders, passFormik, showWarning}) => 
                                             }
                                         />
                                     )}
-                                    disabled={!showWarning}
                                 />
                             </Box>
                         </Grid2>

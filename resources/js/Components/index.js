@@ -9,3 +9,6 @@ export { default as ThemeSwitcher } from "./ThemeSwitcher";
 export { default as HomeStoreCard } from "./HomeStoreCard";
 export { default as VendorInformation } from "../Pages/VendorInformation.jsx";
 export { default as SearchBar } from "./SearchBar.jsx";
+export {default as AddProductCreate} from "./AddProductCreate.jsx";
+export {default as CreateProductModal} from "./CreateProductModal.jsx";
+export {default as ImageUpload} from "./ImageUpload.jsx";

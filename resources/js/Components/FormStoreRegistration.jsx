@@ -16,7 +16,7 @@ import {observer} from "mobx-react";
 import * as yup from "yup";
 
 // Componente para centralizar e ajustar o zoom no marcador
-const CenterMapOnPostalCode = ({ position }) => {
+const CenterMapOnPostalCode = ({ position}) => {
     const map = useMap();
     if (position) {
         map.flyTo(position, 17, { duration: 1.5 }); // Zoom level e transição suave
@@ -24,7 +24,7 @@ const CenterMapOnPostalCode = ({ position }) => {
     return null;
 };
 
-const StoreForm = observer(({passFormik}) => {
+const StoreForm = observer(({passFormik, images}) => {
     const theme = useTheme();
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -33,10 +33,12 @@ const StoreForm = observer(({passFormik}) => {
 
     const handleFormSubmit = async (values) => {
         try {
-            // Guarda ou envia os dados do formulário
-            vendorRegistrationStore.updateStore(values);
-            console.log("Dados da Loja do User passados para a store:", values);
-
+            // Atualize a store com os valores do formulário, incluindo as imagens
+            vendorRegistrationStore.updateStore({
+                ...values,
+                store_images: images, // Assegure que as imagens estão incluídas
+            });
+            console.log("Dados submetidos:", values);
         } catch (error) {
             console.error("Erro ao submeter o formulário:", error);
         }
@@ -58,7 +60,6 @@ const StoreForm = observer(({passFormik}) => {
             .required("Código Postal é obrigatório"),
     });
 
-
     const formik = useFormik({
         initialValues: {
             name: "",
@@ -67,6 +68,7 @@ const StoreForm = observer(({passFormik}) => {
             description: "",
             coordinates: "",
             postal_code: "",
+            store_images: [],
         },
         validationSchema: validationSchema,
         validateOnMount: true,
@@ -141,6 +143,7 @@ const StoreForm = observer(({passFormik}) => {
 
     useEffect(() => {
         if (passFormik) {
+            formik.setFieldValue("store_images", images);
             passFormik(formik); // Passa o formik ao componente pai
         }
         vendorRegistrationStore.setStoreFormValid(formik.isValid); // Mantém o estado sincronizado

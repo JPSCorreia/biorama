@@ -3,7 +3,17 @@ import {makePersistable} from "mobx-persist-store";
 import axios from "axios";
 
 class VendorRegistrationStore {
-    vendor = null; // Informações do utilizador autenticado e que deseja ser vendedor
+    vendor = {
+        user_id: "",
+        first_name: "",
+        last_name: "",
+        email: "",
+        nif: "",
+        phone: "",
+        date_of_birth: "",
+        image_profile: "",
+        is_company: false,
+    }; // Informações do utilizador autenticado e que deseja ser vendedor
     isCompany = false; // Define se o utilizador vai registar uma empresa
     vendorFormValid = false; // Validação do formulário do utilizador
 
@@ -21,13 +31,13 @@ class VendorRegistrationStore {
     companyFormValid = false; // Validação do formulário da empresa
 
     store = {
-        vendor_id: "",
         name: "",
         phone: "",
         email: "",
         description: "",
         rating: 0.0,
         coordinates: "",
+        store_images: null
     }; // Dados da loja
     storeFormValid = false; // Validação do formulário da loja
 
@@ -97,22 +107,24 @@ class VendorRegistrationStore {
 
     // Ação para atualizar os dados do utilizador
     updateVendor(data) {
-        this.user = {...this.user, ...data};
+        this.user = { ...this.user, ...data };
     }
+
 
     // Ação para definir se é empresa
     setIsCompany(isCompany) {
-        console.log("setIsCompany chamado com:", isCompany);
         this.isCompany = isCompany;
+        this.vendor["is_company"] = isCompany; // Atualiza o valor no objeto de utilizador
         if (!isCompany) {
             this.companyFormValid = false; // Redefine a validade do formulário de empresa
+            this.vendor["is_company"] = false; // Atualiza o valor no objeto de utilizador
         }
     }
 
 
     // Ação para atualizar os dados da empresa
     updateCompany(data) {
-        if (this.isCompany) {
+        if (this.vendor["is_company"]) {
             this.company = {...this.company, ...data};
         }
     }

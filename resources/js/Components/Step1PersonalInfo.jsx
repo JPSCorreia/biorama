@@ -1,7 +1,5 @@
 import {
     Box,
-
-    useTheme,
     Button,
 } from "@mui/material";
 import {observer} from "mobx-react-lite";
@@ -9,7 +7,7 @@ import FormCompanyRegistration from "./FormCompanyRegistration.jsx";
 import {vendorRegistrationStore} from '../Stores/vendorRegistrationStore.js';
 import FormVendorRegistration from './FormVendorRegistration.jsx';
 
-const Step1PersonalInfo = observer(({genders, setUserFormik, setCompanyFormik, showWarning, onCloseCompanyForm}) => {
+const Step1PersonalInfo = observer(({genders, setVendorFormik, setCompanyFormik, onCloseCompanyForm}) => {
 
     return (
 
@@ -25,8 +23,7 @@ const Step1PersonalInfo = observer(({genders, setUserFormik, setCompanyFormik, s
         >
             <FormVendorRegistration
                 genders={genders}
-                showWarning={showWarning}
-                passFormik={setUserFormik} // Passa para o formulário de dados pessoais
+                passFormik={setVendorFormik} // Passa para o formulário de dados pessoais
             />
 
             <Box
