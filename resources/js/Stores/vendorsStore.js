@@ -20,6 +20,7 @@ class VendorStore {
             companyAddresses: observable,
             setVendorData: action,
             updateVendorName: action,
+            updateVendorInfo:action,
             updateCompanyAndRelations: action,
             getVendorId: action,
             clearVendorData: action,
@@ -74,6 +75,34 @@ class VendorStore {
             console.log("UpdateData:", updatedData);
         } catch (error) {
             console.error("Erro ao atualizar o nome do vendor no vendor Store:", error);
+        }
+    };
+
+    //Função para actulizar restantes infos do Vendor
+    updateVendorInfo = async (updatedData) => {
+        const vendorId = this.getVendorId();
+
+        if (!vendorId) {
+            console.error("ID do Vendor não encontrado!");
+            return;
+        }
+        console.log("Vendor store antes de actualizar:", this.currentVendor)
+
+        try {
+            const response = await axios.patch(`/dashboard/vendor/info/${vendorId}`, updatedData);
+
+            // Atualizar o estado local com os dados retornados do backend
+            runInAction(() => {
+                this.currentVendor = {
+                    ...this.currentVendor, // Preserva os campos existentes
+                    ...updatedData, // Atualiza apenas os campos fornecidos
+                };
+            });
+            console.log("Vendor store depois de actualizar:", this.currentVendor)
+
+            console.log("Dados do Vendor atualizados com sucesso:", response.data);
+        } catch (error) {
+            console.error("Erro ao atualizar os dados do Vendor!", error);
         }
     };
 

@@ -9,3 +9,5 @@ export { default as ThemeSwitcher } from "./ThemeSwitcher";
 export { default as HomeStoreCard } from "./HomeStoreCard";
 export { default as VendorInformation } from "../Pages/VendorInformation.jsx";
 export { default as SearchBar } from "./SearchBar.jsx";
+export {default as VendorNameEditingForm} from "./VendorNameEdtitingForm.jsx";
+export {default as VendorInfoEditingForm} from "./VendorInfoEditingForm.jsx";
