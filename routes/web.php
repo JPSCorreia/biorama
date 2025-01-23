@@ -99,8 +99,7 @@ Route::post('/registar', [AuthController::class, 'register'])->name('register.ap
 Route::post('/sair', [AuthController::class, 'logout'])->name('logout.api');
 Route::post('/recuperar-palavra-passe', [AuthController::class, 'forgotPassword'])->name('forgot-password.api');
 // Debug routes
-// Environment variables loaded testing route (should be removed in production)
-Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dotenv2', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv2.debug');
 });
@@ -113,26 +112,22 @@ Route::get('/Vendor/info', fn () => Inertia::render('Vendors'))->name('vendor.in
 
 Route::post('/send-invoice', [OrderController::class, 'sendInvoice'])->name('invoice.api'); // send invoice
 
+// Local development routes only for testing
 if (env('APP_ENV') === 'local') {
     Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
+    Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
 }
+
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/dashboard')->group(function () {
 
-        Route::get('/', function () {
-            if (auth()->user()->hasRole('vendor')) {
-                $user = auth()->user()
-                    ->load([
-                        'vendor', // Relacionamento direto com a tabela 'vendors'
-                        'vendor.company', // Relacionamento entre 'vendors' e 'company'
-                        'vendor.company.addresses', // Relacionamento entre 'company' e 'companyAddress'
-                        'vendor.company.contacts' // Relacionamento entre 'company' e 'companyContacts'
-                    ]);
-                return Inertia::render('Dashboard/Home',["user"=>$user]);
-            }
+        Route::get('/', [DashboardController::class, 'showVendorInfo'])->name('dashboard.home');
+        Route::patch('/vendor/name/{vendor}', [DashboardController::class, 'updateVendorName'])
+            ->name('vendor.update.name');
+        Route::patch('/vendor/info/{vendor}', [DashboardController::class, 'updateVendorInfo'])
+            ->name('vendor.update.info');
 
-        })->name('dashboard.home');
 
         Route::get('/analises', function () {
             return Inertia::render('Dashboard/Analytics');

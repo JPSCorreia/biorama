@@ -5,13 +5,17 @@ import { cartStore } from "./cartStore";
 import { alertStore } from "./alertStore";
 import { homeAddressStore } from "./homeAddressStore";
 import { vendorRegistrationStore } from "./vendorRegistrationStore.js";
+import { vendorStore } from "./vendorsStore.js";
 
-// Configuração do mobx-persist-store
+// Mobx-persist-store default configuration for all stores
 configurePersistable({
     storage: window.sessionStorage,
     jsonify: true,
     debugMode: false,
 });
 
-// Export all stores
-export { appStore, authStore, cartStore, alertStore, homeAddressStore, vendorRegistrationStore };
+// NÃO persista o authStore para não interferir com o "Manter-me ligado" do Laravel
+// Remova qualquer configuração de persistable do authStore
+
+// Exporte os stores
+export { appStore, authStore, cartStore, alertStore, homeAddressStore, vendorRegistrationStore, vendorStore };

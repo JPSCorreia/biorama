@@ -1,15 +1,15 @@
-import {action, makeObservable, observable, runInAction} from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import axios from "axios";
-import {makePersistable} from "mobx-persist-store";
+import { makePersistable } from "mobx-persist-store";
 
 class VendorStore {
-
-    //Atributos da classe
+    // Atributos da classe
     vendors = null;
-    currentVendor=null;
+    currentVendor = null;
     companyDetails = null;
-    companyContacts =[];
-    companyAddresses =[];
+    companyContacts = [];
+    companyAddresses = [];
+
 
     constructor() {
         makeObservable(this, {
@@ -18,160 +18,129 @@ class VendorStore {
             companyDetails: observable,
             companyContacts: observable,
             companyAddresses: observable,
-            fetchVendor: action,
-            checkIfVendorIsCompany: action,
-            fetchCompanyDetails: action,
-            updateCompany: action,
-            updateCompanyAddress: action,
-            updateCompanyContact: action,
+            setVendorData: action,
+            updateVendorName: action,
+            updateVendorInfo:action,
+            updateCompanyAndRelations: action,
+            getVendorId: action,
             clearVendorData: action,
         });
 
-        makePersistable({
-            name:"vendorStore",
-            properties:["vendors", "currentVendor", "companyDetails"],
+        makePersistable(this, {
+            name: "vendorStore",
+            properties: ["vendors", "currentVendor", "companyDetails"],
             storage: window.localStorage,
         });
     }
 
+    // Ação para definir os dados iniciais do vendor recebidos do controlador
+    setVendorData(vendorData) {
+        runInAction(() => {
+            this.currentVendor = vendorData;
+            this.companyDetails = vendorData.company;
+            this.companyContacts = vendorData.company.addresses;
+            this.companyAddresses = vendorData.company.contacts;
+        });
+        console.log("Dados do vendor inicializados:", vendorData);
+    }
 
-    // Ação para carregar a lista de vendors
-    fetchVendor = async () => {
+    // Função para recuperar o ID do Vendor
+    getVendorId() {
+        console.log("Current vendor", this.currentVendor);
+        console.log("Current vendor id:  ", this.currentVendor);
+        return this.currentVendor?.id || null;
+    }
+
+
+    // Função para atualizar o nome do Vendor
+    updateVendorName = async (updatedData) => {
+        const vendorId = this.getVendorId();
+
+        if (!vendorId) {
+            console.error("Erro: ID do Vendor não encontrado.");
+            return;
+        }
         try {
-            const response = await axios.get("/vendors");
+            const response = await axios.patch(`/dashboard/vendor/name/${vendorId}`, updatedData);
+
             runInAction(() => {
-                this.vendors = response.data;
+                if (updatedData.first_name) {
+                    this.currentVendor.first_name = updatedData.first_name;
+                }
+                if (updatedData.last_name) {
+                    this.currentVendor.last_name = updatedData.last_name;
+                }
             });
-            console.log("Vendors Carregados:", this.vendors);
+            console.log("Nome do vendor atualizado com sucesso:", response.data);
+            console.log("UpdateData:", updatedData);
         } catch (error) {
-            console.error("Erro ao carregar vendors:", error);
+            console.error("Erro ao atualizar o nome do vendor no vendor Store:", error);
         }
     };
 
-// Ação para verificar se o vendor é uma empresa
-    checkIfVendorIsCompany = async (userId) => {
+    //Função para actulizar restantes infos do Vendor
+    updateVendorInfo = async (updatedData) => {
+        const vendorId = this.getVendorId();
+
+        if (!vendorId) {
+            console.error("ID do Vendor não encontrado!");
+            return;
+        }
+        console.log("Vendor store antes de actualizar:", this.currentVendor)
+
         try {
-            // Faz a requisição para buscar o vendor associado ao userId
-            const response = await axios.get(`/vendors/user/${userId}`);
-            const vendor = response.data;
+            const response = await axios.patch(`/dashboard/vendor/info/${vendorId}`, updatedData);
 
-            if (!vendor) {
-                console.log("Nenhum vendor encontrado para este usuário.");
-                return { isVendor: false, isCompany: false };
-            }
+            // Atualizar o estado local com os dados retornados do backend
+            runInAction(() => {
+                this.currentVendor = {
+                    ...this.currentVendor, // Preserva os campos existentes
+                    ...updatedData, // Atualiza apenas os campos fornecidos
+                };
+            });
+            console.log("Vendor store depois de actualizar:", this.currentVendor)
 
-            // Verifica o campo is_company
-            const isCompany = vendor.is_company === 1; // Verifica se é uma empresa
-            console.log(`O vendor associado ao userId ${userId} ${isCompany ? "é" : "não é"} uma empresa.`);
-
-            return { isVendor: true, isCompany };
+            console.log("Dados do Vendor atualizados com sucesso:", response.data);
         } catch (error) {
-            console.error("Erro ao verificar se o vendor é empresa:", error);
-            return { isVendor: false, isCompany: false };
+            console.error("Erro ao atualizar os dados do Vendor!", error);
         }
     };
 
-    //Acção para obter ta informação da empresa
-    fetchCompanyDetails = async (vendorId) =>{
-        try {
-            const response = await axios.get(`companies?vendor_id${vendorId}`);
-            const company =  response.data;
-            runInAction(() => {
-                this.companyDetails = response.data;
-            });
 
-            this.fetchCompanyContacts(company.id);
-            this.fetchCompanyAddresses(company.id);
-
-            console.log("Informação da empresa carregadas:", this.companyDetails);
-        }catch (error){
-            console.log("Erro a carregar informação da empresa:", error)
+    // Função para atualizar os dados da Company e suas relações (contacts e addresses)
+    updateCompanyAndRelations = async (updatedData) => {
+        if (!this.companyDetails?.id) {
+            console.error("Erro: ID da Company não encontrado.");
+            return;
         }
-    };
 
-    //Ação para caregar os contactos da impresa por id
-    fetchCompanyContacts = async (companyId) =>{
         try {
-            const response = await axios.get(`/company_contacts?company_id =${companyId}`);
-            runInAction(() => {
-                this.companyContacts = response.data;
-            });
-            console.log("Contatos da empresa carregados:", this.companyContacts);
-        }catch (error){
-            console.log("Erro a carregar contatos da empresa:", error);
-        }
-    };
+            const response = await axios.put(`/dashboard/company/${this.companyDetails.id}`, updatedData);
 
-    //Ação parra carregar moradas da empresa por id
-    fetchCompanyAddresses = async (companyId) => {
-        try {
-            const response = await axios.get(`/company_addresses?company_id=${companyId}`);
             runInAction(() => {
-                this.companyAddresses = response.data;
+                const { companyDetails, companyContacts, companyAddresses } = response.data;
+
+                this.companyDetails = companyDetails;
+                this.companyContacts = companyContacts || [];
+                this.companyAddresses = companyAddresses || [];
             });
 
-            console.log("Endereços da empresa carregados:", this.companyAddresses);
+            console.log("Informações da empresa e suas relações atualizadas com sucesso:", response.data);
         } catch (error) {
-            console.error("Erro ao carregar endereços da empresa:", error);
-        }
-    };
-
-    //Função para actualizar os dados da Empresa por id
-    updateCompany = async (companyId, updatedData) => {
-        try {
-            const response = await axios.put(`/companies/${companyId}`, updatedData);
-            runInAction(() => {
-                this.companyDetails = {...this.companyDetails, ...updatedData};
-            });
-
-            console.log("Informação atualizada com sucesso:", response.data);
-        }catch (error){
-            console.log("Erro a actulizar dados", error);
-        }
-    };
-
-    //Função para actualizar a morada da empresa
-    updateCompanyAddress = async (addressId, updatedData) => {
-        try {
-            const response = await axios.put(`/company_addresses/${addressId}`, updatedData);
-            runInAction(() => {
-                // Atualiza o endereço no estado local
-                this.companyAddresses = this.companyAddresses.map((address) =>
-                    address.id === addressId ? { ...address, ...updatedData } : address
-                );
-            });
-
-            console.log("Endereço da empresa atualizado com sucesso:", response.data);
-        } catch (error) {
-            console.error("Erro ao atualizar endereço da empresa:", error);
-        }
-    };
-
-    //Função para actualizar os contactos
-    updateCompanyContact = async (contactId, updatedData) => {
-        try {
-            const response = await axios.put(`/company_contacts/${contactId}`, updatedData);
-            runInAction(() => {
-                // Atualiza o contato no estado local
-                this.companyContacts = this.companyContacts.map((contact) =>
-                    contact.id === contactId ? { ...contact, ...updatedData } : contact
-                );
-            });
-
-            console.log("Contato da empresa atualizado com sucesso:", response.data);
-        } catch (error) {
-            console.error("Erro ao atualizar contato da empresa:", error);
+            console.error("Erro ao atualizar informações da empresa e suas relações:", error);
         }
     };
 
     // Limpar dados do fornecedor atual
     clearVendorData() {
-        this.currentVendor = null;
-        this.companyDetails = null;
-        this.companyContacts = [];
-        this.companyAddresses = [];
+        runInAction(() => {
+            this.currentVendor = null;
+            this.companyDetails = null;
+            this.companyContacts = [];
+            this.companyAddresses = [];
+        });
+        console.log("Dados do vendor limpos.");
     }
-
 }
 
 export const vendorStore = new VendorStore();

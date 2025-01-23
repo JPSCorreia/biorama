@@ -110,7 +110,6 @@ class VendorRegistrationStore {
         this.user = { ...this.user, ...data };
     }
 
-
     // Ação para definir se é empresa
     setIsCompany(isCompany) {
         this.isCompany = isCompany;

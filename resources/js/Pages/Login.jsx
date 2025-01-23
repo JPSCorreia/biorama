@@ -12,18 +12,21 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
-import { authStore } from "../Stores";
 
 const Login = () => {
+
+    // State to manage login form data
     const [formData, setFormData] = useState({
         email: "",
         password: "",
-        remember: true,
+        remember: true, // Default 'remember me' option
     });
 
+    // State to manage error messages
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
 
+    // Function to handle login submission
     const handleLogin = (e) => {
         e.preventDefault();
 
@@ -34,12 +37,18 @@ const Login = () => {
             onError: (errors) => {
                 console.error("Login errors:", errors);
 
-                if (errors.email === "The provided credentials do not match our records.") {
-                    setError("Erro ao iniciar sessão. Verifique o email e a palavra-passe.");
+                // Handle login errors based on API response
+                if (
+                    errors.email ===
+                    "The provided credentials do not match our records."
+                ) {
+                    setError(
+                        "Erro ao iniciar sessão. Verifique o email e a palavra-passe.",
+                    );
                 } else {
                     setError("Ocorreu um erro inesperado. Tente novamente.");
                 }
-                setShowError(true);
+                setShowError(true); // Display error alert
             },
         });
     };
@@ -48,11 +57,11 @@ const Login = () => {
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => {
-                setShowError(false); // Start the fade-out
+                setShowError(false);
             }, 4500); // After 4.5 seconds, start the fade
 
             const clearTimer = setTimeout(() => {
-                setError(""); // Clear the error message
+                setError("");
             }, 5000); // After 5 seconds, clear the error message completely
 
             return () => {
@@ -72,6 +81,7 @@ const Login = () => {
                 marginTop: "40px !important",
             }}
         >
+            {/* Display error message with fade effect */}
             <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
                 {error ? (
                     <Alert
@@ -109,6 +119,8 @@ const Login = () => {
                         backgroundColor: "card.background",
                     }}
                 >
+
+                    {/* Login form title */}
                     <Typography
                         variant="h5"
                         align="center"
@@ -117,6 +129,8 @@ const Login = () => {
                     >
                         Iniciar Sessão
                     </Typography>
+
+                    {/* Login form */}
                     <form onSubmit={handleLogin}>
                         <Box
                             sx={{
@@ -126,6 +140,7 @@ const Login = () => {
                                 gap: 2,
                             }}
                         >
+                            {/* Email input field */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -141,6 +156,8 @@ const Login = () => {
                                     })
                                 }
                             />
+
+                            {/* Password input field */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -156,18 +173,25 @@ const Login = () => {
                                     })
                                 }
                             />
+
+                            {/* Remember me checkbox */}
                             <FormControlLabel
                                 control={
                                     <Checkbox
                                         checked={formData.remember}
-                                        onChange={(e) => 
-                                            setFormData({ ...formData, remember: e.target.checked })
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                remember: e.target.checked,
+                                            })
                                         }
                                         name="remember"
                                     />
                                 }
                                 label="Manter-me ligado"
                             />
+
+                            {/* Submit button */}
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -177,6 +201,8 @@ const Login = () => {
                             >
                                 Login
                             </Button>
+
+                            {/* Link to password recovery page */}
                             <Button
                                 variant="text"
                                 size="small"
@@ -204,6 +230,7 @@ const Login = () => {
                         </Box>
                     </form>
 
+                    {/* Section for user registration */}
                     <Box
                         sx={{
                             mt: 2,
@@ -220,6 +247,8 @@ const Login = () => {
                         >
                             Ainda não tem conta?
                         </Typography>
+
+                        {/* Link to registration page */}
                         <Button
                             variant="text"
                             size="small"

@@ -8,13 +8,12 @@ import {
     Paper,
     Fade,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { authStore } from "../Stores";
 
 const Register = () => {
-
+    // State to manage registration form data
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -24,9 +23,11 @@ const Register = () => {
         password_confirmation: "",
     });
 
+    // State to manage error messages
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
 
+    // Function to handle form submission
     const handleRegister = (e) => {
         e.preventDefault();
 
@@ -37,12 +38,14 @@ const Register = () => {
             return;
         }
 
-        // Clear the error before submitting the form
+        // Clear previous error before submitting the form
         setError("");
         setShowError(false);
 
+        // Send registration data to the server
         router.post("/registar", formData, {
             onSuccess: (page) => {
+                // Check if authentication was successful and update authentication store
                 if (page.props.auth && page.props.auth.user) {
                     authStore.updateAuth(page.props.auth);
                     console.log("Registration and login successful!");
@@ -51,12 +54,19 @@ const Register = () => {
             onError: (errors) => {
                 console.error("Registration errors:", errors);
 
-                // Verify if the error is due to an email already registered
+                // Handle specific server-side validation errors
                 if (errors.email) {
-                    setError("Já existe uma conta com este email.  Utilize outro email.");
+                    setError(
+                        "Já existe uma conta com este email.  Utilize outro email.",
+                    );
                     setShowError(true);
-                } else if (errors.password === "The password field must be at least 8 characters.") {
-                    setError("A palavra-passe deve ter pelo menos 8 caracteres.");
+                } else if (
+                    errors.password ===
+                    "The password field must be at least 8 characters."
+                ) {
+                    setError(
+                        "A palavra-passe deve ter pelo menos 8 caracteres.",
+                    );
                     setShowError(true);
                 } else {
                     setError("Ocorreu um erro inesperado. Tente novamente.");
@@ -70,11 +80,11 @@ const Register = () => {
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => {
-                setShowError(false); // Start the fade-out
+                setShowError(false);
             }, 4500); // After 4.5 seconds, start the fade
 
             const clearTimer = setTimeout(() => {
-                setError(""); // Clear the error message
+                setError("");
             }, 5000); // After 5 seconds, clear the error message completely
 
             return () => {
@@ -94,6 +104,7 @@ const Register = () => {
                 marginTop: "40px !important",
             }}
         >
+            {/* Display error message with fade effect */}
             <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
                 {error ? (
                     <Alert
@@ -131,6 +142,7 @@ const Register = () => {
                         backgroundColor: "card.background",
                     }}
                 >
+                    {/* Registration form title */}
                     <Typography
                         variant="h5"
                         align="center"
@@ -140,6 +152,7 @@ const Register = () => {
                         Crie a sua conta
                     </Typography>
 
+                    {/* Registration form */}
                     <form onSubmit={handleRegister}>
                         <Box
                             sx={{
@@ -149,6 +162,8 @@ const Register = () => {
                                 gap: 2,
                             }}
                         >
+
+                            {/* First name input */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -163,6 +178,8 @@ const Register = () => {
                                     })
                                 }
                             />
+
+                            {/* Last name input */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -177,6 +194,8 @@ const Register = () => {
                                     })
                                 }
                             />
+
+                            {/* Email input */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -192,6 +211,8 @@ const Register = () => {
                                     })
                                 }
                             />
+
+                            {/* NIF input */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -206,6 +227,8 @@ const Register = () => {
                                     })
                                 }
                             />
+
+                            {/* Password inputs */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -237,6 +260,7 @@ const Register = () => {
                                 }
                             />
 
+                            {/* Submit button */}
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -249,6 +273,7 @@ const Register = () => {
                         </Box>
                     </form>
 
+                    {/* Section for existing users */}
                     <Box
                         sx={{
                             mt: 2,
@@ -266,6 +291,7 @@ const Register = () => {
                             Já tem uma conta?
                         </Typography>
 
+                        {/* Link to login page */}
                         <Button
                             variant="text"
                             size="small"

@@ -12,18 +12,21 @@ import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 
 const ForgotPassword = () => {
-
+    // State to manage form data (email input)
     const [formData, setFormData] = useState({
-        email: ""
+        email: "",
     });
 
+    // State to manage error messages
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
+
+    // State to track success message
     const [success, setSuccess] = useState(false);
 
+    // Handle password recovery form submission
     const handleForgotPassword = (e) => {
         e.preventDefault();
-
         router.post("/recuperar-palavra-passe", formData, {
             onSuccess: () => {
                 setSuccess(true);
@@ -35,7 +38,9 @@ const ForgotPassword = () => {
                 if (errors.email) {
                     setError(errors.email);
                 } else {
-                    setError("Ocorreu um erro ao enviar o email de recuperação.");
+                    setError(
+                        "Ocorreu um erro ao enviar o email de recuperação.",
+                    );
                 }
                 setShowError(true);
                 setSuccess(false);
@@ -47,11 +52,11 @@ const ForgotPassword = () => {
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => {
-                setShowError(false); // Start the fade-out
+                setShowError(false);
             }, 4500); // After 4.5 seconds, start the fade
 
             const clearTimer = setTimeout(() => {
-                setError(""); // Clear the error message
+                setError("");
             }, 5000); // After 5 seconds, clear the error message completely
 
             return () => {
@@ -71,6 +76,7 @@ const ForgotPassword = () => {
                 marginTop: "40px !important",
             }}
         >
+            {/* Display error or success message */}
             {error ? (
                 <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
                     <Alert
@@ -102,6 +108,8 @@ const ForgotPassword = () => {
             ) : (
                 <Box sx={{ mb: 2, height: "48px" }}></Box>
             )}
+
+            {/* Password recovery form container */}
             <Box
                 sx={{
                     display: "flex",
@@ -130,28 +138,30 @@ const ForgotPassword = () => {
                         Recuperar Palavra-Passe
                     </Typography>
                     <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                gap: 1,
-                            }}
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                    >
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontSize: "16px" }}
                         >
-                    <Typography
+                            Esqueceu-se da palavra-passe?
+                        </Typography>
+                        <Typography
                             variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "16px"}}
-                    >
-                        Esqueceu-se da palavra-passe?
-                    </Typography>
-                    <Typography
-                            variant="body2"
-                        color="text.secondary"
-                        sx={{  mb:2, fontSize: "16px"}}
-                    >
-                       Insira o seu email para recuperar a sua conta.
+                            color="text.secondary"
+                            sx={{ mb: 2, fontSize: "16px" }}
+                        >
+                            Insira o seu email para recuperar a sua conta.
                         </Typography>
                     </Box>
+
+                    {/* Password recovery form */}
                     <form onSubmit={handleForgotPassword}>
                         <Box
                             sx={{
@@ -161,6 +171,7 @@ const ForgotPassword = () => {
                                 gap: 2,
                             }}
                         >
+                            {/* Email input field */}
                             <TextField
                                 fullWidth
                                 sx={{ maxWidth: "360px" }}
@@ -176,6 +187,8 @@ const ForgotPassword = () => {
                                     })
                                 }
                             />
+
+                            {/* Submit button */}
                             <Button
                                 fullWidth
                                 variant="contained"
@@ -188,6 +201,7 @@ const ForgotPassword = () => {
                         </Box>
                     </form>
 
+                    {/* Section for user registration */}
                     <Box
                         sx={{
                             mt: 2,
@@ -209,6 +223,8 @@ const ForgotPassword = () => {
                             color="text.secondary"
                             sx={{ mt: 0.5, fontSize: "14px" }}
                         ></Typography>
+
+                        {/* Link to registration page */}
                         <Button
                             variant="text"
                             size="small"
