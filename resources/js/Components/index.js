@@ -28,3 +28,4 @@ export {default as VendorCompanyEditingForm} from "./VendorCompanyEditingForm.js
 export {default as AddProductCreate} from "./AddProductCreate.jsx";
 export {default as CreateProductModal} from "./CreateProductModal.jsx";
 export {default as ImageUpload} from "./ImageCropModal.jsx";
+export {default as DashboardStoresCard} from "./DashboardStoresCard"

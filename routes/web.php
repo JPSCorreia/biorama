@@ -122,6 +122,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/dashboard')->group(function () {
 
+        //Rotas de informação do vendedor
         Route::get('/', [DashboardController::class, 'showVendorInfo'])->name('dashboard.home');
         Route::patch('/vendor/name/{vendor}', [DashboardController::class, 'updateVendorName'])
             ->name('vendor.update.name');
@@ -129,6 +130,10 @@ Route::middleware(['auth'])->group(function () {
             ->name('vendor.update.info');
         Route::put('/vendor/company/info/{company}', [DashboardController::class, 'updateCompanyInfo'])
             ->name('vendor.update.company.info');
+
+        //Rotas de informação da loja
+        Route::get('/lojas', [DashboardController::class,'showVendorStores'])
+            ->name('dashboard.stores');
 
 
         Route::get('/analises', function () {
@@ -139,9 +144,7 @@ Route::middleware(['auth'])->group(function () {
             return Inertia::render('Dashboard/Orders');
         })->name('dashboard.orders');
 
-        Route::get('/lojas', function () {
-            return Inertia::render('Dashboard/Stores');
-        })->name('dashboard.stores');
+
     });
 });
 

@@ -302,7 +302,6 @@ const VendorInformation = observer(() => {
                                 <VendorCompanyEditingForm
                                     vendor={vendor}
                                     handleCompanyInfoSubmit={handleCompanyInfoSubmit}
-                                    isSmallScreen={isSmallScreen}
                                 />
                             ) : (
                                 <Container sx={{marginTop: "2%"}}>

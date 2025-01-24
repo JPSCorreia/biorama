@@ -6,6 +6,7 @@ import { alertStore } from "./alertStore";
 import { homeAddressStore } from "./homeAddressStore";
 import { vendorRegistrationStore } from "./vendorRegistrationStore.js";
 import { vendorStore } from "./vendorsStore.js";
+import {shopStore} from "./shopStore.js";
 
 // Mobx-persist-store default configuration for all stores
 configurePersistable({
@@ -15,4 +16,4 @@ configurePersistable({
 });
 
 // Export all stores
-export { appStore, authStore, cartStore, alertStore, homeAddressStore, vendorRegistrationStore, vendorStore };
+export { appStore, authStore, cartStore, alertStore, homeAddressStore, vendorRegistrationStore, vendorStore, shopStore };
