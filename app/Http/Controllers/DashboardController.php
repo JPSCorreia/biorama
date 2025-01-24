@@ -8,7 +8,7 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-use mysql_xdevapi\Exception;
+use Illuminate\Support\Facades\DB;
 
 
 class DashboardController extends Controller
@@ -38,7 +38,7 @@ class DashboardController extends Controller
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
 
-    //Actualizar o nome do vendidor
+    //Actualizar o nome do vendedor
     public function updateVendorName(Request $request, vendor $vendor)
     {
         $validated = $request->validate([
@@ -53,7 +53,7 @@ class DashboardController extends Controller
             'vendor' => $vendor, // Inclua os dados atualizados
         ], 200);
     }
-
+    //Actualizar o restantes dado  do vendedor
     public function updateVendorInfo(Request $request, Vendor $vendor)
     {
         $validated = $request->validate([
@@ -75,7 +75,7 @@ class DashboardController extends Controller
 
 
     }
-
+    //Actualizar os dado da empresa do vendedor do vendedor
     public function updateCompanyInfo(Request $request, Company $company)
     {
         // 1. Validar os dados recebidos
@@ -130,6 +130,32 @@ class DashboardController extends Controller
             'message' => 'Informações da empresa atualizadas com sucesso!',
             'company' => $company,
         ], 200);
-
     }
+
+    public function showVendorStores()
+    {
+        $user = Auth::user();
+        if ($user && $user->hasRole('vendor')) {
+            $user->load([
+                'vendor',
+                'vendor.stores',
+                'vendor.stores.products',
+                'vendor.stores.addresses',
+                'vendor.stores.reviews',
+                'vendor.stores.galleries',
+            ]);
+            dd($user);
+            // Renderiza a página com as informações do vendor
+            return Inertia::render('Dashboard/Lojas', [
+                'user' => $user,
+            ]);
+        }
+
+        return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
+    }
+
+
+
+
+
 }

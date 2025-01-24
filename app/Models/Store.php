@@ -50,4 +50,6 @@ class Store extends Model
     {
         return $this->hasMany(StoreGallery::class);
     }
+
+
 }

@@ -15,3 +15,4 @@ export { default as Store } from "./Store";
 export { default as Stores } from "./Stores";
 export { default as VendorInformation } from "./VendorInformation.jsx";
 export { default as Vendors } from "./Vendors";
+export {default as DashboardStorePage} from  "./DashboardStorePage"
