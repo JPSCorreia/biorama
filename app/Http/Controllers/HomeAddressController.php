@@ -32,9 +32,22 @@ class HomeAddressController extends Controller
                     ->update(['is_primary' => false]);
             }
 
-            // Criar a nova morada
-            $newAddress = HomeAddress::create($validated);
+            // Verifica se há uma morada "apagada" com o mesmo código postal e número
+            $deletedAddress = HomeAddress::onlyTrashed()
+                ->where('postal_code', $validated['postal_code'])
+                ->where('number', $validated['number'])
+                ->first();
 
+            if ($deletedAddress) {
+                // Restaura a morada apagada e atualiza com os novos dados
+                $deletedAddress->restore();
+                $deletedAddress->update($validated);
+                $deletedAddress->save();
+            }
+            else {
+                // Criar a nova morada
+                $newAddress = HomeAddress::create($validated);
+            }
             DB::commit();
 
             return response()->json([
@@ -72,9 +85,23 @@ class HomeAddressController extends Controller
                     ->update(['is_primary' => false]);
             }
 
-            // Atualizar a morada existente
-            $address = HomeAddress::findOrFail($id);
-            $address->update($validated);
+            // Verifica se há uma morada "apagada" com o mesmo código postal e número
+            $deletedAddress = HomeAddress::onlyTrashed()
+                ->where('postal_code', $validated['postal_code'])
+                ->where('number', $validated['number'])
+                ->first();
+
+            if ($deletedAddress) {
+                // Restaura a morada apagada e atualiza com os novos dados
+                $deletedAddress->restore();
+                $deletedAddress->update($validated);
+                $deletedAddress->save();
+            }
+            else {
+                // Atualizar a morada existente
+                $address = HomeAddress::findOrFail($id);
+                $address->update($validated);
+            }
 
             DB::commit();
 

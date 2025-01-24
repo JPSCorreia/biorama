@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { ProfileInformation } from "../Components";
 import { Box } from "@mui/material";
+import Sidebar from "@/Components/SideBar.jsx";
 
 const Profile = observer(() => {
     return (

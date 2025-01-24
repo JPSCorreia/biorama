@@ -121,19 +121,27 @@ class HomeAddressStore {
      * Updates specific fields of an address by ID
      */
     updateAddress(id, updatedAddress) {
-        // Se a morada editada for favorita, desmarcar outras favoritas
-        if (updatedAddress.is_primary) {
-            this.addresses = this.addresses.map(address => ({
-                ...address,
-                is_primary: address.id === id, // Apenas a morada editada será favorita
-            }));
-        } else {
-            // Atualizar normalmente
-            this.addresses = this.addresses.map(address =>
-                address.id === id ? { ...address, ...updatedAddress } : address
-            );
-        }
+        console.log("Antes da atualização:", this.addresses);
+
+        this.addresses = this.addresses.map(address => {
+            if (updatedAddress.is_primary) {
+                // Se a morada editada for favorita, desmarcar outras favoritas
+                return {
+                    ...address,
+                    is_primary: address.id === id, // Apenas a morada editada será favorita
+                    ...(address.id === id ? updatedAddress : {}), // Atualizar os dados da morada editada
+                };
+            }
+
+            // Caso contrário, atualizar normalmente
+            return address.id === id
+                ? { ...address, ...updatedAddress }
+                : address;
+        });
+
+        console.log("Depois da atualização:", this.addresses);
     }
+
 
     /**
      * Sets an address as primary and updates backend
@@ -196,14 +204,17 @@ class HomeAddressStore {
     });
 
     /**
-     * Checks for duplicate postal codes, excluding a specific address ID
+     * Checks for duplicate postal codes with same number, excluding a specific address ID
      */
-    checkDuplicatePostalCode(postalCode, excludeId = null) {
+    checkDuplicatePostalCode(postalCode, number, excludeId = null) {
         return this.addresses.some(
             (address) =>
-                address.postal_code === postalCode && address.id !== excludeId,
+                address.postal_code === postalCode &&
+                address.number === number &&
+                address.id !== excludeId // Exclui a morada com o ID fornecido
         );
     }
+
 
     /**
      * Clears all addresses from the store
