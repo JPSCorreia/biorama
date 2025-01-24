@@ -2,8 +2,12 @@ import { action, makeObservable, observable } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 
 class AppStore {
-    themeType = "light";
+    // Observable state properties
+    themeType = "light"; // Default theme type for the application
 
+    /**
+     * Initializes the AppStore with MobX observables and persistence
+     */
     constructor() {
         makeObservable(this, {
             themeType: observable,
@@ -16,6 +20,9 @@ class AppStore {
         });
     }
 
+    /**
+     * Changes the theme type between "light" and "dark"
+     */
     changeThemeType = action(() => {
         this.themeType == "light"
             ? (this.themeType = "dark")

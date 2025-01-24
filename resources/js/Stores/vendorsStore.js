@@ -3,14 +3,16 @@ import axios from "axios";
 import {makePersistable} from "mobx-persist-store";
 
 class VendorStore {
-    // Atributos da classe
+    // Observable state properties
     vendors = null;
     currentVendor = null;
     companyDetails = null;
     companyContacts = [];
     companyAddresses = [];
 
-
+    /**
+     * Initializes the AlertStore with MobX observables and persistence
+     */
     constructor() {
         makeObservable(this, {
             vendors: observable,
@@ -33,7 +35,7 @@ class VendorStore {
         });
     }
 
-    // Ação para definir os dados iniciais do vendor recebidos do controlador
+    // Action to set initial vendor data received from controller
     setVendorData(vendorData) {
         runInAction(() => {
             if (!this.currentVendor) {
@@ -45,13 +47,12 @@ class VendorStore {
         });
     }
 
-    // Função para recuperar o ID do Vendor
+    // Function to retrieve Vendor ID
     getVendorId() {
         return this.currentVendor?.id || null;
     }
 
-
-    // Função para atualizar o nome do Vendor
+    // Function to update Vendor's name
     updateVendorName = async (updatedData) => {
         const vendorId = this.getVendorId();
         if (!vendorId) {
@@ -69,21 +70,19 @@ class VendorStore {
                     this.currentVendor.last_name = updatedData.last_name;
                 }
             });
-            console.log("Nome do vendor atualizado com sucesso:", response.data);
-            console.log("UpdateData:", updatedData);
         } catch (error) {
             console.error("Erro ao atualizar o nome do vendor no vendor Store:", error);
         }
     };
 
-    //Função para actulizar restantes infos do Vendor
+    // Function to update remaining Vendor information
     updateVendorInfo = async (updatedData) => {
         const vendorId = this.getVendorId();
         if (!vendorId) {
             console.error("ID do Vendor não encontrado!");
             return;
         }
-        console.log("Vendor store antes de atualizar:", this.currentVendor);
+
         try {
             const response = await axios.patch(`/dashboard/vendor/info/${vendorId}`, updatedData);
 
@@ -101,6 +100,7 @@ class VendorStore {
         }
     };
 
+    // Function to update Company data and its relations (contacts and addresses)
     updateCompanyAndRelations = async (updatedData) => {
         if (!this.companyDetails?.id) {
             console.error("Erro: ID da empresa não encontrado!");
@@ -168,9 +168,7 @@ class VendorStore {
         }
     };
 
-
-
-    // Limpar dados do fornecedor atual
+    // Clear current vendor data
     clearVendorData() {
         runInAction(() => {
             this.currentVendor = null;
