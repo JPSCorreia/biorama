@@ -40,7 +40,7 @@ const RegisterVendor = observer(({ genders }) => {
             reader.onload = () => {
                 newImages.push(reader.result);
                 if (newImages.length === files.length) {
-                    setImages((prevImages) => [...prevImages, ...newImages]); // Atualiza o array de imagens
+                    setImages((prevImages) => [...prevImages, ...newImages]);
                 }
             };
             reader.readAsDataURL(file);
@@ -126,7 +126,6 @@ const RegisterVendor = observer(({ genders }) => {
                 return setCurrentStep((prev) => prev + 1);
 
             case 3:
-
                 // Validate the store form
                 if (storeFormik) {
                     const storeErrors = await storeFormik.validateForm();
@@ -135,6 +134,7 @@ const RegisterVendor = observer(({ genders }) => {
                     // Submit the store form if valid
                     if (isStoreValid) {
                         storeFormik.handleSubmit();
+                        setImages([]);
                     }
                     errors = { ...errors, ...storeErrors };
 
@@ -146,6 +146,9 @@ const RegisterVendor = observer(({ genders }) => {
                     return;
                 }
                 return setCurrentStep((prev) => prev + 1);
+
+            case 5:
+                vendorRegistrationStore.submit();
             default:
                 return setCurrentStep((prev) => prev + 1);
         }
@@ -236,7 +239,7 @@ const RegisterVendor = observer(({ genders }) => {
                     onClick={handleNext}
                     disabled={enableButton()}
                 >
-                    Avançar
+                    {currentStep === 5 ? "Concluir" : "Avançar"}
                 </Button>
             </Box>
         </Box>

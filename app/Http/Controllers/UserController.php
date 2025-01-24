@@ -58,27 +58,46 @@ class UserController extends Controller
 
     public function update(UserRequest $request)
     {
-        $user = Auth::user();
+        $user = Auth::user(); // Obtém o utilizador autenticado
+
         try {
+            // Valida os dados enviados
             $data = $request->validated();
-            if ($request->hasFile('photo')) {
-                $photo = $request->file('photo');
+
+            // Verifica se uma imagem foi carregada
+            if ($request->hasFile('image_profile')) {
+                $photo = $request->file('image_profile');
+
+                // Gera o nome do ficheiro com base no ID do utilizador
                 $photoName = 'user_' . $user->id . '.' . $photo->getClientOriginalExtension();
-                $photoPath = $photo->storeAs('vendor_photos', $photoName, 'public');
-                $data['photo'] = 'storage/' . $photoPath;
+
+                // Armazena a imagem no diretório "storage/app/public/User"
+                $photoPath = $photo->storeAs('User', $photoName, 'public');
+
+                // Armazena apenas o caminho relativo no campo "image_profile"
+                $data['image_profile'] = 'storage/' . $photoPath;
+
             }
 
+            // Atualiza o perfil do utilizador
             $user->update($data);
+            $user->save();
+
+            // Carrega as relações necessárias
             $user->load('gender');
 
+            // Retorna a resposta com sucesso
             return response()->json([
                 'message' => 'Utilizador atualizado com sucesso',
                 'user' => $user,
             ], 200);
         } catch (\Exception $e) {
+            // Em caso de erro, retorna uma resposta com erro
             return back()->withErrors(['Erro ao atualizar perfil.'])->withInput();
         }
     }
+
+
 
 
     public function destroy(User $user)

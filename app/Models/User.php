@@ -24,7 +24,7 @@ class User extends Authenticatable implements CanResetPasswordContract
         'nif',
         'phone',
         'date_of_birth',
-        'photo',
+        'image_profile',
     ];
 
     protected $hidden = [

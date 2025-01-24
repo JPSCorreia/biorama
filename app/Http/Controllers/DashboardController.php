@@ -65,6 +65,7 @@ class DashboardController extends Controller
 
         $vendor->update($validated);
         $vendor->load(["gender"]);
+
         return response()->json([
             'message' => 'Informação do Vendor atualizado com sucesso!',
             'vendor' => $vendor, // Inclua os dados atualizados

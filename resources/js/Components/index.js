@@ -26,4 +26,4 @@ export {default as VendorNameEditingForm} from "./VendorNameEdtitingForm.jsx";
 export {default as VendorInfoEditingForm} from "./VendorInfoEditingForm.jsx";
 export {default as AddProductCreate} from "./AddProductCreate.jsx";
 export {default as CreateProductModal} from "./CreateProductModal.jsx";
-export {default as ImageUpload} from "./ImageUpload.jsx";
+export {default as ImageUpload} from "./ImageCropModal.jsx";

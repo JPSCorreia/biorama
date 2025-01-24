@@ -139,7 +139,6 @@ class VendorRegistrationStore {
     }
 
     // Método para enviar os dados ao servidor
-
     async submit() {
         try {
             if (!this.user || !this.store) throw new Error("Dados incompletos");

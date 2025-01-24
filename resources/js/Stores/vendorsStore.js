@@ -37,7 +37,9 @@ class VendorStore {
     setVendorData(vendorData) {
         console.log("Dados do vendor recebidos na store:", vendorData);
         runInAction(() => {
-            this.currentVendor = vendorData;
+            if (!this.currentVendor) {
+                this.currentVendor = vendorData;
+            }
             this.companyDetails = vendorData.company;
             this.companyContacts = vendorData.company.addresses;
             this.companyAddresses = vendorData.company.contacts;

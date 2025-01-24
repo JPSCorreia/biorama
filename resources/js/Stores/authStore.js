@@ -35,6 +35,12 @@ class AuthStore {
     submitDataUser = async (data) => {
         try {
             const response = await axios.post(`/editar-perfil/${this.user.id}`, data);
+            // Envia os dados para o servidor
+            await axios.post(`/editar-perfil/${this.user.id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Necessário para processar ficheiros
+                },
+            });
             this.user = response.data.user;
             console.log("User atualizado com sucesso", this.user);
         } catch (error) {

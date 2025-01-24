@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
     Box,
     Button,
@@ -7,6 +8,7 @@ import {
     useTheme,
     Avatar,
     IconButton,
+    Typography,
 } from "@mui/material";
 import {
     LocalizationProvider,
@@ -22,16 +24,47 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { authStore } from "../Stores/index.js";
 import dayjs from 'dayjs';
-import 'dayjs/locale/pt';
+import ImageCropModal from "./ImageCropModal"; // Importa o modal de recorte
 
-const ProfileEditModal = observer(({ open, handleClose}) => {
-
+const ProfileEditModal = observer(({ open, handleClose }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const {genders} = usePage().props;
+    const { genders } = usePage().props;
 
-    console.log("ProfileEditModal", authStore.user)
+    // Estado para o modal de recorte
+    const [cropModalOpen, setCropModalOpen] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState(null);
 
+    function base64ToFile(base64String, filename) {
+        const arr = base64String.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
+    }
+
+    // Função para abrir o modal de crop ao fazer upload
+    const handleImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageToCrop(reader.result); // Define a imagem carregada para recorte
+                setCropModalOpen(true); // Abre o modal de crop
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // Callback para salvar a imagem recortada
+    const handleCropComplete = (croppedImage) => {
+        formik.setFieldValue('image_profile', croppedImage); // Atualiza o campo no formik
+        setCropModalOpen(false); // Fecha o modal de crop
+    };
 
     const validationSchema = yup.object().shape({
         first_name: yup.string().required("O nome é obrigatório"),
@@ -54,16 +87,23 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                 return;
             }
 
-            // Formatar valores
-            const formattedValues = {
-                ...formik.values,
-                date_of_birth: formik.values.date_of_birth
-                    ? dayjs(formik.values.date_of_birth).format('YYYY-MM-DD')
-                    : null,
-            };
+            // Cria o FormData para enviar como multipart/form-data
+            const formData = new FormData();
+            const values = formik.values;
 
+            // Adiciona os campos do formulário
+            formData.append('first_name', values.first_name);
+            formData.append('last_name', values.last_name);
+            formData.append('email', values.email);
+            formData.append('phone', values.phone);
+            formData.append('nif', values.nif);
+            formData.append('gender_id', values.gender_id);
+            formData.append('date_of_birth', values.date_of_birth
+                ? dayjs(values.date_of_birth).format('YYYY-MM-DD')
+                : null);
+            formData.append('image_profile', values.image_profile);
             // Atualizar authStore
-            await authStore.submitDataUser(formattedValues);
+            await authStore.submitDataUser(formData);
 
             // Fechar modal
             handleClose();
@@ -72,6 +112,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
         }
     };
 
+
     const formik = useFormik({
         initialValues: {
             first_name: authStore.user.first_name || '',
@@ -79,7 +120,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
             email: authStore.user.email || '',
             phone: authStore.user.phone || '',
             nif: authStore.user.nif || '',
-            gender_id: authStore.user.gender.id || '',
+            gender_id: authStore.user.gender ? authStore.user.gender.id : null,
             date_of_birth: authStore.user.date_of_birth ? dayjs(authStore.user.date_of_birth) : null,
             image_profile: authStore.user.image_profile || '',
         },
@@ -88,44 +129,58 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
     });
 
     return (
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: isSmallScreen ? '80%' : '30%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                m: 'auto',
-                padding: isSmallScreen ? '10px' : '30px',
-                borderRadius: "10px",
-                backgroundColor: 'background.paper',
-            }}>
+        <>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
                 <Box
                     sx={{
-                        p: 0,
-                        bgcolor: "white",
-                        borderRadius: 2,
-                        width: "100%",
-                        m: "auto",
-                        position: "relative",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: isSmallScreen ? '80%' : '30%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        m: 'auto',
+                        padding: isSmallScreen ? '10px' : '30px',
+                        borderRadius: "10px",
+                        backgroundColor: 'background.paper',
                     }}
                 >
                     <Box
                         sx={{
                             display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            mb: 2,
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '1.8rem',
+                            }}
+                        >
+                            Editar Perfil
+                        </Typography>
+                        <IconButton onClick={handleClose}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: "flex",
                             alignItems: "center",
                             mt: 0,
-                            mb: 2
+                            mb: 2,
                         }}
                     >
                         <Avatar
@@ -140,38 +195,25 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                 borderRadius: isSmallScreen ? "50%" : "10px",
                             }}
                         >
-                            {!formik.values.image_profile && `${authStore.user?.first_name?.[0] || ''}${authStore.user?.last_name?.[0] || ''}`}
+                            {!formik.values.image_profile &&
+                                `${authStore.user?.first_name?.[0] || ''}${authStore.user?.last_name?.[0] || ''}`}
                         </Avatar>
 
                         <Button
                             component="label"
                             variant="outlined"
                             startIcon={<CloudUploadIcon />}
-                            sx={{
-                                ml: 2,
-                            }}
+                            sx={{ ml: 2 }}
                         >
                             Upload File
                             <input
                                 type="file"
                                 hidden
-                                onChange={(e) => formik.setFieldValue('image_profile', e.target.files[0])}
+                                onChange={handleImageUpload}
                                 accept="image/*"
                             />
                         </Button>
                     </Box>
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: 6,
-                            right: 6,
-                        }}
-                    >
-                        <IconButton onClick={handleClose}>
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                </Box>
 
                 <Box
                     sx={{
@@ -279,7 +321,6 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                 <TextField
                                     select
                                     margin="normal"
-                                    label="Gênero"
                                     name="gender_id"
                                     value={formik.values.gender_id || ""} // Garante que nunca é undefined
                                     onChange={formik.handleChange}
@@ -291,7 +332,7 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                                     sx={{width: isSmallScreen ? '100%' : "45%"}}
                                 >
                                     <option value="" disabled>
-                                        Selecione um gênero
+                                        Selecione um género
                                     </option>
                                     {genders.map((gender) => (
                                         <option key={gender.id} value={gender.id}>
@@ -381,6 +422,13 @@ const ProfileEditModal = observer(({ open, handleClose}) => {
                 </Box>
             </Box>
         </Modal>
+        <ImageCropModal
+            open={cropModalOpen}
+            image={imageToCrop}
+            onClose={() => setCropModalOpen(false)}
+            onCropComplete={handleCropComplete}
+        />
+    </>
     );
 });
 

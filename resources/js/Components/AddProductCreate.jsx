@@ -1,21 +1,25 @@
-import {Card, CardContent, Typography, IconButton, Box, useTheme, useMediaQuery} from '@mui/material';
+import { Typography, Box, useTheme, useMediaQuery } from '@mui/material';
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import {CreateProductModal} from "./";
-import {useState} from "react";
-
+import CreateProductModal from "./CreateProductModal";
+import { useState, useEffect } from "react";
 
 const AddProductCard = () => {
-    const [createProductModalOpen, setHandleCreateProductModalOpen] = useState(false);
-    const handleCreateProductModalOpen = () => setHandleCreateProductModalOpen(true);
-    const handleCreateProductModalClose = () => setHandleCreateProductModalOpen(false);
+    const [modalOpen, setModalOpen] = useState(false);
 
+    const handleModalOpen = () => {
+        setModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+    };
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Box
-            onClick={handleCreateProductModalOpen}
+            onClick={handleModalOpen}
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -52,7 +56,10 @@ const AddProductCard = () => {
             >
                 Criar Novo Produto
             </Typography>
-            <CreateProductModal open={createProductModalOpen} handleClose={handleCreateProductModalClose} />
+            <CreateProductModal
+                open={modalOpen}
+                handleClose={handleModalClose}
+            />
         </Box>
     );
 };

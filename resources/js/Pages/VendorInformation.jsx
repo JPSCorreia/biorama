@@ -23,33 +23,22 @@ import { vendorStore } from "../Stores";
 
 const VendorInformation = observer(() => {
     const{genders, user} = usePage().props;
-    console.log("Gender", genders);
-    console.log("UsePage", usePage());
-    // Retrieve user data from Inertia props
 
-
-    // Load vendor data into the MobX store when component mounts or user changes
-    useEffect(() => {
-        if (user.vendor) {
-            vendorStore.setVendorData(user.vendor);
-        }
-    }, [user.vendor]);
-
-    console.log("Vendor", vendorStore.currentVendor);
+    vendorStore.setVendorData(user.vendor);
 
     // Get the current vendor data from the MobX store
     const vendor = vendorStore.currentVendor;
 
     // Check if the authenticated user is associated with a company
     const isCompany = vendor.is_company;
-
     // State to control which fields are currently being edited
     const [isEditing, setIsEditing] = useState({
         vendorName: false,
-        vendorPersonalInfo:false,
         copanyInfo:false,
         vendorPersonaAndVendorlInfo: false,
     });
+
+    const [editVendorInfo, setEditVendorInfo] = useState(false);
 
     // Function to toggle the edit state for a specific field
     const handleEditToggle = (field) => {
@@ -82,7 +71,7 @@ const VendorInformation = observer(() => {
             // Atualiza os nomes do vendor
             await vendorStore.updateVendorInfo(values);
             // Alterna o estado de edição
-            handleEditToggle("vendorPersonalInfo");
+            setEditVendorInfo(!editVendorInfo);
             console.log("Passou o Front end:");
         } catch (error) {
             console.error("Erro ao atualizar informações do vendor no Vendor info:", error);
@@ -239,7 +228,7 @@ const VendorInformation = observer(() => {
                         justifyContent: "space-between",
                         width: "100%"
                     }}>
-                        {isEditing.vendorPersonalInfo ? (
+                        {editVendorInfo ? (
                         <VendorInfoEditingForm
                             handleInfoSubmit={handleInfoSubmit}
                             vendor={vendor}
@@ -313,7 +302,7 @@ const VendorInformation = observer(() => {
                                 {/* Botão Editar */}
                                 <Box sx={{display: "flex", justifyContent: "flex-end"}}>
                                     <Button
-                                        onClick={() => handleEditToggle("vendorPersonalInfo")}
+                                        onClick={() => setEditVendorInfo(!editVendorInfo)}
                                         component="label"
                                         variant="outlined"
                                         sx={{
