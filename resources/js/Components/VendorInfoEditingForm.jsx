@@ -1,7 +1,7 @@
 import {
     Box,
     Button,
-    Container,
+    Container, IconButton,
     TextField,
     Typography,
     useMediaQuery,
@@ -17,8 +17,10 @@ import * as Yup from "yup";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import { observer } from "mobx-react";
+import SaveIcon from "@mui/icons-material/Save";
+import * as React from "react";
 
-const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders }) => {
+const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders, isSmallScreen }) => {
     const theme = useTheme();
 
     console.log("VendorInfoEditingForm", vendor.gender.id);
@@ -167,6 +169,15 @@ const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders }) =
                 </Box>
 
                 <Box sx={{ textAlign: "right", mt: 3 }}>
+                    {isSmallScreen ?(
+                    <IconButton
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
+                        <SaveIcon/>
+                    </IconButton>
+                    ) : (
                     <Button
                         type="submit"
                         variant="contained"
@@ -174,6 +185,7 @@ const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders }) =
                     >
                         Guardar
                     </Button>
+                    )}
                 </Box>
             </form>
         </Container>

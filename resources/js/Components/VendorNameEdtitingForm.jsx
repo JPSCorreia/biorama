@@ -5,7 +5,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import * as React from "react";
 import * as Yup from "yup";
 
-const VendorNameEdtitingForm = observer(({handleNameSubmit, vendor}) => {
+const VendorNameEdtitingForm = observer(({handleNameSubmit, vendor, isSmallScreen}) => {
 
     const namevalidationSchema = Yup.object({
 
@@ -28,12 +28,18 @@ const VendorNameEdtitingForm = observer(({handleNameSubmit, vendor}) => {
             onSubmit={handleNameSubmit}
         >
             {({errors, touched, isSubmitting}) => (
-                <Form>
+                <Form sx={{
+                    ml: 2,
+                    display: "flex",
+                    flexDirection: isSmallScreen ? "column" : "row",
+                }}>
                     <Box
                         sx={{
                             ml: 2,
                             display: "flex",
-                            flexDirection: "row",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            alignItems: "left",
+                            gap: 2,
                         }}
                     >
                         {/* Campo Primeiro Nome */}
@@ -62,6 +68,7 @@ const VendorNameEdtitingForm = observer(({handleNameSubmit, vendor}) => {
                         <Box>
                             <IconButton
                                 type="submit"
+                                color="primary"
                                 disabled={isSubmitting}
                                 sx={{
                                     display: "flex",

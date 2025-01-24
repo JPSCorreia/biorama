@@ -1,10 +1,11 @@
 import {observer} from "mobx-react";
 import * as Yup from "yup";
-import {Box, Button, Container,  TextField, Typography} from "@mui/material";
+import {Box, Button, Container, IconButton, TextField, Typography} from "@mui/material";
 import * as React from "react";
 import {Field, Form, Formik} from "formik";
+import SaveIcon from "@mui/icons-material/Save";
 
-const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit}) => {
+const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit, isSmallScreen}) => {
 
 
     const companyvalidationSchema = Yup.object({
@@ -204,14 +205,25 @@ const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit}) =>
                         </Box>
 
                         <Box sx={{ textAlign: "right", mt: 3 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                disabled={isSubmitting}
-                            >
-                                Guardar
-                            </Button>
+                            {isSmallScreen ?(
+                                <IconButton
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={isSubmitting}
+                                    >
+                                    <SaveIcon/>
+                                </IconButton>
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={isSubmitting}
+                                >
+                                    Guardar
+                                </Button>
+                            )}
                         </Box>
                     </Form>
                 )}

@@ -12,46 +12,29 @@ import {
 } from "@mui/material";
 import {observer} from "mobx-react";
 import {usePage} from "@inertiajs/react";
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import {Edit as EditIcon} from "@mui/icons-material";
 import VendorNameEdtitingForm from "@/Components/VendorNameEdtitingForm.jsx";
 import {VendorCompanyEditingForm, VendorInfoEditingForm} from "@/Components/index.js";
 import {vendorStore} from "../Stores";
 
 const VendorInformation = observer(() => {
-<<<<<<< HEAD
-    const{genders, user} = usePage().props;
-
-    vendorStore.setVendorData(user.vendor);
-
-    // Get the current vendor data from the MobX store
-=======
     const {genders, auth} = usePage().props;
 
     // Load vendor data into the MobX store when component mounts or user changes
     vendorStore.setVendorData(auth.user.vendor);
->>>>>>> 1fc0d1997c0aba1faff387c72b1f45f24dd9d87f
     const vendor = vendorStore.currentVendor;
     // Get the current vendor data from the MobX store
 
-
     // Check if the authenticated user is associated with a company
     const isCompany = vendor.is_company;
+
     // State to control which fields are currently being edited
     const [isEditing, setIsEditing] = useState({
         vendorName: false,
-<<<<<<< HEAD
-        copanyInfo:false,
-        vendorPersonaAndVendorlInfo: false,
-    });
-
-    const [editVendorInfo, setEditVendorInfo] = useState(false);
-=======
         vendorPersonalInfo: false,
         companyInfo: false,
     });
-
->>>>>>> 1fc0d1997c0aba1faff387c72b1f45f24dd9d87f
 
     // Function to toggle the edit state for a specific field
     const handleEditToggle = (field) => {
@@ -83,12 +66,7 @@ const VendorInformation = observer(() => {
             // Atualiza os nomes do vendor
             await vendorStore.updateVendorInfo(values);
             // Alterna o estado de edição
-<<<<<<< HEAD
-            setEditVendorInfo(!editVendorInfo);
-            console.log("Passou o Front end:");
-=======
             handleEditToggle("vendorPersonalInfo");
->>>>>>> 1fc0d1997c0aba1faff387c72b1f45f24dd9d87f
         } catch (error) {
             console.error("Erro ao atualizar informações do vendor no Vendor info:", error);
         }
@@ -160,6 +138,7 @@ const VendorInformation = observer(() => {
                         <VendorNameEdtitingForm
                             handleNameSubmit={handleNameSubmit}
                             vendor={vendor}
+                            isSmallScreen={isSmallScreen}
                         />
                     ) : (
                         <Box
@@ -213,15 +192,6 @@ const VendorInformation = observer(() => {
                         justifyContent: "space-between",
                         width: "100%"
                     }}>
-<<<<<<< HEAD
-                        {editVendorInfo ? (
-                        <VendorInfoEditingForm
-                            handleInfoSubmit={handleInfoSubmit}
-                            vendor={vendor}
-                            isSmallScreen={isSmallScreen}
-                            genders = {genders}
-                        />
-=======
                         {isEditing.vendorPersonalInfo ? (
                             <VendorInfoEditingForm
                                 handleInfoSubmit={handleInfoSubmit}
@@ -229,7 +199,6 @@ const VendorInformation = observer(() => {
                                 isSmallScreen={isSmallScreen}
                                 genders={genders}
                             />
->>>>>>> 1fc0d1997c0aba1faff387c72b1f45f24dd9d87f
 
                         ) : (
                             <Container sx={{marginTop: "2%", marginLeft: "0%"}}>
@@ -246,7 +215,6 @@ const VendorInformation = observer(() => {
                                         </Typography>
                                     </Box>
                                     <Box sx={{m: "auto 0 auto 0"}}>
-
                                         {isSmallScreen ? (
                                             // Apenas o ícone aparece em telas pequenas
                                             <IconButton onClick={() => handleEditToggle("vendorPersonalInfo")}>
@@ -254,7 +222,6 @@ const VendorInformation = observer(() => {
                                                     color: theme.palette.primary.main,
                                                 }}/>
                                             </IconButton>
-
                                         ) : (
                                             <Button
                                                 onClick={() => handleEditToggle("vendorPersonalInfo")}
@@ -264,7 +231,6 @@ const VendorInformation = observer(() => {
                                                     borderRadius: "5px",
                                                 }}
                                             >
-
                                                 <Typography sx={{display: "flex", alignItems: "center"}}>
                                                     <EditIcon sx={{marginRight: 1}}/>
                                                     Editar
@@ -328,25 +294,6 @@ const VendorInformation = observer(() => {
                                         </Box>
                                     </Box>
                                 </Box>
-<<<<<<< HEAD
-                                {/* Botão Editar */}
-                                <Box sx={{display: "flex", justifyContent: "flex-end"}}>
-                                    <Button
-                                        onClick={() => setEditVendorInfo(!editVendorInfo)}
-                                        component="label"
-                                        variant="outlined"
-                                        sx={{
-                                            borderRadius: "5px",
-                                        }}
-                                    >
-                                        <Typography sx={{display: "flex", alignItems: "center"}}>
-                                            <EditIcon sx={{marginRight: 1}}/>
-                                            Editar
-                                        </Typography>
-                                    </Button>
-                                </Box>
-=======
->>>>>>> 1fc0d1997c0aba1faff387c72b1f45f24dd9d87f
                             </Container>
                         )}
 
@@ -355,10 +302,10 @@ const VendorInformation = observer(() => {
                                 <VendorCompanyEditingForm
                                     vendor={vendor}
                                     handleCompanyInfoSubmit={handleCompanyInfoSubmit}
+                                    isSmallScreen={isSmallScreen}
                                 />
                             ) : (
                                 <Container sx={{marginTop: "2%"}}>
-
                                     <Box sx={{display: "flex", width: "100%", gap: 10}}>
                                         <Box>
                                             <Typography
@@ -379,7 +326,6 @@ const VendorInformation = observer(() => {
                                                         color: theme.palette.primary.main,
                                                     }}/>
                                                 </IconButton>
-
                                             ) : (
                                                 <Button
                                                     onClick={() => handleEditToggle("companyInfo")}
@@ -389,7 +335,6 @@ const VendorInformation = observer(() => {
                                                         borderRadius: "5px",
                                                     }}
                                                 >
-
                                                     <Typography sx={{display: "flex", alignItems: "center"}}>
                                                         <EditIcon sx={{marginRight: 1}}/>
                                                         Editar
@@ -428,7 +373,6 @@ const VendorInformation = observer(() => {
                                                 </Typography>
                                             </Box>
                                         </Box>
-
                                         {/* Email & Telephone */}
                                         <Box
                                             sx={{
@@ -494,7 +438,6 @@ const VendorInformation = observer(() => {
                                                 </Typography>
                                             </Box>
                                         </Box>
-
                                         {/* Address & Postal Code */}
                                         <Box
                                             sx={{
