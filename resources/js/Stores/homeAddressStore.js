@@ -46,6 +46,7 @@ class HomeAddressStore {
         if (!address.street_address)
             throw new Error("O campo street_address é obrigatório.");
         if (!address.city) throw new Error("O campo city é obrigatório.");
+        if(!address.number) throw new Error("O campo number é obrigatório.");
         if (!address.postal_code)
             throw new Error("O campo postal_code é obrigatório.");
         return true;
@@ -73,21 +74,28 @@ class HomeAddressStore {
     addAddress = action((address) => {
         try {
             this.validateAddress(address);
-
-            if (address.is_primary) {
-                runInAction(() => {
-                    this.addresses = this.addresses.map((existingAddress) => ({
-                        ...existingAddress,
-                        is_primary: false,
-                    }));
-                });
-            }
+            this.checkIfHavePrimaryAddress(address.is_primary);
 
             runInAction(() => {
                 this.addresses.push(address);
             });
         } catch (error) {
             console.error("Erro na validação:", error.message);
+        }
+    });
+
+    /**
+     * Checks if the address is primary and updates other addresses accordingly
+     * @type {function(*): void}
+     */
+    checkIfHavePrimaryAddress = action((value) => {
+        if (value) {
+            runInAction(() => {
+                this.addresses = this.addresses.map((existingAddress) => ({
+                    ...existingAddress,
+                    is_primary: false,
+                }));
+            });
         }
     });
 
@@ -112,19 +120,20 @@ class HomeAddressStore {
     /**
      * Updates specific fields of an address by ID
      */
-    updateAddress = action((id, updatedData) => {
-        runInAction(() => {
-            const index = this.addresses.findIndex(
-                (address) => address.id === id,
+    updateAddress(id, updatedAddress) {
+        // Se a morada editada for favorita, desmarcar outras favoritas
+        if (updatedAddress.is_primary) {
+            this.addresses = this.addresses.map(address => ({
+                ...address,
+                is_primary: address.id === id, // Apenas a morada editada será favorita
+            }));
+        } else {
+            // Atualizar normalmente
+            this.addresses = this.addresses.map(address =>
+                address.id === id ? { ...address, ...updatedAddress } : address
             );
-            if (index !== -1) {
-                this.addresses[index] = {
-                    ...this.addresses[index],
-                    ...updatedData,
-                };
-            }
-        });
-    });
+        }
+    }
 
     /**
      * Sets an address as primary and updates backend
@@ -152,7 +161,7 @@ class HomeAddressStore {
      */
     unsetPrimaryAddress = action(async (existingPrimaryId) => {
         try {
-            await axios.put(`/atualizar-morada/${existingPrimaryId}`, {
+            await axios.put(`/editar-morada/${existingPrimaryId}`, {
                 is_primary: false,
             });
 

@@ -24,6 +24,7 @@ class HomeAddressRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'address_name' => 'required|string|max:100',
+            'number' => 'required|string|max:10',
             'phone_number' => 'nullable|string|max:15',
             'street_address' => 'required|string|max:255',
             'postal_code' => 'required|string|max:10',
@@ -46,6 +47,9 @@ class HomeAddressRequest extends FormRequest
 
             'address_name.required' => 'O nome da morada é obrigatório',
             'address_name.max' => 'O nome da morada deve ter no máximo :max caracteres',
+
+            'number.required' => 'O número da morada é obrigatório',
+            'number.max' => 'O número da morada deve ter no máximo :max caracteres',
 
             'phone_number.max' => 'O número de telefone deve ter no máximo :max caracteres',
             'street_address.required' => 'O nome da rua é obrigatório',

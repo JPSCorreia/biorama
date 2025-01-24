@@ -65,7 +65,7 @@ const ProfileInformation = observer(() => {
             elevation={4}
             sx={{
                 p: 2,
-                width: isSmallScreen ? "100%" : "80%",
+                width: "100%",
                 m: "auto",
                 display: "flex",
                 flexDirection: "column",
@@ -86,6 +86,7 @@ const ProfileInformation = observer(() => {
                         bgcolor: "primary.main",
                         borderRadius: isSmallScreen ? "50%" : "10px",
                         fontSize: isSmallScreen ? "1.5rem" : "3rem",
+                        display: isSmallScreen ? "none" : "block",
                     }}
                 >
                     {authStore.user?.first_name[0]}

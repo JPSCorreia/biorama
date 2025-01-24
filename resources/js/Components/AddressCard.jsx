@@ -105,28 +105,38 @@ const AddressCard = observer(({ address, theme }) => {
                     {address.street_address || "Rua não fornecida"}
                 </Typography>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Número</Typography>
-                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                    {address.number || "Número não fornecido"}
-                </Typography>
+            <Box sx={{ display: "flex", flexDirection: "row", mb: 1, justifyContent:"space-between", width:"95%" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Número</Typography>
+                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                        {address.number || "Número não fornecido"}
+                    </Typography>
+                </Box>
+                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Cidade</Typography>
+                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                        {address.city || "Cidade não fornecida"}
+                    </Typography>
+                </Box>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Cidade</Typography>
-                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                    {address.city || "Cidade não fornecida"}
-                </Typography>
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Código Postal</Typography>
-                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                    {address.postal_code || "Código Postal não fornecido"}
-                </Typography>
+            <Box sx={{ display: "flex", flexDirection: "row", mb: 1, justifyContent:"space-between", width:"95%" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Código Postal</Typography>
+                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                        {address.postal_code || "Código Postal não fornecido"}
+                    </Typography>
+                </Box>
+                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Contacto</Typography>
+                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                        {address.phone_number || "Contacto não fornecido"}
+                    </Typography>
+                </Box>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
                 <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Contacto</Typography>
                 <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                    {address.phone_number || "Contacto não fornecido"}
+                    {address.description || "Descrição não fornecida"}
                 </Typography>
             </Box>
         </Box>

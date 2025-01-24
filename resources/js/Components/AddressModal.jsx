@@ -19,13 +19,13 @@ import { usePage } from "@inertiajs/react";
 import {Formik, Form, Field, useFormik} from "formik";
 import * as Yup from "yup";
 
+
 const AddressModal = ({ open, handleClose }) => {
     const { auth } = usePage().props;
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const [isdisabled, setIsDisabled] = useState(true);
+    const [isDisabled, setisDisabled] = useState(true);
 
-    // Combinação dos valores iniciais
     const initialValues = {
         postal_code: "",
         address_name: "",
@@ -33,10 +33,10 @@ const AddressModal = ({ open, handleClose }) => {
         city: "",
         phone_number: "",
         comment: "",
+        number: "",
         is_primary: false,
     };
 
-    // Função de submissão
     const handleFormSubmit = async (values, { resetForm }) => {
         try {
             const response = await axios.post("/adicionar-morada", {
@@ -54,27 +54,12 @@ const AddressModal = ({ open, handleClose }) => {
         }
     };
 
-    // Configuração do `useFormik`
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
             postal_code: Yup.string()
                 .matches(/^\d{4}-\d{3}$/, "Código Postal inválido (formato: 0000-000)")
-                .required("O Código Postal é obrigatório")
-                .test(
-                    "check-duplicate-postal-code",
-                    "Tem uma morada criada com este Código Postal",
-                    async function (value) {
-                        if (!value) return true;
-
-                        // Verifica se o código postal já existe no `homeAddressStore`
-                        const existingAddress = homeAddressStore.addresses.find(
-                            (address) => address.postal_code === value
-                        );
-
-                        return !existingAddress;
-                    }
-                ),
+                .required("O Código Postal é obrigatório"),
             address_name: Yup.string()
                 .max(20, "Defina um nome mais curto para a sua morada")
                 .required("O Nome da morada é obrigatório"),
@@ -88,26 +73,12 @@ const AddressModal = ({ open, handleClose }) => {
                 .nullable()
                 .matches(/^\d{9,15}$/, "Número de telefone inválido"),
             comment: Yup.string().nullable(),
-            is_primary: Yup.boolean().test(
-                "update-is-primary",
-                "Erro ao atualizar morada favorita",
-                async function (value) {
-                    if (!value) return true; // Não validar se is_primary for false
-
-                    try {
-                        await homeAddressStore.updatePrimaryAddress(this.options.context.addressId);
-                        return true;
-                    } catch (error) {
-                        console.error("Erro ao atualizar morada favorita:", error);
-                        return false;
-                    }
-                }
-            ),
+            number: Yup.string().required("O Número é obrigatório"),
+            is_primary: Yup.boolean(),
         }),
         onSubmit: handleFormSubmit,
     });
 
-    // Função para mudança do código postal
     const handlePostalCodeChange = async (event) => {
         let value = event.target.value.replace(/\D/g, "");
         if (value.length > 4) {
@@ -124,12 +95,26 @@ const AddressModal = ({ open, handleClose }) => {
                     const data = response.data[0];
                     formik.setFieldValue("street_address", data.morada || "");
                     formik.setFieldValue("city", data.distrito || "");
+                    setisDisabled(false);
                 } else {
                     formik.setFieldError("postal_code", "Código Postal não encontrado na API");
+                    formik.setFieldValue("street_address", "");
+                    formik.setFieldValue("city", "");
+                    formik.setFieldValue("number", "");
+                    setisDisabled(true);
                 }
             } catch {
                 formik.setFieldError("postal_code", "Erro ao validar o Código Postal");
+                formik.setFieldValue("street_address", "");
+                formik.setFieldValue("city", "");
+                formik.setFieldValue("number", "");
+                setisDisabled(true);
             }
+        } else {
+            formik.setFieldValue("street_address", "");
+            formik.setFieldValue("city", "");
+            formik.setFieldValue("number", "");
+            setisDisabled(true);
         }
     };
 
@@ -165,7 +150,7 @@ const AddressModal = ({ open, handleClose }) => {
                         width: "100%",
                     }}
                 >
-                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold", ml:4.5 }}>
+                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold", ml: 4.5 }}>
                         Criar morada
                     </Typography>
                     <IconButton onClick={handleClose}>
@@ -194,9 +179,10 @@ const AddressModal = ({ open, handleClose }) => {
                             error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
                             helperText={formik.touched.postal_code && formik.errors.postal_code}
                             required
-                            sx={{ width: "40%" }}
+                            sx={{
+                                width: "40%",
+                            }}
                         />
-
                         <TextField
                             margin="normal"
                             label="Cidade"
@@ -206,14 +192,15 @@ const AddressModal = ({ open, handleClose }) => {
                             error={formik.touched.city && Boolean(formik.errors.city)}
                             helperText={formik.touched.city && formik.errors.city}
                             required
-                            isDisabled={isdisabled}
-                            sx={{ width: "40%" }}
+                            disabled={isDisabled}
+                            sx={{
+                                width: "40%",
+                                backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
+                            }}
                         />
-
                     </Box>
                     <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                         <TextField
-                            fullWidth
                             margin="normal"
                             label="Número"
                             name="number"
@@ -222,8 +209,11 @@ const AddressModal = ({ open, handleClose }) => {
                             error={formik.touched.number && Boolean(formik.errors.number)}
                             helperText={formik.touched.number && formik.errors.number}
                             required
-                            isDisabled={isdisabled}
-                            sx={{ width: "40%" }}
+                            disabled={isDisabled}
+                            sx={{
+                                width: "40%",
+                                backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
+                            }}
                         />
                         <TextField
                             fullWidth
@@ -247,32 +237,11 @@ const AddressModal = ({ open, handleClose }) => {
                         error={formik.touched.street_address && Boolean(formik.errors.street_address)}
                         helperText={formik.touched.street_address && formik.errors.street_address}
                         required
-                        isDisabled={isdisabled}
+                        disabled={isDisabled}
+                        sx={{
+                            backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
+                        }}
                     />
-                    <Box sx={{ display:'flex', flexDirection:'column', width: "100%",mt: 1, mb: 2 }}>
-                        <Input
-                            aria-label="Demo input"
-                            multiline
-                            placeholder="Nota sobre a morada (opcional)"
-                            name="comment"
-                            value={formik.values.comment || ""}
-                            onChange={formik.handleChange}
-                            error={formik.touched.comment && Boolean(formik.errors.comment)}
-                            fullWidth
-                        />
-                        {/* Contador de caracteres */}
-                        <Typography
-                            variant="caption"
-                            sx={{ alignSelf: "flex-end", mt: 1 }}
-                        >
-                            {formik.values.comment.length}/50
-                        </Typography>
-                        {formik.touched.comment && formik.errors.comment && (
-                            <Typography variant="caption" color="error.main">
-                                {formik.errors.comment}
-                            </Typography>
-                        )}
-                    </Box>
                     <FormControlLabel
                         control={
                             <Switch
@@ -298,5 +267,7 @@ const AddressModal = ({ open, handleClose }) => {
         </Modal>
     );
 };
+
+
 
 export default AddressModal;

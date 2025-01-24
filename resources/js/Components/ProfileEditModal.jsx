@@ -35,18 +35,6 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
     const [cropModalOpen, setCropModalOpen] = useState(false);
     const [imageToCrop, setImageToCrop] = useState(null);
 
-    function base64ToFile(base64String, filename) {
-        const arr = base64String.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new File([u8arr], filename, { type: mime });
-    }
-
     // Função para abrir o modal de crop ao fazer upload
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
@@ -80,14 +68,13 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
 
     const submitForm = async () => {
         try {
-            // Execute validação antes de submeter
             await formik.validateForm();
             if (!formik.isValid) {
                 console.error("Erro na validação:", formik.errors);
                 return;
             }
 
-            // Cria o FormData para enviar como multipart/form-data
+            // Cria o FormData
             const formData = new FormData();
             const values = formik.values;
 
@@ -98,19 +85,27 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             formData.append('phone', values.phone);
             formData.append('nif', values.nif);
             formData.append('gender_id', values.gender_id);
-            formData.append('date_of_birth', values.date_of_birth
-                ? dayjs(values.date_of_birth).format('YYYY-MM-DD')
-                : null);
-            formData.append('image_profile', values.image_profile);
-            // Atualizar authStore
+            formData.append(
+                'date_of_birth',
+                values.date_of_birth ? dayjs(values.date_of_birth).format('YYYY-MM-DD') : null
+            );
+
+            // Verifica se um ficheiro foi carregado
+            if (values.image_profile instanceof File) {
+                formData.append('image_profile', values.image_profile); // Envia o ficheiro
+            } else {
+                formData.append('image_profile', authStore.user.image_profile); // Envia o link existente
+            }
+
+            // Atualizar no backend
             await authStore.submitDataUser(formData);
 
-            // Fechar modal
-            handleClose();
+            handleClose(); // Fecha o modal
         } catch (error) {
             console.error("Erro ao submeter o formulário:", error);
         }
     };
+
 
 
     const formik = useFormik({
@@ -122,11 +117,13 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             nif: authStore.user.nif || '',
             gender_id: authStore.user.gender ? authStore.user.gender.id : null,
             date_of_birth: authStore.user.date_of_birth ? dayjs(authStore.user.date_of_birth) : null,
-            image_profile: authStore.user.image_profile || '',
+            image_profile: authStore.user.image_profile || '', // Link para a imagem na storage
         },
         validationSchema: validationSchema,
         onSubmit: () => {},
     });
+
+
 
     return (
         <>
@@ -185,7 +182,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                     >
                         <Avatar
                             alt="Profile Image"
-                            src={formik.values.image_profile}
+                            src={formik.values.image_profile || authStore.user.image_profile}
                             sx={{
                                 width: isSmallScreen ? 90 : 125,
                                 height: isSmallScreen ? 90 : 125,
@@ -198,6 +195,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                             {!formik.values.image_profile &&
                                 `${authStore.user?.first_name?.[0] || ''}${authStore.user?.last_name?.[0] || ''}`}
                         </Avatar>
+
 
                         <Button
                             component="label"
@@ -390,7 +388,6 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                             </Box>
                         </Box>
                         <Box sx={{ mt: 2 }}>
-
                             <TextField
                                 label="Email"
                                 name="email"

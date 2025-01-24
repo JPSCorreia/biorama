@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserRequest extends FormRequest
 {
@@ -20,16 +21,17 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:15',
-            'nif' => 'required|string|max:9',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+            'phone' => 'required|string|max:20',
+            'nif' => 'required|string|max:20',
             'gender_id' => 'required|exists:genders,id',
-            'date_of_birth' => 'nullable|date',
-            'image_profile' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'date_of_birth' => 'required|date',
+            'image_link' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Se estiver a carregar imagens
         ];
     }
+
 
 
 
