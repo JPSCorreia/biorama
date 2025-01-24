@@ -1,8 +1,12 @@
-import {makeObservable, observable, action, runInAction} from "mobx";
-import {makePersistable} from "mobx-persist-store";
+import { makeObservable, observable, action, runInAction } from "mobx";
+import { makePersistable } from "mobx-persist-store";
 import axios from "axios";
 
 class VendorRegistrationStore {
+    // Observable state properties
+    isCompany = false; // Defines if the user will register a company
+    vendorFormValid = false; // Vendor form validation status
+    companyFormValid = false; // Company form validation status
     vendor = {
         user_id: "",
         first_name: "",
@@ -13,10 +17,7 @@ class VendorRegistrationStore {
         date_of_birth: "",
         image_profile: "",
         is_company: false,
-    }; // Informações do utilizador autenticado e que deseja ser vendedor
-    isCompany = false; // Define se o utilizador vai registar uma empresa
-    vendorFormValid = false; // Validação do formulário do utilizador
-
+    }; // Vendor data
     company = {
         name: "",
         nif: "",
@@ -27,9 +28,7 @@ class VendorRegistrationStore {
         postal_code: "",
         district: "",
         country: "",
-    }; // Dados da empresa, caso aplicável
-    companyFormValid = false; // Validação do formulário da empresa
-
+    }; // Company data, if applicable
     store = {
         name: "",
         phone: "",
@@ -37,13 +36,16 @@ class VendorRegistrationStore {
         description: "",
         rating: 0.0,
         coordinates: "",
-        store_images: []
-    }; // Dados da loja
-    storeFormValid = false; // Validação do formulário da loja
+        store_images: [],
+    }; // Store data
+    storeFormValid = false; // Store form validation status
 
-    products = []; // Lista de produtos
-    productsFormValid = false; // Validação do formulário dos produtos
+    products = []; // Products list
+    productsFormValid = false; // Products form validation status
 
+    /**
+     * Initializes the VendorRegistrationStore with MobX observables and persistence
+     */
     constructor() {
         makeObservable(this, {
             vendor: observable,
@@ -80,91 +82,86 @@ class VendorRegistrationStore {
             properties: ["vendor", "isCompany", "company", "store", "products"],
             storage: window.sessionStorage,
         });
-
     }
 
-    // Ação para inicializar o utilizador
+    // Action to initialize user
     initializeVendor(vendorData) {
         this.vendor = vendorData;
     }
 
-    // Ações para definir a validade dos formulários
+    // Actions to set form validation status
     setVendorFormValid(value) {
-        this.vendorFormValid = value
+        this.vendorFormValid = value;
     }
-
     setCompanyFormValid(value) {
-        this.companyFormValid = value
+        this.companyFormValid = value;
     }
-
     setStoreFormValid(value) {
-        this.storeFormValid = value
+        this.storeFormValid = value;
     }
-
     setProductFormValid(value) {
-        this.productsFormValid = value
+        this.productsFormValid = value;
     }
 
-    // Ação para atualizar os dados do utilizador
+    // Action to update user data
     updateVendor(data) {
         this.user = { ...this.user, ...data };
     }
 
-    // Ação para definir se é empresa
+    // Action to set company status
     setIsCompany(isCompany) {
         this.isCompany = isCompany;
-        this.vendor["is_company"] = isCompany; // Atualiza o valor no objeto de utilizador
+        this.vendor["is_company"] = isCompany; // Updates the value in the user object
         if (!isCompany) {
-            this.companyFormValid = false; // Redefine a validade do formulário de empresa
-            this.vendor["is_company"] = false; // Atualiza o valor no objeto de utilizador
+            this.companyFormValid = false; // Resets company form validation
+            this.vendor["is_company"] = false; // Updates the value in the user object
         }
     }
 
-
-    // Ação para atualizar os dados da empresa
+    // Action to update company data
     updateCompany(data) {
         if (this.vendor["is_company"]) {
-            this.company = {...this.company, ...data};
+            this.company = { ...this.company, ...data };
         }
     }
 
-    // Ação para atualizar os dados da loja
+    // Action to update store data
     updateStore(data) {
-        this.store = {...this.store, ...data};
+        this.store = { ...this.store, ...data };
     }
 
-    // Ação para adicionar um produto
+    // Action to add a product
     addProduct(product) {
         this.products.push(product);
     }
 
-    // Método para enviar os dados ao servidor
+    // Method to submit data to server
     async submit() {
         try {
-            if (!this.user || !this.store) throw new Error("Dados incompletos");
+            if (!this.user || !this.store) throw new Error("Incomplete data");
 
-            // 1. Atualizar o utilizador (incluindo isCompany e role)
+            // 1. Update user (including isCompany and role)
             await axios.post("/users/update", {
                 ...this.user,
                 isCompany: this.isCompany,
             });
 
-            // 2. Criar empresa, se aplicável
+            // 2. Create company if applicable
             if (this.isCompany && this.company) {
                 await axios.post("/companies", this.company);
             }
 
-            // 3. Criar loja
+            // 3. Create store
             const storeResponse = await axios.post("/stores", this.store);
 
-            // 4. Adicionar produtos
+            // 4. Add products
             if (this.products.length > 0) {
                 await axios.post(`/stores/${storeResponse.data.id}/products`, {
                     products: this.products,
                 });
             }
 
-            // Limpa a store após submissão bem-sucedida
+            // Clear store after successful submission
             runInAction(() => {
                 this.user = null;
                 this.isCompany = false;
@@ -175,7 +172,7 @@ class VendorRegistrationStore {
 
             return true;
         } catch (error) {
-            console.error("Erro ao submeter os dados:", error);
+            console.error("Error submitting data:", error);
             throw error;
         }
     }

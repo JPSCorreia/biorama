@@ -13,7 +13,7 @@ const Search = styled("div")(({ theme }) => ({
         backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
     display: "flex",
-    flexGrow: 1, // Ocupa todo o espaço restante
+    // flexGrow: 1, // Ocupa todo o espaço restante
     width: "100%",
 }));
 
@@ -45,7 +45,7 @@ const SearchBar = () => {
                 alignItems: "center",
                 flexGrow: 1, // Ocupa todo o espaço restante na navbar
                 justifyContent: "center",
-                width: "100%",
+                maxWidth: "600px !important",
                 marginTop: "4px",
                 marginLeft: { xs: 0, md: 2 }, // Ajusta a margem conforme necessário
             }}

@@ -1,12 +1,16 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import { homeAddressStore } from "./homeAddressStore.js";
 import axios from "axios";
 
 class AuthStore {
-    user = null;
-    isAuthenticated = false;
+    // Observable properties for user data and authentication status
+    user = null; // User data
+    isAuthenticated = false; // Authentication status
 
+    /**
+     * Initializes the AuthStore with MobX observables and persistence
+     */
     constructor() {
         makeObservable(this, {
             user: observable,
@@ -22,16 +26,26 @@ class AuthStore {
         });
     }
 
+    /**
+     * Updates authentication state and user data
+     * Also triggers address fetch if user is authenticated
+     * @param {Object} auth - Authentication object containing user data
+     */
     updateAuth(auth) {
         this.isAuthenticated = !!auth?.user;
         this.user = auth?.user || null;
         if (this.isAuthenticated) {
-            console.log(this.user);
-            homeAddressStore.addresses = homeAddressStore.fetchAddresses(); // Faz o fetch das informações do user se autenticado
+            homeAddressStore.addresses = homeAddressStore.fetchAddresses(); // Fetch user addresses if authenticated
         } else {
-            homeAddressStore.clearAddresses(); // Limpa moradas se não autenticado
+            homeAddressStore.clearAddresses(); // Clear addresses if not authenticated
         }
     }
+
+    /**
+     * Updates user profile data via API
+     * @param {Object} data - Updated user data to be submitted
+     * @returns {Promise<void>}
+     */
     submitDataUser = async (data) => {
         try {
             const response = await axios.post(`/editar-perfil/${this.user.id}`, data);
@@ -42,12 +56,14 @@ class AuthStore {
                 },
             });
             this.user = response.data.user;
-            console.log("User atualizado com sucesso", this.user);
         } catch (error) {
-            console.error("Erro ao atualizar o user:", error);
+            console.error("Error updating user:", error);
         }
     };
 
+    /**
+     * Clears authentication state and user data
+     */
     clearAuth() {
         this.isAuthenticated = false;
         this.user = null;

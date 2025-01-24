@@ -77,6 +77,7 @@ const ThemeSwitcher = observer(() => {
         >
             <FormControlLabel
                 // Prevents switch unintended interaction if on dashboard
+                sx={{ margin: "0 !important"}}
                 onClick={
                     usePage().url.startsWith("/dashboard")
                         ? undefined

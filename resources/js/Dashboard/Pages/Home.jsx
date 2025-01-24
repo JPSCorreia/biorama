@@ -1,6 +1,5 @@
-import {Box, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 import {VendorInformation} from "@/Pages/index.js";
-import {usePage} from "@inertiajs/react";
 
 const Home = () => {
     return (
