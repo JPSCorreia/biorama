@@ -24,7 +24,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
     const { auth } = usePage().props;
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const [isdisabled , setIsDisabled] = useState(true);
+    const [isDisabled , setIsDisabled] = useState(true);
 
     // Valores iniciais vindos da morada para edição
     const initialValues = {
@@ -99,21 +99,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
             comment: Yup.string().nullable()
                 .max(50, "O Comentário deve ter no máximo 50 caracteres")
             ,
-            is_primary: Yup.boolean().test(
-                "update-is-primary",
-                "Erro ao atualizar morada favorita",
-                async function (value) {
-                    if (!value) return true; // Não validar se is_primary for false
-
-                    try {
-                        await homeAddressStore.updatePrimaryAddress(this.options.context.addressId);
-                        return true;
-                    } catch (error) {
-                        console.error("Erro ao atualizar morada favorita:", error);
-                        return false;
-                    }
-                }
-            ),
+            is_primary: Yup.boolean().required("O campo é obrigatório")
         }),
         onSubmit: handleFormSubmit,
         context: {
@@ -220,7 +206,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             error={formik.touched.city && Boolean(formik.errors.city)}
                             helperText={formik.touched.city && formik.errors.city}
                             required
-                            isDisabled={isdisabled}
+                            disabled={isDisabled}
                             sx={{ width: "40%" }}
                         />
 
@@ -236,7 +222,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             error={formik.touched.number && Boolean(formik.errors.number)}
                             helperText={formik.touched.number && formik.errors.number}
                             required
-                            isDisabled={isdisabled}
+                            isabled={isDisabled}
                             sx={{ width: "40%" }}
                         />
                         <TextField
@@ -261,7 +247,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         error={formik.touched.street_address && Boolean(formik.errors.street_address)}
                         helperText={formik.touched.street_address && formik.errors.street_address}
                         required
-                        isDisabled={isdisabled}
+                        disabled={isDisabled}
                     />
                     <Box sx={{ display:'flex', flexDirection:'column', width: "100%",mt: 1, mb: 2 }}>
                         <Input

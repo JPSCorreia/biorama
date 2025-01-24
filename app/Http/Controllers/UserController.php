@@ -76,7 +76,12 @@ class UserController extends Controller
 
                 // Armazena apenas o caminho relativo no campo "image_profile"
                 $data['image_profile'] = 'storage/' . $photoPath;
+            }
 
+            // Verifica se o campo `image_profile` está presente no request
+            if (!isset($data['image_profile']) && $user->image_profile) {
+                // Mantém o valor atual se nenhum novo ficheiro ou string foi enviado
+                $data['image_profile'] = $user->image_profile;
             }
 
             // Atualiza o perfil do utilizador
@@ -96,6 +101,7 @@ class UserController extends Controller
             return back()->withErrors(['Erro ao atualizar perfil.'])->withInput();
         }
     }
+
 
 
 

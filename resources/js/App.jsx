@@ -11,6 +11,7 @@ const App = observer(({ children }) => {
 
     // Get media queries
     const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <>
@@ -55,7 +56,7 @@ const App = observer(({ children }) => {
                             }}
                         >
                             <Navbar />
-                            <Box sx={{ width: "80%" }}>{children}</Box>
+                            <Box sx={{ width: isSmallScreen ? "90%" : "80%" }}>{children}</Box>
                         </Container>
                         <Container
                             sx={{

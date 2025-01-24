@@ -14,6 +14,7 @@ class HomeAddress extends Model
         'user_id',
         'address_name',
         'phone_number',
+        'number',
         'street_address',
         'postal_code',
         'city',
