@@ -8,37 +8,24 @@ import {
     useTheme,
     useMediaQuery,
     Container,
-    TextField,
     IconButton,
 } from "@mui/material";
-import { observer } from "mobx-react";
-import { usePage } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { Edit as EditIcon, Save as SaveIcon } from "@mui/icons-material";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
+import {observer} from "mobx-react";
+import {usePage} from "@inertiajs/react";
+import {useEffect, useState} from "react";
+import {Edit as EditIcon} from "@mui/icons-material";
 import VendorNameEdtitingForm from "@/Components/VendorNameEdtitingForm.jsx";
-import {VendorInfoEditingForm} from "@/Components/index.js";
-import { vendorStore } from "../Stores";
+import {VendorCompanyEditingForm, VendorInfoEditingForm} from "@/Components/index.js";
+import {vendorStore} from "../Stores";
 
 const VendorInformation = observer(() => {
-    const{genders, user} = usePage().props;
-    console.log("Gender", genders);
-    console.log("UsePage", usePage());
-    // Retrieve user data from Inertia props
-
+    const {genders, auth} = usePage().props;
 
     // Load vendor data into the MobX store when component mounts or user changes
-    useEffect(() => {
-        if (user.vendor) {
-            vendorStore.setVendorData(user.vendor);
-        }
-    }, [user.vendor]);
-
-    console.log("Vendor", vendorStore.currentVendor);
-
-    // Get the current vendor data from the MobX store
+    vendorStore.setVendorData(auth.user.vendor);
     const vendor = vendorStore.currentVendor;
+    // Get the current vendor data from the MobX store
+
 
     // Check if the authenticated user is associated with a company
     const isCompany = vendor.is_company;
@@ -46,10 +33,10 @@ const VendorInformation = observer(() => {
     // State to control which fields are currently being edited
     const [isEditing, setIsEditing] = useState({
         vendorName: false,
-        vendorPersonalInfo:false,
-        copanyInfo:false,
-        vendorPersonaAndVendorlInfo: false,
+        vendorPersonalInfo: false,
+        companyInfo: false,
     });
+
 
     // Function to toggle the edit state for a specific field
     const handleEditToggle = (field) => {
@@ -61,7 +48,7 @@ const VendorInformation = observer(() => {
 
 
     // Function to handle form submission for vendor's first and last name
-    const handleNameSubmit = async (values, { setSubmitting }) => {
+    const handleNameSubmit = async (values, {setSubmitting}) => {
         try {
             // Update vendor's first and last name
             await vendorStore.updateVendorName(values);
@@ -77,61 +64,28 @@ const VendorInformation = observer(() => {
 
     // Ação para submeter o formns das restantes informalçoes
     const handleInfoSubmit = async (values) => {
-        console.log("Submissão iniciada com valores:", values);
         try {
             // Atualiza os nomes do vendor
             await vendorStore.updateVendorInfo(values);
             // Alterna o estado de edição
             handleEditToggle("vendorPersonalInfo");
-            console.log("Passou o Front end:");
         } catch (error) {
             console.error("Erro ao atualizar informações do vendor no Vendor info:", error);
         }
 
     };
 
+    const handleCompanyInfoSubmit = async (values) => {
+        try {
+            // Atualiza os nomes do vendor
+            await vendorStore.updateCompanyAndRelations(values);
+            // Alterna o estado de edição
+            handleEditToggle("companyInfo");
+        } catch (error) {
+            console.error("Erro ao atualizar informações do Empresa no Vendorinfo:", error);
+        }
+    };
 
-
-    //TODO: not being used?
-    const companyvalidationSchema = Yup.object({
-        name: Yup.string()
-            .max(100, "O Primeiro nome não pode ter mais de 100 caracteres.")
-            .required("Primeiro nome é obrigatorio."),
-        email: Yup.string()
-            .email("Insira um email valido")
-            .required("O email é obrigatorio"),
-        website: Yup.string().required("O website é obrigatorio"),
-        nif: Yup.string()
-            .max(20, "Nif Pode ser mais que 20 caracteres.")
-            .required("Nif é Obrigatorio"),
-        phone: Yup.string()
-            .min(9, "o numero não pode ser inferior a 9 caracteres.")
-            .required("Numero é obrigatorio"),
-        founded_at: Yup.date()
-            .nullable()
-            .required("A data de criação da Empresa é obrigatoria"),
-        sector: Yup.string()
-            .max(100, "O setornão pode ter mais de 100 caracteres.")
-            .required("O sector nome é obrigatorio."),
-        street: Yup.string()
-            .max(100, "O nome da ruanão pode ter mais de 100 caracteres.")
-            .required("O nome da rua é obrigatorio."),
-        number: Yup.string()
-            .max(
-                100,
-                "O numero e o andar  não podem ter mais de 100 caracteres.",
-            )
-            .required("O numero e o andar obrigatorio."),
-        postal_code: Yup.string()
-            .max(100, "O codigo Postal não pode ter mais de 100 caracteres.")
-            .required("O codigo Postal é obrigatorio."),
-        district: Yup.string()
-            .max(100, "O distrito não pode ter mais de 100 caracteres.")
-            .required("O distrito Postal é obrigatorio."),
-        country: Yup.string()
-            .max(100, "O Pais não pode ter mais de 100 caracteres.")
-            .required("O Pais Postal é obrigatorio."),
-    });
 
     // Access theme properties using Material UI's theme hook
     const theme = useTheme();
@@ -184,8 +138,8 @@ const VendorInformation = observer(() => {
                     {/* Editable name section */}
                     {isEditing.vendorName ? (
                         <VendorNameEdtitingForm
-                            handleNameSubmit= {handleNameSubmit}
-                            vendor = {vendor}
+                            handleNameSubmit={handleNameSubmit}
+                            vendor={vendor}
                         />
                     ) : (
                         <Box
@@ -210,7 +164,7 @@ const VendorInformation = observer(() => {
                                     onClick={() =>
                                         handleEditToggle("vendorName")
                                     }
-                                    sx={{ ml: 1 }}
+                                    sx={{ml: 1}}
                                 >
                                     <EditIcon
                                         sx={{
@@ -223,7 +177,7 @@ const VendorInformation = observer(() => {
                     )}
                 </Box>
 
-                <Divider />
+                <Divider/>
 
                 <Box
                     sx={{
@@ -240,21 +194,55 @@ const VendorInformation = observer(() => {
                         width: "100%"
                     }}>
                         {isEditing.vendorPersonalInfo ? (
-                        <VendorInfoEditingForm
-                            handleInfoSubmit={handleInfoSubmit}
-                            vendor={vendor}
-                            isSmallScreen={isSmallScreen}
-                            genders = {genders}
-                        />
+                            <VendorInfoEditingForm
+                                handleInfoSubmit={handleInfoSubmit}
+                                vendor={vendor}
+                                isSmallScreen={isSmallScreen}
+                                genders={genders}
+                            />
 
                         ) : (
                             <Container sx={{marginTop: "2%", marginLeft: "0%"}}>
-                                <Typography sx={{
-                                    marginBottom: 1,
-                                    fontSize: "2rem",
-                                    fontWeight: "bold"
+                                <Box sx={{display: "flex", width: "100%", gap: 10}}>
+                                    <Box>
+                                        <Typography
+                                            sx={{
+                                                marginBottom: 1,
+                                                fontSize: "2rem",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            Dados Pessoais
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{m: "auto 0 auto 0"}}>
 
-                                }}> Dados Pessoais</Typography>
+                                        {isSmallScreen ? (
+                                            // Apenas o ícone aparece em telas pequenas
+                                            <IconButton onClick={() => handleEditToggle("vendorPersonalInfo")}>
+                                                <EditIcon sx={{
+                                                    color: theme.palette.primary.main,
+                                                }}/>
+                                            </IconButton>
+
+                                        ) : (
+                                            <Button
+                                                onClick={() => handleEditToggle("vendorPersonalInfo")}
+                                                component="label"
+                                                variant="outlined"
+                                                sx={{
+                                                    borderRadius: "5px",
+                                                }}
+                                            >
+
+                                                <Typography sx={{display: "flex", alignItems: "center"}}>
+                                                    <EditIcon sx={{marginRight: 1}}/>
+                                                    Editar
+                                                </Typography>
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </Box>
                                 <Box sx={{marginBottom: "3%", p: 2}}>
                                     {/* Linha 1 - Email & Telefone */}
                                     <Box sx={{
@@ -310,163 +298,210 @@ const VendorInformation = observer(() => {
                                         </Box>
                                     </Box>
                                 </Box>
-                                {/* Botão Editar */}
-                                <Box sx={{display: "flex", justifyContent: "flex-end"}}>
-                                    <Button
-                                        onClick={() => handleEditToggle("vendorPersonalInfo")}
-                                        component="label"
-                                        variant="outlined"
-                                        sx={{
-                                            borderRadius: "5px",
-                                        }}
-                                    >
-                                        <Typography sx={{display: "flex", alignItems: "center"}}>
-                                            <EditIcon sx={{marginRight: 1}}/>
-                                            Editar
-                                        </Typography>
-                                    </Button>
-                                </Box>
                             </Container>
                         )}
 
                         {isCompany && (
-                            <Container sx={{ marginTop: "2%" }}>
-                                <Typography
-                                    sx={{
-                                        marginBottom: 1,
-                                        fontSize: "2rem",
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    Dados de Empresa
-                                </Typography>
-                                <Box sx={{ marginBottom: "3%", p: 2 }}>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: isSmallScreen
-                                                ? "column"
-                                                : "row",
-                                            flexWrap: "wrap",
-                                            gap: 2,
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                Nome da Empresa:
+                            isEditing.companyInfo ? (
+                                <VendorCompanyEditingForm
+                                    vendor={vendor}
+                                    handleCompanyInfoSubmit={handleCompanyInfoSubmit}
+                                />
+                            ) : (
+                                <Container sx={{marginTop: "2%"}}>
+
+                                    <Box sx={{display: "flex", width: "100%", gap: 10}}>
+                                        <Box>
+                                            <Typography
+                                                sx={{
+                                                    marginBottom: 1,
+                                                    fontSize: "2rem",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Dados de Empresa
                                             </Typography>
-                                            <Typography>
-                                                {user.vendor?.company.name}
-                                            </Typography>
+                                        </Box>
+                                        <Box sx={{m: "auto 0 auto 0"}}>
+                                            {isSmallScreen ? (
+                                                // Apenas o ícone aparece em telas pequenas
+                                                <IconButton onClick={() => handleEditToggle("companyInfo")}>
+                                                    <EditIcon sx={{
+                                                        color: theme.palette.primary.main,
+                                                    }}/>
+                                                </IconButton>
+
+                                            ) : (
+                                                <Button
+                                                    onClick={() => handleEditToggle("companyInfo")}
+                                                    component="label"
+                                                    variant="outlined"
+                                                    sx={{
+                                                        borderRadius: "5px",
+                                                    }}
+                                                >
+
+                                                    <Typography sx={{display: "flex", alignItems: "center"}}>
+                                                        <EditIcon sx={{marginRight: 1}}/>
+                                                        Editar
+                                                    </Typography>
+                                                </Button>
+                                            )}
                                         </Box>
                                     </Box>
 
-                                    {/* Email & Telephone */}
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: isSmallScreen
-                                                ? "column"
-                                                : "row",
-                                            flexWrap: "wrap",
-                                            gap: 2,
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                Email:
-                                            </Typography>
-                                            <Typography>
-                                                {
-                                                    user.vendor.company.contacts
-                                                        .email
-                                                }
-                                            </Typography>
+                                    <Box sx={{marginBottom: "3%", p: 2}}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: isSmallScreen
+                                                    ? "column"
+                                                    : "row",
+                                                flexWrap: "wrap",
+                                                gap: 2,
+                                                mb: 3,
+                                            }}
+                                        >
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Nome da Empresa:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor?.company.name}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Site:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor?.company.contacts.website}
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                Telefone:
-                                            </Typography>
-                                            <Typography>
-                                                {
-                                                    user.vendor.company.contacts
-                                                        .phone
-                                                }
-                                            </Typography>
-                                        </Box>
-                                    </Box>
 
-                                    {/* NIF & Sector */}
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: isSmallScreen
-                                                ? "column"
-                                                : "row",
-                                            flexWrap: "wrap",
-                                            gap: 2,
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                NIF:
-                                            </Typography>
-                                            <Typography>
-                                                {user.vendor.company.nif}
-                                            </Typography>
+                                        {/* Email & Telephone */}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: isSmallScreen
+                                                    ? "column"
+                                                    : "row",
+                                                flexWrap: "wrap",
+                                                gap: 2,
+                                                mb: 3,
+                                            }}
+                                        >
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Email:
+                                                </Typography>
+                                                <Typography>
+                                                    {
+                                                        vendor.company.contacts
+                                                            .email
+                                                    }
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Telefone:
+                                                </Typography>
+                                                <Typography>
+                                                    {
+                                                        vendor.company.contacts
+                                                            .phone
+                                                    }
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                Sector
-                                            </Typography>
-                                            <Typography>
-                                                {user.vendor.company.sector}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
 
-                                    {/* Address & Postal Code */}
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: isSmallScreen
-                                                ? "column"
-                                                : "row",
-                                            flexWrap: "wrap",
-                                            gap: 2,
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                Morada:
-                                            </Typography>
-                                            <Typography>
-                                                {user.vendor.company.addresses
-                                                    .street +
-                                                    " " +
-                                                    user.vendor.company
-                                                        .addresses.number}
-                                            </Typography>
+                                        {/* NIF & Sector */}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: isSmallScreen
+                                                    ? "column"
+                                                    : "row",
+                                                flexWrap: "wrap",
+                                                gap: 2,
+                                                mb: 3,
+                                            }}
+                                        >
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    NIF:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor.company.nif}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Sector
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor.company.sector}
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                        <Box sx={{ flex: "1 1 45%" }}>
-                                            <Typography fontWeight="bold">
-                                                Cod. Postal & Cidade:
-                                            </Typography>
-                                            <Typography>
-                                                {user.vendor.company.addresses
-                                                    .postal_code +
-                                                    " " +
-                                                    user.vendor.company
-                                                        .addresses.district}
-                                            </Typography>
+
+                                        {/* Address & Postal Code */}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: isSmallScreen
+                                                    ? "column"
+                                                    : "row",
+                                                flexWrap: "wrap",
+                                                gap: 2,
+                                                mb: 3,
+                                            }}
+                                        >
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Morada:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor.company.addresses
+                                                            .street +
+                                                        " " +
+                                                        vendor.company
+                                                            .addresses.number}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Cod. Postal & Cidade:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor.company.addresses
+                                                            .postal_code +
+                                                        " " +
+                                                        vendor.company
+                                                            .addresses.district}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Data de Fundação da Empresa:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor.company.founded_at}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{flex: "1 1 45%"}}>
+                                                <Typography fontWeight="bold">
+                                                    Discrição da Enpresa:
+                                                </Typography>
+                                                <Typography>
+                                                    {vendor.company.description}
+                                                </Typography>
+                                            </Box>
                                         </Box>
                                     </Box>
-                                </Box>
-                            </Container>
+                                </Container>
+                            )
                         )}
                     </Box>
                 </Box>

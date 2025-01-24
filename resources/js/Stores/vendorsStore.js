@@ -1,6 +1,6 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import {action, makeObservable, observable, runInAction} from "mobx";
 import axios from "axios";
-import { makePersistable } from "mobx-persist-store";
+import {makePersistable} from "mobx-persist-store";
 
 class VendorStore {
     // Atributos da classe
@@ -20,7 +20,7 @@ class VendorStore {
             companyAddresses: observable,
             setVendorData: action,
             updateVendorName: action,
-            updateVendorInfo:action,
+            updateVendorInfo: action,
             updateCompanyAndRelations: action,
             getVendorId: action,
             clearVendorData: action,
@@ -35,21 +35,18 @@ class VendorStore {
 
     // Ação para definir os dados iniciais do vendor recebidos do controlador
     setVendorData(vendorData) {
-        console.log("Dados do vendor recebidos na store:", vendorData);
         runInAction(() => {
-            this.currentVendor = vendorData;
+            if (!this.currentVendor) {
+                this.currentVendor = vendorData;
+            }
             this.companyDetails = vendorData.company;
-            this.companyContacts = vendorData.company.addresses;
-            this.companyAddresses = vendorData.company.contacts;
+            this.companyContacts = vendorData.company.contacts;
+            this.companyAddresses = vendorData.company.addresses;
         });
-        console.log("Vendor depois de atualizado", this.currentVendor);
-        console.log("Dados do vendor inicializados:", vendorData);
     }
 
     // Função para recuperar o ID do Vendor
     getVendorId() {
-        console.log("Current vendor", this.currentVendor);
-        console.log("Current vendor id:  ", this.currentVendor);
         return this.currentVendor?.id || null;
     }
 
@@ -57,7 +54,6 @@ class VendorStore {
     // Função para atualizar o nome do Vendor
     updateVendorName = async (updatedData) => {
         const vendorId = this.getVendorId();
-
         if (!vendorId) {
             console.error("Erro: ID do Vendor não encontrado.");
             return;
@@ -83,46 +79,96 @@ class VendorStore {
     //Função para actulizar restantes infos do Vendor
     updateVendorInfo = async (updatedData) => {
         const vendorId = this.getVendorId();
-
         if (!vendorId) {
             console.error("ID do Vendor não encontrado!");
             return;
         }
-        console.log("Vendor store antes de actualizar:", this.currentVendor)
-
+        console.log("Vendor store antes de atualizar:", this.currentVendor);
         try {
             const response = await axios.patch(`/dashboard/vendor/info/${vendorId}`, updatedData);
-            this.currentVendor = response.data.vendor;
-            console.log("Dados do Vendor atualizados com sucesso:", response.data);
+
+            // Atualizar as propriedades do currentVendor individualmente
+            runInAction(() => {
+                Object.keys(response.data.vendor).forEach((key) => {
+                    this.currentVendor[key] = response.data.vendor[key];
+                });
+            });
+
+            console.log("Vendor atualizado com sucesso:", response.data);
+            console.log("Vendor atualizado localmente:", this.currentVendor);
         } catch (error) {
             console.error("Erro ao atualizar os dados do Vendor!", error);
         }
     };
 
-
-    // Função para atualizar os dados da Company e suas relações (contacts e addresses)
     updateCompanyAndRelations = async (updatedData) => {
         if (!this.companyDetails?.id) {
-            console.error("Erro: ID da Company não encontrado.");
+            console.error("Erro: ID da empresa não encontrado!");
             return;
         }
 
         try {
-            const response = await axios.put(`/dashboard/company/${this.companyDetails.id}`, updatedData);
+            // Consolida os dados em um único payload
+            const payload = {
+                name: updatedData.name,
+                nif: updatedData.nif,
+                founded_at: updatedData.founded_at,
+                sector: updatedData.sector,
+                email: updatedData.email,
+                website: updatedData.website,
+                phone: updatedData.phone,
+                street: updatedData.street,
+                number: updatedData.number,
+                postal_code: updatedData.postal_code,
+                district: updatedData.district,
+                country: updatedData.country,
+                description: updatedData.description,
+            };
 
+            // Envia os dados para o backend
+            const response = await axios.put(`/dashboard/vendor/company/info/${this.companyDetails.id}`, payload);
+
+            // Atualizar os campos individuais na store
             runInAction(() => {
-                const { companyDetails, companyContacts, companyAddresses } = response.data;
+                const companyDetails = response.data.company;
+                const companyContacts = response.data.company.contacts;
+                const companyAddresses = response.data.company.addresses;
+                console.log("Responsedata:",  response.data);
+                console.log("Companycontacts:",companyAddresses );
 
-                this.companyDetails = companyDetails;
-                this.companyContacts = companyContacts || [];
-                this.companyAddresses = companyAddresses || [];
+                // Atualiza companyDetails
+                if (companyDetails) {
+                    if (companyDetails.name) this.currentVendor.company.name = companyDetails.name;
+                    if (companyDetails.nif) this.currentVendor.company.nif = companyDetails.nif;
+                    if (companyDetails.founded_at) this.currentVendor.company.founded_at = companyDetails.founded_at;
+                    if (companyDetails.sector) this.currentVendor.company.sector = companyDetails.sector;
+                    if (companyDetails.description) this.currentVendor.company.description = companyDetails.description;
+                }
+
+                // Atualiza companyContacts
+                if (companyContacts) {
+                    if (companyContacts.email) this.currentVendor.company.contacts.email = companyContacts.email;
+                    if (companyContacts.website) this.currentVendor.company.contacts.website = companyContacts.website;
+                    if (companyContacts.phone) this.currentVendor.company.contacts.phone = companyContacts.phone;
+                }
+
+                // Atualiza companyAddresses
+                if (companyAddresses) {
+                    if (companyAddresses.street) this.currentVendor.company.addresses.street = companyAddresses.street;
+                    if (companyAddresses.number) this.currentVendor.company.addresses.number = companyAddresses.number;
+                    if (companyAddresses.postal_code) this.currentVendor.company.addresses.postal_code = companyAddresses.postal_code;
+                    if (companyAddresses.district) this.currentVendor.company.addresses.district = companyAddresses.district;
+                    if (companyAddresses.country) this.currentVendor.company.addresses.country = companyAddresses.country;
+                }
             });
 
-            console.log("Informações da empresa e suas relações atualizadas com sucesso:", response.data);
+            console.log("Informações da empresa e suas relações atualizadas com sucesso!");
         } catch (error) {
             console.error("Erro ao atualizar informações da empresa e suas relações:", error);
         }
     };
+
+
 
     // Limpar dados do fornecedor atual
     clearVendorData() {
@@ -132,7 +178,6 @@ class VendorStore {
             this.companyContacts = [];
             this.companyAddresses = [];
         });
-        console.log("Dados do vendor limpos.");
     }
 }
 

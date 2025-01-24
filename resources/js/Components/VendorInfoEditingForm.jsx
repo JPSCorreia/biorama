@@ -20,7 +20,6 @@ import { observer } from "mobx-react";
 
 const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders }) => {
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     console.log("VendorInfoEditingForm", vendor.gender.id);
 

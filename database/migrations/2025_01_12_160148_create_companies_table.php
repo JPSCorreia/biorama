@@ -24,8 +24,6 @@ return new class extends Migration
             $table->string('sector')->nullable();
             $table->text('description')->nullable();
 
-
-
         });
     }
 

@@ -127,6 +127,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('vendor.update.name');
         Route::patch('/vendor/info/{vendor}', [DashboardController::class, 'updateVendorInfo'])
             ->name('vendor.update.info');
+        Route::put('/vendor/company/info/{company}', [DashboardController::class, 'updateCompanyInfo'])
+            ->name('vendor.update.company.info');
 
 
         Route::get('/analises', function () {

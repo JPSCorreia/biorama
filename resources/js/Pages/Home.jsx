@@ -24,7 +24,6 @@ const Home = observer(() => {
 
     // Get media queries
     const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
-
     useEffect(() => {
 
         // Reset alert store on navigation

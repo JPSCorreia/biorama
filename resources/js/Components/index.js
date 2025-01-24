@@ -24,6 +24,7 @@ export { default as Step3CreateProduct } from "./Step3CreateProduct";
 export { default as ThemeSwitcher } from "./ThemeSwitcher";
 export {default as VendorNameEditingForm} from "./VendorNameEdtitingForm.jsx";
 export {default as VendorInfoEditingForm} from "./VendorInfoEditingForm.jsx";
+export {default as VendorCompanyEditingForm} from "./VendorCompanyEditingForm.jsx";
 export {default as AddProductCreate} from "./AddProductCreate.jsx";
 export {default as CreateProductModal} from "./CreateProductModal.jsx";
 export {default as ImageUpload} from "./ImageUpload.jsx";
