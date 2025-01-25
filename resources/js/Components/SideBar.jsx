@@ -7,7 +7,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { authStore } from "@/Stores";
 
-const Sidebar = () => {
+const SideBar = () => {
     const menuItems = [
         { text: "Dados Pessoais", icon: <AccountCircleIcon />, color: "primary.main" },
         { text: "Encomendas", icon: <ShoppingCartIcon />, color: "secondary.main" },
@@ -19,7 +19,7 @@ const Sidebar = () => {
     return (
         <Box
             sx={{
-                width: "240px", // Largura fixa da sidebar
+                width: "240px", // Largura fixa da SideBar
                 bgcolor: "#f5f5f5", // Fundo cinza claro
                 boxShadow: "2px 0 5px rgba(0,0,0,0.1)", // Sombra para destacar
                 display: "flex",
@@ -51,4 +51,4 @@ const Sidebar = () => {
     );
 };
 
-export default Sidebar;
+export default SideBar;

@@ -18,7 +18,7 @@ import AddressCard from "./AddressCard.jsx";
 import ProfileEditModal from "./ProfileEditModal.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import Sidebar from "./Sidebar.jsx";
+import SideBar from "./SideBar.jsx";
 import { useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
