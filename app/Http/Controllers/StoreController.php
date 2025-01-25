@@ -134,7 +134,9 @@ class StoreController extends Controller
         // Get the vendor
         $vendor = Vendor::where('id', $store->vendor_id)->first();
 
-        $products = StoreProduct::where('store_id', $id)->get();
+        // $products = StoreProduct::where('store_id', $id)->get();
+
+        $products = $store->load('products');
 
         // Format for JSON compatibility
         $formattedStore = [

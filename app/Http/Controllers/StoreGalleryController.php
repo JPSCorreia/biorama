@@ -17,7 +17,6 @@ class StoreGalleryController extends Controller
         $validated = $request->validate([
             'store_id' => 'required|exists:stores,id',
             'image_link' => 'required|url',
-            'image_name' => 'required|string|max:100',
         ]);
 
         $storeGallery = StoreGallery::create($validated);
@@ -33,7 +32,6 @@ class StoreGalleryController extends Controller
     {
         $validated = $request->validate([
             'image_link' => 'sometimes|url',
-            'image_name' => 'sometimes|string|max:100',
         ]);
 
         $storeGallery->update($validated);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductGallery;
 
 class Product extends Model
 {
@@ -11,8 +12,11 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'image_link',
+        'description',
         'sold_at_unit',
+        'price',
+        'discount',
+        'stock'
     ];
 
     public function categories()
@@ -29,6 +33,6 @@ class Product extends Model
 
     public function photos()
     {
-        return $this->hasMany(ProductPhoto::class);
+        return $this->hasMany(ProductGallery::class);
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('sold_at_unit')->default(false);
             $table->decimal('price', 8, 2);
             $table->decimal('discount', 8, 2)->default(0.0);
+            $table->integer('stock')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

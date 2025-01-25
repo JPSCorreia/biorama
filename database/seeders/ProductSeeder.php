@@ -27,7 +27,6 @@ class ProductSeeder extends Seeder
                 StoreProduct::create([
                     'store_id' => $store->id,
                     'product_id' => $product->id,
-                    'stock' => rand(1, 100),
                 ]);
                 ProductGallery::factory(3)->create([
                     'product_id' => $product->id,

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('statuses_id')->constrained('statuses');
-
             $table->string('street_name');
             $table->string('city');
             $table->string('postal_code');

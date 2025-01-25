@@ -18,10 +18,6 @@ class StoreProductFactory extends Factory
         return [
             'store_id' => $store_id,
             'product_id' => $product_id,
-            'description' => $this->faker->sentence(),
-            'price' => $this->faker->randomFloat(2, 1, 100),
-            'discount' => $this->faker->randomFloat(2, 0, 0.5),
-            'stock' => $this->faker->numberBetween(0, 100),
             'created_at' => now(),
             'updated_at' => now(),
         ];

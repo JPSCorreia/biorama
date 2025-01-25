@@ -52,11 +52,12 @@ class StoreSeeder extends Seeder
             ]);
 
             foreach ($products as $product) {
-                StoreProduct::factory()->count(5)->create([
+                StoreProduct::firstOrCreate([
                     'store_id' => $store->id,
                     'product_id' => $product->id,
                 ]);
             }
+
         }
 
 
