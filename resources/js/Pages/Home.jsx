@@ -8,14 +8,13 @@ import {
     useTheme,
     useMediaQuery,
 } from "@mui/material";
-import { HomeMap, NearbyStores } from "../Components";
+import { HomeMap, NearbyStores, AlertBox } from "../Components";
 import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { alertStore } from "../Stores";
 
 const Home = observer(() => {
-
     // Get authentication and flash from page props
     const { auth, flash = {} } = usePage().props;
 
@@ -25,7 +24,6 @@ const Home = observer(() => {
     // Get media queries
     const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
     useEffect(() => {
-
         // Reset alert store on navigation
         const handleNavigate = () => {
             alertStore.reset();
@@ -33,7 +31,6 @@ const Home = observer(() => {
 
         // Add navigation event listener
         if (typeof router?.on === "function") {
-
             router.on("navigate", handleNavigate);
 
             return () => {
@@ -44,41 +41,6 @@ const Home = observer(() => {
             };
         }
     }, []);
-
-    useEffect(() => {
-
-        // Set alert based on flash message
-        if (flash?.message && flash.message !== alertStore.lastMessage) {
-
-            // Clear timers
-            alertStore.clearTimers();
-
-            // Set alert timeout
-            setTimeout(() => {
-
-                alertStore.setAlert(flash.message, flash.type || "success");
-
-                // Set timer to hide alert after 3 seconds
-                const hideTimer = setTimeout(() => {
-                    alertStore.hideAlert();
-                }, 3000);
-                alertStore.addTimer(hideTimer);
-
-                // Set timer to clear alert after 3.5 seconds
-                const clearTimer = setTimeout(() => {
-                    alertStore.clearAlert();
-                }, 3500);
-                alertStore.addTimer(clearTimer);
-
-            }, 150);
-        }
-
-        return () => {
-
-            // Clear timers on unmount
-            alertStore.clearTimers();
-        };
-    }, [flash?.message]);
 
     return (
         <Container
@@ -91,32 +53,7 @@ const Home = observer(() => {
             }}
         >
             {/* Alert */}
-            {alertStore.message ? (
-                <Fade
-                    in={alertStore.show}
-                    timeout={{
-                        enter: 150,
-                        exit: 500,
-                    }}
-                    unmountOnExit
-                >
-                    <Alert
-                        severity={alertStore.severity}
-                        variant="filled"
-                        sx={{
-                            mb: 2,
-                            height: "48px",
-                            width: "100%",
-                            maxWidth: "470px",
-                            alignSelf: "center",
-                        }}
-                    >
-                        {alertStore.message}
-                    </Alert>
-                </Fade>
-            ) : (
-                <Box sx={{ mb: 2, height: "48px" }} />
-            )}
+            <AlertBox />
 
             {/* Banner */}
             <Box

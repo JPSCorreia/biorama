@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Models\StoreGallery;
 
 class StoreController extends Controller
 {
@@ -101,6 +103,52 @@ class StoreController extends Controller
 
     }
 
+
+    public function showStore($id)
+    {
+        $store = Store::selectRaw("
+                id,
+                vendor_id,
+                name,
+                phone_number,
+                email,
+                description,
+                rating,
+                created_at,
+                updated_at,
+                ST_X(coordinates) AS longitude,
+                ST_Y(coordinates) AS latitude
+            ")
+            ->where('id', $id)
+            ->first();
+
+        if (!$store) {
+            abort(404, 'Loja não encontrada');
+        }
+
+        // Buscar a imagem da galeria associada à loja (a primeira imagem disponível)
+        $storeImage = StoreGallery::where('store_id', $id)->first();
+
+        // Formatar os dados da loja para garantir compatibilidade JSON
+        $formattedStore = [
+            'id' => $store->id,
+            'vendor_id' => $store->vendor_id,
+            'name' => $store->name,
+            'phone_number' => $store->phone_number,
+            'email' => $store->email,
+            'description' => mb_convert_encoding($store->description, 'UTF-8', 'ISO-8859-1'),
+            'rating' => $store->rating,
+            'created_at' => $store->created_at,
+            'updated_at' => $store->updated_at,
+            'longitude' => $store->longitude,
+            'latitude' => $store->latitude,
+            'image_link' => $storeImage ? $storeImage->image_link : null, // Definir imagem se existir
+        ];
+
+        return Inertia::render('Store', [
+            'store' => $formattedStore,
+        ]);
+    }
 
 
 }

@@ -7,6 +7,7 @@ use App\Models\StoreAddress;
 use App\Models\StoreGallery;
 use App\Models\StoreProduct;
 use App\Models\StoreReview;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class StoreSeeder extends Seeder
@@ -16,22 +17,21 @@ class StoreSeeder extends Seeder
      */
     public function run()
     {
+
+        $mockImagePath = asset('storage/mock_images/stores/store-1.png'); // Caminho da imagem de teste
+
         // Cria 20 lojas
         $stores = Store::factory()->count(20)->create();
         $products = StoreProduct::all();
 
         foreach ($stores as $store) {
-            // Cria 2 endereços para cada loja
-            StoreAddress::factory()->count(2)->create([
+            StoreAddress::factory()->create([
                 'store_id' => $store->id,
             ]);
-
-            // Cria 2 galerias de imagens para cada loja
-            StoreGallery::factory()->count(10)->create([
+            StoreGallery::factory()->count(5)->create([
                 'store_id' => $store->id,
+                'image_link' => $mockImagePath,
             ]);
-
-            // Cria 5 reviews para cada loja
             StoreReview::factory()->count(5)->create([
                 'store_id' => $store->id,
             ]);
@@ -43,6 +43,7 @@ class StoreSeeder extends Seeder
                 'product_id' => $product->id,
             ]);
         }
-    }
-}
 
+    }
+
+}
