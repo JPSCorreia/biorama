@@ -88,8 +88,8 @@ const ProfileInformation = observer(() => {
 
                 }}
             >
-                {/* Sidebar */}
-                <Sidebar
+                {/* SideBar */}
+                <SideBar
                 />
             </Box>
             <Paper
