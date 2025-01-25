@@ -17,6 +17,9 @@ class StoreSeeder extends Seeder
      */
     public function run()
     {
+
+        $mockImagePath = asset('storage/mock_images/stores/store-1.png'); // Caminho da imagem de teste
+
         $stores = Store::factory()->count(20)->create();
         $products = StoreProduct::all();
 
@@ -26,6 +29,7 @@ class StoreSeeder extends Seeder
             ]);
             StoreGallery::factory()->count(5)->create([
                 'store_id' => $store->id,
+                'image_link' => $mockImagePath,
             ]);
             StoreReview::factory()->count(5)->create([
                 'store_id' => $store->id,
