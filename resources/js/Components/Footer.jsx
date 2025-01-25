@@ -3,7 +3,6 @@ import {
     Facebook as FacebookIcon,
     Twitter as TwitterIcon,
     Instagram as InstagramIcon,
-    LinkedIn as LinkedInIcon,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 
@@ -41,9 +40,6 @@ const Footer = () => {
                         </IconButton>
                         <IconButton href="#" sx={{ color: "footer.text" }}>
                             <InstagramIcon />
-                        </IconButton>
-                        <IconButton href="#" sx={{ color: "footer.text" }}>
-                            <LinkedInIcon />
                         </IconButton>
                     </Box>
             </Box>

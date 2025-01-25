@@ -1,35 +1,21 @@
-import {makeObservable, observable, runInAction} from "mobx";
-import {makePersistable} from "mobx-persist-store";
+import {action, makeObservable, observable, runInAction} from "mobx";
 
-class ShopStore{
-    stores = [];
-    currentStore = null;
+class ShopStore {
+    stores = []; // Lista de lojas
 
     constructor() {
         makeObservable(this, {
-            stores: observable,
-            currentStore:observable,
-        });
-
-        makePersistable(this, {
-            name:"shopStore",
-            properties:["stores", "currentStore"],
-            storage: window.sessionStorage,
+            stores: observable, // Tornar observável
+            setStoreData: action, // Ação para atualizar as lojas
         });
     }
-    setStoreData(storeData){
+
+    // Define os dados das lojas
+    setStoreData(storeData) {
         runInAction(() => {
-            if (!this.currentStore){
-                this.currentStore = storeData
-            }
-        })
-
-    }
-    clearStoreData(){
-        runInAction(() =>{
-           this.stores =[];
-           this.currentStore = null;
+            this.stores = storeData; // Atualiza a lista de lojas
         });
     }
 }
+
 export const shopStore = new ShopStore();

@@ -52,28 +52,31 @@ Route::get('/carrinho', fn () => Inertia::render('Cart'))->name('cart');
 // Search results page
 Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa');
 
+
+// Route::get('/loja/{id}', function ($id) {
+
+//     // Mock store data (should be replaced with database data)
+//     $stores = [
+//         ['id' => 1, 'name' => 'Loja Fictícia 1', 'description' => 'Produtos locais e orgânicos'],
+//         ['id' => 2, 'name' => 'Loja Fictícia 2', 'description' => 'Produtos artesanais'],
+//         ['id' => 3, 'name' => 'Loja Fictícia 3', 'description' => 'Alimentos frescos e sustentáveis'],
+//         ['id' => 4, 'name' => 'Loja Fictícia 4', 'description' => 'Frutas e vegetais frescos'],
+//         ['id' => 5, 'name' => 'Loja Fictícia 5', 'description' => 'Produtos artesanais de alta qualidade'],
+//     ];
+//     $store = collect($stores)->firstWhere('id', $id);
+
+//     if (!$store) {
+//         abort(404, 'Store not found');
+//     }
+
+//     return Inertia::render('Store', [
+//         'store' => $store
+//     ]);
+
+// })->name('store');
+
 // Individual store page
-Route::get('/loja/{id}', function ($id) {
-
-    // Mock store data (should be replaced with database data)
-    $stores = [
-        ['id' => 1, 'name' => 'Loja Fictícia 1', 'description' => 'Produtos locais e orgânicos'],
-        ['id' => 2, 'name' => 'Loja Fictícia 2', 'description' => 'Produtos artesanais'],
-        ['id' => 3, 'name' => 'Loja Fictícia 3', 'description' => 'Alimentos frescos e sustentáveis'],
-        ['id' => 4, 'name' => 'Loja Fictícia 4', 'description' => 'Frutas e vegetais frescos'],
-        ['id' => 5, 'name' => 'Loja Fictícia 5', 'description' => 'Produtos artesanais de alta qualidade'],
-    ];
-    $store = collect($stores)->firstWhere('id', $id);
-
-    if (!$store) {
-        abort(404, 'Store not found');
-    }
-
-    return Inertia::render('Store', [
-        'store' => $store
-    ]);
-
-})->name('store');
+Route::get('/loja/{id}', [StoreController::class, 'showStore'])->name('store.show');
 
 // Guest routes (only accessible when not authenticated)
 Route::middleware('guest')->group(function () {

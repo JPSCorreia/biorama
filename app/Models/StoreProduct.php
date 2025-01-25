@@ -12,10 +12,6 @@ class StoreProduct extends Model
     protected $fillable = [
         'store_id',
         'product_id',
-        'description',
-        'price',
-        'discount',
-        'stock',
     ];
 
     public function store()

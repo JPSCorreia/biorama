@@ -15,7 +15,6 @@ return new class extends Migration
             $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('product_id')->constrained('products');
             $table->primary(['store_id', 'product_id']);
-            $table->integer('stock');
             $table->timestamps();
         });
     }
