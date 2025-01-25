@@ -46,6 +46,7 @@ const AddressModal = ({ open, handleClose }) => {
 
             if (response.status === 201) {
                 homeAddressStore.addAddress(response.data.data);
+                setisDisabled(true);
                 resetForm();
                 handleClose();
             }
@@ -58,8 +59,16 @@ const AddressModal = ({ open, handleClose }) => {
         initialValues,
         validationSchema: Yup.object({
             postal_code: Yup.string()
-                .matches(/^\d{4}-\d{3}$/, "Código Postal inválido (formato: 0000-000)")
-                .required("O Código Postal é obrigatório"),
+                .test(
+                    "check-duplicate-address",
+                    "Já existe uma morada com este Código Postal e Número",
+                    function (value) {
+                        const { number } = this.parent; // Acessa o campo número
+                        if (!value || !number) return true; // Ignora se um dos campos estiver vazio
+                        // Verifica duplicação usando a store
+                        return !homeAddressStore.checkDuplicatePostalCode(value, number, this.options.context?.excludeId);
+                    }
+                ),
             address_name: Yup.string()
                 .max(20, "Defina um nome mais curto para a sua morada")
                 .required("O Nome da morada é obrigatório"),
@@ -167,6 +176,14 @@ const AddressModal = ({ open, handleClose }) => {
                         onChange={formik.handleChange}
                         error={formik.touched.address_name && Boolean(formik.errors.address_name)}
                         helperText={formik.touched.address_name && formik.errors.address_name}
+                        FormHelperTextProps={{
+                            sx: {
+                                minHeight: "20px", // Altura mínima
+                                background: "white", // Fundo branco
+                                padding: "2px 4px", // Espaçamento interno (opcional)
+                                borderRadius: "4px", // Bordas arredondadas (opcional)
+                            },
+                        }}
                         required
                     />
                     <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
@@ -178,6 +195,14 @@ const AddressModal = ({ open, handleClose }) => {
                             onChange={handlePostalCodeChange}
                             error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
                             helperText={formik.touched.postal_code && formik.errors.postal_code}
+                            FormHelperTextProps={{
+                                sx: {
+                                    minHeight: "20px", // Altura mínima
+                                    background: "white", // Fundo branco
+                                    padding: "2px 4px", // Espaçamento interno (opcional)
+                                    borderRadius: "4px", // Bordas arredondadas (opcional)
+                                },
+                            }}
                             required
                             sx={{
                                 width: "40%",
@@ -191,6 +216,12 @@ const AddressModal = ({ open, handleClose }) => {
                             onChange={formik.handleChange}
                             error={formik.touched.city && Boolean(formik.errors.city)}
                             helperText={formik.touched.city && formik.errors.city}
+                            FormHelperTextProps={{
+                                sx: {
+                                    minHeight: "20px", // Altura mínima
+                                    background: "white", // Fundo branco
+                                },
+                            }}
                             required
                             disabled={isDisabled}
                             sx={{
@@ -208,6 +239,12 @@ const AddressModal = ({ open, handleClose }) => {
                             onChange={formik.handleChange}
                             error={formik.touched.number && Boolean(formik.errors.number)}
                             helperText={formik.touched.number && formik.errors.number}
+                            FormHelperTextProps={{
+                                sx: {
+                                    minHeight: "20px", // Altura mínima
+                                    background: "white", // Fundo branco
+                                },
+                            }}
                             required
                             disabled={isDisabled}
                             sx={{
@@ -224,6 +261,12 @@ const AddressModal = ({ open, handleClose }) => {
                             onChange={formik.handleChange}
                             error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
                             helperText={formik.touched.phone_number && formik.errors.phone_number}
+                            FormHelperTextProps={{
+                                sx: {
+                                    minHeight: "20px", // Altura mínima
+                                    background: "white", // Fundo branco
+                                },
+                            }}
                             sx={{ width: "40%" }}
                         />
                     </Box>
@@ -236,6 +279,12 @@ const AddressModal = ({ open, handleClose }) => {
                         onChange={formik.handleChange}
                         error={formik.touched.street_address && Boolean(formik.errors.street_address)}
                         helperText={formik.touched.street_address && formik.errors.street_address}
+                        FormHelperTextProps={{
+                            sx: {
+                                minHeight: "20px", // Altura mínima
+                                background: "white", // Fundo branco
+                            },
+                        }}
                         required
                         disabled={isDisabled}
                         sx={{

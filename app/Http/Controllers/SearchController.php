@@ -9,29 +9,6 @@ use App\Models\Store;
 
 class SearchController extends Controller
 {
-    public function suggestions(Request $request)
-    {
-        $query = $request->input('query');
-
-        $products = Product::where('name', 'like', '%' . $query . '%')
-            ->take(5) // Limits at 5 results
-            ->get();
-
-        $stores = Store::where('name', 'like', '%' . $query . '%')
-            ->take(5) // // Limits at 5 results
-            ->get();
-
-        $vendors = Vendor::where('name', 'like', '%' . $query . '%')
-            ->take(5)
-            ->get();
-
-        return response()->json([
-            'products' => $products,
-            'stores' => $stores,
-            'vendors' => $vendors,
-        ], 200, [], JSON_UNESCAPED_UNICODE);
-    }
-
 
     public function index(Request $request)
     {
@@ -59,5 +36,27 @@ class SearchController extends Controller
         ]);
     }
 
+    public function suggestions(Request $request)
+    {
+        $query = $request->input('query');
+
+        $products = Product::where('name', 'like', '%' . $query . '%')
+            ->take(5) // Limits at 5 results
+            ->get();
+
+        $stores = Store::where('name', 'like', '%' . $query . '%')
+            ->take(5) // // Limits at 5 results
+            ->get();
+
+        $vendors = Vendor::where('name', 'like', '%' . $query . '%')
+            ->take(5)
+            ->get();
+
+        return response()->json([
+            'products' => $products,
+            'stores' => $stores,
+            'vendors' => $vendors,
+        ], 200, [], JSON_UNESCAPED_UNICODE);
+    }
 
 }

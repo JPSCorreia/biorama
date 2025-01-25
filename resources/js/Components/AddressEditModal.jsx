@@ -74,11 +74,13 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                 .matches(/^\d{4}-\d{3}$/, "Código Postal inválido (formato: 0000-000)")
                 .required("O Código Postal é obrigatório")
                 .test(
-                    "check-duplicate-postal-code",
-                    "Já existe uma morada com este Código Postal",
+                    "check-duplicate-address",
+                    "Já existe uma morada com este Código Postal e Número",
                     function (value) {
-                        // Usa a função da store para verificar duplicações
-                        return !homeAddressStore.checkDuplicatePostalCode(value, address.id);
+                        const { number } = this.parent; // Acessa o campo número
+                        if (!value || !number) return true; // Ignora se um dos campos estiver vazio
+                        // Verifica duplicação usando a store
+                        return !homeAddressStore.checkDuplicatePostalCode(value, formik.values.number, this.options.context?.excludeId);
                     }
                 ),
             address_name: Yup.string()
