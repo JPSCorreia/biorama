@@ -15,7 +15,7 @@ import {
 
 
 
-const DashboardStoresCard = observer(()=>{
+const DashboardStoresCard = observer(({store})=>{
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
     return(
@@ -33,10 +33,10 @@ const DashboardStoresCard = observer(()=>{
             {/* Cabeçalho */}
             <CardContent>
                 <Typography variant="h6" component="div" fontWeight="bold">
-                    Loja 1
+                    {store.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ color: "#aaa" }}>
-                    Almada
+                    {store.addresses[0].city}
                 </Typography>
             </CardContent>
 
@@ -77,11 +77,11 @@ const DashboardStoresCard = observer(()=>{
                     }}>
                         <Box sx={{display: "flex", flexDirection: "row", gap: 1}}>
                             <Typography fontWeight="bold">Morada</Typography>
-                            <Typography>Exmplo Morada</Typography>
+                            <Typography>{store.addresses[0].street_address}</Typography>
                         </Box>
                         <Box sx={{flex: "1 1 45%", flexDirection: "row", minHeight: "80px"}}>
                             <Typography fontWeight="bold">Discrição:</Typography>
-                            <Typography>Exemplo</Typography>
+                            <Typography>{store.description}</Typography>
                         </Box>
                     </Box>
                     <Box sx={{
@@ -93,7 +93,7 @@ const DashboardStoresCard = observer(()=>{
                     }}>
                         <Box sx={{flex: "1 1 45%"}}>
                             <Typography fontWeight="bold">Rating</Typography>
-                            <Typography>Exmplo</Typography>
+                            <Typography>{store.rating}</Typography>
                         </Box>
                         <Box sx={{flex: "1 1 45%"}}>
                             <Typography fontWeight="bold">Encomendas</Typography>
