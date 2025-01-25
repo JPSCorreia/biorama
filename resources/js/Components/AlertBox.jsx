@@ -11,8 +11,6 @@ const AlertBox = observer(() => {
 
     useEffect(() => {
         // Set alert based on flash message
-
-        console.log(flash)
         if (flash?.message && flash.message !== alertStore.lastMessage) {
             // Clear timers
             alertStore.clearTimers();

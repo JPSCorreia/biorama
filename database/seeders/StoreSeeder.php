@@ -7,8 +7,8 @@ use App\Models\StoreAddress;
 use App\Models\StoreGallery;
 use App\Models\StoreProduct;
 use App\Models\StoreReview;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Product;
 
 class StoreSeeder extends Seeder
 {
@@ -17,32 +17,47 @@ class StoreSeeder extends Seeder
      */
     public function run()
     {
-
-        $mockImagePath = asset('storage/mock_images/stores/store-1.png'); // Caminho da imagem de teste
+        $mockImages = [
+            'store-1.png',
+            'store-2.jpg',
+            'store-3.webp',
+            'store-4.webp',
+            'store-5.jpg',
+        ];
 
         $stores = Store::factory()->count(20)->create();
-        $products = StoreProduct::all();
+
+        $products = Product::all();
 
         foreach ($stores as $store) {
             StoreAddress::factory()->create([
                 'store_id' => $store->id,
             ]);
-            StoreGallery::factory()->count(5)->create([
-                'store_id' => $store->id,
-                'image_link' => $mockImagePath,
-            ]);
+
+            // Shuffle the mock images
+            $shuffledImages = $mockImages;
+            shuffle($shuffledImages);
+
+            // Create 5 gallery images
+            foreach (array_slice($shuffledImages, 0, 5) as $image) {
+                StoreGallery::factory()->create([
+                    'store_id' => $store->id,
+                    'image_link' => asset('storage/mock_images/stores/' . $image),
+                ]);
+            }
+
             StoreReview::factory()->count(5)->create([
                 'store_id' => $store->id,
             ]);
+
+            foreach ($products as $product) {
+                StoreProduct::factory()->count(5)->create([
+                    'store_id' => $store->id,
+                    'product_id' => $product->id,
+                ]);
+            }
         }
 
-        foreach ($products as $product) {
-            StoreProduct::factory()->create([
-                'store_id' => $store->id,
-                'product_id' => $product->id,
-            ]);
-        }
 
     }
-
 }

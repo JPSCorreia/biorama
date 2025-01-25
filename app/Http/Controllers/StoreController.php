@@ -6,6 +6,8 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\StoreGallery;
+use App\Models\Vendor;
+use App\Models\StoreProduct;
 
 class StoreController extends Controller
 {
@@ -126,10 +128,15 @@ class StoreController extends Controller
             abort(404, 'Loja não encontrada');
         }
 
-        // Buscar a imagem da galeria associada à loja (a primeira imagem disponível)
+        // Get the store image
         $storeImage = StoreGallery::where('store_id', $id)->first();
 
-        // Formatar os dados da loja para garantir compatibilidade JSON
+        // Get the vendor
+        $vendor = Vendor::where('id', $store->vendor_id)->first();
+
+        $products = StoreProduct::where('store_id', $id)->get();
+
+        // Format for JSON compatibility
         $formattedStore = [
             'id' => $store->id,
             'vendor_id' => $store->vendor_id,
@@ -142,11 +149,13 @@ class StoreController extends Controller
             'updated_at' => $store->updated_at,
             'longitude' => $store->longitude,
             'latitude' => $store->latitude,
-            'image_link' => $storeImage ? $storeImage->image_link : null, // Definir imagem se existir
+            'image_link' => $storeImage ? $storeImage->image_link : null,
         ];
 
         return Inertia::render('Store', [
             'store' => $formattedStore,
+            'vendor' => $vendor,
+            'products' => $products
         ]);
     }
 
