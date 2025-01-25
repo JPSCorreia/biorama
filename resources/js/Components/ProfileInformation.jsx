@@ -77,63 +77,69 @@ const ProfileInformation = observer(() => {
                 overflow: "hidden", // Evita overflow lateral
             }}
         >
-            <Box
-                sx={{
-                    display:"flex",
-                    m:"0 auto 0 auto",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    width: "25%",
-                    minHeight: "600px",
-
-                }}
-            >
-                {/* SideBar */}
-                <SideBar
-                />
-            </Box>
             <Paper
                 elevation={4}
                 sx={{
-                    p: 2,
                     width: "75%",
                     m: "auto",
-                    display: "flex",
+                    display: isSmallScreen ? 'none' : "flex",
                     flexDirection: "column",
                     borderRadius: "10px",
                 }}
 
             >
                 {/* Avatar e Nome ECRÃ LARGE */}
-                <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", width: "100%", mb: 4 }}>
-                    <Avatar
-                        alt="Profile Image"
-                        variant = {isSmallScreen ? "" : "rounded"}
-                        src={authStore.user?.image_profile}
-                        sx={{
-                            width: isSmallScreen ? 90 : 150,
-                            height: isSmallScreen ? 90 : 150,
-                            color: "background.secondary",
-                            bgcolor: "primary.main",
-                            borderRadius: isSmallScreen ? "50%" : "10px",
-                            fontSize: isSmallScreen ? "1.5rem" : "3rem",
-                            display: isSmallScreen ? "none" : "block",
-                        }}
-                    >
-                        {authStore.user?.first_name[0]}
-                        {authStore.user?.last_name[0]}
-                    </Avatar>
-                    <Box sx={{
-                        display:  "flex",
+                <Box
+                    sx={{
+                        display: "flex",
                         flexDirection: "row",
                         width: "100%",
-                        justifyContent: "space-between" }}
-                    >
-                        <Box sx={{
-                            ml: 2,
+                        m:" 2% auto 2% auto",
+                        justifyContent: "center",
+
+                    }}
+                >
+                    <Box>
+                        <Avatar
+                            alt="Profile Image"
+                            variant = {isSmallScreen ? "" : "rounded"}
+                            src={authStore.user?.image_profile}
+                            sx={{
+                                justifyContent: "flex-top",
+                                width: isSmallScreen ? 90 : 150,
+                                height: isSmallScreen ? 90 : 150,
+                                color: "background.secondary",
+                                bgcolor: "primary.main",
+                                borderRadius: isSmallScreen ? "50%" : "10px",
+                                fontSize: isSmallScreen ? "1.5rem" : "3rem",
+                                display: isSmallScreen ? "none" : "block",
+                            }}
+                        >
+                            {authStore.user?.first_name[0]}
+                            {authStore.user?.last_name[0]}
+                        </Avatar>
+                    </Box>
+                    <Box
+                        sx={{
                             display: "flex",
-                            alignItems: "center"
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            ml: 2,
+                            mt: 5,
+                            width: "85%",
+
+
                         }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                                mb: 2,
+                            }}
                         >
                             <Typography sx={{
                                 fontWeight: "bold",
@@ -142,324 +148,308 @@ const ProfileInformation = observer(() => {
                             >
                                 {authStore.user.first_name} {authStore.user.last_name}
                             </Typography>
+                            <Button
+                                variant="contained"
+                                sx={{ width: "140px",
+                                    alignContent: "center",
+                                    display: isSmallScreen ? "none" : "block",
+                                }}
+                                onClick={handleProfileModalOpen}
+                            >
+                                Editar Perfil
+                            </Button>
                         </Box>
+                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose}/>
                         <Box
                             sx={{
-                                alignSelf: "flex-end",
-                                height: "50px",
-                                display: isSmallScreen ? "none" : "flex",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
                                 justifyContent: "center",
-                                alignItems: "center",
+                                m: "auto",
                             }}
                         >
-                            {authStore.isAuthenticated && (
-                                <Button
-                                    variant="contained"
-                                    sx={{ width: "140px",
-                                        alignContent: "center",
-                                        mr: 6,
-                                        display: isSmallScreen ? "none" : "block",
-                                    }}
-                                    onClick={handleProfileModalOpen}
-                                >
-                                    Editar Perfil
-                                </Button>
-                            )}
-                            <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose}/>
-                        </Box>
-                    </Box>
-                </Box>
-
-                {/* Dados Pessoais BOTAO NO ECRÃ PEQUENO*/}
-                <Box
-                    sx={{
-                        width: isSmallScreen ? "100%" : "79%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        m: "auto",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: isSmallScreen ? "flex" : "none",
-                            flexDirection: "row",
-                            mb: 3,
-                            ml: 2,
-
-                        }}
-                    >
-                        <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>Dados Pessoais</Typography>
-                        <Box>
-                            {authStore.isAuthenticated && (
-                                <IconButton
-                                    aria-label="edit"
-                                    onClick={handleProfileModalOpen}
-                                    sx={{
-                                        display: isSmallScreen ? "block" : "none",
-                                        color: theme.palette.primary.main,
-                                        ml: 1,
-                                    }}
-                                >
-                                    <EditIcon
-                                        sx={{
-                                            fontSize: "1.6rem",
-                                            color: theme.palette.primary.main,
-                                        }}
-                                    />
-                                </IconButton>
-                            )}
-                            <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} />
-                        </Box>
-                    </Box>
-                    <Typography sx={{
-                        display: isSmallScreen ? 'none' : 'block',
-                        fontWeight: "bold", fontSize: "1.8rem"
-                    }}
-                    >
-                        Dados Pessoais
-                    </Typography>
-                    <List
-                        sx={{
-                            width: "100%",
-                            p:3
-                        }}
-                    >
-                        <ListItem
-                            sx={{
-                                display: "flex",
-                                flexDirection: isSmallScreen ? "column" : "row",
-                                justifyContent: isSmallScreen ? "" : "space-between",
-                                alignItems: isSmallScreen ? "baseline" : "",
-                                p: 0
-                            }}
-                        >
-                            <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Email</Typography>
-                                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                    {authStore.user.email}
-                                </Typography>
-                            </Box>
-                            <Divider
-                                variant="middle"
-                                sx={{
-                                    display : isSmallScreen ? "block" : "none",
-                                    width: "100%",
-                                    mt: 1.5,
-                                    mb: 1.5,
-                                    background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
-                                    border: "none",
-                                    height: 1.5,
-                                }}
-                            />
-                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Nº de Telemóvel</Typography>
-                                <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                    {authStore.user.phone || "Não Fornecido"}
-                                </Typography>
-                            </Box>
-                        </ListItem>
-                        <Divider
-                            variant="middle"
-                            sx={{
-                                display : isSmallScreen ? "block" : "none",
-                                width: "100%",
-                                mt: 1.5,
-                                mb: 1.5,
-                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
-                                border: "none",
-                                height: 1.5,
-                            }}
-                        />
-                        <ListItem
-                            sx={{
-                                display: "flex",
-                                flexDirection: isSmallScreen ? "column" : "row",
-                                justifyContent: isSmallScreen ? "" : "space-between",
-                                alignItems: isSmallScreen ? "baseline" : "",
-                                p: 0
-                            }}
-                        >
-                            <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF</Typography>
-                                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                    {authStore.user.nif || "Não Fornecido"}
-                                </Typography>
-                            </Box>
-                            <Divider
-                                variant="middle"
-                                sx={{
-                                    display : isSmallScreen ? "block" : "none",
-                                    width: "100%",
-                                    mt: 1.5,
-                                    mb: 1.5,
-                                    background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
-                                    border: "none",
-                                    height: 1.5,
-                                }}
-                            />
-                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Género</Typography>
-                                <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                    {authStore.user.gender?.name|| "Não Fornecido"}
-                                </Typography>
-                            </Box>
-                        </ListItem>
-                        <Divider
-                            variant="middle"
-                            sx={{
-                                display : isSmallScreen ? "block" : "none",
-                                width: "100%",
-                                mt: 1.5,
-                                mb: 1.5,
-                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
-                                border: "none",
-                                height: 1.5,
-                            }}
-                        />
-                        <ListItem
-                            sx={{
-                                display: "flex",
-                                flexDirection: isSmallScreen ? "column" : "row",
-                                justifyContent: isSmallScreen ? "" : "space-between",
-                                alignItems: isSmallScreen ? "baseline" : "",
-                                p: 0,
-                                mt: 2
-                            }}
-                        >
-                            <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Data de Nascimento</Typography>
-                                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                    {authStore.user.date_of_birth || "Não Fornecida"}
-                                </Typography>
-                            </Box>
-                            <Divider
-                                variant="middle"
-                                sx={{
-                                    display : isSmallScreen ? "block" : "none",
-                                    width: "100%",
-                                    mt: 1.5,
-                                    mb: 1.5,
-                                    background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
-                                    border: "none",
-                                    height: 1.5,
-                                }}
-                            />
-                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Tempo de Registo</Typography>
-                                <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                    {calculateRegisterTime(authStore.user.created_at)}
-                                </Typography>
-                            </Box>
-                        </ListItem>
-                    </List>
-
-                    {/* Gestão de Moradas */}
-                    <Box sx={{ mt: 4 }}>
-                        <Typography sx={{ fontWeight: "bold", fontSize: "2rem", mb: 2 }}>Gestão de Moradas</Typography>
-                        {addresses.length > 0 ? (
                             <Box
                                 sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen ? "column" : "row",
-                                    alignItems: isSmallScreen ? "baseline" : "center",
-                                    flexWrap: "wrap",
-                                    m: isSmallScreen ? "auto" : 0,
-                                    "& > :first-of-type": {
-                                        marginRight: isSmallScreen ? "" : 5.25,
-                                        marginBottom: isSmallScreen ? 2 : "",
-                                    },
-                                    "& > :last-child": {
-                                        marginLeft: isSmallScreen ? "" : 5.25,
-                                        marginTop: isSmallScreen ? 2 : "",
-                                    },
+                                    display: isSmallScreen ? "flex" : "none",
+                                    flexDirection: "row",
+                                    mb: 3,
+                                    ml: 2,
+                                    width: "50%",
+                                    borderBottom: "1px solid #e0e0e0",
+
                                 }}
                             >
-                                {addresses.map((address) => {
-                                    return (
-                                        <AddressCard
-                                            key={address.id}
-                                            address={address}
-                                            theme={theme}
-
-                                        />
-                                    );
-                                })}
-
-                                {addresses.length < 3 && (
-                                    <Box
-                                        onClick={handleAddressModalOpen}
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            ml: isSmallScreen ? "auto" : 0,
-                                            mr: isSmallScreen ? "auto" : 0,
-                                            backgroundColor: "#388e3c26",
-                                            border: "2px dashed",
-                                            borderColor: theme.palette.primary.main,
-                                            borderRadius: "10px",
-                                            width: isSmallScreen ? "100%" : "30%",
-                                            height: isSmallScreen ? "200px" : "372px",
-                                            cursor: "pointer",
-                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                            transition: "all 0.3s ease",
-                                            "&:hover": {
-                                                transform: "scale(1.05)",
-                                            },
-                                        }}
-                                    >
-                                        <AddCircleIcon
+                                <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>Dados Pessoais</Typography>
+                                <Box>
+                                    {authStore.isAuthenticated && (
+                                        <IconButton
+                                            aria-label="edit"
+                                            onClick={handleProfileModalOpen}
                                             sx={{
-                                                fontSize: 40,
+                                                display: isSmallScreen ? "block" : "none",
                                                 color: theme.palette.primary.main,
-                                            }}
-                                        />
-                                        <Typography
-                                            sx={{
-                                                mt: 1,
-                                                fontWeight: "bold",
-                                                color: theme.palette.primary.main,
+                                                ml: 1,
                                             }}
                                         >
-                                            Adicionar Morada
-                                        </Typography>
-                                    </Box>
-                                )}
+                                            <EditIcon
+                                                sx={{
+                                                    fontSize: "1.6rem",
+                                                    color: theme.palette.primary.main,
+                                                }}
+                                            />
+                                        </IconButton>
+                                    )}
+                                    <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} />
+                                </Box>
                             </Box>
-                        ) : (
                             <Box
-                                onClick={handleAddressModalOpen} // Abre o modal para adicionar uma nova morada
                                 sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    backgroundColor: "#f5f5f5", // Cor de fundo do card
-                                    border: "2px dashed #9e9e9e", // Borda estilizada
-                                    borderRadius: "10px", // Cantos arredondados
-                                    width: isSmallScreen? "100%" : "30%", // Largura do card
-                                    height: "150px", // Altura do card
-                                    cursor: "pointer", // Indica que é clicável
-                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar efeito de card
-                                    transition: "all 0.3s ease", // Animação suave no hover
-                                    "&:hover": {
-                                        backgroundColor: "#e0e0e0", // Cor de fundo no hover
-                                        transform: "scale(1.05)", // Leve aumento no hover
-                                    },
+                                    mt: 9.5,
                                 }}
                             >
-                                <AddCircleIcon sx={{ fontSize: 40, color: "#757575" }} /> {/* Ícone central */}
-                                <Typography sx={{ mt: 1, fontWeight: "bold", color: "#757575" }}>
-                                    Adicionar Morada
-                                </Typography>
+                                <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>Dados Pessoais</Typography>
+                                <List
+                                    sx={{
+                                        pl:2,
+                                        width: "60%",
+                                    }}
+                                >
+                                    <ListItem
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen ? "column" : "row",
+                                            justifyContent: isSmallScreen ? "" : "space-between",
+                                            alignItems: isSmallScreen ? "baseline" : "",
+                                            p: 0,
+                                        }}
+                                    >
+                                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Email</Typography>
+                                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                                                {authStore.user.email}
+                                            </Typography>
+                                        </Box>
+                                        <Divider
+                                            variant="middle"
+                                            sx={{
+                                                display : isSmallScreen ? "block" : "none",
+                                                width: "100%",
+                                                mt: 1.5,
+                                                mb: 1.5,
+                                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                                border: "none",
+                                                height: 1.5,
+                                            }}
+                                        />
+                                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
+                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Nº de Telemóvel</Typography>
+                                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
+                                                {authStore.user.phone || "Não Fornecido"}
+                                            </Typography>
+                                        </Box>
+                                    </ListItem>
+                                    <Divider
+                                        variant="middle"
+                                        sx={{
+                                            display : isSmallScreen ? "block" : "none",
+                                            width: "100%",
+                                            mt: 1.5,
+                                            mb: 1.5,
+                                            background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                            border: "none",
+                                            height: 1.5,
+                                        }}
+                                    />
+                                    <ListItem
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen ? "column" : "row",
+                                            justifyContent: isSmallScreen ? "" : "space-between",
+                                            alignItems: isSmallScreen ? "baseline" : "",
+                                            p: 0
+                                        }}
+                                    >
+                                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF</Typography>
+                                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                                                {authStore.user.nif || "Não Fornecido"}
+                                            </Typography>
+                                        </Box>
+                                        <Divider
+                                            variant="middle"
+                                            sx={{
+                                                display : isSmallScreen ? "block" : "none",
+                                                width: "100%",
+                                                mt: 1.5,
+                                                mb: 1.5,
+                                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                                border: "none",
+                                                height: 1.5,
+                                            }}
+                                        />
+                                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
+                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Género</Typography>
+                                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
+                                                {authStore.user.gender?.name|| "Não Fornecido"}
+                                            </Typography>
+                                        </Box>
+                                    </ListItem>
+                                    <Divider
+                                        variant="middle"
+                                        sx={{
+                                            display : isSmallScreen ? "block" : "none",
+                                            width: "100%",
+                                            mt: 1.5,
+                                            mb: 1.5,
+                                            background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                            border: "none",
+                                            height: 1.5,
+                                        }}
+                                    />
+                                    <ListItem
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: isSmallScreen ? "column" : "row",
+                                            justifyContent: isSmallScreen ? "" : "space-between",
+                                            alignItems: isSmallScreen ? "baseline" : "",
+                                            p: 0,
+                                            mt: 2
+                                        }}
+                                    >
+                                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Data de Nascimento</Typography>
+                                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                                                {authStore.user.date_of_birth || "Não Fornecida"}
+                                            </Typography>
+                                        </Box>
+                                        <Divider
+                                            variant="middle"
+                                            sx={{
+                                                display : isSmallScreen ? "block" : "none",
+                                                width: "100%",
+                                                mt: 1.5,
+                                                mb: 1.5,
+                                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                                border: "none",
+                                                height: 1.5,
+                                            }}
+                                        />
+                                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
+                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Tempo de Registo</Typography>
+                                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
+                                                {calculateRegisterTime(authStore.user.created_at)}
+                                            </Typography>
+                                        </Box>
+                                    </ListItem>
+                                </List>
+
+                                {/* Gestão de Moradas */}
+                                <Box sx={{ mt: 4 }}>
+                                    <Typography sx={{ fontWeight: "bold", fontSize: "2rem", mb: 2 }}>Gestão de Moradas</Typography>
+                                    {addresses.length > 0 ? (
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: isSmallScreen ? "column" : "row",
+                                                alignItems: isSmallScreen ? "baseline" : "center",
+                                                flexWrap: "wrap",
+                                                m: isSmallScreen ? "auto" : 0,
+                                                '& > :first-of-type': {
+                                                    mr: '10%',
+                                                },
+                                            }}
+                                        >
+                                            {addresses.map((address) => {
+                                                return (
+                                                    <AddressCard
+                                                        key={address.id}
+                                                        address={address}
+                                                        theme={theme}
+
+                                                    />
+                                                );
+                                            })}
+
+                                            {addresses.length < 3 && (
+                                                <Box
+                                                    onClick={handleAddressModalOpen}
+                                                    sx={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        ml: isSmallScreen ? "auto" : 0,
+                                                        mr: isSmallScreen ? "auto" : 0,
+                                                        backgroundColor: "#388e3c26",
+                                                        border: "2px dashed",
+                                                        borderColor: theme.palette.primary.main,
+                                                        borderRadius: "10px",
+                                                        width: isSmallScreen ? "100%" : "25%",
+                                                        minHeight: isSmallScreen ? "200px" : "350px",
+                                                        cursor: "pointer",
+                                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                                        transition: "all 0.3s ease",
+                                                        "&:hover": {
+                                                            transform: "scale(1.05)",
+                                                        },
+                                                    }}
+                                                >
+                                                    <AddCircleIcon
+                                                        sx={{
+                                                            fontSize: 40,
+                                                            color: theme.palette.primary.main,
+                                                        }}
+                                                    />
+                                                    <Typography
+                                                        sx={{
+                                                            mt: 1,
+                                                            fontWeight: "bold",
+                                                            color: theme.palette.primary.main,
+                                                        }}
+                                                    >
+                                                        Adicionar Morada
+                                                    </Typography>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    ) : (
+                                        <Box
+                                            onClick={handleAddressModalOpen} // Abre o modal para adicionar uma nova morada
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                backgroundColor: "#f5f5f5", // Cor de fundo do card
+                                                border: "2px dashed #9e9e9e", // Borda estilizada
+                                                borderRadius: "10px", // Cantos arredondados
+                                                width: isSmallScreen? "100%" : "30%", // Largura do card
+                                                height: "150px", // Altura do card
+                                                cursor: "pointer", // Indica que é clicável
+                                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar efeito de card
+                                                transition: "all 0.3s ease", // Animação suave no hover
+                                                "&:hover": {
+                                                    backgroundColor: "#e0e0e0", // Cor de fundo no hover
+                                                    transform: "scale(1.05)", // Leve aumento no hover
+                                                },
+                                            }}
+                                        >
+                                            <AddCircleIcon sx={{ fontSize: 40, color: "#757575" }} /> {/* Ícone central */}
+                                            <Typography sx={{ mt: 1, fontWeight: "bold", color: "#757575" }}>
+                                                Adicionar Morada
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    <AddressModal open={addressModalOpen} handleClose={handleAddressModalClose} />
+                                </Box>
+
                             </Box>
-                        )}
-                        <AddressModal open={addressModalOpen} handleClose={handleAddressModalClose} />
+                        </Box>
                     </Box>
                 </Box>
             </Paper>
+
         </Box>
     );
 });

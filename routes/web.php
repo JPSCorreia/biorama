@@ -114,20 +114,29 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/registar-vendendor-1', [VendorController::class, 'store'])->name('registarVendedor.api');
 
 
-    // User profile routes, TODO: fazer comentário para o que cada rota faz
+    // User profile routes
+    //Route to show user profile
     Route::get('/perfil', [UserController::class, 'show'])->name('profile');
+    //Route to edit user profile
     Route::post('/editar-perfil/{user}', [UserController::class, 'update'])->name('update_profile_user');
+    //Route to get user information
     Route::get('/get-user', [UserController::class, 'get_user'])->name('get_user');
 
     // User settings
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
 
-    // User addresses, TODO: fazer comentário para o que cada rota faz
+    // User addresses
+
+    //Route to get all user addresses
     Route::get('/get-moradas', [HomeAddressController::class, 'index'])->name('get_address');
+    //Route to add a new address
     Route::post('/adicionar-morada', [HomeAddressController::class, 'store'])->name('add_address');
+    //Route to edit an address
     Route::post('/editar-morada/{morada}', [HomeAddressController::class, 'update'])->name('edit_address');
-    Route::delete('/apagar-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
+    //Route to set an address as primary
     Route::patch('/morada/{id}/set-morada-fav', [HomeAddressController::class, 'setPrimary']);
+    //Route to delete an address
+    Route::delete('/apagar-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
 
     // Vendor dashboard
     Route::prefix('/dashboard')->group(function () {

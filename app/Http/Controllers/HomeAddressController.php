@@ -43,6 +43,7 @@ class HomeAddressController extends Controller
                 $deletedAddress->restore();
                 $deletedAddress->update($validated);
                 $deletedAddress->save();
+                $newAddress = $deletedAddress;
             }
             else {
                 // Criar a nova morada

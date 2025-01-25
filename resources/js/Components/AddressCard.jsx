@@ -18,6 +18,8 @@ const AddressCard = observer(({ address, theme }) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    console.log(homeAddressStore.addresses);
+
     const handleSetPrimary = async (address) => {
         homeAddressStore.setPrimaryAddress(address.id);
     };
@@ -36,7 +38,8 @@ const AddressCard = observer(({ address, theme }) => {
                 alignItems: "flex-start",
                 justifyContent: "space-between",
                 borderRadius: "10px",
-                width: isSmallScreen ? "100%" : "30%",
+                width: isSmallScreen ? "100%" : "25%",
+                minHeight: isSmallScreen ? "auto" : "350px",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                 border: "1px solid #e0e0e0",
             }}
@@ -133,12 +136,20 @@ const AddressCard = observer(({ address, theme }) => {
                     </Typography>
                 </Box>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
                 <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Contacto</Typography>
-                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                    {address.description || "Descrição não fornecida"}
+                <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{
+                        ml: 1,
+                        width: "100%",
+                        wordWrap: "break-word",
+                        overflowWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                    }}
+                >
+                    {address.comment || "Descrição não fornecida"}
                 </Typography>
-            </Box>
         </Box>
     );
 });
