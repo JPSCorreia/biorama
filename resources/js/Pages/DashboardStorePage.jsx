@@ -2,10 +2,19 @@ import {observer} from "mobx-react";
 import {usePage} from "@inertiajs/react";
 import {Paper, useMediaQuery, useTheme} from "@mui/material";
 import {DashboardStoresCard} from "@/Components/index.js";
+import {shopStore} from "../Stores";
 
 const DashboardStorePage  = observer(()=>{
-    const {auth, user} = usePage().props;
+    const {user} = usePage().props;
+    //shopStore.setStoresData(user.vendor.stores);
+    shopStore.setStoreData(user.vendor.stores[0]);
+    // Seleciona a primeira loja
     console.log("Auth", user);
+    console.log("User vendor store", shopStore.currentStore);
+    const store = shopStore.currentStore;
+    console.log("Adress:", store.addresses[0] );
+
+
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     return(
@@ -19,7 +28,9 @@ const DashboardStorePage  = observer(()=>{
                        height: "100%",
                        borderRadius: "10px",
                }}>
-        <DashboardStoresCard/>
+        <DashboardStoresCard
+        store={store}
+        />
         </Paper>
     )
 })

@@ -136,23 +136,33 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         if ($user && $user->hasRole('vendor')) {
-            $user->load([
-                'vendor',
-                'vendor.stores',
-                'vendor.stores.products',
-                'vendor.stores.addresses',
-                'vendor.stores.reviews',
-                'vendor.stores.galleries',
-            ]);
-            dd($user);
-            // Renderiza a página com as informações do vendor
-            return Inertia::render('Dashboard/Lojas', [
+            // Carrega o user com apenas os dados necessários
+            $user = $user->with([
+                'vendor' => function ($query) {
+                    $query->with([
+                        'stores' => function ($query) {
+                            $query->select('id', 'name', 'vendor_id',"description","phone_number","email","rating",
+                                DB::raw('ST_X(coordinates) as latitude'),
+                                DB::raw('ST_Y(coordinates) as longitude')
+                            )->with([
+                                'products',
+                                'addresses',
+                                'reviews',
+                                'galleries',
+                            ]);
+                        },
+                    ]);
+                },
+            ])->find($user->id);
+            // Renderiza a página com os dados ajustados
+            return Inertia::render('Dashboard/Stores', [
                 'user' => $user,
             ]);
         }
 
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
+
 
 
 
