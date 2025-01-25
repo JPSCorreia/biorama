@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Gender;
+use App\Models\Store;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -132,36 +133,45 @@ class DashboardController extends Controller
         ], 200);
     }
 
-    public function showVendorStores()
+    public function showVendorStores(Request $request)
     {
         $user = Auth::user();
+
         if ($user && $user->hasRole('vendor')) {
-            // Carrega o user com apenas os dados necessários
-            $user = $user->with([
-                'vendor' => function ($query) {
-                    $query->with([
-                        'stores' => function ($query) {
-                            $query->select('id', 'name', 'vendor_id',"description","phone_number","email","rating",
-                                DB::raw('ST_X(coordinates) as latitude'),
-                                DB::raw('ST_Y(coordinates) as longitude')
-                            )->with([
-                                'products',
-                                'addresses',
-                                'reviews',
-                                'galleries',
-                            ]);
-                        },
-                    ]);
-                },
-            ])->find($user->id);
-            // Renderiza a página com os dados ajustados
-            return Inertia::render('Dashboard/Stores', [
-                'user' => $user,
+            // Busca as lojas associadas ao vendor logado, no máximo 3
+            $stores = Store::where('vendor_id', $user->vendor->id)
+                ->select(
+                    'id',
+                    'name',
+                    'description',
+                    'phone_number',
+                    'email',
+                    'rating',
+                    DB::raw('ST_X(coordinates) as longitude'),
+                    DB::raw('ST_Y(coordinates) as latitude')
+                )
+                ->with([
+                    'addresses', // Inclui endereços
+                    'products',  // Inclui produtos
+                    'reviews',   // Inclui avaliações
+                    'galleries'  // Inclui galerias de imagens
+                ])
+                ->take(3) // Limita o número de lojas a 3
+                ->get();
+
+            // Retorna as lojas para o front-end
+            return inertia('Dashboard/Stores', [
+                'user' => $user, // Dados do usuário logado
+                'stores' => $stores, // Dados das lojas
             ]);
         }
 
+        // Redireciona caso o usuário não esteja autorizado
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
+
+
+
 
 
 
