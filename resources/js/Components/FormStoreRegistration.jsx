@@ -16,11 +16,13 @@ import {observer} from "mobx-react";
 import * as yup from "yup";
 
 // Componente para centralizar e ajustar o zoom no marcador
-const CenterMapOnPostalCode = ({ position}) => {
+const CenterMapOnPostalCode = ({ position }) => {
     const map = useMap();
-    if (position) {
-        map.flyTo(position, 17, { duration: 1.5 }); // Zoom level e transição suave
-    }
+    useEffect(() => {
+        if (position) {
+            map.flyTo(position, 17, { duration: 1.5 });
+        }
+    }, [position, map]); // Recalcula quando `position` muda
     return null;
 };
 
@@ -112,8 +114,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
     const DraggableMarker = () => {
         const position = formik.values.coordinates
             ? formik.values.coordinates.split(",").map(Number)
-            : [38.7071, -9.1355]; // Default position
-
+            : [38.7071, -9.1355];
         const [markerPosition, setMarkerPosition] = useState(position);
 
         return (
@@ -125,7 +126,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                         const latlng = event.target.getLatLng();
                         setMarkerPosition([latlng.lat, latlng.lng]);
                         formik.setFieldValue("coordinates", `${latlng.lat},${latlng.lng}`);
-                        setShouldUpdateMap(false); // Não atualizar mapa ao mover marcador
+                        setShouldUpdateMap(false);
                     },
                 }}
             />
@@ -148,7 +149,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
         }
         vendorRegistrationStore.setStoreFormValid(formik.isValid); // Mantém o estado sincronizado
         console.log("useEffect da store do Form da Store", formik.isValid);
-    }, [formik.isValid, passFormik]); // Apenas dependências estáveis
+    }, [formik.isValid, passFormik, images]); // Apenas dependências estáveis
 
     return (
         <Box

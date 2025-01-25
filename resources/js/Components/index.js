@@ -27,21 +27,11 @@ export { default as Step1PersonalInfo } from "./Step1PersonalInfo";
 export { default as Step2StoreDetails } from "./Step2StoreDetails";
 export { default as Step3CreateProduct } from "./Step3CreateProduct";
 export { default as ThemeSwitcher } from "./ThemeSwitcher";
-<<<<<<< HEAD
 export {default as VendorNameEditingForm} from "./VendorNameEdtitingForm.jsx";
 export {default as VendorInfoEditingForm} from "./VendorInfoEditingForm.jsx";
 export {default as VendorCompanyEditingForm} from "./VendorCompanyEditingForm.jsx";
 export {default as AddProductCreate} from "./AddProductCreate.jsx";
 export {default as CreateProductModal} from "./CreateProductModal.jsx";
 export {default as ImageUpload} from "./ImageCropModal.jsx";
-export {default as DashboardStoresCard} from "./DashboardStoresCard"
-export {default as SideBar} from "./SideBar"
-=======
-export { default as VendorNameEditingForm } from "./VendorNameEdtitingForm";
-export { default as VendorInfoEditingForm } from "./VendorInfoEditingForm";
-export { default as VendorCompanyEditingForm } from "./VendorCompanyEditingForm";
-export { default as AddProductCreate } from "./AddProductCreate";
-export { default as CreateProductModal } from "./CreateProductModal";
-export { default as ImageUpload } from "./ImageCropModal";
-export { default as DashboardStoresCard } from "./DashboardStoresCard";
->>>>>>> 25cd08186f692ddc74d3a14f58d263b87f76952b
+export {default as DashboardStoresCard} from "./DashboardStoresCard";
+export {default as SideBar} from "./SideBar";
