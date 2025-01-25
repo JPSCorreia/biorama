@@ -25,6 +25,7 @@ class StoreSeeder extends Seeder
             'store-5.jpg',
         ];
 
+        // Cria 20 lojas
         $stores = Store::factory()->count(20)->create();
 
         $products = Product::all();

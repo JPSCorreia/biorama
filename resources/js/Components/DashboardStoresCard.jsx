@@ -1,4 +1,3 @@
-
 import {observer} from "mobx-react";
 import {
     Box,
@@ -6,37 +5,54 @@ import {
     Card,
     CardContent,
     CardMedia,
-    Container,
-    Divider,
+    Divider, IconButton,
     Typography,
     useMediaQuery,
-    useTheme
+    useTheme,
 } from "@mui/material";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
-
-
-const DashboardStoresCard = observer(({store})=>{
+const DashboardStoresCard = observer(({store}) => {
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
-    return(
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Verifica se o ecrã é pequeno
+
+    // Limita a descrição a 150 caracteres
+    const truncatedDescription =
+        store?.description?.length > 150
+            ? `${store.description.slice(0, 150)}...`
+            : store?.description;
+
+    return (
         <Card
             sx={{
-                maxWidth: 450,
+                maxWidth: 300, // Reduz a largura máxima do card
+                width: "100%",
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
                 margin: "auto",
                 mt: 5,
-                minHeight: "100%",
+                minHeight: 500, // Altura mínima garantida
+                display: "flex",
+                flexDirection: "column",
             }}
         >
             {/* Cabeçalho */}
             <CardContent>
-                <Typography variant="h6" component="div" fontWeight="bold">
-                    {store.name}
+                <Typography variant="h6" component="div" fontWeight="bold" noWrap>
+                    {store?.name || "Loja sem Nome"}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ color: "#aaa" }}>
-                    {store.addresses[0].city}
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                        color: "#aaa",
+                        whiteSpace: "nowrap", // Evita quebra de linha
+                        overflow: "hidden", // Esconde texto excedente
+                        textOverflow: "ellipsis", // Adiciona reticências (...)
+                    }}
+                >
+                    {store?.addresses[0]?.city || "Sem Cidade"}
                 </Typography>
             </CardContent>
 
@@ -44,73 +60,80 @@ const DashboardStoresCard = observer(({store})=>{
             <CardMedia
                 component="img"
                 sx={{
-                    height: 200,         // Altura da imagem
-                    width: "95%",        // Largura da imagem reduzida
-                    margin: "0 auto",    // Centralizar horizontalmente
+                    height: 150, // Altura fixa para a imagem
+                    width: "95%", // Largura proporcional
+                    margin: "0 auto",
                     borderRadius: "8px",
-                    pb:2,// Bordas arredondadas para um visual mais suave
+                    pb: 2,
                 }}
-                height="200"
-                image="https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp" // Substitui pelo URL da tua imagem
-                alt="Yosemite National Park"
+                image="https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp" // URL de exemplo
+                alt="Imagem da Loja"
             />
-            <Box>
-                <Divider
-                    sx={{
-                        left: 0,
-                        transform: "translateY(-50%)",
-                        height: "1px", // Grossura
-                        background: "linear-gradient(to right, transparent, #000, transparent)", // Gradiente
-                        border: "none",
-                    }}
-                />
-            </Box>
 
+            <Divider
+                sx={{
+                    height: "1px",
+                    background: "linear-gradient(to right, transparent, #000, transparent)",
+                    border: "none",
+                }}
+            />
+
+            {/* Informações */}
             <CardContent>
-                <Box sx={{marginBottom: "3%", p: 2}}>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 3
-                    }}>
-                        <Box sx={{display: "flex", flexDirection: "row", gap: 1}}>
-                            <Typography fontWeight="bold">Morada</Typography>
-                            <Typography>{store.addresses[0].street_address}</Typography>
-                        </Box>
-                        <Box sx={{flex: "1 1 45%", flexDirection: "row", minHeight: "80px"}}>
-                            <Typography fontWeight="bold">Discrição:</Typography>
-                            <Typography>{store.description}</Typography>
-                        </Box>
+                <Box sx={{ marginBottom: 2 }}>
+                    {/* Descrição */}
+                    <Box
+                        sx={{
+                            marginBottom: "1rem", // Espaço entre a descrição e os outros elementos
+                        }}
+                    >
+                        <Typography fontWeight="bold">Descrição:</Typography>
+                        <Typography
+                            sx={{
+                                display: "-webkit-box", // Ativa o line-clamp
+                                WebkitLineClamp: 3, // Define o máximo de 3 linhas
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }}
+                        >
+                            {truncatedDescription || "Sem Descrição"}
+                        </Typography>
                     </Box>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 3
-                    }}>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold">Rating</Typography>
-                            <Typography>{store.rating}</Typography>
-                        </Box>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold">Encomendas</Typography>
-                            <Typography>Exmplo</Typography>
-                        </Box>
+
+                    {/* Rating */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            marginBottom: 2, // Garante separação entre o rating e o botão
+                        }}
+                    >
+                        <Typography fontWeight="bold">Rating:</Typography>
+                        <Typography>{store?.rating || "Sem Avaliação"}</Typography>
                     </Box>
-                    <Box sx={{ textAlign: "right", mt: 2 }}>
-                        <Button variant="contained" color="primary">
-                            Ver
-                        </Button>
-                    </Box>
+                </Box>
+
+                {/* Botão */}
+
+                <Box sx={{ textAlign: "right", mt: "auto" }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                            borderRadius: "50%", // Garante bordas arredondadas
+                            width: 50, // Largura fixa (igual à altura)
+                            height: 50, // Altura fixa (igual à largura)
+                            minWidth: 0, // Remove o comportamento padrão de largura mínima
+                            padding: 0, // Remove padding interno
+                        }}
+                    >
+                        <RemoveRedEyeIcon />
+                    </Button>
                 </Box>
             </CardContent>
         </Card>
-
-
-    )
-})
+    );
+});
 
 export default DashboardStoresCard;
