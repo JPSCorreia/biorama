@@ -16,7 +16,7 @@ class Product extends Model
         'sold_at_unit',
         'price',
         'discount',
-        'stock'
+
     ];
 
     public function categories()
@@ -27,7 +27,6 @@ class Product extends Model
     public function stores()
     {
         return $this->belongsToMany(Store::class, 'store_products', 'product_id', 'store_id')
-            ->withPivot('stock')
             ->withTimestamps();
     }
 

@@ -32,7 +32,6 @@ class Store extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class, 'store_products', 'store_id', 'product_id')
-            ->withPivot('stock')
             ->withTimestamps();
     }
 

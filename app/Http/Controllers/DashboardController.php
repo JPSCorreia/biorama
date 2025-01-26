@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    //Mostrar informação do vendor
     public function showVendorInfo()
     {
         $user = Auth::user();
@@ -38,7 +39,6 @@ class DashboardController extends Controller
         // Se não for vendor, redireciona para o login com uma mensagem de erro
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
-
     //Actualizar o nome do vendedor
     public function updateVendorName(Request $request, vendor $vendor)
     {
@@ -132,7 +132,7 @@ class DashboardController extends Controller
             'company' => $company,
         ], 200);
     }
-
+    //Mostrar todas as lojas do vendor
     public function showVendorStores(Request $request)
     {
         $user = Auth::user();
