@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { Box, Typography, Button, Paper } from "@mui/material";
 import axios from "axios";
+import { useMediaQuery, useTheme } from "@mui/material";
 import backgroundImage from "../../images/background.jpg";
 
 // Component for feature testing in development
@@ -31,6 +32,24 @@ const FeatureTesting = observer(() => {
         }
     };
 
+    const theme = useTheme();
+
+
+    const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+    const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+    const isMd = useMediaQuery(theme.breakpoints.only('md'));
+    const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+    const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+    const currentBreakpoint =
+      isXs ? 'xs' :
+      isSm ? 'sm' :
+      isMd ? 'md' :
+      isLg ? 'lg' :
+      isXl ? 'xl' :
+      'unknown';
+
+
     return (
         <Box
             sx={{
@@ -48,7 +67,7 @@ const FeatureTesting = observer(() => {
             </Typography>
 
             {/* Button to trigger the sendInvoice function with test data */}
-            <Button
+            {/* <Button
                 variant="contained"
                 color="primary"
                 sx={{ width: "250px" }}
@@ -57,10 +76,10 @@ const FeatureTesting = observer(() => {
                 }
             >
                 Send Invoice
-            </Button>
+            </Button> */}
 
             {/* Container with a background image and bordered styling */}
-            <Box
+            {/* <Box
                 sx={{
                     display: "flex",
                     mt: 2,
@@ -93,7 +112,12 @@ const FeatureTesting = observer(() => {
                     <Typography variant="h4">Feature Testing</Typography>
                 </Paper>
 
-            </Box>
+            </Box> */}
+
+            {/* Display the current breakpoint */}
+            <Typography variant="h6" align="center">
+                Current breakpoint: <strong>{currentBreakpoint}</strong>
+            </Typography>
         </Box>
     );
 });

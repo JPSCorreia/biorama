@@ -29,6 +29,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { router } from "@inertiajs/react";
 import { SearchBar } from "./";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const Navbar = observer(() => {
     // Get user roles
@@ -108,6 +109,18 @@ const Navbar = observer(() => {
         },
     ];
 
+    const dashboardPage = {
+        name: "Dashboard",
+        link: "/dashboard",
+        icon: (
+            <DashboardIcon
+                sx={{
+                    mb: 0.25,
+                }}
+            />
+        ),
+    };
+
     // User account settings options
     const settings = [
         {
@@ -129,7 +142,7 @@ const Navbar = observer(() => {
                         onSuccess: () => {
                             handleCloseUserMenu();
                             authStore.updateAuth({ user: null });
-                            console.log("Logout successful");
+                            // console.log("Logout successful"); // For debugging
                         },
                     },
                 );
@@ -147,7 +160,7 @@ const Navbar = observer(() => {
     // Login button configuration
     const login = {
         id: 5,
-        name: "Entrar",
+        name: "Login",
         link: "/entrar",
     };
 
@@ -167,6 +180,10 @@ const Navbar = observer(() => {
     // Check if the screen size is large or small
     const isLg = useMediaQuery(theme.breakpoints.up("lg"));
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
+    const isMd = useMediaQuery(theme.breakpoints.between("sm", "lg"));
+    const betweenXsAndLg = useMediaQuery(theme.breakpoints.between("xs", "lg"));
+    const betweenSmAndMd = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     // Function to handle navigation with Inertia.js preserving state and scroll position
     const navigate = (path) => {
@@ -222,7 +239,9 @@ const Navbar = observer(() => {
                             <SpaIcon
                                 sx={{
                                     mb: 0,
-                                    mr: 1,
+                                    mr: betweenXsAndLg ? 2.5 : 1.1,
+                                    mb: betweenXsAndLg ? 0.75 : 0,
+                                    ml: isMd ? 3 : 0,
                                     color:
                                         theme.palette.mode === "dark"
                                             ? theme.palette.primary.main
@@ -308,7 +327,8 @@ const Navbar = observer(() => {
                             display: {
                                 xs: "none",
                                 md: "flex",
-                                width: "80%",
+                                width: "100%",
+                                maxWidth: "900px",
                                 justifyContent: "space-around",
                             },
                         }}
@@ -318,6 +338,7 @@ const Navbar = observer(() => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                flexGrow: 1,
                             }}
                         >
                             {pages.map((page) => (
@@ -350,8 +371,23 @@ const Navbar = observer(() => {
                                     </Button>
                                 </Tooltip>
                             ))}
+                            {/* Search bar */}
+                            <SearchBar />
                         </Box>
-                        {/* Search bar */}
+                    </Box>
+
+                    {/* Tablet navigation */}
+                    <Box
+                        sx={{
+                            display: {
+                                xs: "flex",
+                                md: "none",
+                                width: "100%",
+                            },
+                            pl: 2,
+                            pr: 0,
+                        }}
+                    >
                         <SearchBar />
                     </Box>
 
@@ -366,36 +402,65 @@ const Navbar = observer(() => {
                                 alignItems: "center",
                             }}
                         >
-                            {hasRole("vendor") && (
-                                <Button
-                                    key="dashboard"
-                                    onClick={() => {
-                                        navigate("/dashboard");
-                                    }}
-                                    variant="contained"
+                            {hasRole("vendor") ? (
+                                <Box
                                     sx={{
-                                        color: theme.palette.navbar.background,
-                                        backgroundColor: theme.palette.navbar.text,
-                                        display: "block",
-                                        marginTop: 1.7,
-                                        marginBottom: 1,
-                                        ml: 4,
-                                        justifyContent: "center",
+                                        display: "flex",
                                         alignItems: "center",
-                                        height: "40px",
-                                        fontSize: "18px",
-                                        textTransform: "none",
-                                        minWidth: "120px !important",
-                                        transition: "all 0.3s ease-in-out",
-                                        "&:hover": {
-                                            backgroundColor:
-                                                theme.palette.navbar.background,
-                                            color: theme.palette.navbar.text,
-                                        },
+                                        minWidth: smallerThanLg
+                                            ? "20px"
+                                            : "155px",
                                     }}
                                 >
-                                    {isLg ? "Dashboard" : "icone"}
-                                </Button>
+                                    <Tooltip title={smallerThanLg? dashboardPage.name : ""}>
+                                    <Button
+                                        key="dashboard"
+                                        onClick={() => {
+                                            navigate("/dashboard");
+                                        }}
+                                        variant="outline"
+                                        sx={{
+                                            // color: theme.palette.navbar.background,
+                                            // backgroundColor:
+                                            //     theme.palette.navbar.text,
+                                            display: "block",
+                                            marginTop: 1.7,
+                                            marginBottom: 1,
+                                            ml: !smallerThanLg? 4 : 1,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            height: "40px",
+                                            fontSize: "18px",
+                                            textTransform: "none",
+                                            // minWidth: "120px !important",
+                                            transition: "all 0.3s ease-in-out",
+                                            "&:hover": {
+                                                backgroundColor:
+                                                    theme.palette.navbar
+                                                        .background,
+                                                color: theme.palette.navbar
+                                                    .text,
+                                            },
+                                        }}
+                                    >
+                                        {!smallerThanLg ? (
+                                            dashboardPage.name
+                                        ) : (
+                                            dashboardPage.icon
+                                        )}
+                                    </Button>
+                                    </Tooltip>
+                                </Box>
+                            ) : !smallerThanLg ? (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        minWidth: "155px",
+                                    }}
+                                ></Box>
+                            ) : (
+                                ""
                             )}
                             {/* Shopping cart button */}
                             <Tooltip title={cart.name}>
@@ -417,7 +482,7 @@ const Navbar = observer(() => {
                                         minWidth: "55px",
                                         paddingRight: "10px",
                                         paddingLeft: "10px",
-                                        marginLeft: "20px",
+                                        marginLeft: smallerThanLg ? "10px" : "20px",
                                     }}
                                 >
                                     <Badge
@@ -429,7 +494,7 @@ const Navbar = observer(() => {
                                         color="success"
                                         overlap="circular"
                                     >
-                                        <ShoppingCartSharpIcon />
+                                        <ShoppingCartSharpIcon sx={{ mb: 0.25 }}/>
                                     </Badge>
                                 </Button>
                             </Tooltip>
@@ -560,6 +625,13 @@ const Navbar = observer(() => {
                                 alignItems: "center",
                             }}
                         >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    minWidth: "155px",
+                                }}
+                            ></Box>
                             {/* Shopping cart button */}
                             <Tooltip title={cart.name}>
                                 <Button
@@ -609,6 +681,9 @@ const Navbar = observer(() => {
                                     marginTop: 1.7,
                                     marginBottom: 1,
                                     minWidth: "75px",
+                                    height: "40px",
+                                    fontSize: "18px",
+                                    // textTransform: "none",
                                     marginLeft: "5px !important",
                                     paddingLeft: "0 !important",
                                     paddingRight: "0 !important",

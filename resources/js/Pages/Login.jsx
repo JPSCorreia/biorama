@@ -32,7 +32,7 @@ const Login = () => {
 
         router.post("/entrar", formData, {
             onSuccess: () => {
-                console.log("Login successful");
+                // console.log("Login successful"); // For debugging
             },
             onError: (errors) => {
                 console.error("Login errors:", errors);

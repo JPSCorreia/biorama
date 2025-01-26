@@ -14,7 +14,7 @@ if (process.env.APP_ENV === "production") {
     console.log = () => {};
 }
 
-// update authStore on every navigation
+// Update authStore on every inertia navigation
 router.on("navigate", (event) => {
     const auth = event.detail.page.props.auth;
     authStore.updateAuth(auth);
@@ -36,14 +36,12 @@ createInertiaApp({
 
         // Verify if it's a dashboard url
         if (name.startsWith("Dashboard/")) {
-            console.log("Tentando resolver a página do perfil:", name);
 
             // Get dashboard page
             const page =
                 dashboardPages[
                     `./Dashboard/Pages/${name.replace("Dashboard/", "")}.jsx`
                 ];
-            console.log("Tentando resolver o nome da página: ", page);
 
             // Throw error if page not found
             if (!page) {
@@ -58,20 +56,15 @@ createInertiaApp({
 
         // Verify if it's a profile url
         if (name.startsWith("Profile/")) {
-            console.log("Tentando resolver a página do perfil:", name);
 
-            // Ajusta o caminho para refletir `js/Pages/Profile/Pages`
+            // Get profile page
             const page =
                 profilePages[
                     `./Profile/Pages/${name.replace("Profile/", "")}.jsx`
                 ];
-            console.log("Tentando resolver o nome da página: ", page);
-
             if (!page) {
                 throw new Error(`Página ${name} não encontrada no perfil.`);
             }
-
-            console.log("Página resolvida: ", page);
 
             const Component = page.default || page;
 

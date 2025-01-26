@@ -43,11 +43,11 @@ const SearchBar = () => {
             sx={{
                 display: "flex",
                 alignItems: "center",
-                flexGrow: 1, // Ocupa todo o espaço restante na navbar
+                flexGrow: 1,
                 justifyContent: "center",
-                maxWidth: "600px !important",
+                maxWidth: "300px !important",
                 marginTop: "4px",
-                marginLeft: { xs: 0, md: 2 }, // Ajusta a margem conforme necessário
+                marginLeft: { xs: 0, md: 2 },
             }}
         >
             <Search>
