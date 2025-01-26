@@ -57,6 +57,12 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
             .required("Email é obrigatório"),
         description: yup.string()
             .nullable(),
+        address_street: yup.string()
+            .required(" Moarda é obrigatório"),
+        city: yup.string()
+            .required("localidade é obrigatória"),
+        comment: yup.string()
+            .nullable(),
         postal_code: yup.string()
             .matches(/^\d{4}-\d{3}$/, "Código Postal inválido")
             .required("Código Postal é obrigatório"),
@@ -68,6 +74,9 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
             phone: "",
             email: "",
             description: "",
+            address_street:"",
+            city: "",
+            comment: "",
             coordinates: "",
             postal_code: "",
             store_images: [],
@@ -94,6 +103,8 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                 if (response.status === 200 && response.data.length > 0) {
                     const data = response.data[0];
                     const coordinates = `${data.latitude},${data.longitude}`;
+                    formik.setFieldValue("address_street", data.morada || "");
+                    formik.setFieldValue("city", data.distrito || "");
                     formik.setFieldValue("coordinates", coordinates);
                     setShouldUpdateMap(true); // Atualizar mapa apenas aqui
                 } else {
@@ -194,28 +205,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                             }
                             fullWidth
                             />
-                            <TextField
-                                label="Email"
-                                name="email"
-                                onChange={formik.handleChange}
-                                value={formik.values.email}
-                                error={Boolean(formik.errors.email)}
-                                helperText={
-                                    <Box sx={{ minHeight: "20px" }}>
-                                        {formik.touched.email && formik.errors.email}
-                                    </Box>
-                                }
-                                fullWidth
-                            />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: 5,
-                            mb:2
-                        }}
-                    >
+
                         <TextField
                             label="Telefone"
                             name="phone"
@@ -230,19 +220,30 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                             fullWidth
                         />
 
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            gap: 5,
+                            mb:2
+                        }}
+                    >
                         <TextField
-                            label="Código Postal"
-                            name="postal_code"
-                            onChange={handlePostalCodeChange}
-                            value={formik.values.postal_code}
-                            error={Boolean(formik.errors.postal_code)}
+                            label="Email"
+                            name="email"
+                            onChange={formik.handleChange}
+                            value={formik.values.email}
+                            error={Boolean(formik.errors.email)}
                             helperText={
                                 <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.postal_code && formik.errors.postal_code}
+                                    {formik.touched.email && formik.errors.email}
                                 </Box>
                             }
                             fullWidth
                         />
+
                     </Box>
                     <Box>
                         <TextField
@@ -261,6 +262,65 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                             rows={4}
                         />
                     </Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            gap: 5,
+                            mb:2
+                        }}
+                    >
+                        <TextField
+                            label="Morada"
+                            name="address_street"
+                            onChange={formik.handleChange}
+                            value={formik.values.address_street}
+                            error={Boolean(formik.errors.address_street)}
+                            helperText={
+                                <Box sx={{ minHeight: "20px" }}>
+                                    {formik.touched.address_street && formik.errors.address_street}
+                                </Box>
+                            }
+                            fullWidth
+                        />
+                    </Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            gap: 5,
+                            mb:2
+                        }}
+                    >
+                        <TextField
+                        label="Localidade"
+                        name="city"
+                        onChange={formik.handleChange}
+                        value={formik.values.city}
+                        error={Boolean(formik.errors.city)}
+                        helperText={
+                        <Box sx={{ minHeight: "20px" }}>
+                            {formik.touched.city && formik.errors.city}
+                        </Box>
+                    }
+                        fullWidth
+                        />
+
+                        <TextField
+                            label="Código Postal"
+                            name="postal_code"
+                            onChange={handlePostalCodeChange}
+                            value={formik.values.postal_code}
+                            error={Boolean(formik.errors.postal_code)}
+                            helperText={
+                                <Box sx={{ minHeight: "20px" }}>
+                                    {formik.touched.postal_code && formik.errors.postal_code}
+                                </Box>
+                            }
+                            fullWidth
+                        />
+                    </Box>
+
                 </Box>
                 <Box
                     sx={{

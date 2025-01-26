@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Store;
+use App\Models\StoreAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\StoreGallery;
 use App\Models\Vendor;
@@ -18,23 +20,69 @@ class StoreController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'vendor_id' => 'required|exists:vendors,id',
-            'name' => 'required|string|max:100|unique:stores',
-            'phone_number' => 'nullable|string|max:15',
-            'email' => 'nullable|email|max:255|unique:stores',
-            'description' => 'nullable|string',
-            'image_link' => 'nullable|url',
-            'street_address' => 'required|string|max:255',
-            'city' => 'required|string|max:50',
-            'postal_code' => 'required|string|max:10',
-            'rating' => 'nullable|numeric|min:0|max:5',
-            'coordinates' => 'nullable|string',
-        ]);
+        try {
+            // Validação dos dados
+            $validated = $request->validate([
+                // Dados da loja
+                'name' => 'required|string|max:100|unique:stores',
+                'phone_number' => 'nullable|string|max:15',
+                'email' => 'nullable|email|max:255|unique:stores',
+                'description' => 'nullable|string',
+                'rating' => 'nullable|numeric|min:0|max:5',
+                'latitude' => 'required|numeric|min:-90|max:90',
+                'longitude' => 'required|numeric|min:-180|max:180',
 
-        $store = Store::create($validated);
-        return response()->json($store, 201);
+                // Dados do endereço
+                'address_name' => 'required|string|max:255',
+                'postal_code' => 'required|string|max:10',
+                'city' => 'required|string|max:50',
+                'comment' => 'nullable|string',
+            ]);
+
+            // Usa transações para garantir consistência
+            DB::beginTransaction();
+
+            // 1. Criar a loja
+            $store = new Store();
+            $store->name = $validated['name'];
+            $store->phone_number = $validated['phone_number'] ?? null;
+            $store->email = $validated['email'] ?? null;
+            $store->description = $validated['description'] ?? null;
+            $store->rating = $validated['rating'] ?? null;
+
+            // Define as coordenadas como POINT
+            $store->coordinates = DB::raw("POINT({$validated['longitude']}, {$validated['latitude']})");
+
+            $store->save();
+
+            // 2. Criar o endereço associado
+            $storeAddress = new StoreAddress();
+            $storeAddress->store_id = $store->id;
+            $storeAddress->address_name = $validated['address_name'];
+            $storeAddress->postal_code = $validated['postal_code'];
+            $storeAddress->city = $validated['city'];
+            $storeAddress->comment = $validated['comment'] ?? null;
+
+            $storeAddress->save();
+
+            // Confirma a transação
+            DB::commit();
+
+            // Retorna a loja criada com o endereço associado
+            return response()->json([
+                'store' => $store,
+                'address' => $storeAddress,
+            ], 201);
+        } catch (\Exception $e) {
+            // Reverte a transação no caso de erro
+            DB::rollBack();
+
+            return response()->json([
+                'error' => 'Erro ao criar a loja e o endereço: ' . $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     public function show(Store $store)
     {

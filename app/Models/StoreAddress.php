@@ -13,7 +13,6 @@ class StoreAddress extends Model
 
     protected $fillable = [
         'store_id',
-        'address_name',
         'phone_number',
         'street_address',
         'postal_code',

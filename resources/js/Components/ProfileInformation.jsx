@@ -449,7 +449,6 @@ const ProfileInformation = observer(() => {
                     </Box>
                 </Box>
             </Paper>
-
         </Box>
     );
 });
