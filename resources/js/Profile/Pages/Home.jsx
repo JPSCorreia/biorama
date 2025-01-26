@@ -1,11 +1,10 @@
 import { observer } from "mobx-react";
 import { ProfileInformation } from "../../Components/index.js";
 import { Box } from "@mui/material";
-import {ProfileLayout} from "../../Pages/index.js";
+import { ProfileLayout } from "../../Pages/index.js";
 import App from "../../App.jsx";
-import {SidebarProvider} from "@/Context/SidebarContext.jsx";
 
-const Profile = observer(() => {
+const Home = observer(() => {
     return (
         <Box
             sx={{
@@ -22,7 +21,4 @@ const Profile = observer(() => {
     );
 });
 
-// Aninhar os dois layouts
-Profile.layout = (page) => <ProfileLayout>{page}</ProfileLayout>;
-
-export default Profile;
+export default Home;

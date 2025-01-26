@@ -40,10 +40,6 @@ class OrderFactory extends Factory
                 ? $address->number
                 : $this->faker->buildingNumber,
 
-            'address_name' => isset($address) && !empty($address->address_name)
-                ? $address->address_name
-                : $this->faker->word() . ' Home',
-
             'comment' => isset($address) && !empty($address->comment)
                 ? $address->comment
                 : $this->faker->sentence,

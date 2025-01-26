@@ -19,7 +19,6 @@ class StoreAddressFactory extends Factory
     {
         return [
             'store_id' => Store::factory(), // Utiliza uma store existente ou cria um novo.
-            'address_name' => $this->faker->word(),
             'street_address' => $this->faker->streetAddress(),
             'postal_code' => $this->faker->postcode(),
             'city' => $this->faker->city(),

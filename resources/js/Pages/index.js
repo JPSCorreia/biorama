@@ -14,6 +14,5 @@ export { default as Store } from "./Store";
 export { default as Stores } from "./Stores";
 export { default as VendorInformation } from "./VendorInformation";
 export { default as Vendors } from "./Vendors";
-export {default as DashboardStorePage} from  "./DashboardStorePage"
-export { default as ProfileLayout } from "../Profile/ProfileLayout.jsx";
-
+export { default as DashboardStorePage } from "./DashboardStorePage";
+export { default as ProfileLayout } from "../Profile/ProfileLayout";

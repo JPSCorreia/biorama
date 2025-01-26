@@ -11,15 +11,15 @@ class HomeAddress extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
         'address_name',
         'phone_number',
-        'number',
         'street_address',
         'postal_code',
+        'number',
         'city',
         'is_primary',
         'comment',
+        'user_id',
     ];
 
     public function user()

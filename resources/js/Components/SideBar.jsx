@@ -17,7 +17,6 @@ import HomeIcon from "@mui/icons-material/Home";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { authStore } from "@/Stores";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useSidebar } from "@/context/SidebarContext"; // Importa o Contexto
 
 const SideBar = () => {
     const theme = useTheme();
