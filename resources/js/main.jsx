@@ -7,7 +7,7 @@ import CustomThemeProvider from "./CustomThemeProvider";
 import App from "./App";
 import Dashboard from "./Dashboard/Dashboard";
 import { router } from "@inertiajs/react";
-import {ProfileLayout} from "@/Pages/index.js";
+import { ProfileLayout } from "@/Pages/index.js";
 
 // Supress console.log in production
 if (process.env.APP_ENV === "production") {
@@ -30,16 +30,20 @@ createInertiaApp({
         const dashboardPages = import.meta.glob("./Dashboard/Pages/**/*.jsx", {
             eager: true,
         });
-        const profilePages = import.meta.glob("./Pages/Profile/**/*.jsx", { eager: true });
-
+        const profilePages = import.meta.glob("./Profile/Pages/**/*.jsx", {
+            eager: true,
+        });
 
         // Verify if it's a dashboard url
         if (name.startsWith("Dashboard/")) {
+            console.log("Tentando resolver a página do perfil:", name);
+
             // Get dashboard page
             const page =
                 dashboardPages[
                     `./Dashboard/Pages/${name.replace("Dashboard/", "")}.jsx`
                 ];
+            console.log("Tentando resolver o nome da página: ", page);
 
             // Throw error if page not found
             if (!page) {
@@ -53,11 +57,14 @@ createInertiaApp({
         }
 
         // Verify if it's a profile url
-        if (name.startsWith("/Profile/")) {
+        if (name.startsWith("Profile/")) {
             console.log("Tentando resolver a página do perfil:", name);
 
             // Ajusta o caminho para refletir `js/Pages/Profile/Pages`
-            const page = profilePages[`./${name}.jsx`];
+            const page =
+                profilePages[
+                    `./Profile/Pages/${name.replace("Profile/", "")}.jsx`
+                ];
             console.log("Tentando resolver o nome da página: ", page);
 
             if (!page) {
@@ -71,15 +78,12 @@ createInertiaApp({
             // Aplica o layout principal + layout específico do perfil
             Component.layout = (page) => (
                 <App>
-                    <ProfileLayout>
-                        {page}
-                    </ProfileLayout>
+                    <ProfileLayout>{page}</ProfileLayout>
                 </App>
             );
 
             return Component;
         }
-
 
         // Get normal app page
         const page = pages[`./Pages/${name}.jsx`];

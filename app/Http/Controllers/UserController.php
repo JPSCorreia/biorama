@@ -43,7 +43,7 @@ class UserController extends Controller
         $user->load('home_addresses', 'gender');
         $genders = Gender::all();
 
-        return Inertia::render('/Profile/Pages/Profile', ['user' => $user, 'genders' => $genders]);
+        return Inertia::render('Profile/Home', ['user' => $user, 'genders' => $genders]);
     }
 
     public function edit()

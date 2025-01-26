@@ -1,20 +1,16 @@
 import { Box } from "@mui/material";
-import {SideBar} from "../../Components/index"; // Certifique-se de que o caminho está correto
+import { SideBar } from "../Components";
 
-export default function ProfileLayout({ children }){
-
-
+export default function ProfileLayout({ children }) {
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
             {/* Sidebar fixa */}
             <Box sx={{ width: "240px", bgcolor: "#f5f5f5" }}>
-                <SideBar />
+                {/* <SideBar /> */}
             </Box>
 
             {/* Conteúdo dinâmico */}
-            <Box sx={{ flex: 1, padding: "20px" }}>
-                {children}
-            </Box>
+            <Box sx={{ flex: 1, padding: "20px" }}>{children}</Box>
         </Box>
     );
-};
+}
