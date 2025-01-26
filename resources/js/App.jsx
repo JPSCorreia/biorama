@@ -16,6 +16,7 @@ const App = observer(({ children }) => {
     return (
         <>
             {
+
                 // When user is on dashboard, render only the children
                 usePage().component === "Dashboard" ? (
                     <>{children}</>

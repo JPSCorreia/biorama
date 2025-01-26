@@ -7,6 +7,7 @@ import CustomThemeProvider from "./CustomThemeProvider";
 import App from "./App";
 import Dashboard from "./Dashboard/Dashboard";
 import { router } from "@inertiajs/react";
+import {ProfileLayout} from "@/Pages/index.js";
 
 // Supress console.log in production
 if (process.env.APP_ENV === "production") {
@@ -29,6 +30,8 @@ createInertiaApp({
         const dashboardPages = import.meta.glob("./Dashboard/Pages/**/*.jsx", {
             eager: true,
         });
+        const profilePages = import.meta.glob("./Profile/Pages/**/*.jsx", { eager: true });
+
 
         // Verify if it's a dashboard url
         if (name.startsWith("Dashboard/")) {
@@ -46,6 +49,28 @@ createInertiaApp({
             // Set dashboard layout
             const Component = page.default || page;
             Component.layout = (page) => <Dashboard>{page}</Dashboard>;
+            return Component;
+        }
+
+        if (name.startsWith("Profile/")) {
+            console.log(name)
+            const page = profilePages[`./Dashboard/Pages/${name.replace("Dashboard/", "")}.jsx`];
+            console.log("Tentando resolver o nome da página: ", profilePages);
+
+
+            if (!page) {
+                throw new Error(`Página ${name} não encontrada no Perfil.`);
+            }
+
+            console.log("Página resolvida: ", page); // Depuração da página resolvida
+
+
+            const Component = page.default || page;
+            Component.layout = (page) => (
+                <App>
+                    <ProfileLayout>{page}</ProfileLayout>
+                </App>
+            );
             return Component;
         }
 

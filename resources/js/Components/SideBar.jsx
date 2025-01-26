@@ -22,7 +22,6 @@ import { useSidebar } from "@/context/SidebarContext"; // Importa o Contexto
 const SideBar = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const { activeItem, setActiveItem } = useSidebar(); // Estado da sidebar
 
     const menuItems = [
         { text: "Dados Pessoais", icon: <AccountCircleIcon />, color: "primary.main" },
