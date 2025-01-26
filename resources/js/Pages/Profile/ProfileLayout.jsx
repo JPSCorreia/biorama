@@ -1,6 +1,5 @@
-import React from "react";
 import { Box } from "@mui/material";
-import SideBar from "../Components/SideBar.jsx"; // Certifique-se de que o caminho está correto
+import {SideBar} from "../../Components/index"; // Certifique-se de que o caminho está correto
 
 export default function ProfileLayout({ children }){
 

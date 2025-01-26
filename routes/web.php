@@ -116,10 +116,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
     Route::post('/registar-vendendor-1', [VendorController::class, 'store'])->name('registarVendedor.api');
 
-
+    Route::prefix('/perfil')->group(function()){
+        //Route to show user profile
+        Route::get('/perfil', [UserController::class, 'show'])->name('profile');
+    }
     // User profile routes
-    //Route to show user profile
-    Route::get('/perfil', [UserController::class, 'show'])->name('profile');
     //Route to edit user profile
     Route::post('/editar-perfil/{user}', [UserController::class, 'update'])->name('update_profile_user');
     //Route to get user information

@@ -30,7 +30,7 @@ createInertiaApp({
         const dashboardPages = import.meta.glob("./Dashboard/Pages/**/*.jsx", {
             eager: true,
         });
-        const profilePages = import.meta.glob("./Profile/Pages/**/*.jsx", { eager: true });
+        const profilePages = import.meta.glob("./Pages/Profile/**/*.jsx", { eager: true });
 
 
         // Verify if it's a dashboard url
@@ -52,27 +52,34 @@ createInertiaApp({
             return Component;
         }
 
-        if (name.startsWith("Profile/")) {
-            console.log(name)
-            const page = profilePages[`./Dashboard/Pages/${name.replace("Dashboard/", "")}.jsx`];
-            console.log("Tentando resolver o nome da página: ", profilePages);
+        // Verify if it's a profile url
+        if (name.startsWith("/Profile/")) {
+            console.log("Tentando resolver a página do perfil:", name);
 
+            // Ajusta o caminho para refletir `js/Pages/Profile/Pages`
+            const page = profilePages[`./${name}.jsx`];
+            console.log("Tentando resolver o nome da página: ", page);
 
             if (!page) {
-                throw new Error(`Página ${name} não encontrada no Perfil.`);
+                throw new Error(`Página ${name} não encontrada no perfil.`);
             }
 
-            console.log("Página resolvida: ", page); // Depuração da página resolvida
-
+            console.log("Página resolvida: ", page);
 
             const Component = page.default || page;
+
+            // Aplica o layout principal + layout específico do perfil
             Component.layout = (page) => (
                 <App>
-                    <ProfileLayout>{page}</ProfileLayout>
+                    <ProfileLayout>
+                        {page}
+                    </ProfileLayout>
                 </App>
             );
+
             return Component;
         }
+
 
         // Get normal app page
         const page = pages[`./Pages/${name}.jsx`];
