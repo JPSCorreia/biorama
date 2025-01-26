@@ -9,17 +9,11 @@ class OrderStoreProduct extends Model
 {
     use HasFactory;
 
+    protected $table = 'order_store_products'; // Nome da tabela
     protected $primaryKey = ['order_id', 'store_id', 'product_id']; // Chave primária composta
 
 
-    protected $fillable = [
-        'order_id',
-        'product_id',
-        'order_id',
-        'price',
-        'discount',
-        'quantity',
-    ];
+    protected $fillable = ['order_id', 'store_id', 'product_id', 'price', 'discount', 'quantity'];
 
     public function order()
     {

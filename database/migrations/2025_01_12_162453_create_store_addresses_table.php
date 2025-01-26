@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('store_addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('store_id')->constrained('stores');
-            $table->string('address_name', 100);
             $table->string('street_address', 255);
             $table->string('postal_code', 10);
             $table->string('city', 50);

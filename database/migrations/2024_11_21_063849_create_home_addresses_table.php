@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('home_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
             $table->string('address_name', 100);
             $table->string('phone_number', 15)->nullable();
             $table->string('street_address', 255);
@@ -22,6 +21,8 @@ return new class extends Migration
             $table->string('city', 50);
             $table->boolean('is_primary')->default(false);
             $table->mediumText('comment')->nullable();
+
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

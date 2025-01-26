@@ -13,8 +13,8 @@ class Gender extends Model
         return $this->hasOne(User::class);
     }
 
-    public function gender()
+    public function vendor()
     {
-        return $this->belongsTo(Gender::class);
+        return $this->hasOne(Vendor::class);
     }
 }

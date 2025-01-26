@@ -18,29 +18,11 @@ class OrderSeeder extends Seeder
      */
     public function run()
     {
-        // 3. Criar 30 ordens
-        $orders = Order::factory(30)->create();
+        // Create 30 orders
+        Order::factory(1)->create();
+        //dd('Orders created', Order::all());
+        //OrderStoreProduct::factory(30)->create();
 
-        $stores = Store::all();
-
-
-        // 4. Associar 5 produtos a cada ordem usando store_products
-        foreach ($orders as $order) {
-            $store = $stores->random(); // Selecionar uma loja aleatória para a ordem
-            $storeProducts = StoreProduct::where('store_id', $store->id)
-                ->inRandomOrder()
-                ->limit(5)
-                ->get(); // Selecionar 5 produtos aleatórios da loja
-
-            // Associar os produtos à ordem de modo a utilizar a tabela pivot
-            foreach ($storeProducts as $storeProduct) {
-                OrderStoreProduct::factory()->create([
-                    'order_id' => $order->id,
-                    'store_id' => $storeProduct->id,
-                    'product_id' => $storeProduct->product_id,
-                ]);
-            }
-        }
 
     }
 
