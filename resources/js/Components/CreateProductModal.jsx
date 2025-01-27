@@ -181,96 +181,63 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                 }}
                             >
                                 {images.length > 0 ? (
-                                    <Box
-                                        sx={{
-                                            width: "100%",
-                                            height: "100%",
-                                            position: "relative",
-                                            "&:hover > .upload-overlay": {
-                                                display: "flex", // Exibe o overlay ao passar o rato
-                                            },
-                                        }}
-                                    >
-                                        <img
-                                            src={images[previewIndex]}
-                                            alt="Preview"
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                objectFit: "contain", // Mantém a imagem ajustada sem cortar
-                                            }}
-                                        />
-                                        {/* Botão de upload no hover */}
                                         <Box
-                                            className="upload-overlay"
                                             sx={{
-                                                position: "absolute",
-                                                top: 0,
-                                                left: 0,
-                                                width: "100%",
-                                                height: "100%",
-                                                backgroundColor: "rgba(0, 0, 0, 0.6)",
-                                                display: "none",
+                                                width: 400,
+                                                height: 300,
+                                                border: "2px dashed",
+                                                borderColor: "grey.400",
+                                                borderRadius: "8px",
+                                                position: "relative",
+                                                display: "flex",
                                                 justifyContent: "center",
                                                 alignItems: "center",
-                                                flexDirection: "column",
-                                                zIndex: 10,
+                                                overflow: "hidden",
                                             }}
                                         >
-                                            <Typography variant="body2" color="white" mb={1}>
-                                                Alterar Imagem
-                                            </Typography>
-                                            <IconButton
-                                                component="label"
-                                                sx={{
-                                                    backgroundColor: "white",
-                                                    "&:hover": { backgroundColor: "grey.300" },
-                                                }}
-                                            >
-                                                <UploadIcon sx={{ color: "black" }} />
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    hidden
-                                                    onChange={handleImageUpload} // Função para carregar imagem
+                                            {images.length > 0 ? (
+                                                <img
+                                                    src={images[previewIndex].url}
+                                                    alt="Preview"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        objectFit: "contain",
+                                                    }}
                                                 />
-                                            </IconButton>
+                                            ) : (
+                                                <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        width: "100%",
+                                                        height: "100%",
+                                                    }}
+                                                >
+                                                    <Typography variant="body2" color="grey.500" mb={1}>
+                                                        Adicionar Imagem
+                                                    </Typography>
+                                                    <IconButton
+                                                        component="label"
+                                                        sx={{
+                                                            backgroundColor: "primary.main",
+                                                            color: "white",
+                                                            "&:hover": { backgroundColor: "primary.dark" },
+                                                        }}
+                                                    >
+                                                        <UploadIcon />
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            hidden
+                                                            onChange={handleImageUpload}
+                                                        />
+                                                    </IconButton>
+                                                </Box>
+                                            )}
                                         </Box>
-                                    </Box>
-                                ) : (
-                                    // Caso não haja imagem, exibe diretamente o botão com ícone
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            width: "100%",
-                                            height: "100%",
-                                        }}
-                                    >
-                                        <Typography variant="body2" color="grey.500" mb={1}>
-                                            Adicionar Imagem
-                                        </Typography>
-                                        <IconButton
-                                            component="label"
-                                            sx={{
-                                                backgroundColor: "primary.main",
-                                                color: "white",
-                                                "&:hover": { backgroundColor: "primary.dark" },
-                                            }}
-                                        >
-                                            <UploadIcon />
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                hidden
-                                                onChange={handleImageUpload} // Função para carregar imagem
-                                            />
-                                        </IconButton>
-                                    </Box>
-                                )}
-                            </Box>
 
                             {/* Carrossel de miniaturas */}
                             {images.length > 0 && (
