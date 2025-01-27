@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import ReactDOMServer from "react-dom/server";
 import { Box, CircularProgress, useTheme } from "@mui/material";
 import { StoreSharp as StoreSharpIcon } from "@mui/icons-material";
@@ -14,7 +15,7 @@ import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
 import { router } from "@inertiajs/react";
 
-// Create custom leaflet store icon function.
+// Criar um ícone customizado para o marcador das lojas
 const createCustomIcon = (color) => {
     const iconHtml = ReactDOMServer.renderToString(
         <div
@@ -33,7 +34,7 @@ const createCustomIcon = (color) => {
                 fontSize="inherit"
                 style={{ fill: color, width: "1em", height: "1em" }}
             />
-        </div>
+        </div>,
     );
 
     return L.divIcon({
@@ -44,85 +45,56 @@ const createCustomIcon = (color) => {
     });
 };
 
-// Recenter map function.
+// Recentra o mapa na posição fornecida
 const SetViewOnPosition = ({ position }) => {
     const map = useMap();
     if (position) {
-        map.setView(position, 12); // Zoom level
+        map.setView(position, 15); // Zoom level
     }
     return null;
 };
 
-const HomeMap = () => {
-    const [position, setPosition] = useState(null);
-    const [loadMap, setLoadMap] = useState(false);
+const HomeMap = ({ radius }) => {
+    const [position, setPosition] = useState(null); // Coordenadas do utilizador
+    const [loading, setLoading] = useState(true);
+    const [nearbyStores, setNearbyStores] = useState([]); // Lojas próximas
     const theme = useTheme();
 
     useEffect(() => {
-        const timeoutId = setTimeout(() => setLoadMap(true), 5000);
+        const fetchNearbyStores = async (latitude, longitude) => {
+            try {
+                const response = await axios.get("/stores/nearby", {
+                    params: { latitude, longitude, radius },
+                });
+                setNearbyStores(response.data);
+            } catch (err) {
+                console.error(
+                    "Erro ao buscar lojas próximas:",
+                    err.response?.data?.message || err.message,
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
 
+        // Obter a localização do utilizador
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                (location) => {
-                    const { latitude, longitude } = location.coords;
-                    setPosition([latitude, longitude]);
-                    setLoadMap(true);
-                    clearTimeout(timeoutId);
+                ({ coords }) => {
+                    const { latitude, longitude } = coords;
+                    setPosition([latitude, longitude]); // Define a posição do utilizador
+                    fetchNearbyStores(latitude, longitude); // Buscar lojas próximas
                 },
                 () => {
                     console.error("Não foi possível obter a localização.");
-                    setLoadMap(true);
-                }
+                    setLoading(false);
+                },
             );
         } else {
             console.error("Geolocalização não é suportada neste navegador.");
-            setLoadMap(true);
+            setLoading(false);
         }
-
-        return () => clearTimeout(timeoutId);
-    }, []);
-
-    // Generate 5 fictious stores (//TODO: remove later).
-    const generateNearbyStores = (center) => {
-        const offset = 0.04; // Pequeno desvio para criar lojas próximas
-        return [
-            {
-                position: [center[0] + offset, center[1] + offset],
-                id: 1,
-                name: "Loja Fictícia 1",
-                description: "Especializada em produtos locais e orgânicos.",
-            },
-            {
-                position: [center[0] - offset, center[1] - offset],
-                id: 2,
-                name: "Loja Fictícia 2",
-                description: "Grande variedade de produtos artesanais.",
-            },
-            {
-                position: [center[0] + offset, center[1] - offset],
-                id: 3,
-                name: "Loja Fictícia 3",
-                description:
-                    "Conhecida pelos seus alimentos frescos e sustentáveis.",
-            },
-            {
-                position: [center[0] - offset * 1.5, center[1] + offset * 0.5],
-                id: 4,
-                name: "Loja Fictícia 4",
-                description:
-                    "Oferece uma variedade de frutas e vegetais frescos.",
-            },
-            {
-                position: [center[0] + offset * 1.5, center[1] - offset * 0.5],
-                id: 5,
-                name: "Loja Fictícia 5",
-                description:
-                    "Loja local com produtos artesanais de alta qualidade.",
-            },
-        ];
-    };
-
-    const nearbyStores = position ? generateNearbyStores(position) : [];
+    }, [radius]);
 
     const navigate = (path) => {
         router.visit(path, {
@@ -131,9 +103,11 @@ const HomeMap = () => {
         });
     };
 
+    console.log("Nearby Stores:", nearbyStores);
+
     return (
         <>
-            {!loadMap ? (
+            {loading ? (
                 <Box
                     sx={{
                         height: "400px",
@@ -162,23 +136,20 @@ const HomeMap = () => {
                     }}
                 >
                     <MapContainer
-                        center={position || [38.7071, -9.1355]} // Default to Lisbon without location.
+                        center={position || [38.7071, -9.1355]} // Default para Lisboa
                         zoom={13}
                         style={{ height: "100%", width: "100%" }}
                     >
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         {position && (
                             <>
-                                {/* Geolocation Marker */}
-                                {/* <Marker
-                                position={position}
-                            /> */}
-                                {nearbyStores.map((store, index) => (
+                                {/* Marcadores para as lojas próximas */}
+                                {nearbyStores.slice(0, 5).map((store) => (
                                     <Marker
-                                        key={index}
-                                        position={store.position}
+                                        key={store.id}
+                                        position={[store.latitude, store.longitude]}
                                         icon={createCustomIcon(
-                                            theme.palette.primary.main
+                                            theme.palette.primary.main,
                                         )}
                                         eventHandlers={{
                                             click: () => {
@@ -209,8 +180,8 @@ const HomeMap = () => {
     );
 };
 
-export default HomeMap;
-
-SetViewOnPosition.propTypes = {
-    position: PropTypes.arrayOf(PropTypes.number),
+HomeMap.propTypes = {
+    radius: PropTypes.number.isRequired, // Raio de busca (em km)
 };
+
+export default HomeMap;

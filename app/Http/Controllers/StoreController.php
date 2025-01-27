@@ -185,9 +185,7 @@ class StoreController extends Controller
         // Get the user
         $user = User::where('id', $vendor->user_id)->first();
 
-        // $products = StoreProduct::where('store_id', $id)->get();
-
-        $products = $store->load('products');
+        $products = $store->load('products')->products;
 
         // Format for JSON compatibility
         $formattedStore = [
