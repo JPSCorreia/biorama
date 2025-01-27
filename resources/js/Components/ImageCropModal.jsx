@@ -14,6 +14,8 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
     }, []);
 
     const handleCrop = () => {
+        if (!croppedAreaPixels || !image) return;
+
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const img = new Image();
@@ -44,7 +46,11 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
             const croppedImageFile = base64ToFile(croppedImageBase64, "cropped-image.png");
 
             // Enviar o ficheiro para o componente pai
-            onCropComplete(croppedImageFile);
+            if (onCropComplete) {
+                onCropComplete(croppedImageFile); // Retorna o arquivo File
+            }
+
+            onClose(); // Fecha o modal
         };
     };
 

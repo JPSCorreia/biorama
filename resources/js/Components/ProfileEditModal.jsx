@@ -34,6 +34,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
     // Estado para o modal de recorte
     const [cropModalOpen, setCropModalOpen] = useState(false);
     const [imageToCrop, setImageToCrop] = useState(null);
+    const [croppedImageURL, setCroppedImageURL] = useState(null);
 
     // Função para abrir o modal de crop ao fazer upload
     const handleImageUpload = (event) => {
@@ -49,8 +50,10 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
     };
 
     // Callback para salvar a imagem recortada
-    const handleCropComplete = (croppedImage) => {
-        formik.setFieldValue('image_profile', croppedImage); // Atualiza o campo no formik
+    const handleCropComplete = (croppedImageFile) => {
+        // Gera um Blob URL para pré-visualizar
+        const previewURL = URL.createObjectURL(croppedImageFile);
+        setCroppedImageURL(previewURL); // Define o preview no estado
         setCropModalOpen(false); // Fecha o modal de crop
     };
 
@@ -97,8 +100,12 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                 formData.append('image_profile', authStore.user.image_profile); // Envia o link existente
             }
 
+            console.log('ImageStore', formik.values.image_profile);
+
             // Atualizar no backend
             await authStore.submitDataUser(formData);
+
+            formik.resetForm(); // Reseta o formulário
 
             handleClose(); // Fecha o modal
         } catch (error) {
@@ -182,13 +189,10 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                     >
                         <Avatar
                             alt="Profile Image"
-                            src={formik.values.image_profile || authStore.user.image_profile}
+                            src={croppedImageURL || formik.values.image_profile} // Mostra o preview ou o valor existente
                             sx={{
                                 width: isSmallScreen ? 90 : 125,
                                 height: isSmallScreen ? 90 : 125,
-                                color: "background.secondary",
-                                bgcolor: "primary.main",
-                                fontSize: "3rem",
                                 borderRadius: isSmallScreen ? "50%" : "10px",
                             }}
                         >

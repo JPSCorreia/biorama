@@ -26,10 +26,10 @@ const CreateProductModal = observer(({ open, handleClose }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const [images, setImages] = useState([]); // Lista de imagens [{ file, url }]
+    const [images, setImages] = useState([]); // [{ file, url }]
     const [previewIndex, setPreviewIndex] = useState(0); // Índice da imagem em pré-visualização
     const [cropModalOpen, setCropModalOpen] = useState(false); // Estado do modal de recorte
-    const [imageToCrop, setImageToCrop] = useState(null); // Imagem bruta para recorte
+    const [imageToCrop, setImageToCrop] = useState(null); // Imagem para recorte
 
     // Abrir modal de recorte com a imagem carregada
     const handleImageUpload = (event) => {
@@ -46,20 +46,38 @@ const CreateProductModal = observer(({ open, handleClose }) => {
 
     // Callback para salvar a imagem recortada
     const handleCropComplete = (croppedFile) => {
-        const url = URL.createObjectURL(croppedFile); // Cria URL temporário para preview
-        setImages((prev) => [...prev, { file: croppedFile, url }]); // Adiciona ao estado
-        setPreviewIndex(images.length); // Atualiza o índice para a nova imagem
+        const url = URL.createObjectURL(croppedFile); // Cria URL para pré-visualização
+        const newImage = { file: croppedFile, url };
+
+        // Atualiza o estado local das imagens
+        setImages((prev) => {
+            const updatedImages = [...prev, newImage];
+
+            // Atualiza o campo do Formik
+            formik.setFieldValue(
+                "imagesProduct",
+                updatedImages.map((img) => img.file) // Apenas os arquivos
+            );
+
+            return updatedImages;
+        });
+
+        setPreviewIndex(images.length); // Atualiza o índice da pré-visualização
         setCropModalOpen(false); // Fecha o modal de recorte
     };
 
-    // Apagar a imagem atual em pré-visualização
-    const handleDeleteImage = () => {
-        if (images.length > 0) {
-            URL.revokeObjectURL(images[previewIndex].url); // Libera o URL temporário
-            const updatedImages = images.filter((_, index) => index !== previewIndex);
-            setImages(updatedImages);
-            setPreviewIndex(0);
-        }
+    // Apagar a imagem selecionada
+    const handleDeleteImage = (index) => {
+        const updatedImages = images.filter((_, i) => i !== index);
+
+        // Atualiza o estado local e o campo do Formik
+        setImages(updatedImages);
+        formik.setFieldValue(
+            "imagesProduct",
+            updatedImages.map((img) => img.file) // Apenas os arquivos
+        );
+
+        setPreviewIndex(0);
     };
 
     const formik = useFormik({
@@ -69,6 +87,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
             sold_at_unit: false,
             price: "",
             discount: "",
+            imagesProduct: [], // Inicializa como array vazio
         },
         validationSchema: Yup.object({
             name: Yup.string()
@@ -95,14 +114,15 @@ const CreateProductModal = observer(({ open, handleClose }) => {
             formData.append("discount", values.discount);
             formData.append("sold_at_unit", values.sold_at_unit);
 
-            images.forEach((image, index) => {
-                formData.append(`images[${index}]`, image.file);
+            // Adiciona as imagens ao FormData
+            values.imagesProduct.forEach((file, index) => {
+                formData.append(`imagesProduct[${index}]`, file);
             });
 
-            // Envia para a store (ou para o backend via API)
+            // Envia para a store ou backend
             vendorRegistrationStore.addProduct(formData);
 
-            console.log("Dados do Produto:", values);
+            // Limpa o formulário e os estados locais
             resetForm();
             images.forEach((image) => URL.revokeObjectURL(image.url)); // Libera URLs temporários
             setImages([]);
@@ -173,20 +193,64 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                     overflow: "hidden",
                                     "&:hover": {
                                         cursor: "pointer",
-                                        opacity: 0.8,
                                     },
                                 }}
                             >
                                 {images.length > 0 ? (
-                                    <img
-                                        src={images[previewIndex].url}
-                                        alt="Preview"
-                                        style={{
+                                    <Box
+                                        sx={{
+                                            position: "relative",
                                             width: "100%",
                                             height: "100%",
-                                            objectFit: "contain",
+                                            "&:hover img": {
+                                                opacity: 0.5,
+                                            },
+                                            "&:hover .add-image-overlay": {
+                                                display: "flex",
+                                            },
                                         }}
-                                    />
+                                    >
+                                        <img
+                                            src={images[previewIndex].url}
+                                            alt="Preview"
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                objectFit: "contain",
+                                                transition: "opacity 0.3s",
+                                            }}
+                                        />
+                                        <Box
+                                            className="add-image-overlay"
+                                            sx={{
+                                                position: "absolute",
+                                                top: 0,
+                                                left: 0,
+                                                width: "100%",
+                                                height: "100%",
+                                                display: "none",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                            }}
+                                        >
+                                            <IconButton
+                                                component="label"
+                                                sx={{
+                                                    backgroundColor: "white",
+                                                    "&:hover": { backgroundColor: "grey.300" },
+                                                }}
+                                            >
+                                                <UploadIcon sx={{ color: "black" }} />
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    hidden
+                                                    onChange={handleImageUpload}
+                                                />
+                                            </IconButton>
+                                        </Box>
+                                    </Box>
                                 ) : (
                                     <Box
                                         sx={{
@@ -258,6 +322,9 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                                                 : "2px solid transparent",
                                                         overflow: "hidden",
                                                         cursor: "pointer",
+                                                        "&:hover .delete-icon": {
+                                                            display: "flex",
+                                                        },
                                                     }}
                                                 >
                                                     <img
@@ -267,23 +334,25 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                                             width: "100%",
                                                             height: "100%",
                                                             objectFit: "cover",
+                                                            transition: "opacity 0.3s",
                                                         }}
                                                         onClick={() => setPreviewIndex(index)}
                                                     />
                                                     <IconButton
+                                                        className="delete-icon"
                                                         sx={{
                                                             position: "absolute",
-                                                            top: 8,
-                                                            right: 8,
+                                                            top: "50%",
+                                                            left: "50%",
+                                                            transform: "translate(-50%, -50%)",
                                                             color: "red",
+                                                            display: "none",
+                                                            backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                                            "&:hover": {
+                                                                backgroundColor: "rgba(255, 255, 255, 1)",
+                                                            },
                                                         }}
-                                                        onClick={() => {
-                                                            URL.revokeObjectURL(image.url);
-                                                            setImages((prev) =>
-                                                                prev.filter((_, i) => i !== index)
-                                                            );
-                                                            setPreviewIndex(0);
-                                                        }}
+                                                        onClick={handleDeleteImage(index)}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>
