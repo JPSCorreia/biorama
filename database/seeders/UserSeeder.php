@@ -15,6 +15,12 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        $images = [
+            'storage/mock_images/users/user_1.png',
+            'storage/mock_images/users/user_2.png',
+            'storage/mock_images/users/user_3.png'
+        ];
+
         User::create([
             'id' => 1, // ID manualmente atribuído
             'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
@@ -24,7 +30,7 @@ class UserSeeder extends Seeder
             'nif'=> '239502051',
             'phone' => '912345678',
             'date_of_birth' => '1990-01-01',
-            'image_profile' => null, // Sem foto
+            'image_profile' => 'storage/mock_images/users/user_1.png',
             'remember_token' => Str::random(10),
             'iban' => 'PT50000201231234567890154',
             'gender_id' => 1, // ID do género
@@ -32,7 +38,12 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
             'password' => Hash::make('123456789'), // Cria uma hash segura
         ]);
-        User::factory()->count(25)->create();
+
+        User::factory()->count(25)->create()->each(function ($user) use ($images) {
+            $user->update([
+                'image_profile' => $images[array_rand($images)], // Seleciona uma imagem aleatória
+            ]);
+        });
 
 
         foreach (User::all() as $user) {
