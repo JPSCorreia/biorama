@@ -21,6 +21,7 @@ class OrderFactory extends Factory
         $address = HomeAddress::where('user_id', $user_id)->inRandomOrder()->first();
 
         return [
+            'user_id' => $user_id,
 
             'statuses_id' => $status_id,
 
@@ -43,6 +44,8 @@ class OrderFactory extends Factory
             'comment' => isset($address) && !empty($address->comment)
                 ? $address->comment
                 : $this->faker->sentence,
+
+            'total' => $this->faker->randomFloat(2, 1, 1000),
 
             'created_at' => now(),
             'updated_at' => now(),

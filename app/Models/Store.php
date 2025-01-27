@@ -12,6 +12,7 @@ class Store extends Model
 
     protected $fillable = [
         'store_id',
+        'vendor_id',
         'name',
         'phone_number',
         'email',
@@ -29,9 +30,16 @@ class Store extends Model
         return $this->belongsTo(Vendor::class);
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_store_products')
+            ->withPivot(['product_id', 'price', 'quantity', 'discount'])
+            ->withTimestamps();
+    }
+
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'store_products', 'store_id', 'product_id')
+        return $this->belongsToMany(Product::class, 'store_products')
             ->withTimestamps();
     }
 

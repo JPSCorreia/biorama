@@ -18,12 +18,39 @@ class OrderSeeder extends Seeder
      */
     public function run()
     {
-        // Create 30 orders
-        Order::factory(1)->create();
-        //dd('Orders created', Order::all());
-        //OrderStoreProduct::factory(30)->create();
+        // Criar 30 encomendas
+        Order::factory(30)->create();
 
+        $orders = Order::all();
+        $stores = Store::with('products')->get(); // Carrega as lojas com os seus produtos
 
+        foreach ($orders as $order) {
+            $store = $stores->random(); // Seleciona uma loja aleatória
+            $products = $store->products->random(rand(1, 5)); // Seleciona entre 1 e 5 produtos da loja
+
+            foreach ($products as $product) {
+                $quantity = rand(1, 10); // Quantidade aleatória
+
+                // Calcula o desconto e o preço final
+                $originalPrice = $product->price * $quantity;
+                $discountValue = $originalPrice * ($product->discount / 100);
+                $finalPrice = $originalPrice - $discountValue;
+
+                // Cria o registo na tabela pivot
+                OrderStoreProduct::create([
+                    'order_id' => $order->id,
+                    'store_id' => $store->id,
+                    'product_id' => $product->id,
+                    'price' => $product->price,
+                    'discount' => $product->discount,
+                    'discount_value' => $discountValue,
+                    'quantity' => $quantity,
+                    'final_price' => $finalPrice,
+                    'original_price' => $originalPrice,
+                ]);
+            }
+        }
     }
+
 
 }

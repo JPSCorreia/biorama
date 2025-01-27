@@ -16,17 +16,16 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained('orders');
 
             // Definir store_id e product_id sem FK direta
-            $table->unsignedBigInteger('store_id');
-            $table->unsignedBigInteger('product_id');
-
-            // Definir FK composta para store_products
-            $table->foreign(['store_id', 'product_id'])
-                ->references(['store_id', 'product_id'])
-                ->on('store_products');
+            $table->foreignId('store_id')->constrained('store_products', 'store_id');
+            $table->foreignId('product_id')->constrained('store_products', 'product_id');
 
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->nullable();
             $table->integer('quantity');
+            $table->decimal('discount_value', 10, 2)->nullable();
+            $table->decimal('final_price', 10, 2);
+            $table->decimal('original_price', 10, 2);
+
             $table->timestamps();
         });
     }

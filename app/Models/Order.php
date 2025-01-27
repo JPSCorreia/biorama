@@ -10,12 +10,14 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'statuses_id',
         'street_name',
         'city',
         'postal_code',
         'phone_number',
         'comment',
+        'total',
 
     ];
 
@@ -29,8 +31,18 @@ class Order extends Model
         return $this->belongsTo(HomeAddress::class);
     }
 
-    public function storeProducts()
+    public function products()
     {
-        return $this->hasMany(OrderStoreProduct::class, 'order_id', 'id');
+        return $this->belongsToMany(Product::class, 'order_store_products')
+            ->withTrashed()
+            ->withPivot(['product_id','price', 'quantity', 'discount'])
+            ->using(OrderStoreProduct::class);
+    }
+    public function stores()
+    {
+        return $this->belongsToMany(Store::class, 'order_store_products')
+            ->withTrashed()
+            ->withPivot(['store_id','price', 'quantity', 'discount'])
+            ->using(OrderStoreProduct::class);
     }
 }
