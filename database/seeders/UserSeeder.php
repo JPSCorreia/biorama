@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\HomeAddress;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -21,6 +20,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
             'last_name' => 'Bonaparte',
             'email' => 'vladimiro@example.com',
+            'email_verified_at' => now(),
             'nif'=> '239502051',
             'phone' => '912345678',
             'date_of_birth' => '1990-01-01',
@@ -45,6 +45,8 @@ class UserSeeder extends Seeder
                 'user_id' => $user->id,
             ]);
         }
+
+
     }
 
 }

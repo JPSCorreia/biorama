@@ -36,16 +36,12 @@ class AuthController extends Controller
 
         $user->assignRole('user');
 
-        // Auto login
-        Auth::login($user);
+        // Send verification email
+        $user->sendEmailVerificationNotification();
 
-        // Regenerate session
-        $request->session()->regenerate();
-
-        // Redirect with success message
-        return redirect()->route('home')
-            ->with('message', 'Registro realizado com sucesso!')
-            ->with('type', 'success');
+        return redirect()->route('login')
+        ->with('message', 'Email de verificação enviado. Verifique a sua caixa de entrada.')
+        ->with('type', 'info');
     }
 
     public function login(Request $request)
@@ -58,16 +54,35 @@ class AuthController extends Controller
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            // Regenerate session
+            $user = Auth::user();
+
+            if (!$user->hasVerifiedEmail()) {
+                Auth::logout();
+
+                return back()
+                    ->withErrors(['email' => 'O seu email ainda não foi verificado. Por favor, verifique o seu email.'])
+                    ->withInput($request->except('password'))
+                    ->with('message', 'Utilizador não verificado. Por favor, verifique o seu email.')
+                    ->with('type', 'error');
+            }
+
             $request->session()->regenerate();
 
             Log::info('Login attempt:', [
-                'user' => Auth::user()->email,
+                'user' => $user->email,
                 'remember' => $remember,
                 'via_remember' => Auth::viaRemember(),
                 'session_id' => session()->getId(),
                 'is_authenticated' => Auth::check()
             ]);
+
+            // Verificar se o login ocorreu após a verificação do email
+            if ($request->session()->pull('email_verified', false)) {
+                return redirect()
+                    ->intended(route('home'))
+                    ->with('message', 'Email verificado com sucesso! Login efetuado automaticamente.')
+                    ->with('type', 'success');
+            }
 
             return redirect()
                 ->intended(route('home'))
@@ -76,9 +91,13 @@ class AuthController extends Controller
         }
 
         return back()
-            ->withErrors(['email' => 'The provided credentials do not match our records.'])
-            ->withInput($request->except('password'));
+            ->withErrors(['email' => 'Credenciais inválidas.'])
+            ->withInput($request->except('password'))
+            ->with('message', 'Email ou palavra-passe incorretos.')
+            ->with('type', 'error');
     }
+
+
 
     public function logout(Request $request)
     {
@@ -153,7 +172,36 @@ class AuthController extends Controller
     }
 
 
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
 
+        if ($user->created_at->addHour()->isPast()) {
+            $user->delete();
+
+            return redirect()
+                ->route('register')
+                ->with('message', 'O link de verificação expirou. Registe-se novamente.')
+                ->with('type', 'error');
+        }
+
+
+        if (!hash_equals(sha1($user->email), $hash)) {
+            return redirect()->route('login')->with('message', 'Link de verificação inválido ou expirado.')
+                ->with('type', 'error');
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            Auth::login($user);
+            session()->flash('email_verified', true);
+        }
+
+        return redirect()->route('home')->with([
+            'message' => 'Email verificado com sucesso!',
+            'type' => 'success',
+        ]);
+    }
 
 
 }

@@ -12,9 +12,11 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
+import { observer } from "mobx-react";
+import { authStore } from "../Stores";
+import { AlertBox } from "../Components";
 
-const Login = () => {
-
+const Login = observer(() => {
     // State to manage login form data
     const [formData, setFormData] = useState({
         email: "",
@@ -53,24 +55,6 @@ const Login = () => {
         });
     };
 
-    // Clear the error message automatically after 5 seconds
-    useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => {
-                setShowError(false);
-            }, 4500); // After 4.5 seconds, start the fade
-
-            const clearTimer = setTimeout(() => {
-                setError("");
-            }, 5000); // After 5 seconds, clear the error message completely
-
-            return () => {
-                clearTimeout(timer);
-                clearTimeout(clearTimer);
-            };
-        }
-    }, [error]);
-
     return (
         <Container
             maxWidth="sm"
@@ -81,25 +65,7 @@ const Login = () => {
                 marginTop: "40px !important",
             }}
         >
-            {/* Display error message with fade effect */}
-            <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
-                {error ? (
-                    <Alert
-                        severity="error"
-                        variant="filled"
-                        sx={{
-                            mb: 2,
-                            height: "48px",
-                            width: "100%",
-                            maxWidth: "470px",
-                        }}
-                    >
-                        {error}
-                    </Alert>
-                ) : (
-                    <Box sx={{ mb: 2, height: "48px" }}></Box>
-                )}
-            </Fade>
+            <AlertBox />
             <Box
                 sx={{
                     display: "flex",
@@ -119,7 +85,6 @@ const Login = () => {
                         backgroundColor: "card.background",
                     }}
                 >
-
                     {/* Login form title */}
                     <Typography
                         variant="h5"
@@ -276,6 +241,6 @@ const Login = () => {
             </Box>
         </Container>
     );
-};
+});
 
 export default Login;
