@@ -509,7 +509,6 @@ const Navbar = observer(() => {
                                         onClick={handleOpenUserMenu}
                                         sx={{ p: 0 }}
                                     >
-                                        {console.log(authStore.user)}
                                         <Avatar
                                             alt="User Avatar"
                                             src={authStore.user?.image_profile}

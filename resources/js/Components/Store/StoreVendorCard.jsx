@@ -1,6 +1,8 @@
 import { Paper, Typography, Avatar } from "@mui/material";
 
-const StoreVendorCard = ({ store, vendor }) => {
+const StoreVendorCard = ({ store, vendor, user }) => {
+
+    console.log(user.image_profile)
     return (
         <Paper
             elevation={4}
@@ -16,7 +18,7 @@ const StoreVendorCard = ({ store, vendor }) => {
         >
             {/* Vendor Avatar */}
             <Avatar
-                // src={store.???} //TODO: Mudar para o avatar do vendedor
+                src={user.image_profile}
                 alt={`${vendor.first_name}'s Avatar`}
                 sx={{
                     width: 80,

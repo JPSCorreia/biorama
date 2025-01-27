@@ -5,8 +5,7 @@ import { Container, Box } from "@mui/material";
 import { AlertBox } from "../Components";
 
 const Store = observer(() => {
-    const { store, vendor, products } = usePage().props;
-    console.log(products)
+    const { store, vendor, products, user } = usePage().props;
 
     return (
         <Container
@@ -33,7 +32,7 @@ const Store = observer(() => {
                     marginTop: 2,
                 }}
             >
-                <StoreVendorCard store={store} vendor={vendor} />
+                <StoreVendorCard store={store} vendor={vendor} user={user} />
                 <StoreDescription store={store} />
             </Box>
 
