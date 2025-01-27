@@ -37,8 +37,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
         try {
             // Atualize a store com os valores do formulário, incluindo as imagens
             vendorRegistrationStore.updateStore({
-                ...values,
-                store_images: images, // Assegure que as imagens estão incluídas
+                ...values, images, // Assegure que as imagens estão incluídas
             });
             console.log("Dados submetidos:", values);
         } catch (error) {
@@ -49,7 +48,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
     const validationSchema = yup.object().shape({
         name: yup.string()
             .required("Nome é obrigatório"),
-        phone: yup.string()
+        phone_number: yup.string()
             .matches(/^\d{9,15}$/, "Número de telefone inválido")
             .required("Telefone é obrigatório"),
         email: yup.string()
@@ -57,8 +56,8 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
             .required("Email é obrigatório"),
         description: yup.string()
             .nullable(),
-        address_street: yup.string()
-            .required(" Moarda é obrigatório"),
+        street_address: yup.string()
+            .required(" Morada é obrigatório"),
         city: yup.string()
             .required("localidade é obrigatória"),
         comment: yup.string()
@@ -66,20 +65,21 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
         postal_code: yup.string()
             .matches(/^\d{4}-\d{3}$/, "Código Postal inválido")
             .required("Código Postal é obrigatório"),
+        coordinates: yup.string()
+            .required("Necessario coodernadas"),
     });
 
     const formik = useFormik({
         initialValues: {
             name: "",
-            phone: "",
+            phone_number: "",
             email: "",
             description: "",
-            address_street:"",
+            street_address:"",
             city: "",
             comment: "",
             coordinates: "",
             postal_code: "",
-            store_images: [],
         },
         validationSchema: validationSchema,
         validateOnMount: true,
@@ -103,7 +103,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                 if (response.status === 200 && response.data.length > 0) {
                     const data = response.data[0];
                     const coordinates = `${data.latitude},${data.longitude}`;
-                    formik.setFieldValue("address_street", data.morada || "");
+                    formik.setFieldValue("street_address", data.morada || "");
                     formik.setFieldValue("city", data.distrito || "");
                     formik.setFieldValue("coordinates", coordinates);
                     setShouldUpdateMap(true); // Atualizar mapa apenas aqui
@@ -155,7 +155,7 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
 
     useEffect(() => {
         if (passFormik) {
-            formik.setFieldValue("store_images", images);
+            formik.setFieldValue( images);
             passFormik(formik); // Passa o formik ao componente pai
         }
         vendorRegistrationStore.setStoreFormValid(formik.isValid); // Mantém o estado sincronizado
@@ -208,13 +208,13 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
 
                         <TextField
                             label="Telefone"
-                            name="phone"
+                            name="phone_number"
                             onChange={formik.handleChange}
-                            value={formik.values.phone}
-                            error={Boolean(formik.errors.phone)}
+                            value={formik.values.phone_number}
+                            error={Boolean(formik.errors.phone_number)}
                             helperText={
                                 <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.phone && formik.errors.phone}
+                                    {formik.touched.phone_number && formik.errors.phone_number}
                                 </Box>
                             }
                             fullWidth
@@ -272,13 +272,13 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
                     >
                         <TextField
                             label="Morada"
-                            name="address_street"
+                            name="street_address"
                             onChange={formik.handleChange}
-                            value={formik.values.address_street}
-                            error={Boolean(formik.errors.address_street)}
+                            value={formik.values.street_address}
+                            error={Boolean(formik.errors.street_address)}
                             helperText={
                                 <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.address_street && formik.errors.address_street}
+                                    {formik.touched.street_address && formik.errors.street_address}
                                 </Box>
                             }
                             fullWidth

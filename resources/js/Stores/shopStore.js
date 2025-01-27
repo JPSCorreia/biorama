@@ -1,5 +1,7 @@
 import { makeObservable, observable, runInAction } from "mobx";
 import { makePersistable } from "mobx-persist-store";
+import { router } from "@inertiajs/react";
+import axios from "axios";
 
 class ShopStore {
     stores = []; // Lista de todas as lojas
@@ -48,37 +50,35 @@ class ShopStore {
     }
 
     // Cria uma nova loja e o endereço associado
-    async createStore(newStoreData) {
+    async createStore(storeData) {
+        console.log("store Data antes do processamento", storeData);
+
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            // Cria uma cópia dos dados a serem enviados
+            const processedData = { ...storeData };
 
-            const response = await fetch('/create/store', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken, // Inclui o token CSRF
-                },
-                body: JSON.stringify(newStoreData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.text(); // Obtém o erro como texto
-                throw new Error(errorData || 'Erro ao criar a loja na base de dados');
+            // Verifica se o array de imagens está vazio
+            if (!storeData.images || storeData.images.length === 0) {
+                delete processedData.images; // Remove o campo se não houver imagens
             }
 
-            const createdStore = await response.json();
+            console.log("Dados processados para envio", processedData);
 
-            runInAction(() => {
-                this.stores.push(createdStore);
-                this.setStoreData(createdStore); // Define a loja criada como a atual
-            });
-
-            return { success: true, store: createdStore };
+            // Envia os dados para o backend usando o Inertia Router
+            const response = await axios.post("/create/store", processedData);
+            console.log("resposta:", response.data);
+            if (response.data.success) {
+                console.log("Loja criada com sucesso:", response.data);
+            }
+            return {success:true};
         } catch (error) {
-            console.error('Erro ao criar a loja:', error);
+            console.error("Erro inesperado ao criar a loja Front End:", error.message);
             return { success: false, message: error.message };
         }
     }
+
+
+
 
 
     // Limpa os dados da loja atual
