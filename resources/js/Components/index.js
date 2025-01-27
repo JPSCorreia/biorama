@@ -4,6 +4,7 @@ export { default as AddressModal } from "./AddressModal";
 export { default as AlertBox } from "./AlertBox";
 export { default as StoreBanner } from "./Store/StoreBanner";
 export { default as StoreDescription } from "./Store/StoreDescription";
+export { default as StoreMap } from "./Store/StoreMap";
 export { default as StoreProductsContainer } from "./Store/StoreProductsContainer";
 export { default as StoreVendorCard } from "./Store/StoreVendorCard";
 export { default as CartList } from "./CartList";

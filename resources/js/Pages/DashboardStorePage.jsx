@@ -25,6 +25,7 @@ const DashboardStorePage = observer(() => {
         displayedStores.push(null); // Adiciona um espaço vazio
     }
 
+
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         const newImages = [];
@@ -41,35 +42,42 @@ const DashboardStorePage = observer(() => {
         });
     };
 
+
     const handleSave = async () => {
         setIsLoading(true);
         setErrorMessage("");
-        console.log("Dados a enviar:",storeFormik);
 
         try {
-            // Combina os dados do formik com as imagens
+            if (!storeFormik || !storeFormik.values) {
+                throw new Error("Os dados do formulário estão incompletos.");
+            }
+
+            // Combina os dados do Formik com as imagens
             const storeData = {
-                ...storeFormik,
-                images, // Inclui as imagens enviadas
+                ...storeFormik.values,
+                images,
             };
 
-            // Chama o método para criar a loja
+            // Chama o método createStore no shopStore
             const result = await shopStore.createStore(storeData);
 
             if (result.success) {
                 console.log("Loja criada com sucesso:", result.store);
-                setOpenModal(false); // Fecha o modal após sucesso
-                setStoreFormik({}); // Limpa os dados do formik
-                setImages([]); // Limpa as imagens
+                setOpenModal(false); // Fecha o modal
             } else {
                 setErrorMessage(result.message);
             }
         } catch (error) {
-            setErrorMessage("Erro ao guardar os dados.");
+            console.error("Erro ao criar a loja:", error.message);
+            setErrorMessage("Erro ao guardar a loja. Por favor, tenta novamente.");
         } finally {
             setIsLoading(false);
         }
     };
+
+
+
+
 
     return (
         <Paper
@@ -166,7 +174,8 @@ const DashboardStorePage = observer(() => {
                             onClick={handleSave}
                             disabled={isLoading}
                         >
-                            {isLoading ? (
+
+                        {isLoading ? (
                                 <CircularProgress size={24} sx={{ color: "white" }} />
                             ) : (
                                 "Guardar"
