@@ -29,7 +29,6 @@ class VendorSeeder extends Seeder
                 'nif'=> '239502051',
                 'phone' => '912345678',
                 'date_of_birth' => '1990-01-01',
-                'image_profile' => null, // Sem foto
                 'iban' => 'PT50000201231234567890154',
                 'gender_id' => 1, // ID do género
                 'is_company' => true, // Pode ser alterado para `false` se quiseres simular individual

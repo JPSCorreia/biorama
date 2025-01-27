@@ -90,6 +90,11 @@ Route::middleware('guest')->group(function () {
     // Registration page
     Route::get('/registo', fn () => Inertia::render('Register'))->name('register');
 
+    // Email verification
+    Route::get('/email/verificar/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    ->middleware('signed')
+    ->name('verification.verify');
+
     // Password recovery page
     Route::get('/recuperar-palavra-passe', fn () =>
         Inertia::render('ForgotPassword')
@@ -110,6 +115,7 @@ Route::middleware('guest')->group(function () {
     // Send new password form data
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])
         ->name('password.update');
+
 });
 
 // Protected routes (requires authentication)

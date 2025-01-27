@@ -1,6 +1,6 @@
-import { Paper, Typography, Avatar } from "@mui/material";
+import { Paper, Typography, Box, Avatar } from "@mui/material";
 
-const StoreVendorCard = ({ store, vendor }) => {
+const StoreVendorCard = ({ store, vendor, user }) => {
     return (
         <Paper
             elevation={4}
@@ -16,7 +16,7 @@ const StoreVendorCard = ({ store, vendor }) => {
         >
             {/* Vendor Avatar */}
             <Avatar
-                // src={store.???} //TODO: Mudar para o avatar do vendedor
+                src={user.image_profile}
                 alt={`${vendor.first_name}'s Avatar`}
                 sx={{
                     width: 80,
@@ -25,12 +25,17 @@ const StoreVendorCard = ({ store, vendor }) => {
                     border: "2px solid #fff", // Borda branca ao redor do avatar
                 }}
             />
-            {/* Store name*/}
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {vendor.first_name} {vendor.last_name}
-            </Typography>
-            {/* Store Map TODO */}
-                MAPA? talvez mais sentido na descrição
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                {/* Store name*/}
+                <Typography variant="h6" sx={{ fontWeight: "bold", alignSelf: "center" }}>
+                    {vendor.first_name} {vendor.last_name}
+                </Typography>
+                <Typography >Rating: 4.8</Typography>
+                <Typography>
+                    Numero de vendas: 150
+                </Typography>
+                <Typography>etc</Typography>
+            </Box>
         </Paper>
     );
 };

@@ -238,7 +238,6 @@ const Navbar = observer(() => {
                         ) : (
                             <SpaIcon
                                 sx={{
-                                    mb: 0,
                                     mr: betweenXsAndLg ? 2.5 : 1.1,
                                     mb: betweenXsAndLg ? 0.75 : 0,
                                     ml: isMd ? 3 : 0,

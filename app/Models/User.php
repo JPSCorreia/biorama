@@ -8,10 +8,12 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\VerifyEmailNotification;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements CanResetPasswordContract
+class User extends Authenticatable implements CanResetPasswordContract, MustVerifyEmail
 {
     use HasFactory, HasRoles, Notifiable, SoftDeletes, CanResetPassword;
 
@@ -26,6 +28,7 @@ class User extends Authenticatable implements CanResetPasswordContract
         'iban',
         'password',
         'gender_id',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -60,5 +63,26 @@ class User extends Authenticatable implements CanResetPasswordContract
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmailNotification($this));
+    }
+
+     /**
+     * Scope to filter verified users.
+     */
+    public function scopeVerified($query)
+    {
+        return $query->whereNotNull('email_verified_at');
+    }
+
+    /**
+     * Scope to filter unverified users.
+     */
+    public function scopeUnverified($query)
+    {
+        return $query->whereNull('email_verified_at');
     }
 }

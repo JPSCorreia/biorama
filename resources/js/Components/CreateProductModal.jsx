@@ -14,8 +14,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadIcon from "@mui/icons-material/CloudUpload";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ImageCropModal from "./ImageCropModal";
@@ -26,7 +26,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const [images, setImages] = useState([]); // Lista de imagens finais recortadas
+    const [images, setImages] = useState([]); // Lista de imagens [{ file, url }]
     const [previewIndex, setPreviewIndex] = useState(0); // Índice da imagem em pré-visualização
     const [cropModalOpen, setCropModalOpen] = useState(false); // Estado do modal de recorte
     const [imageToCrop, setImageToCrop] = useState(null); // Imagem bruta para recorte
@@ -45,17 +45,17 @@ const CreateProductModal = observer(({ open, handleClose }) => {
     };
 
     // Callback para salvar a imagem recortada
-    const handleCropComplete = (croppedImage) => {
-        setImages((prev) => [...prev, croppedImage]); // Adiciona ao estado final
-        setPreviewIndex(images.length); // Atualiza o índice de pré-visualização para a nova imagem
+    const handleCropComplete = (croppedFile) => {
+        const url = URL.createObjectURL(croppedFile); // Cria URL temporário para preview
+        setImages((prev) => [...prev, { file: croppedFile, url }]); // Adiciona ao estado
+        setPreviewIndex(images.length); // Atualiza o índice para a nova imagem
         setCropModalOpen(false); // Fecha o modal de recorte
     };
-
-
 
     // Apagar a imagem atual em pré-visualização
     const handleDeleteImage = () => {
         if (images.length > 0) {
+            URL.revokeObjectURL(images[previewIndex].url); // Libera o URL temporário
             const updatedImages = images.filter((_, index) => index !== previewIndex);
             setImages(updatedImages);
             setPreviewIndex(0);
@@ -88,21 +88,25 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                 .max(100, "O desconto deve ser menor ou igual a 100"),
         }),
         onSubmit: (values, { resetForm }) => {
+            const formData = new FormData();
+            formData.append("name", values.name);
+            formData.append("description", values.description);
+            formData.append("price", values.price);
+            formData.append("discount", values.discount);
+            formData.append("sold_at_unit", values.sold_at_unit);
 
-            // Adiciona o array de imagens ao objeto values
-            const updatedValues = {
-                ...values, // Mantém os valores existentes
-                images, // Adiciona o array de imagens
-            };
+            images.forEach((image, index) => {
+                formData.append(`images[${index}]`, image.file);
+            });
 
-            // Envia para a store
-            vendorRegistrationStore.addProduct(updatedValues);
+            // Envia para a store (ou para o backend via API)
+            vendorRegistrationStore.addProduct(formData);
 
-            console.log("Dados do Produto:", updatedValues);
-            resetForm(); // Reseta o formulário
-            setImages([]); // Limpa as imagens após o envio
+            console.log("Dados do Produto:", values);
+            resetForm();
+            images.forEach((image) => URL.revokeObjectURL(image.url)); // Libera URLs temporários
+            setImages([]);
         },
-
     });
 
     return (
@@ -129,6 +133,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
                     }}
                 >
+                    {/* Cabeçalho do Modal */}
                     <Box
                         sx={{
                             display: "flex",
@@ -140,28 +145,20 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                         <Typography id="create-product-modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
                             Criar Produto
                         </Typography>
-                        {/* Botão para fechar o modal */}
                         <IconButton
                             onClick={(event) => {
-                                event.stopPropagation(); //stop propagation to avoid modal close
+                                event.stopPropagation();
                                 handleClose();
                             }}
                         >
                             <CloseIcon />
                         </IconButton>
-
                     </Box>
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 2,
-                            mb: 2,
-                        }}
-                    >
+                    {/* Conteúdo do Modal */}
+                    <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mb: 2 }}>
+                        {/* Área de Imagens */}
                         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                            {/* Área de pré-visualização */}
                             <Box
                                 sx={{
                                     width: 400,
@@ -176,69 +173,21 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                     overflow: "hidden",
                                     "&:hover": {
                                         cursor: "pointer",
-                                        opacity: 0.8, // Reduz opacidade ao passar o rato
+                                        opacity: 0.8,
                                     },
                                 }}
                             >
                                 {images.length > 0 ? (
-                                    <Box
-                                        sx={{
+                                    <img
+                                        src={images[previewIndex].url}
+                                        alt="Preview"
+                                        style={{
                                             width: "100%",
                                             height: "100%",
-                                            position: "relative",
-                                            "&:hover > .upload-overlay": {
-                                                display: "flex", // Exibe o overlay ao passar o rato
-                                            },
+                                            objectFit: "contain",
                                         }}
-                                    >
-                                        <img
-                                            src={images[previewIndex]}
-                                            alt="Preview"
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                objectFit: "contain", // Mantém a imagem ajustada sem cortar
-                                            }}
-                                        />
-                                        {/* Botão de upload no hover */}
-                                        <Box
-                                            className="upload-overlay"
-                                            sx={{
-                                                position: "absolute",
-                                                top: 0,
-                                                left: 0,
-                                                width: "100%",
-                                                height: "100%",
-                                                backgroundColor: "rgba(0, 0, 0, 0.6)",
-                                                display: "none",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                flexDirection: "column",
-                                                zIndex: 10,
-                                            }}
-                                        >
-                                            <Typography variant="body2" color="white" mb={1}>
-                                                Alterar Imagem
-                                            </Typography>
-                                            <IconButton
-                                                component="label"
-                                                sx={{
-                                                    backgroundColor: "white",
-                                                    "&:hover": { backgroundColor: "grey.300" },
-                                                }}
-                                            >
-                                                <UploadIcon sx={{ color: "black" }} />
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    hidden
-                                                    onChange={handleImageUpload} // Função para carregar imagem
-                                                />
-                                            </IconButton>
-                                        </Box>
-                                    </Box>
+                                    />
                                 ) : (
-                                    // Caso não haja imagem, exibe diretamente o botão com ícone
                                     <Box
                                         sx={{
                                             display: "flex",
@@ -265,16 +214,16 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                onChange={handleImageUpload} // Função para carregar imagem
+                                                onChange={handleImageUpload}
                                             />
                                         </IconButton>
                                     </Box>
                                 )}
                             </Box>
 
-                            {/* Carrossel de miniaturas */}
+                            {/* Carrossel de Imagens */}
                             {images.length > 0 && (
-                                <Box sx={{ display: "flex", flexDirection: "column", gap: 1, m:"auto" }}>
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 1, m: "auto" }}>
                                     <Box
                                         sx={{
                                             display: "flex",
@@ -283,12 +232,10 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                             mt: 2,
                                         }}
                                     >
-                                        {/* Botão de seta para trás */}
+                                        {/* Botão de Anterior */}
                                         <IconButton
                                             onClick={() =>
-                                                setPreviewIndex(
-                                                    (prev) => (prev - 1 + images.length) % images.length
-                                                )
+                                                setPreviewIndex((prev) => (prev - 1 + images.length) % images.length)
                                             }
                                             disabled={images.length <= 1}
                                         >
@@ -302,7 +249,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                                     key={index}
                                                     sx={{
                                                         position: "relative",
-                                                        width: 80, // Ajustado para refletir 4:3
+                                                        width: 80,
                                                         height: 60,
                                                         borderRadius: "8px",
                                                         border:
@@ -311,45 +258,32 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                                                 : "2px solid transparent",
                                                         overflow: "hidden",
                                                         cursor: "pointer",
-                                                        "&:hover > .delete-icon": {
-                                                            display: "block",
-                                                        },
-                                                        "&:hover > img": {
-                                                            opacity: 0.6,
-                                                        },
                                                     }}
                                                 >
                                                     <img
-                                                        src={image}
+                                                        src={image.url}
                                                         alt={`Thumbnail ${index}`}
                                                         style={{
                                                             width: "100%",
                                                             height: "100%",
-                                                            objectFit: "cover", // Miniatura cobre o espaço, mantendo o formato
-                                                            transition: "opacity 0.3s",
+                                                            objectFit: "cover",
                                                         }}
-                                                        onClick={() => setPreviewIndex(index)} // Atualiza a preview ao clicar
+                                                        onClick={() => setPreviewIndex(index)}
                                                     />
-                                                    {/* Ícone de exclusão */}
                                                     <IconButton
-                                                        className="delete-icon"
                                                         sx={{
-                                                            m:"auto",
                                                             position: "absolute",
                                                             top: 8,
-                                                            right: 14,
-                                                            backgroundColor: "transparent",
+                                                            right: 8,
                                                             color: "red",
-                                                            display: "none",
-                                                            "&:hover": {
-                                                                backgroundColor: "transparent",
-                                                            },
                                                         }}
-                                                        onClick={() =>
+                                                        onClick={() => {
+                                                            URL.revokeObjectURL(image.url);
                                                             setImages((prev) =>
                                                                 prev.filter((_, i) => i !== index)
-                                                            )
-                                                        }
+                                                            );
+                                                            setPreviewIndex(0);
+                                                        }}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>
@@ -357,7 +291,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                             ))}
                                         </Box>
 
-                                        {/* Botão de seta para frente */}
+                                        {/* Botão de Próximo */}
                                         <IconButton
                                             onClick={() =>
                                                 setPreviewIndex((prev) => (prev + 1) % images.length)
@@ -372,8 +306,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                         </Box>
 
                         {/* Formulário */}
-                        <Box sx={{width: "70%"}}>
-
+                        <Box sx={{ width: "70%" }}>
                             <TextField
                                 fullWidth
                                 label="Nome"
@@ -383,7 +316,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                 error={formik.touched.name && Boolean(formik.errors.name)}
                                 helperText={formik.touched.name && formik.errors.name}
                                 required
-                                sx={{ mb: 2}}
+                                sx={{ mb: 2 }}
                             />
                             <TextField
                                 fullWidth
@@ -398,15 +331,16 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                 required
                                 sx={{ mb: 2 }}
                             />
-                            <Box sx={{ display: "flex", gap: 2, mb: 2, justifyContent:"space-between" }}>
+                            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
                                 <TextField
                                     label="Desconto (%)"
                                     name="discount"
                                     value={formik.values.discount}
                                     onChange={formik.handleChange}
                                     error={formik.touched.discount && Boolean(formik.errors.discount)}
+                                    helperText={formik.touched.discount && formik.errors.discount}
                                     required
-                                    sx={{ width: "35%"  }}
+                                    sx={{ width: "35%" }}
                                 />
                                 <TextField
                                     label="Preço (€)"
@@ -414,24 +348,28 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                     value={formik.values.price}
                                     onChange={formik.handleChange}
                                     error={formik.touched.price && Boolean(formik.errors.price)}
+                                    helperText={formik.touched.price && formik.errors.price}
                                     required
                                     sx={{ width: "35%" }}
                                 />
-
                             </Box>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formik.values.sold_at_unit}
-                                    onChange={formik.handleChange}
-                                    name="sold_at_unit"
-                                    color="primary"
-                                />
-                            }
-                            label={formik.values.sold_at_unit ? "Preço por unidade" : "Preço por Kg"}
-                        />
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={formik.values.sold_at_unit}
+                                        onChange={formik.handleChange}
+                                        name="sold_at_unit"
+                                    />
+                                }
+                                label={
+                                    formik.values.sold_at_unit
+                                        ? "Preço por unidade"
+                                        : "Preço por Kg"
+                                }
+                            />
                         </Box>
                     </Box>
+
                     {/* Botão de Submissão */}
                     <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
                         <Button

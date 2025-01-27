@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
-import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreDescription } from "../Components";
+import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription } from "../Components";
 import { Container, Box } from "@mui/material";
 import { AlertBox } from "../Components";
 
 const Store = observer(() => {
-    const { store, vendor, products } = usePage().props;
-    console.log(products)
+    const { store, vendor, products, user } = usePage().props;
+
+    console.log(usePage().props)
 
     return (
         <Container
@@ -33,8 +34,9 @@ const Store = observer(() => {
                     marginTop: 2,
                 }}
             >
-                <StoreVendorCard store={store} vendor={vendor} />
-                <StoreDescription store={store} />
+                <StoreVendorCard store={store} vendor={vendor} user={user} />
+                {/* <StoreDescription store={store} /> */}
+                <StoreMap store={store} />
             </Box>
 
             {/* Products */}

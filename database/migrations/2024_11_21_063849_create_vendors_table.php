@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('nif', 20);
             $table->string('phone');
             $table->date('date_of_birth');
-            $table->string('image_profile')->nullable();
             $table->boolean('is_company')->default(false); // Se oo vendedor é uma empresa
             $table->string('iban');
             $table->foreignId('gender_id')->nullable()->constrained('genders')->onDelete('set null');

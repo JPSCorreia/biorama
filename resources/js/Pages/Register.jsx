@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { authStore } from "../Stores";
+import { AlertBox } from "../Components";
 
 const Register = () => {
     // State to manage registration form data
@@ -23,24 +24,14 @@ const Register = () => {
         password_confirmation: "",
     });
 
-    // State to manage error messages
-    const [error, setError] = useState("");
-    const [showError, setShowError] = useState(false);
-
     // Function to handle form submission
     const handleRegister = (e) => {
         e.preventDefault();
 
         // Verify if the passwords match
         if (formData.password !== formData.password_confirmation) {
-            setError("As palavras-passe não coincidem. Tente novamente.");
-            setShowError(true);
             return;
         }
-
-        // Clear previous error before submitting the form
-        setError("");
-        setShowError(false);
 
         // Send registration data to the server
         router.post("/registar", formData, {
@@ -48,51 +39,14 @@ const Register = () => {
                 // Check if authentication was successful and update authentication store
                 if (page.props.auth && page.props.auth.user) {
                     authStore.updateAuth(page.props.auth);
-                    console.log("Registration and login successful!");
+                    // console.log("Registration and login successful!"); // debug
                 }
             },
             onError: (errors) => {
-                console.error("Registration errors:", errors);
-
-                // Handle specific server-side validation errors
-                if (errors.email) {
-                    setError(
-                        "Já existe uma conta com este email.  Utilize outro email.",
-                    );
-                    setShowError(true);
-                } else if (
-                    errors.password ===
-                    "The password field must be at least 8 characters."
-                ) {
-                    setError(
-                        "A palavra-passe deve ter pelo menos 8 caracteres.",
-                    );
-                    setShowError(true);
-                } else {
-                    setError("Ocorreu um erro inesperado. Tente novamente.");
-                    setShowError(true);
-                }
+                // console.error("Registration errors:", errors); // debug
             },
         });
     };
-
-    // Clear the error message automatically after 5 seconds
-    useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => {
-                setShowError(false);
-            }, 4500); // After 4.5 seconds, start the fade
-
-            const clearTimer = setTimeout(() => {
-                setError("");
-            }, 5000); // After 5 seconds, clear the error message completely
-
-            return () => {
-                clearTimeout(timer);
-                clearTimeout(clearTimer);
-            };
-        }
-    }, [error]);
 
     return (
         <Container
@@ -104,25 +58,7 @@ const Register = () => {
                 marginTop: "40px !important",
             }}
         >
-            {/* Display error message with fade effect */}
-            <Fade in={showError} timeout={{ enter: 50, exit: 500 }}>
-                {error ? (
-                    <Alert
-                        severity="error"
-                        variant="filled"
-                        sx={{
-                            mb: 2,
-                            height: "48px",
-                            width: "100%",
-                            maxWidth: "470px",
-                        }}
-                    >
-                        {error}
-                    </Alert>
-                ) : (
-                    <Box sx={{ mb: 2, height: "48px" }}></Box>
-                )}
-            </Fade>
+            <AlertBox />
             <Box
                 sx={{
                     display: "flex",

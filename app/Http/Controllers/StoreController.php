@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\StoreGallery;
 use App\Models\Vendor;
-use App\Models\StoreProduct;
+use App\Models\User;
 
 class StoreController extends Controller
 {
@@ -216,9 +216,10 @@ class StoreController extends Controller
         // Get the vendor
         $vendor = Vendor::where('id', $store->vendor_id)->first();
 
-        // $products = StoreProduct::where('store_id', $id)->get();
+        // Get the user
+        $user = User::where('id', $vendor->user_id)->first();
 
-        $products = $store->load('products');
+        $products = $store->load('products')->products;
 
         // Format for JSON compatibility
         $formattedStore = [
@@ -239,7 +240,8 @@ class StoreController extends Controller
         return Inertia::render('Store', [
             'store' => $formattedStore,
             'vendor' => $vendor,
-            'products' => $products
+            'products' => $products,
+            'user' => $user
         ]);
     }
 

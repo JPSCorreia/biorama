@@ -95,7 +95,7 @@ const Home = observer(() => {
                 <Typography variant="h4" gutterBottom>
                     Descubra as lojas mais perto de si!
                 </Typography>
-                <HomeMap />
+                <HomeMap radius={10000} />
             </Box>
 
             {/* Nearby Stores */}
