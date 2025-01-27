@@ -17,17 +17,20 @@ import HomeIcon from "@mui/icons-material/Home";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { authStore } from "@/Stores";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { useSidebar } from "../../Context/SidebarContext.jsx";
 
 const SideBar = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
+    const { activeItem, setActiveItem } = useSidebar();
+
     const menuItems = [
-        { text: "Dados Pessoais", icon: <AccountCircleIcon />, color: "primary.main" },
-        { text: "Encomendas", icon: <ShoppingCartIcon />, color: "secondary.main" },
-        { text: "Moradas", icon: <HomeIcon />, color: "success.main" },
-        { text: "Notificações", icon: <NotificationsIcon />, color: "warning.main" },
-        { text: "Sair", icon: <LogoutIcon />, color: "warning.main" },
+        { text: "Dados Pessoais", icon: <AccountCircleIcon />, color: theme.palette.primary.main },
+        { text: "Encomendas", icon: <ShoppingCartIcon />, color: theme.palette.message.info },
+        { text: "Moradas", icon: <HomeIcon />, color: theme.palette.message.success },
+        { text: "Notificações", icon: <NotificationsIcon />, color:  theme.palette.message.warning },
+        { text: "Sair", icon: <LogoutIcon />, color:  theme.palette.message.error },
     ];
 
     const handleNavigation = (text) => {
@@ -46,8 +49,8 @@ const SideBar = () => {
     return (
         <Box
             sx={{
-                width: isSmallScreen ? "100vw" : "240px", // Largura responsiva
-                height: isSmallScreen ? "auto" : "100vh", // Altura total em telas grandes
+                width: isSmallScreen ? "100vw" : "260px", // Largura responsiva
+                height: isSmallScreen ? "auto" : "auto", // Altura total em telas grandes
                 bgcolor: "#f5f5f5",
                 boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
                 display: "flex",
@@ -55,7 +58,7 @@ const SideBar = () => {
                 justifyContent: "space-between",
                 p: isSmallScreen ? 1 : 2, // Padding menor em telas pequenas
                 borderRadius: isSmallScreen ? 0 : "10px",
-                overflowY: "auto", // Permite rolagem se necessário
+                overflowY: "none", // Permite rolagem se necessário
             }}
         >
             <Typography variant="h6" sx={{ mb: 2, ml: 2 }}>
@@ -64,7 +67,7 @@ const SideBar = () => {
 
             <List>
                 {menuItems.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ width: "100%", mb: 2 }}>
+                    <ListItem key={item.text} disablePadding sx={{ width: "100%", m:"10% 0%" }}>
                         <ListItemButton
                             onClick={() => {
                                 setActiveItem(item.text); // Define o item ativo no contexto
@@ -72,18 +75,37 @@ const SideBar = () => {
                             }}
                             sx={{
                                 display: "flex",
-                                justifyContent: "space-between",
+                                alignItems: "center",
+                                gap: 1.5, // Ícones mais próximos do texto
                                 bgcolor: activeItem === item.text ? "primary.light" : "inherit",
+                                color: activeItem === item.text ? "white" :  "#000", // Cor do texto baseada na seleção
                                 borderRadius: "5px",
+
+                                "&:hover": {
+                                    bgcolor: activeItem === item.text ? "success.dark" : "primary.light", // Hover verde mais escuro para item selecionado
+                                    color: "white", // Mantém o texto branco no hover
+                                },
                             }}
                         >
-                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemIcon
+                                sx={{
+                                    color: activeItem === item.text ? "white" : item.color, // Cor do ícone baseada na seleção
+                                    minWidth: 0, // Remove largura padrão para ajustar espaçamento
+                                }}
+                            >
+                                {item.icon}
+                            </ListItemIcon>
                             <ListItemText primary={item.text} />
-                            <ArrowForwardIosIcon />
+                            <ArrowForwardIosIcon
+                                sx={{
+                                    color: activeItem === item.text ? "white" : "#000", // Ícone de seta baseado na seleção
+                                }}
+                            />
                         </ListItemButton>
                     </ListItem>
                 ))}
             </List>
+
         </Box>
     );
 };

@@ -4,6 +4,7 @@ import { Navbar, Footer } from "./Components";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@mui/material/styles";
 import { usePage } from "@inertiajs/react";
+// import background from "../../public/images/";
 
 const App = observer(({ children }) => {
     // Access theme properties using Material UI's theme hook
@@ -34,6 +35,22 @@ const App = observer(({ children }) => {
                             overflow: "hidden",
                         }}
                     >
+                        {/*<Box*/}
+                        {/*    sx={{*/}
+                        {/*        position: "absolute",*/}
+                        {/*        top: 0,*/}
+                        {/*        left: 0,*/}
+                        {/*        zIndex: -1,*/}
+                        {/*        width: "100% !important",*/}
+                        {/*        height: "100% !important",*/}
+                        {/*        backgroundImage: `url(${background})`,*/}
+                        {/*        backgroundSize: "cover",*/}
+                        {/*        backgroundPosition: "center",*/}
+                        {/*        opacity: 0.7,*/}
+                        {/*    }}*/}
+                        {/*>*/}
+
+                        {/*</Box>*/}
                         <Box
                             sx={{
                                 position: "fixed",

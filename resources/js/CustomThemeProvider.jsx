@@ -50,6 +50,14 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                     appStore.themeType === "dark" ? "#121212" : "#FDFDF9",
                 text: "white",
             },
+
+            // Custom styles for messages
+            message: {
+                success: green[700],
+                error: '#d32f2f',
+                warning: '#ed6c02',
+                info: '#0288d1',
+            },
         },
     });
 

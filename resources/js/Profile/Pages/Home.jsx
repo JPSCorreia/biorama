@@ -1,8 +1,6 @@
 import { observer } from "mobx-react";
-import { ProfileInformation } from "../../Components/index.js";
+import { ProfileInformation } from "../Components";
 import { Box } from "@mui/material";
-import { ProfileLayout } from "../../Pages/index.js";
-import App from "../../App.jsx";
 
 const Home = observer(() => {
     return (
@@ -12,7 +10,7 @@ const Home = observer(() => {
                 flexDirection: "column",
                 height: "100%",
                 width: "100%",
-                marginTop: "88px !important",
+
             }}
         >
             {/* Profile Information card*/}
