@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Store;
 use App\Models\StoreAddress;
 use Illuminate\Http\Request;
@@ -20,65 +22,97 @@ class StoreController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            // Validação dos dados
-            $validated = $request->validate([
-                // Dados da loja
-                'name' => 'required|string|max:100|unique:stores',
-                'phone_number' => 'nullable|string|max:15',
-                'email' => 'nullable|email|max:255|unique:stores',
-                'description' => 'nullable|string',
-                'rating' => 'nullable|numeric|min:0|max:5',
-                'latitude' => 'required|numeric|min:-90|max:90',
-                'longitude' => 'required|numeric|min:-180|max:180',
+        Log::info($request->all());
+        // Validação dos dados recebidos
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone_number' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255',
+            'description' => 'nullable|string',
+            'coordinates' => 'required|string|',
+            'street_address' => 'required|string|max:255',
+            'city' => 'required|string|max:50',
+            'postal_code' => 'required|string|max:10',
+            'comment' => 'nullable|string',
+            'image_link' => 'nullable|array', // Aceita um array
+            'image_link.*' => 'nullable|string', // Cada item do array deve ser uma string
+        ]);
 
-                // Dados do endereço
-                'address_name' => 'required|string|max:255',
-                'postal_code' => 'required|string|max:10',
-                'city' => 'required|string|max:50',
-                'comment' => 'nullable|string',
+        try {
+            // Obter o vendor autenticado
+            $vendor = Auth::user()->vendor;
+
+            // Separar latitude e longitude
+            [$latitude, $longitude] = explode(',', $validated['coordinates']);
+
+            // Criar a loja
+            $store = $vendor->stores()->create([
+                'name' => $validated['name'],
+                'phone_number' => $validated['phone_number'],
+                'email' => $validated['email'],
+                'description' => $validated['description'],
+                'coordinates' => DB::raw("POINT({$longitude}, {$latitude})"),
             ]);
 
-            // Usa transações para garantir consistência
-            DB::beginTransaction();
+            // Criar o endereço associado
+            $store->addresses()->create([
+                'street_address' => $validated['street_address'],
+                'postal_code' => $validated['postal_code'],
+                'city' => $validated['city'],
+                'comment' => $validated['comment'],
+            ]);
 
-            // 1. Criar a loja
-            $store = new Store();
-            $store->name = $validated['name'];
-            $store->phone_number = $validated['phone_number'] ?? null;
-            $store->email = $validated['email'] ?? null;
-            $store->description = $validated['description'] ?? null;
-            $store->rating = $validated['rating'] ?? null;
+            // Processar o campo image_link (array de imagens)
+            $imageLinks = []; // Array para armazenar os caminhos das imagens
+            if (!empty($validated['image_link'])) {
+                foreach ($validated['image_link'] as $index => $base64Image) {
+                    // Decodifica a string base64 para conteúdo binário
+                    $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
 
-            // Define as coordenadas como POINT
-            $store->coordinates = DB::raw("POINT({$validated['longitude']}, {$validated['latitude']})");
+                    // Gera o nome do ficheiro
+                    $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.jpg';
 
-            $store->save();
+                    // Salva a imagem no diretório "storage/app/public/store"
+                    $imagePath = 'store/' . $imageName;
+                    file_put_contents(storage_path('app/public/' . $imagePath), $imageData);
 
-            // 2. Criar o endereço associado
-            $storeAddress = new StoreAddress();
-            $storeAddress->store_id = $store->id;
-            $storeAddress->address_name = $validated['address_name'];
-            $storeAddress->postal_code = $validated['postal_code'];
-            $storeAddress->city = $validated['city'];
-            $storeAddress->comment = $validated['comment'] ?? null;
+                    // Adiciona o caminho ao array
+                    $imageLinks[] = 'storage/' . $imagePath;
 
-            $storeAddress->save();
+                    // Cria o registro na galeria
+                    $store->galleries()->create([
+                        'image_link' => 'storage/' . $imagePath,
+                    ]);
+                }
+            }
 
-            // Confirma a transação
-            DB::commit();
+            // Retornar as lojas atualizadas do vendor
+            $stores = Store::where('vendor_id', $vendor->id)
+                ->select(
+                    'id',
+                    'name',
+                    'description',
+                    'phone_number',
+                    'email',
+                    'rating',
+                    DB::raw('ST_X(coordinates) as longitude'),
+                    DB::raw('ST_Y(coordinates) as latitude')
+                )
+                ->with(['addresses', 'products', 'reviews', 'galleries'])
+                ->take(3)
+                ->get();
 
-            // Retorna a loja criada com o endereço associado
             return response()->json([
-                'store' => $store,
-                'address' => $storeAddress,
+                'success' => true,
+                'message' => 'Loja criada com sucesso!',
+                'images' => $imageLinks,
+                'stores' => $stores,
             ], 201);
         } catch (\Exception $e) {
-            // Reverte a transação no caso de erro
-            DB::rollBack();
-
+            // Retorna uma resposta JSON de erro
             return response()->json([
-                'error' => 'Erro ao criar a loja e o endereço: ' . $e->getMessage(),
+                'success' => false,
+                'error' => 'Erro ao criar a loja: ' . $e->getMessage(),
             ], 500);
         }
     }
