@@ -1,6 +1,8 @@
 import { Paper, Typography, Box } from "@mui/material";
 
 const StoreProductsContainer = ({ products }) => {
+
+    console.log(products)
     return (
         <Paper
             elevation={4}

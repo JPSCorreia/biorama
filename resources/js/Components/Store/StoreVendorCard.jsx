@@ -1,9 +1,8 @@
-import { Paper, Typography, Box, Avatar } from "@mui/material";
+import { Typography, Box, Avatar } from "@mui/material";
 
 const StoreVendorCard = ({ store, vendor, user }) => {
     return (
-        <Paper
-            elevation={4}
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -13,6 +12,8 @@ const StoreVendorCard = ({ store, vendor, user }) => {
                 padding: 3,
                 pt: 2,
                 borderRadius: "10px",
+                flexWrap: "wrap",
+                // border: "1px solid #e0e0e0",
             }}
         >
             <Typography
@@ -44,12 +45,47 @@ const StoreVendorCard = ({ store, vendor, user }) => {
                     {vendor.first_name} {vendor.last_name}
                 </Typography>
                 <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
-                <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}><Typography sx={{ fontWeight: "bold" }}>Rating:</Typography><Typography sx={{ ml: 1 }}>{store.rating} / 5</Typography></Box>
-                <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}><Typography sx={{ fontWeight: "bold" }}>Telefone:</Typography><Typography sx={{ ml: 1 }}>{vendor.phone}</Typography></Box>
-                <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}><Typography sx={{ fontWeight: "bold" }}>Email:</Typography><Typography sx={{ ml: 1 }}>{vendor.email}</Typography></Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            Rating:
+                        </Typography>
+                        <Typography sx={{ ml: 1 }}>
+                            {store.rating} / 5
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            Telefone:
+                        </Typography>
+                        <Typography sx={{ ml: 1 }}>{vendor.phone}</Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            mb: 1,
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            Email:
+                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                ml: 1,
+                                                width: "100%",
+                                                wordWrap: "break-word",
+                                                overflowWrap: "break-word",
+                                                whiteSpace: "pre-wrap",
+                                            }}
+                                        >
+                            {vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}
+
+                        </Typography>
+                    </Box>
                 </Box>
             </Box>
-        </Paper>
+        </Box>
     );
 };
 

@@ -155,6 +155,7 @@ class StoreController extends Controller
         $longitude = $request->input('longitude');
         $latitude = $request->input('latitude');
         $radius = $request->input('radius', 10000);
+
         $stores = Store::selectRaw("
             id,
             name,
@@ -166,19 +167,23 @@ class StoreController extends Controller
                 POINT(?, ?)
             ) AS distance
         ", [$longitude, $latitude])
+            ->with('galleries')
             ->whereRaw("ST_Distance_Sphere(coordinates, POINT(?, ?)) <= ?", [$longitude, $latitude, $radius])
             ->orderBy('distance')
             ->get();
 
         // Opcionalmente transforma os dados em um formato JSON-friendly
         $stores = $stores->map(function ($store) {
+            $firstImage = $store->galleries->first();
+
             return [
                 'id' => $store->id,
                 'name' => $store->name,
-                'description' => mb_convert_encoding($store->description, 'UTF-8', 'ISO-8859-1'),
+                'description' => mb_convert_encoding($store->description, 'UTF-8', 'auto'),
                 'longitude' => $store->longitude,
                 'latitude' => $store->latitude,
                 'distance' => $store->distance,
+                'image_link' => $firstImage ? $firstImage->image_link : '',
             ];
         });
 
@@ -228,7 +233,7 @@ class StoreController extends Controller
             'name' => $store->name,
             'phone_number' => $store->phone_number,
             'email' => $store->email,
-            'description' => mb_convert_encoding($store->description, 'UTF-8', 'ISO-8859-1'),
+            'description' => mb_convert_encoding($store->description, 'UTF-8', 'auto'),
             'rating' => $store->rating,
             'created_at' => $store->created_at,
             'updated_at' => $store->updated_at,

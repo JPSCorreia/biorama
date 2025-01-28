@@ -14,31 +14,31 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
 import { router } from "@inertiajs/react";
+import { hoverStore } from "../Stores";
+import { observer } from "mobx-react-lite";
 
 // Criar um ícone customizado para o marcador das lojas
 const createCustomIcon = (color) => {
-    const iconHtml = ReactDOMServer.renderToString(
-        <div
-            style={{
-                fontSize: "24px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                border: `1px solid ${color}`,
-                borderRadius: "50%",
-                padding: "4px",
-                boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`,
-            }}
-        >
-            <StoreSharpIcon
-                fontSize="inherit"
-                style={{ fill: color, width: "1em", height: "1em" }}
-            />
-        </div>,
-    );
-
     return L.divIcon({
-        html: iconHtml,
+        html: ReactDOMServer.renderToString(
+            <div
+                style={{
+                    fontSize: "24px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: `1px solid ${color}`,
+                    borderRadius: "50%",
+                    padding: "4px",
+                    boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`,
+                }}
+            >
+                <StoreSharpIcon
+                    fontSize="inherit"
+                    style={{ fill: color, width: "1em", height: "1em" }}
+                />
+            </div>
+        ),
         className: "custom-marker-icon",
         iconSize: [36, 36],
         iconAnchor: [18, 18],
@@ -49,15 +49,16 @@ const createCustomIcon = (color) => {
 const SetViewOnPosition = ({ position }) => {
     const map = useMap();
     if (position) {
-        map.setView(position, 15); // Zoom level
+        map.setView(position, 14); // Zoom level
     }
     return null;
 };
 
-const HomeMap = ({ radius }) => {
+const HomeMap = observer(({ radius }) => {
     const [position, setPosition] = useState(null); // Coordenadas do utilizador
     const [loading, setLoading] = useState(true);
-    const [nearbyStores, setNearbyStores] = useState([]); // Lojas próximas
+    const [nearbyStores, setNearbyStores] = useState([]);
+    const [forceUpdate, setForceUpdate] = useState(false); // Forçar re-render no hover
     const theme = useTheme();
 
     useEffect(() => {
@@ -70,31 +71,35 @@ const HomeMap = ({ radius }) => {
             } catch (err) {
                 console.error(
                     "Erro ao buscar lojas próximas:",
-                    err.response?.data?.message || err.message,
+                    err.response?.data?.message || err.message
                 );
             } finally {
                 setLoading(false);
             }
         };
 
-        // Obter a localização do utilizador
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 ({ coords }) => {
                     const { latitude, longitude } = coords;
                     setPosition([latitude, longitude]); // Define a posição do utilizador
-                    fetchNearbyStores(latitude, longitude); // Buscar lojas próximas
+                    fetchNearbyStores(latitude, longitude);
                 },
                 () => {
                     console.error("Não foi possível obter a localização.");
                     setLoading(false);
-                },
+                }
             );
         } else {
             console.error("Geolocalização não é suportada neste navegador.");
             setLoading(false);
         }
     }, [radius]);
+
+    // Atualiza o estado quando o hover muda para forçar re-render
+    useEffect(() => {
+        setForceUpdate((prev) => !prev);
+    }, [hoverStore.hoveredStoreId]);
 
     const navigate = (path) => {
         router.visit(path, {
@@ -108,7 +113,7 @@ const HomeMap = ({ radius }) => {
             {loading ? (
                 <Box
                     sx={{
-                        height: "400px",
+                        height: "300px",
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -123,7 +128,7 @@ const HomeMap = ({ radius }) => {
             ) : (
                 <Box
                     sx={{
-                        height: "400px",
+                        height: "250px",
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -135,39 +140,54 @@ const HomeMap = ({ radius }) => {
                 >
                     <MapContainer
                         center={position || [38.7071, -9.1355]} // Default para Lisboa
-                        zoom={13}
+                        zoom={14}
                         style={{ height: "100%", width: "100%" }}
                     >
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         {position && (
                             <>
-                                {/* Marcadores para as lojas próximas */}
-                                {nearbyStores.slice(0, 5).map((store) => (
-                                    <Marker
-                                        key={store.id}
-                                        position={[store.latitude, store.longitude]}
-                                        icon={createCustomIcon(
-                                            theme.palette.primary.main,
-                                        )}
-                                        eventHandlers={{
-                                            click: () => {
-                                                navigate(`/loja/${store.id}`);
-                                            },
-                                        }}
-                                    >
-                                        <Tooltip
-                                            direction="top"
-                                            offset={[0, -10]}
-                                            opacity={1}
+                                {nearbyStores.slice(0, 6).map((store) => {
+                                    const isHovered = hoverStore.hoveredStoreId === store.id;
+
+                                    return (
+                                        <Marker
+                                            key={store.id}
+                                            position={[
+                                                store.latitude,
+                                                store.longitude,
+                                            ]}
+                                            icon={createCustomIcon(
+                                                isHovered
+                                                    ? theme.palette.secondary.main // Cor diferente no hover
+                                                    : theme.palette.primary.main
+                                            )}
+                                            eventHandlers={{
+                                                click: () => {
+                                                    navigate(`/loja/${store.id}`);
+                                                },
+                                                mouseover: () => {
+                                                    hoverStore.setHoveredStore(store.id);
+                                                },
+                                                mouseout: () => {
+                                                    hoverStore.setHoveredStore(null);
+                                                },
+                                            }}
                                         >
-                                            <div>
-                                                <strong>{store.name}</strong>
-                                                <br />
-                                                {store.description}
-                                            </div>
-                                        </Tooltip>
-                                    </Marker>
-                                ))}
+                                            {isHovered && (
+                                                <Tooltip
+                                                    direction="top"
+                                                    offset={[0, -10]}
+                                                    opacity={1}
+                                                    permanent
+                                                >
+                                                    <div>
+                                                        <strong>{store.name}</strong>
+                                                    </div>
+                                                </Tooltip>
+                                            )}
+                                        </Marker>
+                                    );
+                                })}
                                 <SetViewOnPosition position={position} />
                             </>
                         )}
@@ -176,10 +196,10 @@ const HomeMap = ({ radius }) => {
             )}
         </>
     );
-};
+});
 
 HomeMap.propTypes = {
-    radius: PropTypes.number.isRequired, // Raio de busca (em km)
+    radius: PropTypes.number.isRequired,
 };
 
 export default HomeMap;

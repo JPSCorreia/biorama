@@ -67,13 +67,13 @@ const StoreMap = ({ store }) => {
             : null;
 
     return (
-        <Paper
-            elevation={4}
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                width: "30%",
+                width: "50%",
+                mt: 2,
                 ml: 1,
                 padding: 3,
                 pt: 2,
@@ -141,7 +141,7 @@ const StoreMap = ({ store }) => {
                     </MapContainer>
                 </Box>
             )}
-        </Paper>
+        </Box>
     );
 };
 

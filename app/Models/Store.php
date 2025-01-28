@@ -56,7 +56,7 @@ class Store extends Model
 
     public function galleries()
     {
-        return $this->hasMany(StoreGallery::class);
+        return $this->hasMany(StoreGallery::class, 'store_id');
     }
 
 

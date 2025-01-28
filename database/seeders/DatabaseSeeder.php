@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        setlocale(LC_ALL, 'pt_PT.UTF-8');
+
         $this->call([
             RoleAndPermissionSeeder::class,
             GenderSeeder::class,

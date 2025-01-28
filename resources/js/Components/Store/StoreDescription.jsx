@@ -1,16 +1,17 @@
-import { Paper, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import ReactMarkdown from "react-markdown";
 
 const StoreDescription = ({ store }) => {
     return (
-        <Paper
-            elevation={4}
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "top",
                 alignItems: "center",
-                width: "40%",
-                ml: 1,
+                width: "100%",
+                // ml: 1,
+                mt: 2,
                 mr: 1,
                 padding: 3,
                 pt: 2,
@@ -24,9 +25,9 @@ const StoreDescription = ({ store }) => {
                 Descrição
             </Typography>
             <Typography variant="body2" color="textSecondary">
-                {store.description || "Esta loja ainda não tem uma descrição."}
+                <ReactMarkdown>{store.description || "Esta loja ainda não tem uma descrição."}</ReactMarkdown>
             </Typography>
-        </Paper>
+        </Box>
     );
 };
 
