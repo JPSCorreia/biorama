@@ -54,23 +54,23 @@ class ShopStore {
         console.log("store Data antes do processamento", storeData);
 
         try {
-            // Cria uma cópia dos dados a serem enviados
             const processedData = { ...storeData };
 
-            // Verifica se o array de imagens está vazio
-            if (!storeData.images || storeData.images.length === 0) {
-                delete processedData.images; // Remove o campo se não houver imagens
+            if (!storeData.image_link || storeData.image_link.length === 0) {
+                delete processedData.image_link; // Remove o campo se não houver imagens
             }
 
             console.log("Dados processados para envio", processedData);
 
-            // Envia os dados para o backend usando o Inertia Router
+            // Envia os dados para o backend
             const response = await axios.post("/create/store", processedData);
+
             console.log("resposta:", response.data);
             if (response.data.success) {
                 console.log("Loja criada com sucesso:", response.data);
             }
-            return {success:true};
+
+            return { success: true };
         } catch (error) {
             console.error("Erro inesperado ao criar a loja Front End:", error.message);
             return { success: false, message: error.message };
