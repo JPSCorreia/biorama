@@ -20,7 +20,7 @@ class StoreFactory extends Factory
             'name' => $this->faker->unique()->company(),
             'phone_number' => $this->faker->numerify('#########'),
             'email' => $this->faker->unique()->safeEmail(),
-            'description' => $this->faker->text(),
+            'description' => implode(" ", $this->faker->paragraphs(3)),
             'rating' => $this->faker->randomFloat(2, 0, 5),
             'coordinates' => DB::raw("POINT({$this->faker->longitude(-8.9236, -8.8957)}, {$this->faker->latitude(38.5244, 38.5417)})"),
             'created_at' => now(),

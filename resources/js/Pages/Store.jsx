@@ -1,13 +1,17 @@
 import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
 import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription } from "../Components";
-import { Container, Box } from "@mui/material";
+import { Container, Box, useTheme, useMediaQuery  } from "@mui/material";
 import { AlertBox } from "../Components";
 
 const Store = observer(() => {
+
     const { store, vendor, products, user } = usePage().props;
 
-    console.log(usePage().props)
+    const theme = useTheme();
+
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     return (
         <Container
@@ -32,10 +36,11 @@ const Store = observer(() => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     marginTop: 2,
+                    height: "300px"
                 }}
             >
                 <StoreVendorCard store={store} vendor={vendor} user={user} />
-                {/* <StoreDescription store={store} /> */}
+                <StoreDescription store={store} />
                 <StoreMap store={store} />
             </Box>
 

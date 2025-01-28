@@ -103,8 +103,6 @@ const HomeMap = ({ radius }) => {
         });
     };
 
-    console.log("Nearby Stores:", nearbyStores);
-
     return (
         <>
             {loading ? (
