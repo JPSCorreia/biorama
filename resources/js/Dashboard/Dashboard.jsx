@@ -15,6 +15,7 @@ import {
     Assessment as AssessmentIcon,
     Logout as LogoutIcon,
 } from "@mui/icons-material";
+import background from "../../images/background.jpg";
 
 // Navigation items
 const navigation = [
@@ -149,8 +150,22 @@ const Dashboard = ({ children }) => {
                     sidebarFooter: ExitButton,
                     toolbarActions: ThemeSwitcher,
                 }}
+                //sx={{}}
             >
-                <Box sx={{ flexGrow: 1, margin: 0, paddingTop: "10%" }}>
+                <Box sx={{ flexGrow: 1, margin: 0, paddingTop: "10%", "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundImage: `url(${background})`, // Caminho da imagem
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        opacity: 0.7, // Apenas a imagem fica transparente
+                        zIndex: -1, // Mantém o fundo atrás do conteúdo
+                    },
+                }}>
                     {children}
                 </Box>
             </DashboardLayout>

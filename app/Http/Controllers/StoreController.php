@@ -8,6 +8,7 @@ use App\Models\Store;
 use App\Models\StoreAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\Models\StoreGallery;
 use App\Models\Vendor;
@@ -23,6 +24,7 @@ class StoreController extends Controller
     public function store(Request $request)
     {
         Log::info($request->all());
+
         // Validação dos dados recebidos
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -34,8 +36,8 @@ class StoreController extends Controller
             'city' => 'required|string|max:50',
             'postal_code' => 'required|string|max:10',
             'comment' => 'nullable|string',
-            'image_link' => 'nullable|array', // Aceita um array
-            'image_link.*' => 'nullable|string', // Cada item do array deve ser uma string
+            'image_link' => 'nullable|array', // Array de imagens
+            'image_link.*' => 'nullable|string', // Cada imagem deve ser uma string Base64
         ]);
 
         try {
@@ -62,29 +64,39 @@ class StoreController extends Controller
                 'comment' => $validated['comment'],
             ]);
 
-            // Processar o campo image_link (array de imagens)
-            $imageLinks = []; // Array para armazenar os caminhos das imagens
+            // Processar imagens
+            $imageLinks = [];
+
             if (!empty($validated['image_link'])) {
                 foreach ($validated['image_link'] as $index => $base64Image) {
-                    // Decodifica a string base64 para conteúdo binário
-                    $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
+                    if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+                        $imageType = $matches[1]; // Obtém a extensão do ficheiro
+                        $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
 
-                    // Gera o nome do ficheiro
-                    $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.jpg';
+                        if ($imageData === false) {
+                            throw new \Exception("Erro ao decodificar imagem base64.");
+                        }
 
-                    // Salva a imagem no diretório "storage/app/public/store"
-                    $imagePath = 'store/' . $imageName;
-                    file_put_contents(storage_path('app/public/' . $imagePath), $imageData);
+                        // Gera um nome de ficheiro único
+                        $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.' . $imageType;
 
-                    // Adiciona o caminho ao array
-                    $imageLinks[] = 'storage/' . $imagePath;
+                        // Caminho para armazenar a imagem
+                        $imagePath = "store/{$imageName}";
 
-                    // Cria o registro na galeria
-                    $store->galleries()->create([
-                        'image_link' => 'storage/' . $imagePath,
-                    ]);
+                        // Salva o ficheiro na pasta pública do storage
+                        Storage::disk('public')->put($imagePath, $imageData);
+
+                        // Guarda o caminho no array
+                        $imageLinks[] = "storage/{$imagePath}";
+
+                        // Guarda na galeria da loja
+                        $store->galleries()->create([
+                            'image_link' => "storage/{$imagePath}",
+                        ]);
+                    }
                 }
             }
+
 
             // Retornar as lojas atualizadas do vendor
             $stores = Store::where('vendor_id', $vendor->id)
