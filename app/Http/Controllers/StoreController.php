@@ -101,7 +101,7 @@ class StoreController extends Controller
                 ->with(['addresses', 'products', 'reviews', 'galleries'])
                 ->take(3)
                 ->get();
-
+            dd($stores);
             return response()->json([
                 'success' => true,
                 'message' => 'Loja criada com sucesso!',

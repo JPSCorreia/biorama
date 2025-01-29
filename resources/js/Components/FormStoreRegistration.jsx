@@ -158,9 +158,11 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
             formik.setFieldValue( images);
             passFormik(formik); // Passa o formik ao componente pai
         }
-        vendorRegistrationStore.setStoreFormValid(formik.isValid); // Mantém o estado sincronizado
-        console.log("useEffect da store do Form da Store", formik.isValid);
-    }, [formik.isValid, passFormik, images]); // Apenas dependências estáveis
+    },[passFormik, images]);
+
+    useEffect(() => {
+        vendorRegistrationStore.setStoreFormik(formik); // Mantém o estado sincronizado
+    }, [formik]);
 
     return (
         <Box

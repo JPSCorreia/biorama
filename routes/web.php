@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeAddressController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
@@ -121,9 +123,12 @@ Route::middleware('guest')->group(function () {
 // Protected routes (requires authentication)
 Route::middleware(['auth'])->group(function () {
 
-    // Routes to register as vendor, TODO: fazer comentário para o que cada rota faz
+    // Routes to register as vendor
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
-    Route::post('/registar-vendendor-1', [VendorController::class, 'store'])->name('registarVendedor.api');
+    Route::post('/registar-vendedor-dados-pessoais', [VendorController::class, 'store'])->name('registar_vendedor');
+    Route::post('/registar-vendedor-dados-empresa', [CompanyController::class, 'store'])->name('registar_vendedor_empresa');
+    Route::post('/registar-vendedor-loja', [StoreController::class, 'store'])->name('registar_store');
+    Route::post('/registar-vendedor-produto', [ProductController::class, 'store'])->name('registar_produto');
 
     Route::prefix('/perfil')->group(function () {
         Route::get('/', [UserController::class, 'show'])->name('profile');

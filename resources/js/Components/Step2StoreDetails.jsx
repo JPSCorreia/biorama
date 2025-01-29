@@ -4,6 +4,7 @@ import { PhotoCamera } from "@mui/icons-material";
 import { observer } from "mobx-react";
 
 const Step2StoreDetails = observer(({ setStoreFormik, handleImageUpload, images }) => {
+    //const {submitData} = vendorRegistrationStore.submitStep2();
     return (
         <Box
             sx={{

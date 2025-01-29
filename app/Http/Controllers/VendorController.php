@@ -36,7 +36,7 @@ class VendorController extends Controller
         ]);
     }
 
-    public function store(UserRequest $userRequest, VendorRequest $vendorRequest)
+    public function store(VendorRequest $vendorRequest)
     {
         try {
             // Obter o utilizador autenticado
@@ -46,18 +46,11 @@ class VendorController extends Controller
                 return response()->json(['error' => 'Utilizador não autenticado'], 403);
             }
 
-            // Validar os dados do utilizador
-            $validatedUserData = $userRequest->validated();
-
-            // Converta a data para o formato correto
-            $validatedUserData['date_of_birth'] = date('Y-m-d', strtotime($validatedUserData->date_of_birth));
-
-            // Atualizar os dados do utilizador na tabela `users`
-            $user->update($validatedUserData);
-            $user->save();
 
             // Validar os dados do vendor
             $validatedVendorData = $vendorRequest->validated();
+
+            $validatedVendorData['date_of_birth'] = date('Y-m-d', strtotime($validatedVendorData['date_of_birth']));
 
             // Criar o registo do vendedor na tabela `vendors`
             $vendor = Vendor::create($validatedVendorData);
