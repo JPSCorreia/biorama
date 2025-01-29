@@ -77,16 +77,26 @@ class VendorRegistrationStore {
             console.log("Resposta do servidor para os dados pessoais:", responseVendor);
 
             // Se o utilizador escolheu registar-se como empresa, faz a segunda requisição
-            if (this.isCompany && this.companyFormik) {
-                const companyValues = this.companyFormik.values;
+            if (this.isCompany && this.companyFormik && responseVendor) {
 
                 // Segunda requisição: Envia os dados da empresa
-                const responseCompany = await axios.post("/registar-vendedor-dados-empresa", {
-                    vendor_id: responseVendor.data.vendor_id,
-                    companyValues
+                router.post("/registar-vendedor-dados-empresa", {
+                    ...this.companyFormik.values,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${authStore.user.token}`, // Garante que o token está presente
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    onSuccess: () => {
+                        console.log("Empresa registada com sucesso!");
+                    },
+                    onError: (errors) => {
+                        console.error("Erro ao registar empresa:", errors);
+                    }
                 });
 
-                console.log("Resposta do servidor para os dados da empresa:", responseCompany);
+                //console.log("Resposta do servidor para os dados da empresa:", responseCompany);
             }
 
             console.log("Registo concluído com sucesso!");

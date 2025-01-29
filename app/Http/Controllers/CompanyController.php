@@ -33,6 +33,9 @@ class CompanyController extends Controller
      */
      public function store(CompanyRequest $request){
 
+         $vendor = Auth::user()->vendor();
+
+
          dd($request->all());
         // Validação dos dados
         $validatedData = $request->validated();
@@ -42,8 +45,7 @@ class CompanyController extends Controller
             DB::beginTransaction();
 
             // Cria a empresa
-            $company = Company::create([
-                'vendor_id'   => $validatedData['vendor_id'],
+            $company = $vendor->company()->create([
                 'name'        => $validatedData['name'],
                 'nif'         => $validatedData['nif'],
                 'founded_at'  => $validatedData['founded_at'] ?? null,
@@ -52,16 +54,14 @@ class CompanyController extends Controller
             ]);
 
             // Cria os contatos da empresa
-            $contact = CompanyContact::create([
-                'company_id' => $company->id,
+            $contact = $company->contacts()->create([
                 'phone'      => $validatedData['phone'],
                 'email'      => $validatedData['email'],
                 'website'    => $validatedData['website'] ?? null,
             ]);
 
             // Cria a morada da empresa
-            $address = CompanyAddress::create([
-                'company_id'  => $company->id,
+            $address = $company->addresses()->create([
                 'street'      => $validatedData['street'],
                 'number'      => $validatedData['number'],
                 'postal_code' => $validatedData['postal_code'],

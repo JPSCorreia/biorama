@@ -41,8 +41,8 @@ class UserSeeder extends Seeder
         User::create([
             'id' => 2, // ID manualmente atribuído
             'first_name' => 'Lucas', // Nome personalizado ou podes usar fake data
-            'last_name' => 'Silvetsre',
-            'email' => 'lucassilvetsre4@gmail.com',
+            'last_name' => 'Silvestre',
+            'email' => 'lucassilvestre4@gmail.com',
             'email_verified_at' => now(),
             'nif'=> '239502051',
             'phone' => '912345678',
