@@ -39,30 +39,27 @@ class VendorController extends Controller
     public function store(VendorRequest $vendorRequest)
     {
         try {
-            // Obter o utilizador autenticado
             $user = Auth::user();
-
             if (!$user) {
                 return response()->json(['error' => 'Utilizador não autenticado'], 403);
             }
 
-
-            // Validar os dados do vendor
             $validatedVendorData = $vendorRequest->validated();
-
             $validatedVendorData['date_of_birth'] = date('Y-m-d', strtotime($validatedVendorData['date_of_birth']));
 
-            // Criar o registo do vendedor na tabela `vendors`
             $vendor = Vendor::create($validatedVendorData);
-
             $user->assignRole('vendor');
 
-            return response()->json([
-                'message' => 'Vendedor registado com sucesso.',
-                'user' => $user,
-                'vendor' => $vendor,
-            ], 201);
+            // Se for um pedido Inertia, envia JSON corretamente
+            if ($vendorRequest->header('X-Inertia')) {
+                return response()->json([
+                    'message' => 'Vendedor registado com sucesso.',
+                    'user' => $user,
+                    'vendor' => $vendor,
+                ], 201);
+            }
 
+            return redirect()->route('alguma_rota'); // Se não for Inertia, redireciona
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erro ao registar o vendedor.',

@@ -60,46 +60,38 @@ class VendorRegistrationStore {
     // Action to initialize user
     async submitStep1() {
         try {
-            // Verifica se `personalFormik` está disponível
             if (!this.personalFormik) {
                 console.error("Erro: Formulário pessoal não foi encontrado.");
                 return;
             }
 
-            const personalValues = {
-                ...(this.personalFormik?.values || {}), // Garante que não dá erro caso `personalFormik` seja `null`
-                user_id: authStore.user?.id // Garante que `authStore.user` existe antes de acessar `id`
-            };
-
             // Primeira requisição: Envia os dados pessoais
-            const responseVendor = await axios.post("/registar-vendedor-dados-pessoais", personalValues);
+            router.post("/registar-vendedor-dados-pessoais", {
+                ...(this.personalFormik?.values || {}),
+                user_id: authStore.user?.id
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    console.log("Dados pessoais registados com sucesso!");
 
-            console.log("Resposta do servidor para os dados pessoais:", responseVendor);
-
-            // Se o utilizador escolheu registar-se como empresa, faz a segunda requisição
-            if (this.isCompany && this.companyFormik && responseVendor) {
-
-                // Segunda requisição: Envia os dados da empresa
-                router.post("/registar-vendedor-dados-empresa", {
-                    ...this.companyFormik.values,
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${authStore.user.token}`, // Garante que o token está presente
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    onSuccess: () => {
-                        console.log("Empresa registada com sucesso!");
-                    },
-                    onError: (errors) => {
-                        console.error("Erro ao registar empresa:", errors);
+                    if (this.isCompany && this.companyFormik) {
+                        router.post("/registar-vendedor-dados-empresa", {
+                            ...this.companyFormik.values
+                        }, {
+                            preserveScroll: true,
+                            onSuccess: () => {
+                                console.log("Empresa registada com sucesso!");
+                            },
+                            onError: (errors) => {
+                                console.error("Erro ao registar empresa:", errors);
+                            }
+                        });
                     }
-                });
-
-                //console.log("Resposta do servidor para os dados da empresa:", responseCompany);
-            }
-
-            console.log("Registo concluído com sucesso!");
+                },
+                onError: (errors) => {
+                    console.error("Erro ao registar dados pessoais:", errors);
+                }
+            });
 
         } catch (error) {
             console.error("Erro ao enviar os formulários:", error);

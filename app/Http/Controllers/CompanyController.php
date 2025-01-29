@@ -31,20 +31,14 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-     public function store(CompanyRequest $request){
-
-         $vendor = Auth::user()->vendor();
-
-
-         dd($request->all());
-        // Validação dos dados
-        $validatedData = $request->validated();
-
+    public function store(CompanyRequest $request)
+    {
         try {
-            // Inicia a transação
+            $vendor = Auth::user()->vendor();
+            $validatedData = $request->validated();
+
             DB::beginTransaction();
 
-            // Cria a empresa
             $company = $vendor->company()->create([
                 'name'        => $validatedData['name'],
                 'nif'         => $validatedData['nif'],
@@ -53,14 +47,12 @@ class CompanyController extends Controller
                 'description' => $validatedData['description'] ?? null,
             ]);
 
-            // Cria os contatos da empresa
             $contact = $company->contacts()->create([
                 'phone'      => $validatedData['phone'],
                 'email'      => $validatedData['email'],
                 'website'    => $validatedData['website'] ?? null,
             ]);
 
-            // Cria a morada da empresa
             $address = $company->addresses()->create([
                 'street'      => $validatedData['street'],
                 'number'      => $validatedData['number'],
@@ -69,18 +61,20 @@ class CompanyController extends Controller
                 'country'     => $validatedData['country'],
             ]);
 
-            // Confirma a transação
             DB::commit();
 
-            return response()->json([
-                'message'  => 'Empresa registada com sucesso!',
-                'company'  => $company,
-                'contact'  => $contact,
-                'address'  => $address,
-            ], 201);
+            // Se for um pedido Inertia, envia JSON corretamente
+            if ($request->header('X-Inertia')) {
+                return response()->json([
+                    'message'  => 'Empresa registada com sucesso!',
+                    'company'  => $company,
+                    'contact'  => $contact,
+                    'address'  => $address,
+                ], 201);
+            }
 
+            return redirect()->route('alguma_rota'); // Se não for Inertia, redireciona
         } catch (\Exception $e) {
-            // Se houver erro, cancela a transação
             DB::rollBack();
 
             return response()->json([
