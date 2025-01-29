@@ -21,10 +21,15 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 dark: green[700], // Dark green for contrast
             },
 
+            hover: {
+                main: green[400],
+                dark: green[500],
+            },
+
             // Background colors for different elements based on theme mode
             background: {
                 default:
-                    appStore.themeType === "dark" ? "#242424" : "#3838381f", // Default page background
+                    appStore.themeType === "dark" ? "#242424" : "#ffffff", // Default page background
                 paper: appStore.themeType === "dark" ? "#242424" : "#FFFFFF", // Paper elements background
                 secondary:
                     appStore.themeType === "dark" ? "#121212" : "#F5F5F0", // Secondary background color

@@ -67,15 +67,16 @@ const StoreMap = ({ store }) => {
             : null;
 
     return (
-        <Paper
-            elevation={4}
+        <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "top",
-                width: "60%",
+                alignItems: "center",
+                width: "50%",
+                mt: 2,
                 ml: 1,
-                padding: 2,
+                padding: 3,
+                pt: 2,
                 borderRadius: "10px",
             }}
         >
@@ -83,7 +84,7 @@ const StoreMap = ({ store }) => {
                 variant="h6"
                 sx={{ fontWeight: "bold", marginBottom: 1 }}
             >
-                Localização da Loja
+                Localização
             </Typography>
             {!storePosition ? (
                 <Box
@@ -140,7 +141,7 @@ const StoreMap = ({ store }) => {
                     </MapContainer>
                 </Box>
             )}
-        </Paper>
+        </Box>
     );
 };
 

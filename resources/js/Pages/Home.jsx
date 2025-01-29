@@ -3,8 +3,6 @@ import {
     Container,
     Typography,
     Button,
-    Alert,
-    Fade,
     useTheme,
     useMediaQuery,
 } from "@mui/material";
@@ -13,6 +11,7 @@ import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { alertStore } from "../Stores";
+import BannerImage from "../../images/banner.png";
 
 const Home = observer(() => {
     // Get authentication and flash from page props
@@ -22,7 +21,9 @@ const Home = observer(() => {
     const theme = useTheme();
 
     // Get media queries
-    const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
     useEffect(() => {
         // Reset alert store on navigation
         const handleNavigate = () => {
@@ -56,7 +57,7 @@ const Home = observer(() => {
             <AlertBox />
 
             {/* Banner */}
-            <Box
+            {/* <Box
                 sx={{
                     display: "flex",
                     flexDirection: smallerThanLg ? "column" : "row",
@@ -66,7 +67,8 @@ const Home = observer(() => {
                     color: "white",
                     p: 2,
                     textAlign: "center",
-                    mb: 4,
+                    mb: 2,
+                    borderRadius: "5px",
                 }}
             >
                 <Typography variant="h4" sx={{ mr: 3 }}>
@@ -88,28 +90,28 @@ const Home = observer(() => {
                         Cria agora o teu espaço!
                     </Button>
                 )}
-            </Box>
+            </Box> */}
+            <Box sx={{ display: "flex", justifyContent: "center"}}><img src={BannerImage} alt="Banner" style={{ minWidth: "80%", maxHeight: "300px" }} /></Box>
 
             {/* Map */}
-            <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" gutterBottom>
-                    Descubra as lojas mais perto de si!
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    mb: 2,
+                    mt: 2,
+                    justifyContent: "center",
+                }}
+            >
+                <Typography variant={isSmallScreen ? "text" : isMediumScreen ? "h5" : "h4"} gutterBottom sx={{ alignSelf: "start" }}>
+                    Descobre as lojas mais perto de ti!
                 </Typography>
                 <HomeMap radius={10000} />
             </Box>
 
             {/* Nearby Stores */}
-            <Box sx={{ bgcolor: "primary.main", mt: 3, p: 2, mb: 4 }}>
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                    textAlign="center"
-                    color="white"
-                >
-                    Lojas Próximas
-                </Typography>
-                <NearbyStores radius={10000} />
-            </Box>
+            <NearbyStores radius={10000} />
         </Container>
     );
 });

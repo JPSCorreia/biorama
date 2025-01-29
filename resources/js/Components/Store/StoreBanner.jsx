@@ -6,6 +6,7 @@ const StoreBanner = ({ imageLink, title }) => {
     const theme = useTheme();
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     return (
         <Box
@@ -34,13 +35,19 @@ const StoreBanner = ({ imageLink, title }) => {
                     left: 0,
                     width: "100%",
                     height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
                     borderRadius: 2,
                 }}
             />
             <Typography
-                variant={isSmallScreen ? "h5" : "h3"}
-                sx={{ zIndex: 1 }}
+                variant={isSmallScreen ? "h6" : isMediumScreen ? "h4" : "h2"}
+                sx={{
+                    zIndex: 1,
+                    textTransform: "uppercase",
+                    fontWeight: "bold",
+                    textShadow:
+                        "0 0 3px limegreen, 0 0 3px limegreen, 0 0 3px limegreen",
+                }}
             >
                 {title}
             </Typography>

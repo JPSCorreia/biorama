@@ -5,132 +5,141 @@ import {
     Card,
     CardContent,
     CardMedia,
-    Divider, IconButton,
+    Divider,
     Typography,
-    useMediaQuery,
-    useTheme,
+    Avatar, Rating,
 } from "@mui/material";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
-const DashboardStoresCard = observer(({store}) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Verifica se o ecrã é pequeno
+const DashboardStoresCard = observer(({store, user}) => {
+    // Pega a primeira imagem da galeria como fundo e a segunda como perfil
+    const backgroundImage = store?.galleries[0].image_link|| "https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp";
+    const profileImage = user?.image_profile || "https://img.freepik.com/free-photo/sideways-black-person-looking-away_23-2148749548.jpg?t=st=1738098181~exp=1738101781~hmac=37201112c86819d842272cc0f3c10da8c78de0e39ee9a77845680f10018abde5&w=1800";
 
     // Limita a descrição a 150 caracteres
-    const truncatedDescription =
-        store?.description?.length > 150
-            ? `${store.description.slice(0, 150)}...`
-            : store?.description;
+    const truncatedDescription = store?.description?.length > 150
+        ? `${store.description.slice(0, 150)}...`
+        : store?.description || "Sem Descrição";
 
     return (
         <Card
             sx={{
-                maxWidth: 300, // Reduz a largura máxima do card
+                maxWidth: 300,
                 width: "100%",
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
                 margin: "auto",
                 mt: 5,
-                minHeight: 500, // Altura mínima garantida
+                minHeight: 500,
                 display: "flex",
                 flexDirection: "column",
+                position: "relative",
             }}
         >
-            {/* Cabeçalho */}
-            <CardContent>
-                <Typography variant="h6" component="div" fontWeight="bold" noWrap>
-                    {store?.name || "Loja sem Nome"}
-                </Typography>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                        color: "#aaa",
-                        whiteSpace: "nowrap", // Evita quebra de linha
-                        overflow: "hidden", // Esconde texto excedente
-                        textOverflow: "ellipsis", // Adiciona reticências (...)
-                    }}
-                >
-                    {store?.addresses[0]?.city || "Sem Cidade"}
-                </Typography>
-            </CardContent>
-
-            {/* Imagem */}
+            {/* Imagem de fundo */}
             <CardMedia
                 component="img"
                 sx={{
-                    height: 150, // Altura fixa para a imagem
-                    width: "95%", // Largura proporcional
-                    margin: "0 auto",
-                    borderRadius: "8px",
-                    pb: 2,
+                    height: 160,
+                    width: "100%",
+                    objectFit: "cover",
                 }}
-                image="https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp" // URL de exemplo
+                image={backgroundImage}
                 alt="Imagem da Loja"
             />
+
+            {/* Avatar Circular no Centro */}
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 100, // Ajusta a posição do avatar
+                    left: "50%",
+                    transform: "translate(-50%, 0%)",
+                    zIndex: 2,
+                    borderRadius: "50%",
+                    border: "4px solid white",
+                    width: 90,
+                    height: 90,
+                    overflow: "hidden",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                }}
+            >
+                <Avatar src={profileImage} sx={{width: 76, height: 76}}/>
+            </Box>
+
+            {/* Conteúdo do Card */}
+            <CardContent sx={{textAlign: "center", pt: 6}}>
+                <Typography variant="h6" fontWeight="bold" noWrap>
+                    {store?.name || "Loja sem Nome"}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {store?.addresses?.[0]?.city || "Sem Cidade"}
+                </Typography>
+            </CardContent>
 
             <Divider
                 sx={{
                     height: "1px",
                     background: "linear-gradient(to right, transparent, #000, transparent)",
                     border: "none",
+                    mb: 2,
                 }}
             />
 
             {/* Informações */}
             <CardContent>
-                <Box sx={{ marginBottom: 2 }}>
+                <Box sx={{marginBottom: 2, }}>
                     {/* Descrição */}
-                    <Box
-                        sx={{
-                            marginBottom: "1rem", // Espaço entre a descrição e os outros elementos
-                        }}
-                    >
+                    <Box sx={{marginBottom: "2rem", minHeight:"88px"}}>
                         <Typography fontWeight="bold">Descrição:</Typography>
                         <Typography
                             sx={{
-                                display: "-webkit-box", // Ativa o line-clamp
-                                WebkitLineClamp: 3, // Define o máximo de 3 linhas
+                                display: "-webkit-box",
+                                WebkitLineClamp: 3,
                                 WebkitBoxOrient: "vertical",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                             }}
                         >
-                            {truncatedDescription || "Sem Descrição"}
+                            {truncatedDescription}
                         </Typography>
                     </Box>
 
                     {/* Rating */}
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            marginBottom: 2, // Garante separação entre o rating e o botão
-                        }}
-                    >
-                        <Typography fontWeight="bold">Rating:</Typography>
-                        <Typography>{store?.rating || "Sem Avaliação"}</Typography>
+                    <Box sx={{display: "flex", flexDirection: "row", marginBottom: 2, gap:9}}>
+                        <Box>
+                            <Typography fontWeight="bold">Rating:</Typography>
+                            <Rating
+                                value={store?.rating || 0}
+                                precision={0.5} // Permite meio ponto (exemplo: 4.5 estrelas)
+                                readOnly
+                            />
+                        </Box>
+
+                        <Box sx={{textAlign: "right", mt: "auto"}}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                sx={{
+                                    borderRadius: "50%",
+                                    width: 50,
+                                    height: 50,
+                                    minWidth: 0,
+                                    padding: 0,
+                                }}
+                            >
+                                <RemoveRedEyeIcon/>
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
 
-                {/* Botão */}
+                {/* Botão de Visualizar */}
 
-                <Box sx={{ textAlign: "right", mt: "auto" }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            borderRadius: "50%", // Garante bordas arredondadas
-                            width: 50, // Largura fixa (igual à altura)
-                            height: 50, // Altura fixa (igual à largura)
-                            minWidth: 0, // Remove o comportamento padrão de largura mínima
-                            padding: 0, // Remove padding interno
-                        }}
-                    >
-                        <RemoveRedEyeIcon />
-                    </Button>
-                </Box>
             </CardContent>
         </Card>
     );

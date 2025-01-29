@@ -136,7 +136,7 @@ const AddressCard = observer(({ address, theme }) => {
                     </Typography>
                 </Box>
             </Box>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Contacto</Typography>
+                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Comentário</Typography>
                 <Typography
                     variant="body1"
                     gutterBottom
