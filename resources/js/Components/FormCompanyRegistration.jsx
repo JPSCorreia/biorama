@@ -107,15 +107,17 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
 
     const formik = useFormik({
         initialValues: {
-            name: "",
-            nif:  "",
-            phone: "",
-            email: "",
-            street: "",
-            number: "",
-            postal_code: "",
-            district: "",
-            country: "",
+
+            name: "Lucas",
+            nif:  "245910069",
+            phone: "961970027",
+            email: "lucas@example.com",
+            street: "Rua Sebastião josé da Costa",
+            number: "25",
+            postal_code: "2925-266",
+            district: "Setúbal",
+            country: "Portugal",
+            vendor_id: "",
         },
         validationSchema: validationSchema,
         validateOnMount: true,
@@ -129,6 +131,8 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
             setTouched: formik.setTouched,
             values: formik.values,
             handleSubmit: formik.handleSubmit,
+            setFieldValue: formik.setFieldValue,
+
         };
     }, [formik]);
 

@@ -53,6 +53,7 @@ class VendorRegistrationStore {
         this.isCompany = value;
     }
 
+
     setCompanyFormik(formik) {
         this.companyFormik = formik;
     }
@@ -60,36 +61,34 @@ class VendorRegistrationStore {
     // Action to initialize user
     async submitStep1() {
         try {
-            // Verifica se `personalFormik` está disponível
             if (!this.personalFormik) {
                 console.error("Erro: Formulário pessoal não foi encontrado.");
                 return;
             }
 
-            const personalValues = {
-                ...(this.personalFormik?.values || {}), // Garante que não dá erro caso `personalFormik` seja `null`
-                user_id: authStore.user?.id // Garante que `authStore.user` existe antes de acessar `id`
-            };
+
 
             // Primeira requisição: Envia os dados pessoais
-            const responseVendor = await axios.post("/registar-vendedor-dados-pessoais", personalValues);
+            const responseVendor = await axios.post("/registar-vendedor-dados-pessoais", {
+                ...(this.personalFormik?.values || {}),
+                user_id: authStore.user?.id
+            });
 
-            console.log("Resposta do servidor para os dados pessoais:", responseVendor);
-
-            // Se o utilizador escolheu registar-se como empresa, faz a segunda requisição
             if (this.isCompany && this.companyFormik) {
-                const companyValues = this.companyFormik.values;
+                console.log("Vendedor registado com sucesso!", responseVendor.data.user.vendor);
 
-                // Segunda requisição: Envia os dados da empresa
-                const responseCompany = await axios.post("/registar-vendedor-dados-empresa", {
-                    vendor_id: responseVendor.data.vendor_id,
-                    companyValues
-                });
+                this.companyFormik.values.vendor_id = responseVendor.data.user.vendor.id;
+                console.log("Enviando dados da empresa:", this.companyFormik.values);
+                try {
+                    const responseCompany = await axios.post(`/registar-vendedor-dados-empresa/${responseVendor.data.user.vendor.id}`, {
+                        ...(this.companyFormik?.values || {}),
+                    });
 
-                console.log("Resposta do servidor para os dados da empresa:", responseCompany);
+                    console.log("Empresa registada com sucesso!", responseCompany);
+                } catch (error) {
+                    console.error("Erro ao registar empresa:", error.response?.data || error);
+                }
             }
-
-            console.log("Registo concluído com sucesso!");
 
         } catch (error) {
             console.error("Erro ao enviar os formulários:", error);
