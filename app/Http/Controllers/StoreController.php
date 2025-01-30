@@ -206,6 +206,7 @@ class StoreController extends Controller
 
     public function showStore($id)
     {
+        // Get the store
         $store = Store::selectRaw("
                 id,
                 vendor_id,
@@ -241,6 +242,11 @@ class StoreController extends Controller
         // Get all store images
         $storeGallery = StoreGallery::where('store_id', $id)->get();
 
+        // Get store addresses
+        $storeAddresses = StoreAddress::where('store_id', $id)->get();
+
+        // Calculate vendor rating (average rating of all vendor stores)
+        $vendorRating = Store::where('vendor_id', $store->vendor_id)->avg('rating');
 
         // Format for JSON compatibility
         $formattedStore = [
@@ -258,14 +264,22 @@ class StoreController extends Controller
             'image_link' => $storeImage ? $storeImage->image_link : null,
         ];
 
+        // Other section with additional information
+        $other = [
+            'vendor_rating' => $vendorRating,
+        ];
+
         return Inertia::render('Store', [
             'store' => $formattedStore,
             'vendor' => $vendor,
             'products' => $products,
             'user' => $user,
-            'gallery' => $storeGallery
+            'gallery' => $storeGallery,
+            'addresses' => $storeAddresses,
+            'other' => $other
         ]);
     }
+
 
 
 }

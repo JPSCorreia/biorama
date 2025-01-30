@@ -1,4 +1,4 @@
-import {observer} from "mobx-react";
+import { observer } from "mobx-react";
 import {
     Box,
     Button,
@@ -7,21 +7,27 @@ import {
     CardMedia,
     Divider,
     Typography,
-    Avatar, Rating,
+    Avatar,
+    Rating,
 } from "@mui/material";
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import {fixImagePath} from "../utils/utils.js";
-import {shopStore} from "@/Stores/index.js";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import { fixImagePath } from "../utils/utils.js";
+import { shopStore } from "@/Stores/index.js";
 
-const DashboardStoresCard = observer(({store, user}) => {
+const DashboardStoresCard = observer(({ store, user }) => {
     // Pega a primeira imagem da galeria como fundo e a segunda como perfil
-    const backgroundImage = fixImagePath(store?.galleries[0].image_link)|| "https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp";
-    const profileImage = fixImagePath(user?.image_profile) || "https://img.freepik.com/free-photo/sideways-black-person-looking-away_23-2148749548.jpg?t=st=1738098181~exp=1738101781~hmac=37201112c86819d842272cc0f3c10da8c78de0e39ee9a77845680f10018abde5&w=1800";
-console.log("user:", user);
+    const backgroundImage =
+        fixImagePath(store?.galleries[0].image_link) ||
+        "https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp";
+    const profileImage =
+        fixImagePath(user?.image_profile) ||
+        "https://img.freepik.com/free-photo/sideways-black-person-looking-away_23-2148749548.jpg?t=st=1738098181~exp=1738101781~hmac=37201112c86819d842272cc0f3c10da8c78de0e39ee9a77845680f10018abde5&w=1800";
+
     // Limita a descrição a 150 caracteres
-    const truncatedDescription = store?.description?.length > 150
-        ? `${store.description.slice(0, 150)}...`
-        : store?.description || "Sem Descrição";
+    const truncatedDescription =
+        store?.description?.length > 150
+            ? `${store.description.slice(0, 150)}...`
+            : store?.description || "Sem Descrição";
 
     return (
         <Card
@@ -70,11 +76,11 @@ console.log("user:", user);
                     backgroundColor: "white",
                 }}
             >
-                <Avatar src={profileImage} sx={{width: 76, height: 76}}/>
+                <Avatar src={profileImage} sx={{ width: 76, height: 76 }} />
             </Box>
 
             {/* Conteúdo do Card */}
-            <CardContent sx={{textAlign: "center", pt: 6}}>
+            <CardContent sx={{ textAlign: "center", pt: 6 }}>
                 <Typography variant="h6" fontWeight="bold" noWrap>
                     {store?.name || "Loja sem Nome"}
                 </Typography>
@@ -86,7 +92,8 @@ console.log("user:", user);
             <Divider
                 sx={{
                     height: "1px",
-                    background: "linear-gradient(to right, transparent, #000, transparent)",
+                    background:
+                        "linear-gradient(to right, transparent, #000, transparent)",
                     border: "none",
                     mb: 2,
                 }}
@@ -94,9 +101,9 @@ console.log("user:", user);
 
             {/* Informações */}
             <CardContent>
-                <Box sx={{marginBottom: 2, }}>
+                <Box sx={{ marginBottom: 2 }}>
                     {/* Descrição */}
-                    <Box sx={{marginBottom: "2rem", minHeight:"100px"}}>
+                    <Box sx={{ marginBottom: "2rem", minHeight: "100px" }}>
                         <Typography fontWeight="bold">Descrição:</Typography>
                         <Typography
                             sx={{
@@ -112,7 +119,14 @@ console.log("user:", user);
                     </Box>
 
                     {/* Rating */}
-                    <Box sx={{display: "flex", flexDirection: "row", marginBottom: 2, gap:9}}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            marginBottom: 2,
+                            gap: 9,
+                        }}
+                    >
                         <Box>
                             <Typography fontWeight="bold">Rating:</Typography>
                             <Rating
@@ -122,12 +136,14 @@ console.log("user:", user);
                             />
                         </Box>
 
-                        <Box sx={{textAlign: "right", mt: "auto"}}>
+                        <Box sx={{ textAlign: "right", mt: "auto" }}>
                             <Button
                                 variant="contained"
                                 color="primary"
                                 // Navegação ao clicar no botão
-                                onClick={() => shopStore.navigateToStore(store.id)}
+                                onClick={() =>
+                                    shopStore.navigateToStore(store.id)
+                                }
                                 sx={{
                                     borderRadius: "50%",
                                     width: 50,
@@ -136,14 +152,13 @@ console.log("user:", user);
                                     padding: 0,
                                 }}
                             >
-                                <RemoveRedEyeIcon/>
+                                <RemoveRedEyeIcon />
                             </Button>
                         </Box>
                     </Box>
                 </Box>
 
                 {/* Botão de Visualizar */}
-
             </CardContent>
         </Card>
     );

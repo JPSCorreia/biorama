@@ -106,11 +106,11 @@ const Home = observer(() => {
                 <Typography variant={isSmallScreen ? "text" : isMediumScreen ? "h5" : "h4"} gutterBottom sx={{ alignSelf: "start" }}>
                     Descobre as lojas mais perto de ti!
                 </Typography>
-                <HomeMap radius={10000} />
+                <HomeMap radius={50000} />
             </Box>
 
             {/* Nearby Stores */}
-            <NearbyStores radius={10000} />
+            <NearbyStores radius={50000} />
         </Container>
     );
 });

@@ -1,90 +1,139 @@
-import { Typography, Box, Avatar } from "@mui/material";
+import { observer } from "mobx-react";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardMedia,
+    Divider,
+    Typography,
+    Avatar,
+    Rating,
+    useTheme,
+} from "@mui/material";
+import { formatDateToPortuguese } from "../../utils/utils";
 
-const StoreVendorCard = ({ store, vendor, user }) => {
+const StoreVendorCard = observer(({ store, user, vendor, other }) => {
+
+
+    const theme = useTheme();
+
+
     return (
-        <Box
+        <Card
             sx={{
+                maxWidth: 300,
+                width: "100%",
+                borderRadius: "16px",
+                overflow: "hidden",
+                boxShadow: 3,
+                minHeight: 350,
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                width: "30%",
-                mr: 1,
-                padding: 3,
-                pt: 2,
-                borderRadius: "10px",
-                flexWrap: "wrap",
-                // border: "1px solid #e0e0e0",
+                position: "relative",
             }}
         >
-            <Typography
-                variant="h6"
-                sx={{ fontWeight: "bold", marginBottom: 1 }}
-            >
-                Vendedor
-            </Typography>
-            {/* Vendor Avatar */}
-            <Avatar
-                src={user.image_profile}
-                alt={`${vendor.first_name}'s Avatar`}
+            <Box
                 sx={{
-                    width: 80,
                     height: 80,
-                    marginBottom: 1,
-                    marginTop: 1,
-                    alignSelf: "center",
-                    border: "2px solid #fff", // Borda branca ao redor do avatar
+                    width: "100%",
+                    objectFit: "cover",
+                    backgroundColor: theme.palette.primary.main,
                 }}
             />
+
+            {/* Avatar Circular no Centro */}
             <Box
-                sx={{ display: "flex", flexDirection: "column", width: "100%" }}
+                sx={{
+                    position: "absolute",
+                    top: 100, // Ajusta a posição do avatar
+                    left: "50%",
+                    transform: "translate(-50%, -75%)",
+                    zIndex: 2,
+                    borderRadius: "50%",
+                    border: "4px solid white",
+                    width: 90,
+                    height: 90,
+                    overflow: "hidden",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                }}
             >
-                {/* Store name*/}
-                <Typography
-                    sx={{ fontWeight: "bold", alignSelf: "center", mb: 1 }}
-                >
-                    {vendor.first_name} {vendor.last_name}
-                </Typography>
-                <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
-                    <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}>
-                        <Typography sx={{ fontWeight: "bold" }}>
-                            Rating:
-                        </Typography>
-                        <Typography sx={{ ml: 1 }}>
-                            {store.rating} / 5
-                        </Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}>
-                        <Typography sx={{ fontWeight: "bold" }}>
-                            Telefone:
-                        </Typography>
-                        <Typography sx={{ ml: 1 }}>{vendor.phone}</Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            mb: 1,
-                        }}
-                    >
-                        <Typography sx={{ fontWeight: "bold" }}>
-                            Email:
-                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                ml: 1,
-                                                width: "100%",
-                                                wordWrap: "break-word",
-                                                overflowWrap: "break-word",
-                                                whiteSpace: "pre-wrap",
-                                            }}
-                                        >
-                            {vendor.email}
-                        </Typography>
-                    </Box>
-                </Box>
+                <Avatar
+                    src={user.image_profile}
+                    sx={{ width: 76, height: 76 }}
+                />
             </Box>
-        </Box>
+
+            {/* Conteúdo do Card */}
+            <CardContent sx={{ textAlign: "center", pt: 6, pb: 0.75 }}>
+                <Typography variant="h6" fontWeight="bold" noWrap>
+                    {vendor?.first_name + " " + vendor?.last_name ||
+                        "Vendedor sem Nome"}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" noWrap sx={{ mb: 0.5 }}>
+                    Vendedor
+                </Typography>
+                <Rating
+                    value={Number(other?.vendor_rating) || 0}
+                    precision={0.5}
+                    readOnly
+                    sx={{ fontSize: 18 }}
+                />
+            </CardContent>
+            <Divider
+                sx={{
+                    height: "1px",
+                    background:
+                        "linear-gradient(to right, transparent, #000, transparent)",
+                    border: "none",
+                    // mb: 1,
+                }}
+            />
+
+            {/* Informações */}
+            <CardContent sx={{ pb: "0.25rem !important" }}>
+                <Box sx={{ mb: 1 }}>
+                        <Typography fontWeight="bold">Membro desde:</Typography>
+                        <Typography
+                            sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        >
+                            {formatDateToPortuguese(vendor?.created_at)}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
+                        <Typography fontWeight="bold">Email:</Typography>
+                        <Typography
+                            sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        >
+                            {vendor?.email}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
+                        <Typography fontWeight="bold">Telefone:</Typography>
+                        <Typography
+                            sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        >
+                            {vendor?.phone}
+                        </Typography>
+                    </Box>
+            </CardContent>
+        </Card>
     );
-};
+});
 
 export default StoreVendorCard;

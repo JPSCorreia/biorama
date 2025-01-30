@@ -2,13 +2,14 @@ import { Paper, Typography, Box } from "@mui/material";
 
 const StoreProductsContainer = ({ products }) => {
 
-    console.log(products)
     return (
         <Paper
             elevation={4}
             sx={{
                 padding: 3,
                 borderRadius: "10px",
+                mt: 2,
+                mb: 1,
             }}
         >
             <Typography
@@ -24,7 +25,7 @@ const StoreProductsContainer = ({ products }) => {
                         mt: 4,
                     }}
                 >
-                    {products.map((product) => (
+                    {products.slice(0, 12).map((product) => (
                         <Box
                             key={product.id}
                             sx={{
