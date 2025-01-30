@@ -83,7 +83,8 @@ Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa'
 Route::get('/loja/{id}', [StoreController::class, 'showStore'])->name('store.show');
 
 
-
+//Route to save a store
+Route::post('/create/store', [StoreController::class, 'Store'])->name('create.store');
 // Guest routes (only accessible when not authenticated)
 Route::middleware('guest')->group(function () {
 
