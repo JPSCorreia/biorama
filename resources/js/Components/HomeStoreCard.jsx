@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 import { router } from "@inertiajs/react";
 import { observer } from "mobx-react";
 import { hoverStore } from "../Stores";
-import { truncateDescription } from "../utils/utils";
 
 const HomeStoreCard = observer(({ store }) => {
 
@@ -14,7 +13,7 @@ const HomeStoreCard = observer(({ store }) => {
 
     const isHovered = hoverStore.hoveredStoreId === store.id;
 
-
+    console.log(store)
 
     return (
         <Paper
@@ -65,20 +64,17 @@ const HomeStoreCard = observer(({ store }) => {
             >
                 {/* Nome da loja sobre a imagem */}
                 <Typography
-                    variant="h4"
+                    variant="h6"
                     sx={{
                         position: "absolute",
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
                         color: "white",
+                        fontWeight: "bold",
                         zIndex: 1,
                         textAlign: "center",
                         width: "100%",
-                        textTransform: "uppercase",
-                        fontWeight: "bold",
-                        textShadow:
-                            `0 0 3px ${theme.palette.primary.main}, 0 0 3px ${theme.palette.primary.main}, 0 0 3px ${theme.palette.primary.main}`,
                         px: 1, // Padding lateral para evitar corte
                     }}
                 >
@@ -91,9 +87,9 @@ const HomeStoreCard = observer(({ store }) => {
                 <Box
                     variant="body2"
                     color="text.secondary"
-                    sx={{ marginBottom: 1, fontSize: 14 }}
+                    sx={{ marginBottom: 1 }}
                 >
-                    <ReactMarkdown>{truncateDescription(store.description)}</ReactMarkdown>
+                    <ReactMarkdown>{store.description}</ReactMarkdown>
                 </Box>
                 <Typography variant="caption" sx={{ fontWeight: "bold" }}>
                     Distância: {(store.distance / 1000).toFixed(2)} km

@@ -1,27 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {observer} from "mobx-react";
 import {usePage} from "@inertiajs/react";
 import {Box, Paper, Typography, useMediaQuery, useTheme, Modal, CircularProgress, Button} from "@mui/material";
 import DashboardStoresCard from "@/Components/DashboardStoresCard";
 import {shopStore} from "@/Stores/index.js";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import DashboardStoreStep2 from "@/Components/DashboardStoreStep2.jsx";
-// Importa o componente do modal
+import Step2StoreDetails from "@/Components/Step2StoreDetails"; // Importa o componente do modal
 
 const DashboardStorePage = observer(() => {
-    const { user, stores: initialStores } = usePage().props;
-
-    useEffect(() => {
-        if (!shopStore.stores.length) {
-            shopStore.setStoresData(initialStores);
-        }
-    }, [initialStores]);
-    const stores = shopStore.stores// Carrega as lojas do backend
-
-
-    console.log('Store id', stores.id);
-
-
+    const {stores, user} = usePage().props; // Carrega as lojas do backend
+    console.log("stores", stores);
+    console.log("props:", usePage().props);
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const [isLoading, setIsLoading] = useState(false);
@@ -89,14 +78,13 @@ const DashboardStorePage = observer(() => {
     };
 
 
-
     return (
         <Box sx={{position: "relative", width: "100%", height:"100%" ,display: "flex", justifyContent: "center", mt: 4,}}>
             {/* Título "A Minha Loja" sobre o Paper */}
             <Box
                 sx={{
                     position: "absolute",
-                    width: "72%",
+                    width: "82%",
                     top: -20, // Eleva a box sobre o Paper
                     left: "50%",
                     transform: "translateX(-50%)", // Centraliza horizontalmente
@@ -119,7 +107,7 @@ const DashboardStorePage = observer(() => {
                 elevation={4}
                 sx={{
                     p: 2,
-                    width: isSmallScreen ? "100%" : "70%",
+                    width: isSmallScreen ? "100%" : "80%",
                     m: "auto",
                     display: "flex",
                     flexDirection: isSmallScreen ? "column" : "row",
@@ -132,7 +120,7 @@ const DashboardStorePage = observer(() => {
 
                 {/* Faz o loop para renderizar as Cards */}
                 {stores.map((store) => (
-                    <DashboardStoresCard key={store.id} store={store} user={user} />
+                    <DashboardStoresCard key={store.id} store={store}/>
                 ))}
                 {stores.length < 3 && (
                     <Box
@@ -200,12 +188,11 @@ const DashboardStorePage = observer(() => {
                             p: 4,
                         }}
                     >
-
-                        <DashboardStoreStep2
+                        <Step2StoreDetails
                             setStoreFormik={setStoreFormik}
                             handleImageUpload={handleImageUpload}
-                            images={images}/>
-
+                            images={images}
+                        />
 
                         <Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
                             <Button

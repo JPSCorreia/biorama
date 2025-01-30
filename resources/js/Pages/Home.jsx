@@ -91,7 +91,7 @@ const Home = observer(() => {
                     </Button>
                 )}
             </Box> */}
-            <Box sx={{ display: "flex", justifyContent: "center", maxWidth: "100%", cursor: "pointer"}} onClick={() => router.get("/vendedores/registo")}><img src={BannerImage} alt="Banner"style={{ width: "100%", padding: "1px", border: "1px solid green", borderRadius: "3px" }}/></Box>
+            <Box sx={{ display: "flex", justifyContent: "center", maxWidth: "100%"}}><img src={BannerImage} alt="Banner"style={{ width: "100%" }}/></Box>
             {/* Map */}
             <Box
                 sx={{
@@ -106,11 +106,11 @@ const Home = observer(() => {
                 <Typography variant={isSmallScreen ? "text" : isMediumScreen ? "h5" : "h4"} gutterBottom sx={{ alignSelf: "start" }}>
                     Descobre as lojas mais perto de ti!
                 </Typography>
-                <HomeMap radius={50000} />
+                <HomeMap radius={10000} />
             </Box>
 
             {/* Nearby Stores */}
-            <NearbyStores radius={50000} />
+            <NearbyStores radius={10000} />
         </Container>
     );
 });

@@ -1,140 +1,92 @@
-import { observer } from "mobx-react";
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    CardMedia,
-    Divider,
-    Typography,
-    Avatar,
-    Rating,
-    useTheme,
-    useMediaQuery
-} from "@mui/material";
-import { formatDateToPortuguese } from "../../utils/utils";
+import { Typography, Box, Avatar } from "@mui/material";
 
-const StoreVendorCard = observer(({ store, user, vendor, other }) => {
-
-
-    const theme = useTheme();
-    const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
-
+const StoreVendorCard = ({ store, vendor, user }) => {
     return (
-        <Card
+        <Box
             sx={{
-                minWidth: 250,
-                width: smallerThanMediumScreen ? "100%" : "20%",
-                borderRadius: "16px",
-                overflow: "hidden",
-                boxShadow: 3,
-                minHeight: 350,
                 display: "flex",
                 flexDirection: "column",
-                position: "relative",
+                alignItems: "center",
+                width: "30%",
+                mr: 1,
+                padding: 3,
+                pt: 2,
+                borderRadius: "10px",
+                flexWrap: "wrap",
+                // border: "1px solid #e0e0e0",
             }}
         >
-            <Box
-                sx={{
-                    height: 80,
-                    width: "100%",
-                    objectFit: "cover",
-                    backgroundColor: theme.palette.primary.main,
-                }}
-            />
-
-            {/* Avatar Circular no Centro */}
-            <Box
-                sx={{
-                    position: "absolute",
-                    top: 100, // Ajusta a posição do avatar
-                    left: "50%",
-                    transform: "translate(-50%, -75%)",
-                    zIndex: 2,
-                    borderRadius: "50%",
-                    border: "4px solid white",
-                    width: 90,
-                    height: 90,
-                    overflow: "hidden",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                }}
+            <Typography
+                variant="h6"
+                sx={{ fontWeight: "bold", marginBottom: 1 }}
             >
-                <Avatar
-                    src={user.image_profile}
-                    sx={{ width: 76, height: 76 }}
-                />
-            </Box>
-
-            {/* Conteúdo do Card */}
-            <CardContent sx={{ textAlign: "center", pt: 6, pb: 0.75 }}>
-                <Typography variant="h6" fontWeight="bold" noWrap>
-                    {vendor?.first_name + " " + vendor?.last_name ||
-                        "Vendedor sem Nome"}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" noWrap sx={{ mb: 0.5 }}>
-                    Vendedor
-                </Typography>
-                <Rating
-                    value={Number(other?.vendor_rating) || 0}
-                    precision={0.5}
-                    readOnly
-                    sx={{ fontSize: 18 }}
-                />
-            </CardContent>
-            <Divider
+                Vendedor
+            </Typography>
+            {/* Vendor Avatar */}
+            <Avatar
+                src={user.image_profile}
+                alt={`${vendor.first_name}'s Avatar`}
                 sx={{
-                    height: "1px",
-                    background:
-                        "linear-gradient(to right, transparent, #000, transparent)",
-                    border: "none",
-                    // mb: 1,
+                    width: 80,
+                    height: 80,
+                    marginBottom: 1,
+                    marginTop: 1,
+                    alignSelf: "center",
+                    border: "2px solid #fff", // Borda branca ao redor do avatar
                 }}
             />
+            <Box
+                sx={{ display: "flex", flexDirection: "column", width: "100%" }}
+            >
+                {/* Store name*/}
+                <Typography
+                    sx={{ fontWeight: "bold", alignSelf: "center", mb: 1 }}
+                >
+                    {vendor.first_name} {vendor.last_name}
+                </Typography>
+                <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                    <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            Rating:
+                        </Typography>
+                        <Typography sx={{ ml: 1 }}>
+                            {store.rating} / 5
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", mb: 1 }}>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            Telefone:
+                        </Typography>
+                        <Typography sx={{ ml: 1 }}>{vendor.phone}</Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            mb: 1,
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            Email:
+                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                ml: 1,
+                                                width: "100%",
+                                                wordWrap: "break-word",
+                                                overflowWrap: "break-word",
+                                                whiteSpace: "pre-wrap",
+                                            }}
+                                        >
+                            {vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}
 
-            {/* Informações */}
-            <CardContent sx={{ pb: "0.25rem !important" }}>
-                <Box sx={{ mb: 1 }}>
-                        <Typography fontWeight="bold">Membro desde:</Typography>
-                        <Typography
-                            sx={{
-                                wordWrap: "break-word",
-                                overflowWrap: "break-word",
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {formatDateToPortuguese(vendor?.created_at)}
                         </Typography>
                     </Box>
-                    <Box sx={{ mb: 1 }}>
-                        <Typography fontWeight="bold">Email:</Typography>
-                        <Typography
-                            sx={{
-                                wordWrap: "break-word",
-                                overflowWrap: "break-word",
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {vendor?.email}
-                        </Typography>
-                    </Box>
-                    <Box sx={{ mb: 1 }}>
-                        <Typography fontWeight="bold">Telefone:</Typography>
-                        <Typography
-                            sx={{
-                                wordWrap: "break-word",
-                                overflowWrap: "break-word",
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {vendor?.phone}
-                        </Typography>
-                    </Box>
-            </CardContent>
-        </Card>
+                </Box>
+            </Box>
+        </Box>
     );
-});
+};
 
 export default StoreVendorCard;

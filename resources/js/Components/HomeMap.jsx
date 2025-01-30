@@ -37,7 +37,7 @@ const createCustomIcon = (color) => {
                     fontSize="inherit"
                     style={{ fill: color, width: "1em", height: "1em" }}
                 />
-            </div>,
+            </div>
         ),
         className: "custom-marker-icon",
         iconSize: [36, 36],
@@ -58,6 +58,7 @@ const HomeMap = observer(({ radius }) => {
     const [position, setPosition] = useState(null); // Coordenadas do utilizador
     const [loading, setLoading] = useState(true);
     const [nearbyStores, setNearbyStores] = useState([]);
+    const [forceUpdate, setForceUpdate] = useState(false); // Forçar re-render no hover
     const theme = useTheme();
 
     useEffect(() => {
@@ -70,7 +71,7 @@ const HomeMap = observer(({ radius }) => {
             } catch (err) {
                 console.error(
                     "Erro ao buscar lojas próximas:",
-                    err.response?.data?.message || err.message,
+                    err.response?.data?.message || err.message
                 );
             } finally {
                 setLoading(false);
@@ -87,13 +88,18 @@ const HomeMap = observer(({ radius }) => {
                 () => {
                     console.error("Não foi possível obter a localização.");
                     setLoading(false);
-                },
+                }
             );
         } else {
             console.error("Geolocalização não é suportada neste navegador.");
             setLoading(false);
         }
     }, [radius]);
+
+    // Atualiza o estado quando o hover muda para forçar re-render
+    useEffect(() => {
+        setForceUpdate((prev) => !prev);
+    }, [hoverStore.hoveredStoreId]);
 
     const navigate = (path) => {
         router.visit(path, {
@@ -127,8 +133,8 @@ const HomeMap = observer(({ radius }) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        borderRadius: "6px",
-                        padding: "2px",
+                        borderRadius: "2px",
+                        padding: "1px",
                         border: `1px solid ${theme.palette.primary.main}`,
                     }}
                 >
@@ -141,8 +147,7 @@ const HomeMap = observer(({ radius }) => {
                         {position && (
                             <>
                                 {nearbyStores.slice(0, 6).map((store) => {
-                                    const isHovered =
-                                        hoverStore.hoveredStoreId === store.id;
+                                    const isHovered = hoverStore.hoveredStoreId === store.id;
 
                                     return (
                                         <Marker
@@ -153,26 +158,18 @@ const HomeMap = observer(({ radius }) => {
                                             ]}
                                             icon={createCustomIcon(
                                                 isHovered
-                                                    ? theme.palette.secondary
-                                                          .main // Cor diferente no hover
-                                                    : theme.palette.primary
-                                                          .main,
+                                                    ? theme.palette.secondary.main // Cor diferente no hover
+                                                    : theme.palette.primary.main
                                             )}
                                             eventHandlers={{
                                                 click: () => {
-                                                    navigate(
-                                                        `/loja/${store.id}`,
-                                                    );
+                                                    navigate(`/loja/${store.id}`);
                                                 },
                                                 mouseover: () => {
-                                                    hoverStore.setHoveredStore(
-                                                        store.id,
-                                                    );
+                                                    hoverStore.setHoveredStore(store.id);
                                                 },
                                                 mouseout: () => {
-                                                    hoverStore.setHoveredStore(
-                                                        null,
-                                                    );
+                                                    hoverStore.setHoveredStore(null);
                                                 },
                                             }}
                                         >
@@ -184,9 +181,7 @@ const HomeMap = observer(({ radius }) => {
                                                     permanent
                                                 >
                                                     <div>
-                                                        <strong>
-                                                            {store.name}
-                                                        </strong>
+                                                        <strong>{store.name}</strong>
                                                     </div>
                                                 </Tooltip>
                                             )}
