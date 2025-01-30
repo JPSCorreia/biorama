@@ -203,9 +203,7 @@ Route::get('/vendorinfo', function () {
     return Inertia::render('VendorInformation');
 })->name('vendor.information');
 
-
-
-Route::post('/teste', function (CompanyRequest $companyRequest) {
-    dd($companyRequest->validated());
-})->middleware(['auth']);
+Route::get('/teste', function () {
+    return Inertia::render('FeatureTesting');
+})->name('teste');
 

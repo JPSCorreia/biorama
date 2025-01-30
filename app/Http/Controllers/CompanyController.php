@@ -41,8 +41,8 @@ class CompanyController extends Controller
 
             DB::beginTransaction();
 
-            $company = $vendor->company()->create(          
-                 'vendor_id'   => $validatedData['vendor_id'],
+            $company = $vendor->company()->create([
+                'vendor_id'   => $validatedData['vendor_id'],
                 'name'        => $validatedData['name'],
                 'nif'         => $validatedData['nif'],
                 'founded_at'  => $validatedData['founded_at'] ?? null,
@@ -51,7 +51,6 @@ class CompanyController extends Controller
             ]);
 
 
-            $contact = $company->contacts()->create([
             // Cria os contatos da empresa
             $contact = CompanyContact::create([
                 'company_id' => $company->id,
@@ -59,8 +58,6 @@ class CompanyController extends Controller
                 'email'      => $validatedData['email'],
                 'website'    => $validatedData['website'] ?? null,
             ]);
-              
-            $address = $company->addresses()->create([
 
             // Cria a morada da empresa
             $address = CompanyAddress::create([
@@ -84,7 +81,7 @@ class CompanyController extends Controller
                 ], 201);
             }
 
-        } catch (\Exception $e) {         
+        } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([

@@ -24,18 +24,16 @@ const RegisterVendor = observer(({ genders }) => {
 
     const [formErrors, setFormErrors] = useState(null);
 
+    // Reference to the personal and company forms
     const personalFormRef = useRef(null);
     const companyFormRef = useRef(null);
+
+    // Reference to the store form
+    const storeFormRef = useRef(null);
 
     // Controls warning visibility
     const [showWarning, setShowWarning] = useState(true);
 
-    // Para depuração
-    useEffect(() => {
-        console.log("RegisterVendor -> Referências:", { personalFormRef, companyFormRef });
-    }, [personalFormRef.current, companyFormRef.current]);
-
-    const [storeFormik, setStoreFormik] = useState(null); // Store data
     const [images, setImages] = useState([]);
 
     const validateFormik = async (formik) => {
@@ -68,29 +66,25 @@ const RegisterVendor = observer(({ genders }) => {
 
     // Function to close the company form and validate the personal info form
     const handleCloseCompanyForm = () => {
-        // Atualiza o estado na store
+        // Update the store to reflect the user's choice
         vendorRegistrationStore.setIsCompany(false);
-
-        // Limpa os valores e o estado "touched" do formulário da empresa
+        // Reset the company form
         if (companyFormRef?.current) {
-            companyFormRef.current.resetForm(); // Limpa todos os valores
+            companyFormRef.current.resetForm();
             companyFormRef.current.setTouched(
                 Object.keys(companyFormRef.current.values).reduce(
                     (acc, key) => ({ ...acc, [key]: false }),
                     {}
                 )
-            ); // Marca todos os campos como "não tocados"
+            );
         }
 
-        // Adiciona lógica adicional, como esconder o formulário no componente intermediário
         if (onCloseCompanyForm) {
-            onCloseCompanyForm(); // Chama a callback do componente intermediário para fechar a UI
+            onCloseCompanyForm(); // call the parent component's function
         }
 
         console.log("O formulário de empresa foi fechado.");
     };
-
-
 
     const handleNext = async () => {
         if (currentStep === 1) {
@@ -142,11 +136,32 @@ const RegisterVendor = observer(({ genders }) => {
             } else {
                 console.log("Erros encontrados:", { personalErrors, companyErrors });
             }
-        } else {
+        }
+        else if (currentStep === 3) {
+            const storeErrors = await storeFormRef.current.validateForm();
+            storeFormRef.current.setTouched(
+                Object.keys(storeFormRef.current.values).reduce(
+                    (acc, key) => ({ ...acc, [key]: true }),
+                    {}
+                )
+            );
+
+            const isStoreValid = Object.keys(storeErrors).length === 0;
+            if (isStoreValid) {
+                vendorRegistrationStore.setStoreFormik(storeFormRef.current);
+                vendorRegistrationStore.setStoreImages(images);
+                await vendorRegistrationStore.submitStep2();
+                setCurrentStep((prev) => prev + 1);
+            }
+        }
+        else if (currentStep === 5) {
+            await vendorRegistrationStore.submitStep3();
+            setCurrentStep((prev) => prev + 1);
+        }
+        else {
             setCurrentStep((prev) => prev + 1);
         }
     };
-
 
     // Function to handle the "Back" button click event
     const handleBack = () => {
@@ -173,8 +188,7 @@ const RegisterVendor = observer(({ genders }) => {
                 return <IntroStep2VendorRegister />;
             case 3:
                 return (
-                    vendorRegistrationStore.submitStep1(),
-                    <Step2StoreDetails setStoreFormik={setStoreFormik} handleImageUpload={handleImageUpload} images={images} />
+                    <Step2StoreDetails ref={storeFormRef} formErrors={formErrors} images={images} handleImageUpload={handleImageUpload} />
                 );
             case 4:
                 return <IntroStep3VendorRegister />;
