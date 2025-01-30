@@ -9,6 +9,8 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\OrderController;
+use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\VendorRequest;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -120,13 +122,14 @@ Route::middleware('guest')->group(function () {
 
 });
 
+Route::post('/registar-vendedor-dados-empresa/{vendor_id}', [CompanyController::class, 'store'])
+    ->name('registar_empresa');
 // Protected routes (requires authentication)
 Route::middleware(['auth'])->group(function () {
 
     // Routes to register as vendor
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
     Route::post('/registar-vendedor-dados-pessoais', [VendorController::class, 'store'])->name('registar_vendedor');
-    Route::post('/registar-vendedor-dados-empresa', [CompanyController::class, 'store'])->name('registar_vendedor_empresa');
     Route::post('/registar-vendedor-loja', [StoreController::class, 'store'])->name('registar_store');
     Route::post('/registar-vendedor-produto', [ProductController::class, 'store'])->name('registar_produto');
 
@@ -202,4 +205,7 @@ Route::get('/vendorinfo', function () {
 
 
 
+Route::post('/teste', function (CompanyRequest $companyRequest) {
+    dd($companyRequest->validated());
+})->middleware(['auth']);
 

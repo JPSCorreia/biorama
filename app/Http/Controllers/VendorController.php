@@ -49,15 +49,15 @@ class VendorController extends Controller
 
             $vendor = Vendor::create($validatedVendorData);
             $user->assignRole('vendor');
+            $user->load(['roles', 'vendor']);
 
             // Se for um pedido Inertia, envia JSON corretamente
-            if ($vendorRequest->header('X-Inertia')) {
-                return response()->json([
-                    'message' => 'Vendedor registado com sucesso.',
-                    'user' => $user,
-                    'vendor' => $vendor,
-                ], 201);
-            }
+            return response()->json([
+                'message' => 'Vendedor registado com sucesso.',
+                'user' => $user,
+                'vendor' => $vendor,
+            ], 200);
+
 
             return redirect()->route('alguma_rota'); // Se não for Inertia, redireciona
         } catch (\Exception $e) {

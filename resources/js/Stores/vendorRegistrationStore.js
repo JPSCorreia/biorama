@@ -65,33 +65,29 @@ class VendorRegistrationStore {
                 return;
             }
 
+
+
             // Primeira requisição: Envia os dados pessoais
-            router.post("/registar-vendedor-dados-pessoais", {
+            const responseVendor = await axios.post("/registar-vendedor-dados-pessoais", {
                 ...(this.personalFormik?.values || {}),
                 user_id: authStore.user?.id
-            }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    console.log("Dados pessoais registados com sucesso!");
-
-                    if (this.isCompany && this.companyFormik) {
-                        router.post("/registar-vendedor-dados-empresa", {
-                            ...this.companyFormik.values
-                        }, {
-                            preserveScroll: true,
-                            onSuccess: () => {
-                                console.log("Empresa registada com sucesso!");
-                            },
-                            onError: (errors) => {
-                                console.error("Erro ao registar empresa:", errors);
-                            }
-                        });
-                    }
-                },
-                onError: (errors) => {
-                    console.error("Erro ao registar dados pessoais:", errors);
-                }
             });
+
+            if (this.isCompany && this.companyFormik) {
+                console.log("Vendedor registado com sucesso!", responseVendor.data.user.vendor);
+
+                this.companyFormik.values.vendor_id = responseVendor.data.user.vendor.id;
+                console.log("Enviando dados da empresa:", this.companyFormik.values);
+                try {
+                    const responseCompany = await axios.post(`/registar-vendedor-dados-empresa/${responseVendor.data.user.vendor.id}`, {
+                        ...(this.companyFormik?.values || {}),
+                    });
+
+                    console.log("Empresa registada com sucesso!", responseCompany);
+                } catch (error) {
+                    console.error("Erro ao registar empresa:", error.response?.data || error);
+                }
+            }
 
         } catch (error) {
             console.error("Erro ao enviar os formulários:", error);

@@ -6,8 +6,10 @@ use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use App\Models\CompanyAddress;
 use App\Models\CompanyContact;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -31,10 +33,10 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CompanyRequest $request)
+    public function store(CompanyRequest $request, $id)
     {
         try {
-            $vendor = Auth::user()->vendor();
+            $vendor = vendor::find($id);
             $validatedData = $request->validated();
 
             DB::beginTransaction();
@@ -73,7 +75,6 @@ class CompanyController extends Controller
                 ], 201);
             }
 
-            return redirect()->route('alguma_rota'); // Se não for Inertia, redireciona
         } catch (\Exception $e) {
             DB::rollBack();
 
