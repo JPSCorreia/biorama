@@ -55,11 +55,15 @@ class AuthStore {
                     'Content-Type': 'multipart/form-data', // Necessário para processar ficheiros
                 },
             });
-            this.user = response.data.user;
+            this.setUser(response.data.user);
         } catch (error) {
             console.error("Error updating user:", error);
         }
     };
+
+    setUser = action((updatedUser) => {
+        this.user = updatedUser;
+    });
 
     /**
      * Clears authentication state and user data

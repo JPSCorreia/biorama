@@ -1,181 +1,140 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import axios from "axios";
+import {router} from "@inertiajs/react"
+import {authStore} from "../Stores";
 
 class VendorRegistrationStore {
     // Observable state properties
-    isCompany = false; // Defines if the user will register a company
-    vendorFormValid = false; // Vendor form validation status
-    companyFormValid = false; // Company form validation status
-    vendor = {
-        user_id: "",
-        first_name: "",
-        last_name: "",
-        email: "",
-        nif: "",
-        phone: "",
-        date_of_birth: "",
-        image_profile: "",
-        is_company: false,
-    }; // Vendor data
-    company = {
-        name: "",
-        nif: "",
-        phone: "",
-        email: "",
-        street: "",
-        number: "",
-        postal_code: "",
-        district: "",
-        country: "",
-    }; // Company data, if applicable
-    store = {
-        name: "",
-        phone: "",
-        email: "",
-        description: "",
-        rating: 0.0,
-        coordinates: "",
-        store_images: [],
-    }; // Store data
-    storeFormValid = false; // Store form validation status
+    vendorFormik = null // Vendor form
+    isCompany = false; // Boolean to check if the vendor is a company
+    companyFormik = null; // Company form
+    storeFormik = null; // Formik para detalhes da loja
+    productFormik = null; // Formik para criação de produtos
 
-    products = []; // Products list
-    productsFormValid = false; // Products form validation status
 
     /**
      * Initializes the VendorRegistrationStore with MobX observables and persistence
      */
     constructor() {
         makeObservable(this, {
-            vendor: observable,
+            vendorFormik: observable,
+            setPersonalFormik: action,
             isCompany: observable,
-            vendorFormValid: observable,
-
-            company: observable,
-            companyFormValid: observable,
-
-            store: observable,
-            storeFormValid: observable,
-
-            products: observable,
-            productsFormValid: observable,
-
-            initializeVendor: action,
-            updateVendor: action,
             setIsCompany: action,
-            setVendorFormValid: action,
+            companyFormik: observable,
+            setCompanyFormik: action,
 
-            updateCompany: action,
-            setCompanyFormValid: action,
+            storeFormik: observable,
+            setStoreFormik: action,
+            setStoreImages: action,
 
-            updateStore: action,
-            setStoreFormValid: action,
+            productFormik: observable,
+            setProductFormik: action,
+            getProductFormik: action,
 
-            addProduct: action,
-            setProductFormValid: action,
 
-            submit: action,
+
+            submitStep1: action,
+            submitStep2: action,
+
         });
         makePersistable(this, {
             name: "vendorRegistrationStore",
-            properties: ["vendor", "isCompany", "company", "store", "products"],
+            properties: ["vendorFormik"],
             storage: window.sessionStorage,
         });
     }
 
+    setPersonalFormik(formik) {
+        this.personalFormik = formik;
+    }
+
+    setIsCompany(value) {
+        this.isCompany = value;
+    }
+
+
+    setCompanyFormik(formik) {
+        this.companyFormik = formik;
+    }
+
     // Action to initialize user
-    initializeVendor(vendorData) {
-        this.vendor = vendorData;
-    }
-
-    // Actions to set form validation status
-    setVendorFormValid(value) {
-        this.vendorFormValid = value;
-    }
-    setCompanyFormValid(value) {
-        this.companyFormValid = value;
-    }
-    setStoreFormValid(value) {
-        this.storeFormValid = value;
-    }
-    setProductFormValid(value) {
-        this.productsFormValid = value;
-    }
-
-    // Action to update user data
-    updateVendor(data) {
-        this.user = { ...this.user, ...data };
-    }
-
-    // Action to set company status
-    setIsCompany(isCompany) {
-        this.isCompany = isCompany;
-        this.vendor["is_company"] = isCompany; // Updates the value in the user object
-        if (!isCompany) {
-            this.companyFormValid = false; // Resets company form validation
-            this.vendor["is_company"] = false; // Updates the value in the user object
-        }
-    }
-
-    // Action to update company data
-    updateCompany(data) {
-        if (this.vendor["is_company"]) {
-            this.company = { ...this.company, ...data };
-        }
-    }
-
-    // Action to update store data
-    updateStore(data) {
-        this.store = { ...this.store, ...data };
-    }
-
-    // Action to add a product
-    addProduct(product) {
-        this.products.push(product);
-    }
-
-    // Method to submit data to server
-    async submit() {
+    async submitStep1() {
         try {
-            if (!this.user || !this.store) throw new Error("Incomplete data");
-
-            // 1. Update user (including isCompany and role)
-            await axios.post("/users/update", {
-                ...this.user,
-                isCompany: this.isCompany,
-            });
-
-            // 2. Create company if applicable
-            if (this.isCompany && this.company) {
-                await axios.post("/companies", this.company);
+            if (!this.personalFormik) {
+                console.error("Erro: Formulário pessoal não foi encontrado.");
+                return;
             }
 
-            // 3. Create store
-            const storeResponse = await axios.post("/stores", this.store);
 
-            // 4. Add products
-            if (this.products.length > 0) {
-                await axios.post(`/stores/${storeResponse.data.id}/products`, {
-                    products: this.products,
-                });
-            }
 
-            // Clear store after successful submission
-            runInAction(() => {
-                this.user = null;
-                this.isCompany = false;
-                this.company = null;
-                this.store = null;
-                this.products = [];
+            // Primeira requisição: Envia os dados pessoais
+            const responseVendor = await axios.post("/registar-vendedor-dados-pessoais", {
+                ...(this.personalFormik?.values || {}),
+                user_id: authStore.user?.id
             });
 
-            return true;
+            if (this.isCompany && this.companyFormik) {
+                console.log("Vendedor registado com sucesso!", responseVendor.data.user.vendor);
+
+                this.companyFormik.values.vendor_id = responseVendor.data.user.vendor.id;
+                console.log("Enviando dados da empresa:", this.companyFormik.values);
+                try {
+                    const responseCompany = await axios.post(`/registar-vendedor-dados-empresa/${responseVendor.data.user.vendor.id}`, {
+                        ...(this.companyFormik?.values || {}),
+                    });
+
+                    console.log("Empresa registada com sucesso!", responseCompany);
+                } catch (error) {
+                    console.error("Erro ao registar empresa:", error.response?.data || error);
+                }
+            }
+
         } catch (error) {
-            console.error("Error submitting data:", error);
-            throw error;
+            console.error("Erro ao enviar os formulários:", error);
         }
     }
+
+
+    setStoreFormik(formik) {
+        this.storeFormik = formik;
+    }
+
+    setStoreImages(images) {
+        images.forEach((image, index) => {
+            this.storeFormik.values.image_link[index] = image;
+        });
+    }
+
+    async submitStep2() {
+        console.log("Enviando dados da loja:", this.storeFormik.values);
+        try {
+            if (!this.storeFormik) {
+                console.error("Erro: Formulário de loja não foi encontrado.");
+                return;
+            }
+
+            // Primeira requisição: Envia os dados da loja
+            const responseStore = await axios.post("/registar-vendedor-loja", {
+                ...(this.storeFormik?.values || {}),
+            });
+
+            console.log("Loja registada com sucesso!", responseStore.data.store);
+
+        } catch (error) {
+            console.error("Erro ao enviar os formulários:", error);
+        }
+    }
+
+    setProductFormik(formik) {
+        this.productFormik = formik;
+    }
+
+    getProductFormik() {
+        return this.productFormik;
+    }
+
 }
 
 export const vendorRegistrationStore = new VendorRegistrationStore();

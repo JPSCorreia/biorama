@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useImperativeHandle, useState, forwardRef} from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -12,7 +12,6 @@ import { useTheme } from "@mui/material/styles";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {useMediaQuery} from "@mui/material";
-import {observer} from "mobx-react";
 import * as yup from "yup";
 
 // Componente para centralizar e ajustar o zoom no marcador
@@ -26,7 +25,7 @@ const CenterMapOnPostalCode = ({ position }) => {
     return null;
 };
 
-const FormStoreRegistration = observer(({passFormik, images}) => {
+const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
     const theme = useTheme();
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -35,10 +34,6 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
 
     const handleFormSubmit = async (values) => {
         try {
-            // Atualize a store com os valores do formulário, incluindo as imagens
-            vendorRegistrationStore.updateStore({
-                ...values, images, // Assegure que as imagens estão incluídas
-            });
             console.log("Dados submetidos:", values);
         } catch (error) {
             console.error("Erro ao submeter o formulário:", error);
@@ -80,9 +75,9 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
             comment: "",
             coordinates: "",
             postal_code: "",
+            image_link: [],
         },
         validationSchema: validationSchema,
-        validateOnMount: true,
         onSubmit: handleFormSubmit,
     });
 
@@ -153,14 +148,33 @@ const FormStoreRegistration = observer(({passFormik, images}) => {
         return null;
     };
 
+    useImperativeHandle(ref, () => {
+
+        return {
+            validateForm: formik.validateForm,
+            setTouched: formik.setTouched,
+            setFieldValue: formik.setFieldValue,
+            values: formik.values,
+            handleSubmit: formik.handleSubmit,
+        };
+    }, [formik]);
     useEffect(() => {
-        if (passFormik) {
-            formik.setFieldValue( images);
-            passFormik(formik); // Passa o formik ao componente pai
+        if (formErrors) {
+            formik.setErrors(formErrors);
+
+            // Marca todos os campos como "touched" para que os erros apareçam sempre
+            formik.setTouched(
+                Object.keys(formErrors).reduce((acc, key) => {
+                    acc[key] = true;
+                    return acc;
+                }, {})
+            );
+
+            // Força uma revalidação para garantir que os erros aparecem
+            console.log("Revalidar formulário"); // Para depuração
+            formik.validateForm();
         }
-        vendorRegistrationStore.setStoreFormValid(formik.isValid); // Mantém o estado sincronizado
-        console.log("useEffect da store do Form da Store", formik.isValid);
-    }, [formik.isValid, passFormik, images]); // Apenas dependências estáveis
+    }, [formErrors]);
 
     return (
         <Box

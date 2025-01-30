@@ -2,56 +2,64 @@ import {
     Box,
     Button,
 } from "@mui/material";
-import {observer} from "mobx-react-lite";
-import FormCompanyRegistration from "./FormCompanyRegistration.jsx";
-import {vendorRegistrationStore} from '../Stores/vendorRegistrationStore.js';
-import FormVendorRegistration from './FormVendorRegistration.jsx';
+import {forwardRef} from "react";
+import { useEffect } from "react";
+import {FormCompanyRegistration, FormVendorRegistration} from "./";
+import {vendorRegistrationStore} from "@/Stores/index.js";
 
-const Step1PersonalInfo = observer(({genders, setVendorFormik, setCompanyFormik, onCloseCompanyForm}) => {
 
+const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyRef, onCloseCompanyForm }, ref) => {
+
+    useEffect(() => {
+        console.log("Step1PersonalInfo -> Recebeu refs:", { ref, companyRef });
+        console.log("Step1PersonalInfo -> isCompany:", isCompany);
+    }, [ref, companyRef, isCompany]);
     return (
-
         <Box
             sx={{
                 display: "flex",
-                flexDirection: 'column',
+                flexDirection: "column",
                 width: "85%",
                 "& > :first-of-type": {
-                    mb: 4
-                }
+                    mb: 4,
+                },
             }}
         >
+            {/* Formulário de registo pessoal */}
             <FormVendorRegistration
                 genders={genders}
-                passFormik={setVendorFormik} // Passa para o formulário de dados pessoais
+                ref={ref}
+                formErrors={formErrors?.personal}
+                isCompany={isCompany}
             />
 
-            <Box
+            <Button
+                variant="outlined"
+                onClick={() => {
+                    if (ref.current) {  // Garante que `ref.current` existe antes de chamar `setFieldValue`
+                        ref.current.setFieldValue("is_company", true); // Atualiza o estado do formulário
+                    }
+
+                    vendorRegistrationStore.setIsCompany(true); // Atualiza o estado na store
+                }}
                 sx={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "center",
+                    display: vendorRegistrationStore.isCompany ? "none" : "block", // Verifica `is_company` de forma segura
+                    color: "#000",
+                    borderColor: "#000",
                 }}
             >
-                <Button
-                    component="button"
-                    variant="outlined"
-                    onClick={() => vendorRegistrationStore.setIsCompany(true)}// Alterna entre empresa e pessoal
-                    sx={{
-                        display: vendorRegistrationStore.isCompany ? "none" : "block",
-                        color: "#000",
-                        borderColor: "#000",
-                    }}
-                >
-                    {"Quero registar a minha empresa"}
-                </Button>
-            </Box>
-            {vendorRegistrationStore.isCompany && (
+                Quero registar a minha empresa
+            </Button>
+
+            {/* Formulário de empresa (aparece apenas se for empresa) */}
+            {isCompany && (
                 <FormCompanyRegistration
-                    passFormik={setCompanyFormik} // Passa para o formulário de empresa
-                    onCloseCompanyForm={onCloseCompanyForm} // Corrigir o nome da prop
+                    ref={companyRef}
+                    formErrors={formErrors?.company}
+                    onCloseCompanyForm={onCloseCompanyForm}
                 />
             )}
+
         </Box>
     );
 });

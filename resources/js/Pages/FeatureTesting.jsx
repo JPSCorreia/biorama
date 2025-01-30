@@ -3,9 +3,12 @@ import { Box, Typography, Button, Paper } from "@mui/material";
 import axios from "axios";
 import { useMediaQuery, useTheme } from "@mui/material";
 import backgroundImage from "../../images/background.jpg";
+import { usePage } from "@inertiajs/react";
 
 // Component for feature testing in development
 const FeatureTesting = observer(() => {
+
+    console.log(usePage());
     // Function to send an invoice via API request
     const sendInvoice = async (order) => {
         try {

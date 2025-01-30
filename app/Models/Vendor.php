@@ -15,13 +15,14 @@ class Vendor extends Model
         'first_name',
         'last_name',
         'email',
-        'password',
-        'gender_id',
         'nif',
         'phone',
         'date_of_birth',
-        'photo',
-    ];
+        'iban',
+        'is_company',
+        'gender_id',
+        'user_id',
+        ];
 
 
     public function user()
