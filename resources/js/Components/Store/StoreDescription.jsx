@@ -18,15 +18,15 @@ const StoreDescription = ({ store }) => {
                 borderRadius: "10px",
             }}
         >
-            <Typography
-                variant="h6"
-                sx={{ fontWeight: "bold", marginBottom: 1 }}
+            <Box
+                variant="body2"
+                color="text.secondary"
             >
-                Descrição
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-                <ReactMarkdown>{store.description || "Esta loja ainda não tem uma descrição."}</ReactMarkdown>
-            </Typography>
+                <ReactMarkdown>
+                    {store.description ||
+                        "Esta loja ainda não tem uma descrição."}
+                </ReactMarkdown>
+            </Box>
         </Box>
     );
 };

@@ -11,7 +11,7 @@ import { usePage, router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { alertStore } from "../Stores";
-import BannerImage from "../../images/banner.png";
+import BannerImage from "../../images/banner2.png";
 
 const Home = observer(() => {
     // Get authentication and flash from page props
@@ -91,8 +91,7 @@ const Home = observer(() => {
                     </Button>
                 )}
             </Box> */}
-            <Box sx={{ display: "flex", justifyContent: "center"}}><img src={BannerImage} alt="Banner" style={{ minWidth: "80%", maxHeight: "300px" }} /></Box>
-
+            <Box sx={{ display: "flex", justifyContent: "center", maxWidth: "100%", cursor: "pointer"}} onClick={() => router.get("/vendedores/registo")}><img src={BannerImage} alt="Banner"style={{ width: "100%", padding: "1px", border: "1px solid green", borderRadius: "3px" }}/></Box>
             {/* Map */}
             <Box
                 sx={{

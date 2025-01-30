@@ -13,13 +13,13 @@ import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore.js";
 import CloseIcon from "@mui/icons-material/Close";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import {useEffect, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import axios from "axios";
 
 
 dayjs.locale('pt'); // Define o locale globalmente
 
-const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
+const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, refCompany) => {
     const [isReadOnly, setIsReadOnly] = useState(true); // Estado para controlar se os campos estão desativados
     const [loading, setLoading] = useState(false); // Estado para mostrar o carregamento da API
     const handlePostalCodeChange = async (e) => {
@@ -59,7 +59,6 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
     };
 
     const validationSchema = yup.object().shape({
-
         //Tabela companies
         name: yup
             .string()
@@ -108,31 +107,52 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
 
     const formik = useFormik({
         initialValues: {
-            vendor_id: vendorRegistrationStore.vendor.id,
-            name: vendorRegistrationStore.company.name || "",
-            nif: vendorRegistrationStore.company.nif || "",
-            phone: vendorRegistrationStore.company.phone || "",
-            email: vendorRegistrationStore.company.email || "",
-            street: vendorRegistrationStore.company.street || "",
-            number: vendorRegistrationStore.company.number || "",
-            postal_code: vendorRegistrationStore.company.postal_code || "",
-            district: vendorRegistrationStore.company.district || "",
-            country: vendorRegistrationStore.company.country || "",
+
+            name: "Lucas",
+            nif:  "245910069",
+            phone: "961970027",
+            email: "lucas@example.com",
+            street: "Rua Sebastião josé da Costa",
+            number: "25",
+            postal_code: "2925-266",
+            district: "Setúbal",
+            country: "Portugal",
+            vendor_id: "",
         },
         validationSchema: validationSchema,
         validateOnMount: true,
         onSubmit: handleFormSubmit,
     });
 
+    useImperativeHandle(refCompany, () => {
+        console.log("useImperativeHandle foi chamado!"); // Para depuração
+        return {
+            validateForm: formik.validateForm,
+            setTouched: formik.setTouched,
+            values: formik.values,
+            handleSubmit: formik.handleSubmit,
+            setFieldValue: formik.setFieldValue,
+
+        };
+    }, [formik]);
 
     useEffect(() => {
-        if (passFormik) {
-            passFormik(formik); // Passa o formik ao componente pai
-        }
-        vendorRegistrationStore.setCompanyFormValid(formik.isValid); // Mantém o estado sincronizado
-        console.log("useEffect do componente do form dados empresa");
-    }, [formik.isValid, passFormik]); // Apenas dependências estáveis
+        if (formErrors) {
+            formik.setErrors(formErrors);
 
+            // Marca todos os campos como "touched" para que os erros apareçam sempre
+            formik.setTouched(
+                Object.keys(formErrors).reduce((acc, key) => {
+                    acc[key] = true;
+                    return acc;
+                }, {})
+            );
+
+            // Força uma revalidação para garantir que os erros aparecem
+            console.log("Revalidar formulário"); // Para depuração
+            formik.validateForm();
+        }
+    }, [formErrors]);
 
     return (
         <Paper
@@ -141,12 +161,12 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
                 width: "100%",
                 m: "auto",
                 position: "relative",
-                pr:5,
-                pl:5,
+                pr: 5,
+                pl: 5,
                 pb: 5,
                 pt: 3,
-
-            }}>
+            }}
+        >
             <Box
                 sx={{
                     display: "flex",
@@ -154,126 +174,97 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
                     justifyContent: "space-between",
                 }}
             >
-                <Typography
-                    sx={{
-                        fontSize: "2.5rem",
-                        fontWeight: "bold",
-                    }}
-                >
+                <Typography sx={{ fontSize: "2.5rem", fontWeight: "bold" }}>
                     Registo de Empresa
                 </Typography>
-                <Box
-                >
-                    <IconButton onClick={onCloseCompanyForm}>
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
+                <IconButton onClick={onCloseCompanyForm} arial-label="close">
+                    <CloseIcon />
+                </IconButton>
             </Box>
+
             <form onSubmit={formik.handleSubmit}>
-                <Grid
-                    container
-                    spacing={10}
-                >
+                <Grid container spacing={10}>
+                    {/* Coluna Esquerda */}
                     <Grid item xs={12} md={6}>
                         <TextField
                             label="Nome da Empresa"
                             name="name"
                             fullWidth
-                            typre="text"
+                            type="text"
                             margin="normal"
                             value={formik.values.name}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.name && Boolean(formik.errors.name)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.name && formik.errors.name}
-                                </Box>
-                            }
+                            helperText={formik.touched.name ? formik.errors.name : ""}
                             required
                         />
                         <TextField
                             label="Email"
                             name="email"
                             fullWidth
-                            typre="text"
+                            type="text"
                             margin="normal"
                             value={formik.values.email}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.email && formik.errors.email}
-                                </Box>
-                            }
+                            helperText={formik.touched.email ? formik.errors.email : ""}
                             required
                         />
+
                         <Grid container>
                             <Grid item xs={12} md={6}>
                                 <TextField
                                     label="Nrº de Telemóvel"
                                     name="phone"
-                                    typre="text"
+                                    type="text"
                                     margin="normal"
                                     value={formik.values.phone}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.phone && Boolean(formik.errors.phone)}
-                                    helperText={
-                                        <Box sx={{ minHeight: "20px" }}>
-                                            {formik.touched.phone && formik.errors.phone}
-                                        </Box>
-                                    }
+                                    helperText={formik.touched.phone ? formik.errors.phone : ""}
                                     required
-                                    sx={{
-                                        width: '80%',
-                                    }}
+                                    sx={{ width: "80%" }}
                                 />
                             </Grid>
-                            <Grid item xs={12} md={6} sx={{ textAlign: 'right' }}>
+                            <Grid item xs={12} md={6} sx={{ textAlign: "right" }}>
                                 <TextField
                                     label="NIF"
                                     name="nif"
                                     fullWidth
-                                    typre="text"
+                                    type="text"
                                     margin="normal"
                                     value={formik.values.nif}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.nif && Boolean(formik.errors.nif)}
-                                    helperText={
-                                        <Box sx={{ minHeight: "20px" }}>
-                                            {formik.touched.nif && formik.errors.nif}
-                                        </Box>
-                                    }
+                                    helperText={formik.touched.nif ? formik.errors.nif : ""}
                                     required
-                                    sx={{ width:"80%" }}
+                                    sx={{ width: "80%" }}
                                 />
-
                             </Grid>
                         </Grid>
                     </Grid>
+
+                    {/* Coluna Direita */}
                     <Grid item xs={12} md={6}>
                         <TextField
                             label="Morada"
                             name="street"
                             fullWidth
-                            typre="text"
+                            type="text"
                             margin="normal"
                             value={formik.values.street}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.street && Boolean(formik.errors.street)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.street && formik.errors.street}
-                                </Box>
-                            }
+                            helperText={formik.touched.street ? formik.errors.street : ""}
                             required
-                            disabled={isReadOnly} // Desativa quando é apenas leitura ou está a carregar
-
+                            disabled={isReadOnly}
                         />
+
                         <Grid container>
                             <Grid item xs={12} md={6}>
                                 <TextField
@@ -286,84 +277,53 @@ const FormCompanyRegistration = observer(({passFormik, onCloseCompanyForm}) => {
                                     onChange={handlePostalCodeChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
-                                    helperText={
-                                        <Box sx={{ minHeight: "20px" }}>
-                                            {formik.touched.postal_code && formik.errors.postal_code}
-                                        </Box>
-                                    }
+                                    helperText={formik.touched.postal_code ? formik.errors.postal_code : ""}
                                     required
-                                    sx={{
-                                        width: '80%',
-                                    }}
+                                    sx={{ width: "80%" }}
                                 />
                                 <TextField
                                     label="Número"
                                     name="number"
-                                    typre="text"
+                                    type="text"
                                     margin="normal"
                                     value={formik.values.number}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.number && Boolean(formik.errors.number)}
-                                    helperText={
-                                        <Box sx={{ minHeight: "20px" }}>
-                                            {formik.touched.number && formik.errors.number}
-                                        </Box>
-                                    }
+                                    helperText={formik.touched.number ? formik.errors.number : ""}
                                     required
-                                    disabled={isReadOnly || loading} // Desativa quando é apenas leitura ou está a carregar
-
-                                    sx={{
-                                        width: '80%',
-                                    }}
+                                    disabled={isReadOnly || loading}
+                                    sx={{ width: "80%" }}
                                 />
                             </Grid>
-                            <Grid
-                                item xs={12}
-                                md={6}
-                                sx={{ textAlign: 'right' }}
-                            >
+                            <Grid item xs={12} md={6} sx={{ textAlign: "right" }}>
                                 <TextField
                                     label="Cidade"
                                     name="district"
-                                    typre="text"
+                                    type="text"
                                     margin="normal"
                                     value={formik.values.district}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.district && Boolean(formik.errors.district)}
-                                    helperText={
-                                        <Box sx={{ minHeight: "20px" }}>
-                                            {formik.touched.district && formik.errors.district}
-                                        </Box>
-                                    }
+                                    helperText={formik.touched.district ? formik.errors.district : ""}
                                     required
-                                    disabled={isReadOnly || loading} // Desativa quando é apenas leitura ou está a carregar
-
-                                    sx={{
-                                        width: '80%',
-                                    }}
+                                    disabled={isReadOnly || loading}
+                                    sx={{ width: "80%" }}
                                 />
                                 <TextField
-                                    label="Pais"
+                                    label="País"
                                     name="country"
-                                    typre="text"
+                                    type="text"
                                     margin="normal"
                                     value={formik.values.country}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.country && Boolean(formik.errors.country)}
-                                    helperText={
-                                        <Box sx={{ minHeight: "20px" }}>
-                                            {formik.touched.country && formik.errors.country}
-                                        </Box>
-                                    }
+                                    helperText={formik.touched.country ? formik.errors.country : ""}
                                     required
-                                    disabled={isReadOnly || loading} // Desativa quando é apenas leitura ou está a carregar
-
-                                    sx={{
-                                        width: '80%',
-                                    }}
+                                    disabled={isReadOnly || loading}
+                                    sx={{ width: "80%" }}
                                 />
                             </Grid>
                         </Grid>

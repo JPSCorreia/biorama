@@ -38,6 +38,25 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
             'password' => Hash::make('123456789'), // Cria uma hash segura
         ]);
+        User::create([
+            'id' => 2, // ID manualmente atribuído
+            'first_name' => 'Lucas', // Nome personalizado ou podes usar fake data
+
+            'last_name' => 'Silvestre',
+            'email' => 'lucassilvestre4@gmail.com',
+
+            'email_verified_at' => now(),
+            'nif'=> '239502051',
+            'phone' => '912345678',
+            'date_of_birth' => '1990-01-01',
+            'image_profile' => url('storage/mock_images/users/user_1.png'),
+            'remember_token' => Str::random(10),
+            'iban' => 'PT50000201231234567890154',
+            'gender_id' => 1, // ID do género
+            'created_at' => now(),
+            'updated_at' => now(),
+            'password' => Hash::make('123456789'), // Cria uma hash segura
+        ]);
 
         User::factory()->count(25)->create()->each(function ($user) use ($images) {
             $user->update([

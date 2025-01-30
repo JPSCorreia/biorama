@@ -113,7 +113,6 @@ class StoreController extends Controller
                 ->with(['addresses', 'products', 'reviews', 'galleries'])
                 ->take(3)
                 ->get();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Loja criada com sucesso!',
@@ -236,7 +235,12 @@ class StoreController extends Controller
         // Get the user
         $user = User::where('id', $vendor->user_id)->first();
 
+        // Get all products
         $products = $store->load('products')->products;
+
+        // Get all store images
+        $storeGallery = StoreGallery::where('store_id', $id)->get();
+
 
         // Format for JSON compatibility
         $formattedStore = [
@@ -258,7 +262,8 @@ class StoreController extends Controller
             'store' => $formattedStore,
             'vendor' => $vendor,
             'products' => $products,
-            'user' => $user
+            'user' => $user,
+            'gallery' => $storeGallery
         ]);
     }
 

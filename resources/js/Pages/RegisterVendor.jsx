@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useRef, ref } from "react";
 import { Box, LinearProgress, Button, Typography } from "@mui/material";
 import {
     IntroStep1VendorRegister,
@@ -11,25 +11,42 @@ import {
 import { vendorRegistrationStore } from "../Stores";
 import { usePage } from "@inertiajs/react";
 import { observer } from "mobx-react";
+import { useEffect } from "react";
+
+// Depuração para ver se a referência está a ser atribuída corretamente
 
 const RegisterVendor = observer(({ genders }) => {
     // Tracks the current step in the registration process
     const [currentStep, setCurrentStep] = useState(0);
-
+    const [isEnableNext, setIsEnableNext] = useState(true);
     // Calculates progress percentage
     const progress = (currentStep / 6) * 100;
 
-    // Get page props for authentication
-    const { auth } = usePage().props;
+    const [formErrors, setFormErrors] = useState(null);
+
+    // Reference to the personal and company forms
+    const personalFormRef = useRef(null);
+    const companyFormRef = useRef(null);
+
+    // Reference to the store form
+    const storeFormRef = useRef(null);
 
     // Controls warning visibility
     const [showWarning, setShowWarning] = useState(true);
 
-    // States to hold formik instances for different forms
-    const [vendorFormik, setVendorFormik] = useState(null); // Personal data
-    const [companyFormik, setCompanyFormik] = useState(null); // Company data
-    const [storeFormik, setStoreFormik] = useState(null); // Store data
     const [images, setImages] = useState([]);
+
+    const validateFormik = async (formik) => {
+        const errors = await formik.validateForm();
+        formik.setErrors(errors);
+        await formik.setTouched(
+            Object.keys(formik.values).reduce(
+                (acc, key) => ({...acc, [key]: true}),
+                {}
+            )
+        );
+        return Object.keys(errors).length === 0; // Retorna true se não houver erros
+    };
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
@@ -48,109 +65,101 @@ const RegisterVendor = observer(({ genders }) => {
     };
 
     // Function to close the company form and validate the personal info form
-    const handleCloseCompanyForm = async () => {
-        // Close the company form
+    const handleCloseCompanyForm = () => {
+        // Update the store to reflect the user's choice
         vendorRegistrationStore.setIsCompany(false);
-        runInAction(() => {
-            vendorRegistrationStore.setIsCompany(false);
-        });
-
-        // Validate the personal info form
-        if (vendorFormik) {
-            const errors = await vendorFormik.validateForm();
-            const isValid = Object.keys(errors).length === 0;
-
-            // Update the store with the validation result
-            runInAction(() => {
-                vendorRegistrationStore.setVendorFormValid(isValid);
-            });
+        // Reset the company form
+        if (companyFormRef?.current) {
+            companyFormRef.current.resetForm();
+            companyFormRef.current.setTouched(
+                Object.keys(companyFormRef.current.values).reduce(
+                    (acc, key) => ({ ...acc, [key]: false }),
+                    {}
+                )
+            );
         }
-    };
 
-    // Function to check if the "Next" button should be active
-    const enableButton = () => {
-        switch (currentStep) {
-            case 1:
-                return vendorRegistrationStore.isCompany
-                    ? !(
-                          vendorRegistrationStore.vendorFormValid &&
-                          vendorRegistrationStore.companyFormValid
-                      )
-                    : !vendorRegistrationStore.vendorFormValid;
-            case 3:
-                return !vendorRegistrationStore.storeFormValid;
-            case 5:
-                return !vendorRegistrationStore.productsFormValid;
-            default:
-                return false;
+        if (onCloseCompanyForm) {
+            onCloseCompanyForm(); // call the parent component's function
         }
+
+        console.log("O formulário de empresa foi fechado.");
     };
 
     const handleNext = async () => {
-        let errors = {};
-        let isValid = true;
+        if (currentStep === 1) {
+            const personalErrors = await personalFormRef.current.validateForm();
+            personalFormRef.current.setTouched(
+                Object.keys(personalFormRef.current.values).reduce(
+                    (acc, key) => ({ ...acc, [key]: true }),
+                    {}
+                )
+            );
 
-        switch (currentStep) {
-            case 1:
-                // Validate the personal info form
-                if (currentStep === 1 && vendorFormik) {
-                    const userErrors = await vendorFormik.validateForm();
-                    const isUserValid = Object.keys(userErrors).length === 0;
+            const isPersonalValid = Object.keys(personalErrors).length === 0;
+            if (isPersonalValid) {
+                vendorRegistrationStore.setPersonalFormik(personalFormRef.current);
+            }
 
-                    // Submit the personal info form if valid
-                    if (isUserValid) {
-                        vendorFormik.handleSubmit();
-                    }
-                    errors = { ...errors, ...userErrors };
+            let companyErrors = {}; // Inicia vazio
 
-                    // Update global validity
-                    isValid = isUserValid && isValid;
+            // Se o utilizador escolheu registar-se como empresa, validar o segundo formulário
+            if (vendorRegistrationStore.isCompany && companyFormRef?.current) {
+                companyErrors = await companyFormRef.current.validateForm();
+                companyFormRef.current.setTouched(
+                    Object.keys(companyFormRef.current.values).reduce(
+                        (acc, key) => ({ ...acc, [key]: true }),
+                        {}
+                    )
+                );
+                if (!companyErrors) {
+                    vendorRegistrationStore.setCompanyFormik(companyFormRef.current);
                 }
+            }
 
-                // Validate company form (if applicable)
-                if (vendorRegistrationStore.isCompany && companyFormik) {
-                    const companyErrors = await companyFormik.validateForm();
-                    const isCompanyValid =
-                        Object.keys(companyErrors).length === 0;
+            // Atualiza os erros nos estados correspondentes
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                personal: personalErrors,
+                company: companyErrors,
+            }));
 
-                    // Submit the company form if valid
-                    if (isCompanyValid) {
-                        companyFormik.handleSubmit();
-                    }
-                    errors = { ...errors, ...companyErrors };
 
-                    // Update global validity
-                    isValid = isCompanyValid && isValid;
-                }
+            const isCompanyValid = Object.keys(companyErrors).length === 0;
+            if (isCompanyValid) {
+                vendorRegistrationStore.setCompanyFormik(companyFormRef.current);
+            }
 
-                return setCurrentStep((prev) => prev + 1);
+            if (isPersonalValid && (vendorRegistrationStore.isCompany ? isCompanyValid : true)) {
+                await vendorRegistrationStore.submitStep1();
+                setCurrentStep((prev) => prev + 1); // Avança apenas se todos os formulários forem válidos
+            } else {
+                console.log("Erros encontrados:", { personalErrors, companyErrors });
+            }
+        }
+        else if (currentStep === 3) {
+            const storeErrors = await storeFormRef.current.validateForm();
+            storeFormRef.current.setTouched(
+                Object.keys(storeFormRef.current.values).reduce(
+                    (acc, key) => ({ ...acc, [key]: true }),
+                    {}
+                )
+            );
 
-            case 3:
-                // Validate the store form
-                if (storeFormik) {
-                    const storeErrors = await storeFormik.validateForm();
-                    const isStoreValid = Object.keys(storeErrors).length === 0;
-
-                    // Submit the store form if valid
-                    if (isStoreValid) {
-                        storeFormik.handleSubmit();
-                        setImages([]);
-                    }
-                    errors = { ...errors, ...storeErrors };
-
-                    // Update global validity
-                    isValid = isStoreValid && isValid;
-                }
-                if (!isValid) {
-                    console.log("Erros nos formulários:", errors);
-                    return;
-                }
-                return setCurrentStep((prev) => prev + 1);
-
-            case 5:
-                vendorRegistrationStore.submit();
-            default:
-                return setCurrentStep((prev) => prev + 1);
+            const isStoreValid = Object.keys(storeErrors).length === 0;
+            if (isStoreValid) {
+                vendorRegistrationStore.setStoreFormik(storeFormRef.current);
+                vendorRegistrationStore.setStoreImages(images);
+                await vendorRegistrationStore.submitStep2();
+                setCurrentStep((prev) => prev + 1);
+            }
+        }
+        else if (currentStep === 5) {
+            await vendorRegistrationStore.submitStep3();
+            setCurrentStep((prev) => prev + 1);
+        }
+        else {
+            setCurrentStep((prev) => prev + 1);
         }
     };
 
@@ -167,16 +176,20 @@ const RegisterVendor = observer(({ genders }) => {
             case 1:
                 return (
                     <Step1PersonalInfo
+                        ref={personalFormRef}
+                        companyRef={companyFormRef}
                         genders={genders}
-                        setVendorFormik={setVendorFormik}
-                        setCompanyFormik={setCompanyFormik}
+                        formErrors={formErrors}
+                        isCompany={vendorRegistrationStore.isCompany}
                         onCloseCompanyForm={handleCloseCompanyForm}
                     />
                 );
             case 2:
                 return <IntroStep2VendorRegister />;
             case 3:
-                return <Step2StoreDetails setStoreFormik={setStoreFormik} handleImageUpload={handleImageUpload} images={images} />;
+                return (
+                    <Step2StoreDetails ref={storeFormRef} formErrors={formErrors} images={images} handleImageUpload={handleImageUpload} />
+                );
             case 4:
                 return <IntroStep3VendorRegister />;
             case 5:
@@ -237,7 +250,7 @@ const RegisterVendor = observer(({ genders }) => {
                 <Button
                     variant="contained"
                     onClick={handleNext}
-                    disabled={enableButton()}
+                    disabled={!isEnableNext}
                 >
                     {currentStep === 5 ? "Concluir" : "Avançar"}
                 </Button>

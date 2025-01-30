@@ -23,7 +23,6 @@ return new class extends Migration
             $table->date('founded_at')->nullable();
             $table->string('sector')->nullable();
             $table->text('description')->nullable();
-
         });
     }
 
