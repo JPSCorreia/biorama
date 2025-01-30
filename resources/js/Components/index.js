@@ -20,6 +20,7 @@ export { default as IntroStep2VendorRegister } from "./IntroStep2VendorRegister"
 export { default as IntroStep3VendorRegister } from "./IntroStep3VendorRegister";
 export { default as Navbar } from "./Navbar";
 export { default as NearbyStores } from "./NearbyStores";
+export { default as ProductCard } from "./ProductCard";
 export { default as ProductList } from "./ProductList";
 export { default as ProfileEditModal } from "./ProfileEditModal";
 export { default as SearchBar } from "./SearchBar";

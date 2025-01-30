@@ -8,9 +8,6 @@ const Store = observer(() => {
 
     const { store, vendor, products, user, gallery, address, other } = usePage().props;
 
-    console.log("other", other.vendor_rating);
-    console.log("store rating", store.rating);
-
     const theme = useTheme();
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -36,7 +33,7 @@ const Store = observer(() => {
 
             {/* Store Information */}
             <StoreDescription store={store} />
-            <StoreProductsContainer products={products} />
+            <StoreProductsContainer products={products} image_test={gallery[0].image_link}/>
             <Box
                 sx={{
                     display: "flex",
