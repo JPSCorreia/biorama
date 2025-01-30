@@ -102,13 +102,7 @@ const CreateProductModal = observer(({ open, handleClose }) => {
         }),
         onSubmit: async (values) => {
             try {
-                vendorRegistrationStore.addProduct({
-                    ...values,
-                    images: images.map((img) => img.base64), // Apenas Base64 para envio
-                    store_id: usePage().props.auth.user.store.id,
-                });
-                vendorRegistrationStore.setProductFormValid(true);
-                console.log("Dados submetidos:", values);
+                await vendorRegistrationStore.submitStep3(values);
             } catch (error) {
                 console.error("Erro ao submeter o formulário:", error);
             }
@@ -189,61 +183,64 @@ const CreateProductModal = observer(({ open, handleClose }) => {
                                 </IconButton>
                             </Box>
                         )}
-                    </Box>
-
-                    <TextField
-                        fullWidth
-                        label="Nome"
-                        name="name"
-                        value={formik.values.name}
-                        onChange={formik.handleChange}
-                        error={formik.touched.name && Boolean(formik.errors.name)}
-                        helperText={formik.touched.name && formik.errors.name}
-                        sx={{ mb: 2 }}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Descrição"
-                        name="description"
-                        multiline
-                        rows={3}
-                        value={formik.values.description}
-                        onChange={formik.handleChange}
-                        error={formik.touched.description && Boolean(formik.errors.description)}
-                        helperText={formik.touched.description && formik.errors.description}
-                        sx={{ mb: 2 }}
-                    />
-                    <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                        <TextField
-                            label="Desconto (%)"
-                            name="discount"
-                            value={formik.values.discount}
-                            onChange={formik.handleChange}
-                            error={formik.touched.discount && Boolean(formik.errors.discount)}
-                            helperText={formik.touched.discount && formik.errors.discount}
-                        />
-                        <TextField
-                            label="Preço (€)"
-                            name="price"
-                            value={formik.values.price}
-                            onChange={formik.handleChange}
-                            error={formik.touched.price && Boolean(formik.errors.price)}
-                            helperText={formik.touched.price && formik.errors.price}
-                        />
-                    </Box>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={formik.values.sold_at_unit}
+                        <form onSubmit={formik.handleSubmit}>
+                            <TextField
+                                fullWidth
+                                label="Nome"
+                                name="name"
+                                value={formik.values.name}
                                 onChange={formik.handleChange}
-                                name="sold_at_unit"
+                                error={formik.touched.name && Boolean(formik.errors.name)}
+                                helperText={formik.touched.name && formik.errors.name}
+                                sx={{ mb: 2 }}
                             />
-                        }
-                        label={formik.values.sold_at_unit ? "Preço por unidade" : "Preço por Kg"}
-                    />
-                    <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={formik.handleSubmit}>
-                        Criar Produto
-                    </Button>
+                            <TextField
+                                fullWidth
+                                label="Descrição"
+                                name="description"
+                                multiline
+                                rows={3}
+                                value={formik.values.description}
+                                onChange={formik.handleChange}
+                                error={formik.touched.description && Boolean(formik.errors.description)}
+                                helperText={formik.touched.description && formik.errors.description}
+                                sx={{ mb: 2 }}
+                            />
+                            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                                <TextField
+                                    label="Desconto (%)"
+                                    name="discount"
+                                    value={formik.values.discount}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.discount && Boolean(formik.errors.discount)}
+                                    helperText={formik.touched.discount && formik.errors.discount}
+                                />
+                                <TextField
+                                    label="Preço (€)"
+                                    name="price"
+                                    value={formik.values.price}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.price && Boolean(formik.errors.price)}
+                                    helperText={formik.touched.price && formik.errors.price}
+                                />
+                            </Box>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={formik.values.sold_at_unit}
+                                        onChange={(event) => {
+                                            formik.setFieldValue("sold_at_unit", event.target.checked);
+                                        }}
+                                        name="sold_at_unit"
+                                    />
+                                }
+                                label={formik.values.sold_at_unit ? "Preço por unidade" : "Preço por Kg"}
+                            />
+                            <Button variant="contained" color="primary" sx={{ mt: 2 }} type="submit">
+                                Criar Produto
+                            </Button>
+                        </form>
+                    </Box>
                 </Box>
             </Modal>
 

@@ -20,7 +20,7 @@ const RegisterVendor = observer(({ genders }) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [isEnableNext, setIsEnableNext] = useState(true);
     // Calculates progress percentage
-    const progress = (currentStep / 6) * 100;
+    const progress = (currentStep / 5) * 100;
 
     const [formErrors, setFormErrors] = useState(null);
 
@@ -156,7 +156,6 @@ const RegisterVendor = observer(({ genders }) => {
         }
         else if (currentStep === 5) {
             await vendorRegistrationStore.submitStep3();
-            setCurrentStep((prev) => prev + 1);
         }
         else {
             setCurrentStep((prev) => prev + 1);

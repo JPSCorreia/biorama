@@ -131,7 +131,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
     Route::post('/registar-vendedor-dados-pessoais', [VendorController::class, 'store'])->name('registar_vendedor');
     Route::post('/registar-vendedor-loja', [StoreController::class, 'store'])->name('registar_store');
-    Route::post('/registar-vendedor-produto', [ProductController::class, 'store'])->name('registar_produto');
+    Route::post('/registar-vendedor-produto/{store_id}', [ProductController::class, 'store'])->name('registar_produto');
 
     Route::prefix('/perfil')->group(function () {
         Route::get('/', [UserController::class, 'show'])->name('profile');
@@ -206,4 +206,5 @@ Route::get('/vendorinfo', function () {
 Route::get('/teste', function () {
     return Inertia::render('FeatureTesting');
 })->name('teste');
+
 
