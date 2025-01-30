@@ -1,7 +1,7 @@
 import { Paper, Box, Typography, IconButton, ImageList, ImageListItem } from "@mui/material";
 import FormStoreRegistration from "./FormStoreRegistration";
 import { PhotoCamera } from "@mui/icons-material";
-import { observer } from "mobx-react";
+import {forwardRef} from "react";
 
 const Step2StoreDetails = forwardRef(({ formErrors, handleImageUpload, images }, ref) => {
     return (
