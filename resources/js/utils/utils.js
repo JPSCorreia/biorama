@@ -50,3 +50,16 @@ export const fixImagePath = (imagePath) => {
     if (imagePath.startsWith("http")) return imagePath; // Se já for uma URL completa, retorna direto
     return `/storage/${imagePath.replace(/^storage\//, "")}`; // Remove prefixos extras
 };
+
+export function formatDateToPortuguese(dataISO) {
+    const meses = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    const data = new Date(dataISO);
+    const mes = meses[data.getMonth()];
+    const ano = data.getFullYear();
+
+    return `${mes}, ${ano}`;
+}

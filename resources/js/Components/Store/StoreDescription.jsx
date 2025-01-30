@@ -13,7 +13,7 @@ const StoreDescription = ({ store }) => {
                 // ml: 1,
                 mt: 2,
                 mr: 1,
-                padding: 3,
+                // padding: 3,
                 pt: 2,
                 borderRadius: "10px",
             }}

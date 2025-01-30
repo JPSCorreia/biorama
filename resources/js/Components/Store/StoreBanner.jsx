@@ -17,8 +17,7 @@ const StoreBanner = ({ title, gallery }) => {
                     backgroundImage: `url(${props.item.image_link})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    border: `1px solid ${theme.palette.primary.main}`,
-                    boxShadow: 3,
+                    boxShadow: `0px 2px 10px ${theme.palette.primary.main}`,
                 }}
             >
                 {/* Dark background overlay */}
@@ -38,6 +37,7 @@ const StoreBanner = ({ title, gallery }) => {
             sx={{
                 position: "relative", // Set position to relative so it can be positioned above the images
                 width: "100%",
+                // alignSelf: "center",
                 height: { xs: 150, sm: 200, md: 300 },
             }}
         >
@@ -65,8 +65,7 @@ const StoreBanner = ({ title, gallery }) => {
                         textTransform: "uppercase",
                         fontWeight: "bold",
                         textAlign: "center",
-                        textShadow:
-                            `0 0 3px ${theme.palette.primary.main}, 0 0 3px ${theme.palette.primary.main}, 0 0 3px ${theme.palette.primary.main}`,
+                        textShadow: `0 0 3px ${theme.palette.primary.main}, 0 0 3px ${theme.palette.primary.main}, 0 0 3px ${theme.palette.primary.main}`,
                         width: "80%",
                     }}
                 >
@@ -85,13 +84,13 @@ const StoreBanner = ({ title, gallery }) => {
                 }}
                 indicatorIconButtonProps={{
                     style: {
-                        color: theme.palette.carousel.buttons.inactive
-                    }
+                        color: theme.palette.carousel.buttons.inactive,
+                    },
                 }}
                 activeIndicatorIconButtonProps={{
                     style: {
-                        color: theme.palette.carousel.buttons.active
-                    }
+                        color: theme.palette.carousel.buttons.active,
+                    },
                 }}
             >
                 {gallery.map((item, i) => (
