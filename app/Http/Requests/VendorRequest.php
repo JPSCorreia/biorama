@@ -8,7 +8,7 @@ class VendorRequest extends FormRequest
 {
     public function authorize()
     {
-        return true;
+        return true; // Permitir que qualquer utilizador acesse esta request
     }
 
     public function rules()

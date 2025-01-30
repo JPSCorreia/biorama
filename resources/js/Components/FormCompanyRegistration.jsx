@@ -107,6 +107,7 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
 
     const formik = useFormik({
         initialValues: {
+
             name: "Lucas",
             nif:  "245910069",
             phone: "961970027",
@@ -131,6 +132,7 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
             values: formik.values,
             handleSubmit: formik.handleSubmit,
             setFieldValue: formik.setFieldValue,
+
         };
     }, [formik]);
 

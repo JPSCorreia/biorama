@@ -53,6 +53,7 @@ class VendorRegistrationStore {
         this.isCompany = value;
     }
 
+
     setCompanyFormik(formik) {
         this.companyFormik = formik;
     }
