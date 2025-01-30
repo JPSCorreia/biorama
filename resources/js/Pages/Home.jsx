@@ -91,7 +91,7 @@ const Home = observer(() => {
                     </Button>
                 )}
             </Box> */}
-            <Box sx={{ display: "flex", justifyContent: "center", maxWidth: "100%"}}><img src={BannerImage} alt="Banner"style={{ width: "100%" }}/></Box>
+            <Box sx={{ display: "flex", justifyContent: "center", maxWidth: "100%", cursor: "pointer"}} onClick={() => router.get("/vendedores/registo")}><img src={BannerImage} alt="Banner"style={{ width: "100%", padding: "1px", border: "1px solid green", borderRadius: "3px" }}/></Box>
             {/* Map */}
             <Box
                 sx={{

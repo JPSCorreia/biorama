@@ -35,6 +35,13 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                     appStore.themeType === "dark" ? "#121212" : "#F5F5F0", // Secondary background color
             },
 
+            carousel: {
+                buttons: {
+                    active: green[400],
+                    inactive: appStore.themeType === "dark" ? "#ffffff" : "#aeaeae",
+                }
+            },
+
             // Custom styles for the navbar
             navbar: {
                 background:

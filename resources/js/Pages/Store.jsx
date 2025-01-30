@@ -1,12 +1,14 @@
 import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
 import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription } from "../Components";
-import { Container, Box, useTheme, useMediaQuery  } from "@mui/material";
+import { Container, Typography, Box, useTheme, useMediaQuery  } from "@mui/material";
 import { AlertBox } from "../Components";
 
 const Store = observer(() => {
 
-    const { store, vendor, products, user } = usePage().props;
+    const { store, vendor, products, user, gallery } = usePage().props;
+
+    console.log("gallery", gallery);
 
     const theme = useTheme();
 
@@ -27,18 +29,17 @@ const Store = observer(() => {
             <AlertBox />
 
             {/* Store Banner */}
-            <StoreBanner imageLink={store.image_link} title={store.name} />
+            <StoreBanner title={store.name} gallery={gallery} />
 
             {/* Store Information */}
             <StoreDescription store={store} />
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "row",
+                    flexDirection: "column",
                     justifyContent: "space-between",
                     marginTop: 2,
                     flexWrap: "wrap",
-                    // height: "300px"
                 }}
             >
                 <StoreVendorCard store={store} vendor={vendor} user={user} />

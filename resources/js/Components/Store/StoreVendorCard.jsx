@@ -64,7 +64,6 @@ const StoreVendorCard = ({ store, vendor, user }) => {
                             display: "flex",
                             flexDirection: "row",
                             mb: 1,
-                            flexWrap: "wrap",
                         }}
                     >
                         <Typography sx={{ fontWeight: "bold" }}>
@@ -79,8 +78,7 @@ const StoreVendorCard = ({ store, vendor, user }) => {
                                                 whiteSpace: "pre-wrap",
                                             }}
                                         >
-                            {vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}{vendor.email}
-
+                            {vendor.email}
                         </Typography>
                     </Box>
                 </Box>

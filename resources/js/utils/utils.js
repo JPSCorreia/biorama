@@ -30,3 +30,16 @@ export function stringAvatar(name) {
     // children: `${name[0][0]}${hasSpace(name)? name.split(' ')[name.split(' ').length - 1][0] : ''}`,
   };
 }
+
+export const truncateDescription = (text, minLength = 225, maxLength = 275) => {
+    if (text.length <= maxLength) return text; // Retorna o texto original se não ultrapassar o limite
+
+    // Procurar o primeiro ponto final dentro do intervalo
+    const cutoffIndex = text.slice(minLength, maxLength).lastIndexOf(".");
+    if (cutoffIndex !== -1) {
+        return text.slice(0, minLength + cutoffIndex + 1); // Corta no ponto final encontrado
+    }
+
+    // Se não encontrar um ponto final, corta nos 340 caracteres e adiciona "..."
+    return text.slice(0, maxLength) + "...";
+};

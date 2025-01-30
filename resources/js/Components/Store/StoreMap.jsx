@@ -109,8 +109,8 @@ const StoreMap = ({ store }) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        borderRadius: "2px",
-                        padding: "1px",
+                        borderRadius: "8px",
+                        padding: "2px",
                         border: `1px solid ${theme.palette.primary.main}`,
                     }}
                 >
