@@ -8,11 +8,13 @@ const DashboardShowStore = observer(() =>{
     console.log("Props:", usePage().props.store);
     shopStore.setStoreData(usePage().props.store);
     const user = usePage().props.auth.user;
+
     const store = shopStore.currentStore;
+    console.log("Current Strore", shopStore.currentStore);
     return(
-        <Paper>
+
             <DashboardShowStoreInfo store ={store} user ={user}/>
-        </Paper>
+
     )
 })
 export default DashboardShowStore;

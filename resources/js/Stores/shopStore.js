@@ -44,9 +44,8 @@ class ShopStore {
     // Define os dados da loja selecionada
     setStoreData(storeData) {
         runInAction(() => {
-            if (!this.currentStore){
-                this.currentStore = storeData.store;
-            }
+                this.currentStore = storeData;
+
 
             this.storeRating = storeData?.rating || null;
             this.storeAddresses = storeData?.addresses || [];
