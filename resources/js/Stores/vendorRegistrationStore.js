@@ -27,7 +27,7 @@ class VendorRegistrationStore {
 
             storeFormik: observable,
             setStoreFormik: action,
-            getStoreFormik: action,
+            setStoreImages: action,
 
             productFormik: observable,
             setProductFormik: action,
@@ -36,6 +36,7 @@ class VendorRegistrationStore {
 
 
             submitStep1: action,
+            submitStep2: action,
 
         });
         makePersistable(this, {
@@ -100,8 +101,30 @@ class VendorRegistrationStore {
         this.storeFormik = formik;
     }
 
-    getStoreFormik() {
-        return this.storeFormik;
+    setStoreImages(images) {
+        images.forEach((image, index) => {
+            this.storeFormik.values.image_link[index] = image;
+        });
+    }
+
+    async submitStep2() {
+        console.log("Enviando dados da loja:", this.storeFormik.values);
+        try {
+            if (!this.storeFormik) {
+                console.error("Erro: Formulário de loja não foi encontrado.");
+                return;
+            }
+
+            // Primeira requisição: Envia os dados da loja
+            const responseStore = await axios.post("/registar-vendedor-loja", {
+                ...(this.storeFormik?.values || {}),
+            });
+
+            console.log("Loja registada com sucesso!", responseStore.data.store);
+
+        } catch (error) {
+            console.error("Erro ao enviar os formulários:", error);
+        }
     }
 
     setProductFormik(formik) {
