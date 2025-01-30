@@ -78,8 +78,7 @@ Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa'
 // Individual store page
 Route::get('/loja/{id}', [StoreController::class, 'showStore'])->name('store.show');
 
-//Route to save a store
-Route::post('/create/store', [StoreController::class, 'Store'])->name('create.store');
+
 
 // Guest routes (only accessible when not authenticated)
 Route::middleware('guest')->group(function () {
@@ -164,8 +163,12 @@ Route::middleware(['auth'])->group(function () {
             ->name('vendor.update.company.info');
 
         // Store routes
-        Route::get('/lojas', [DashboardController::class,'showVendorStores'])
+        Route::get('/stores', [DashboardController::class,'showVendorStores'])
             ->name('dashboard.stores');
+
+        //Route to show a store
+        Route::get('/store/{id}', [dashboardController::class, 'dashboardShowStore'])
+            ->name('dashboard.store.show');
 
         Route::get('/analises', function () {
             return Inertia::render('Dashboard/Analytics');

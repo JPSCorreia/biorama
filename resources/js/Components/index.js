@@ -34,3 +34,4 @@ export {default as AddProductCreate} from "./AddProductCreate.jsx";
 export {default as CreateProductModal} from "./CreateProductModal.jsx";
 export {default as ImageUpload} from "./ImageCropModal.jsx";
 export {default as DashboardStoresCard} from "./DashboardStoresCard";
+export {default as DashboardShowStoreInfo} from "./DashboarShowStoreInfo";

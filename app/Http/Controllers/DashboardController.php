@@ -30,10 +30,31 @@ class DashboardController extends Controller
             ]);
             $genders = Gender::all();
 
+            $stores = Store::where('vendor_id', $user->vendor->id)
+                ->select(
+                    'id',
+                    'name',
+                    'description',
+                    'phone_number',
+                    'email',
+                    'rating',
+                    DB::raw('ST_X(coordinates) as longitude'),
+                    DB::raw('ST_Y(coordinates) as latitude')
+                )
+                ->with([
+                    'addresses', // Inclui endereços
+                    'products',  // Inclui produtos
+                    'reviews',   // Inclui avaliações
+                    'galleries'  // Inclui galerias de imagens
+                ])
+                ->take(3) // Limita o número de lojas a 3
+                ->get();
+
             // Renderiza a página com as informações do vendor
             return Inertia::render('Dashboard/Home', [
                 'user' => $user,
                 'genders' => $genders,
+                'stores' => $stores
             ]);
         }
         // Se não for vendor, redireciona para o login com uma mensagem de erro
@@ -160,7 +181,7 @@ class DashboardController extends Controller
                 ->get();
 
             // Retorna as lojas para o front-end
-            return inertia('Dashboard/Stores', [
+            return inertia::render('Dashboard/Stores', [
                 'user' => $user, // Dados do usuário logado
                 'stores' => $stores, // Dados das lojas
             ]);
@@ -170,7 +191,24 @@ class DashboardController extends Controller
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
 
+public function dashboardShowStore( $id){
 
+        $store = Store::select('id',
+            'name',
+            'description',
+            'phone_number',
+            'email',
+            'rating',
+            DB::raw('ST_X(coordinates) as longitude'),
+            DB::raw('ST_Y(coordinates) as latitude')
+        )
+            ->with(['addresses', 'products', 'reviews', 'galleries'])
+            ->findOrFail($id);
+
+    return inertia('Dashboard/Store', [
+        'store' => $store,
+    ]);
+}
 
 
 

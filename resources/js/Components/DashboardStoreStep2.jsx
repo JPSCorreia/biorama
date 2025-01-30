@@ -2,8 +2,9 @@ import { Paper, Box, Typography, IconButton, ImageList, ImageListItem } from "@m
 import FormStoreRegistration from "./FormStoreRegistration";
 import { PhotoCamera } from "@mui/icons-material";
 import { observer } from "mobx-react";
+import DashboardStoreCreateForm from "@/Components/DashboardStoreCreateForm.jsx";
 
-const Step2StoreDetails = observer(({ setStoreFormik, handleImageUpload, images, }) => {
+const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, images }) => {
     return (
         <Box
             sx={{
@@ -123,11 +124,11 @@ const Step2StoreDetails = observer(({ setStoreFormik, handleImageUpload, images,
                     >
                         Dados da sua Loja
                     </Typography>
-                    <FormStoreRegistration passFormik={setStoreFormik} images={images} />
+                    <DashboardStoreCreateForm passFormik={setStoreFormik} images={images} />
                 </Box>
             </Paper>
         </Box>
     );
 });
 
-export default Step2StoreDetails;
+export default DashboardStoreStep2;

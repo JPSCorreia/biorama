@@ -4,7 +4,7 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useTheme } from "@mui/material/styles";
 import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
-import { router } from "@inertiajs/react";
+import {router, usePage} from "@inertiajs/react";
 import { Box, Typography, Button } from "@mui/material";
 import { useState, useMemo } from "react";
 import {
@@ -16,6 +16,31 @@ import {
     Logout as LogoutIcon,
 } from "@mui/icons-material";
 import background from "../../images/background.jpg";
+import {shopStore} from "@/Stores/index.js";
+
+const updateNavigationWithStores = (navigation, stores) => {
+    if (!stores) {
+        return navigation;
+    }
+
+    return navigation.map(item => {
+        if (item.segment === "dashboard" && item.children) {
+            // Atualiza os children mantendo o existente ("Todas Lojas") e adiciona as novas lojas
+            return {
+                ...item,
+                children: [
+                    ...item.children, // Mantém o "Todas Lojas"
+                    ...stores.map(store => ({
+                        segment: `store/${store.id}`,
+                        title: store.name,
+                        icon: <StoreIcon />,
+                    })),
+                ],
+            };
+        }
+        return item;
+    });
+};
 
 // Navigation items
 const navigation = [
@@ -32,9 +57,14 @@ const navigation = [
         kind: "divider",
     },
     {
-        segment: "dashboard/lojas",
+        segment: "dashboard",
         title: "Lojas",
         icon: <StoreIcon />,
+        children:[{
+            segment: "stores",
+            title: "Todas Lojas",
+            icon: <StoreIcon />,
+        }],
     },
     {
         kind: "divider",
@@ -57,6 +87,9 @@ const navigation = [
 const Dashboard = ({ children }) => {
 
     const theme = useTheme();
+    shopStore.setStoresData(usePage().props.stores);
+    const stores = shopStore.stores;
+    const updatedNavigation = updateNavigationWithStores(navigation, stores);
 
     // User information
     const [session, setSession] = useState({
@@ -122,7 +155,7 @@ const Dashboard = ({ children }) => {
 
     return (
         <AppProvider
-            navigation={navigation}
+            navigation={updatedNavigation}
             session={session}
             authentication={authentication}
             router={{

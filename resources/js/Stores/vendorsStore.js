@@ -38,7 +38,7 @@ class VendorStore {
     // Action to set initial vendor data received from controller
     setVendorData(vendorData) {
         runInAction(() => {
-            if (!this.currentVendor) {
+            if (!this.currentVendor  ) {
                 this.currentVendor = vendorData;
             }
             this.companyDetails = vendorData.company;

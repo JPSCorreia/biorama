@@ -81,7 +81,7 @@ class StoreController extends Controller
                         $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.' . $imageType;
 
                         // Caminho para armazenar a imagem
-                        $imagePath = "store/{$imageName}";
+                        $imagePath = "/stores/{$imageName}";
 
                         // Salva o ficheiro na pasta pública do storage
                         Storage::disk('public')->put($imagePath, $imageData);

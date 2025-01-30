@@ -30,3 +30,9 @@ export function stringAvatar(name) {
     // children: `${name[0][0]}${hasSpace(name)? name.split(' ')[name.split(' ').length - 1][0] : ''}`,
   };
 }
+
+export const fixImagePath = (imagePath) => {
+    if (!imagePath) return "/images/default-image.jpg"; // Coloca uma imagem padrão
+    if (imagePath.startsWith("http")) return imagePath; // Se já for uma URL completa, retorna direto
+    return `/storage/${imagePath.replace(/^storage\//, "")}`; // Remove prefixos extras
+};
