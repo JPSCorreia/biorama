@@ -6,6 +6,7 @@ import {
     CircularProgress,
     Typography,
     useTheme,
+    useMediaQuery,
 } from "@mui/material";
 import { StoreSharp as StoreSharpIcon } from "@mui/icons-material";
 import {
@@ -52,13 +53,16 @@ const createCustomIcon = (color) => {
 const SetViewOnPosition = ({ position }) => {
     const map = useMap();
     if (position) {
-        map.setView(position, 15); // Zoom
+        map.setView(position, 16); // Zoom
     }
     return null;
 };
 
-const StoreMap = ({ store }) => {
+const StoreMap = ({ store, address }) => {
     const theme = useTheme();
+
+    const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
+
 
     // Verificar se a loja tem coordenadas
     const storePosition =
@@ -72,24 +76,16 @@ const StoreMap = ({ store }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                width: "50%",
-                mt: 2,
-                ml: 1,
-                padding: 3,
-                pt: 2,
+                minWidth: "300px",
+                flexGrow: 1,
+                ml: smallerThanMediumScreen? 0 : 4,
                 borderRadius: "10px",
+                mt: smallerThanMediumScreen ? 4 : 0,
             }}
         >
-            <Typography
-                variant="h6"
-                sx={{ fontWeight: "bold", marginBottom: 1 }}
-            >
-                Localização
-            </Typography>
             {!storePosition ? (
                 <Box
                     sx={{
-                        height: "300px",
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -104,7 +100,8 @@ const StoreMap = ({ store }) => {
             ) : (
                 <Box
                     sx={{
-                        height: "300px",
+                        height: "100%",
+                        minHeight: "300px",
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -117,7 +114,7 @@ const StoreMap = ({ store }) => {
                     <MapContainer
                         center={storePosition} // Centraliza no marcador da loja
                         zoom={13}
-                        style={{ height: "100%", width: "100%" }}
+                        style={{ height: smallerThanMediumScreen? "300px" : "100%", width: "100%" }}
                     >
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         {/* Marcador da loja */}
@@ -126,14 +123,15 @@ const StoreMap = ({ store }) => {
                             icon={createCustomIcon(theme.palette.primary.main)}
                         >
                             <Tooltip
-                                direction="top"
-                                offset={[0, -10]}
+                                direction="right"
+                                offset={[20, -10]}
                                 opacity={1}
+                                permanent={true}
                             >
                                 <div>
                                     <strong>{store.name}</strong>
                                     <br />
-                                    {store.description || "Loja"}
+                                    {address.street_address || "Loja"}
                                 </div>
                             </Tooltip>
                         </Marker>
@@ -141,6 +139,12 @@ const StoreMap = ({ store }) => {
                     </MapContainer>
                 </Box>
             )}
+            <Typography
+                variant="body1"
+                sx={{ mt: 2, mb: 0.25 }}
+            >
+                {address.street_address}, {address.postal_code} - {address.city}
+            </Typography>
         </Box>
     );
 };

@@ -6,7 +6,7 @@ import { AlertBox } from "../Components";
 
 const Store = observer(() => {
 
-    const { store, vendor, products, user, gallery, addresses, other } = usePage().props;
+    const { store, vendor, products, user, gallery, address, other } = usePage().props;
 
     console.log("other", other.vendor_rating);
     console.log("store rating", store.rating);
@@ -15,6 +15,8 @@ const Store = observer(() => {
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+    const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
         <Container
@@ -38,15 +40,15 @@ const Store = observer(() => {
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                    flexDirection: smallerThanMediumScreen? "column" : "row",
+                    justifyContent: "center",
                     mt: 4,
                     mb: 4,
                     flexWrap: "wrap",
                 }}
             >
                 <StoreVendorCard store={store} vendor={vendor} user={user} other={other} />
-                <StoreMap store={store} addresses={addresses} />
+                <StoreMap store={store} address={address} />
             </Box>
         </Container>
     );

@@ -243,7 +243,7 @@ class StoreController extends Controller
         $storeGallery = StoreGallery::where('store_id', $id)->get();
 
         // Get store addresses
-        $storeAddresses = StoreAddress::where('store_id', $id)->get();
+        $storeAddress = StoreAddress::where('store_id', $id)->get();
 
         // Calculate vendor rating (average rating of all vendor stores)
         $vendorRating = Store::where('vendor_id', $store->vendor_id)->avg('rating');
@@ -275,7 +275,7 @@ class StoreController extends Controller
             'products' => $products,
             'user' => $user,
             'gallery' => $storeGallery,
-            'addresses' => $storeAddresses,
+            'address' => $storeAddress[0],
             'other' => $other
         ]);
     }

@@ -10,6 +10,7 @@ import {
     Avatar,
     Rating,
     useTheme,
+    useMediaQuery
 } from "@mui/material";
 import { formatDateToPortuguese } from "../../utils/utils";
 
@@ -17,13 +18,13 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
 
 
     const theme = useTheme();
-
+    const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
         <Card
             sx={{
-                maxWidth: 300,
-                width: "100%",
+                minWidth: 250,
+                width: smallerThanMediumScreen ? "100%" : "20%",
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
