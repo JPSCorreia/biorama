@@ -12,6 +12,7 @@ import {MapContainer, TileLayer, Marker} from "react-leaflet";
 import {fixImagePath} from "../utils/utils.js";
 import {useTheme} from "@mui/material/styles";
 import {StoreMap} from "@/Components/index.js";
+import React from "react";
 
 const DashboarShowStoreInfo = observer(({store, user}) => {
 

@@ -2,7 +2,7 @@ import {observer} from "mobx-react";
 import {Paper} from "@mui/material";
 import {usePage} from "@inertiajs/react";
 import {shopStore} from "@/Stores/index.js";
-import { DashboarShowStoreInfo } from "./";
+import {DashboardShowStoreInfo} from "@/Components/index.js";
 
 const DashboardShowStore = observer(() =>{
     console.log("Props:", usePage().props.store);
@@ -13,7 +13,7 @@ const DashboardShowStore = observer(() =>{
     console.log("Current Strore", shopStore.currentStore);
     return(
 
-            <DashboarShowStoreInfo store ={store} user ={user}/>
+            <DashboardShowStoreInfo store ={store} user ={user}/>
 
     )
 })
