@@ -13,6 +13,8 @@ import {fixImagePath} from "../utils/utils.js";
 import {useTheme} from "@mui/material/styles";
 import {StoreMap} from "@/Components/index.js";
 import React from "react";
+import DashboardStoreShortCutCard from "@/Components/DashboardStoreShortCutCard.jsx";
+import ReactMarkdown from "react-markdown";
 
 const DashboarShowStoreInfo = observer(({store, user}) => {
 
@@ -90,7 +92,7 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
 
             </Box>
             {/* Informações da loja */}
-            <Box sx={{display: "flex", gap: 2, mb: 3, pt:3}}>
+            <Box sx={{display: "flex", gap: 2, mb: 3, pt:3, flexDirection: isSmallScreen ? "column" : "row",}}>
                 {/* Informações da loja */}
                 <Box sx={{flex: "1 1 50%", marginBottom: "3%", p: 2}}>
                     {/* Linha 1 - Email & Telemóvel */}
@@ -160,7 +162,9 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
                     }}>
                         <Box sx={{flex: "1 1 45%"}}>
                             <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Descrição:</Typography>
-                            <Typography sx={{fontSize: "1rem"}}>{store?.description || "Sem descrição"}</Typography>
+                            <ReactMarkdown>
+                                {store?.description || "Sem descrição"}
+                            </ReactMarkdown>
                         </Box>
                     </Box>
                 </Box>
@@ -180,7 +184,8 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
             </Box>
 
 
-            <Divider/>
+
+
 
             {/* Mapa */}
 
@@ -189,7 +194,13 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
             <Box sx={{mt: 3, textAlign: "right"}}>
                 <Button variant="contained" color="primary">Editar</Button>
             </Box>
-            {/* Cards de produtos e rating*/}
+
+            <Divider/>
+
+            {/* container dos cards*/}
+            <Box sx={{pb:3}}>
+                <DashboardStoreShortCutCard store={store}/>
+            </Box>
         </Paper>
     );
 });

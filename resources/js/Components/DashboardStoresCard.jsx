@@ -13,6 +13,7 @@ import {
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { fixImagePath } from "../utils/utils.js";
 import { shopStore } from "@/Stores/index.js";
+import ReactMarkdown from "react-markdown";
 
 const DashboardStoresCard = observer(({ store, user }) => {
     // Pega a primeira imagem da galeria como fundo e a segunda como perfil
@@ -105,17 +106,9 @@ const DashboardStoresCard = observer(({ store, user }) => {
                     {/* Descrição */}
                     <Box sx={{ marginBottom: "2rem", minHeight: "100px" }}>
                         <Typography fontWeight="bold">Descrição:</Typography>
-                        <Typography
-                            sx={{
-                                display: "-webkit-box",
-                                WebkitLineClamp: 3,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                            }}
-                        >
+                        <ReactMarkdown>
                             {truncatedDescription}
-                        </Typography>
+                        </ReactMarkdown>
                     </Box>
 
                     {/* Rating */}
