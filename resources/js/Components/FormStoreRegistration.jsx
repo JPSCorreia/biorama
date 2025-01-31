@@ -13,6 +13,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {useMediaQuery} from "@mui/material";
 import * as yup from "yup";
+import { usePage } from "@inertiajs/react";
 
 // Componente para centralizar e ajustar o zoom no marcador
 const CenterMapOnPostalCode = ({ position }) => {
@@ -31,6 +32,8 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
     const [loading, setLoading] = useState(false);
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
+
+    console.log(usePage().props);
 
     const handleFormSubmit = async (values) => {
         try {
@@ -66,15 +69,15 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
 
     const formik = useFormik({
         initialValues: {
-            name: "",
-            phone_number: "",
-            email: "",
-            description: "",
+            name: "Loja 1",
+            phone_number: "961970027",
+            email: "loja1@example.com",
+            description: "lojja1",
             street_address:"",
             city: "",
             comment: "",
             coordinates: "",
-            postal_code: "",
+            postal_code: "2925-266",
             image_link: [],
         },
         validationSchema: validationSchema,
@@ -218,7 +221,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                                 </Box>
                             }
                             fullWidth
-                            />
+                        />
 
                         <TextField
                             label="Telefone"
@@ -307,17 +310,17 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                         }}
                     >
                         <TextField
-                        label="Localidade"
-                        name="city"
-                        onChange={formik.handleChange}
-                        value={formik.values.city}
-                        error={Boolean(formik.errors.city)}
-                        helperText={
-                        <Box sx={{ minHeight: "20px" }}>
-                            {formik.touched.city && formik.errors.city}
-                        </Box>
-                    }
-                        fullWidth
+                            label="Localidade"
+                            name="city"
+                            onChange={formik.handleChange}
+                            value={formik.values.city}
+                            error={Boolean(formik.errors.city)}
+                            helperText={
+                                <Box sx={{ minHeight: "20px" }}>
+                                    {formik.touched.city && formik.errors.city}
+                                </Box>
+                            }
+                            fullWidth
                         />
 
                         <TextField

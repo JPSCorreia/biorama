@@ -123,7 +123,17 @@ const FormVendorRegistration = forwardRef(({genders, formErrors, handleCloseComp
             dateAdapter={AdapterDayjs}
             adapterLocale={dayjs.locale(navigator.language) || dayjs.locale("pt")}
         >
-            <Paper sx={{ mt: 4, width: "100%", m: "auto", p: 5 }}>
+            <Box
+                sx={{
+                    mt: 4,
+                    width: "100%",
+                    m: "auto",
+                    p: 5,
+                    border: "1px solid #ccc",
+                    borderRadius: "15px",
+                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                }}
+            >
                 <Box sx={{ display: "flex", flexDirection: "row" }}>
                     <Typography sx={{ fontSize: "2.5rem", fontWeight: "bold", mb: 0 }}>
                         Dados Pessoais
@@ -291,7 +301,7 @@ const FormVendorRegistration = forwardRef(({genders, formErrors, handleCloseComp
                         </Grid2>
                     </Grid2>
                 </form>
-            </Paper>
+            </Box>
         </LocalizationProvider>
     );
 });

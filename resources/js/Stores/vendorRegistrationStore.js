@@ -1,7 +1,6 @@
-import { makeObservable, observable, action, runInAction } from "mobx";
+import { makeObservable, observable, action } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import axios from "axios";
-import {router} from "@inertiajs/react"
 import {authStore} from "../Stores";
 
 class VendorRegistrationStore {
@@ -10,7 +9,8 @@ class VendorRegistrationStore {
     isCompany = false; // Boolean to check if the vendor is a company
     companyFormik = null; // Company form
     storeFormik = null; // Formik para detalhes da loja
-    productFormik = null; // Formik para criação de produtos
+    products = [];
+    store_id = null;
 
 
     /**
@@ -29,14 +29,15 @@ class VendorRegistrationStore {
             setStoreFormik: action,
             setStoreImages: action,
 
-            productFormik: observable,
-            setProductFormik: action,
-            getProductFormik: action,
+            products: observable,
+            setProduct: action,
+            store_id: observable,
 
 
 
             submitStep1: action,
             submitStep2: action,
+            submitStep3: action,
 
         });
         makePersistable(this, {
@@ -120,6 +121,8 @@ class VendorRegistrationStore {
                 ...(this.storeFormik?.values || {}),
             });
 
+            this.store_id = responseStore.data.store.id;
+
             console.log("Loja registada com sucesso!", responseStore.data.store);
 
         } catch (error) {
@@ -127,12 +130,34 @@ class VendorRegistrationStore {
         }
     }
 
-    setProductFormik(formik) {
-        this.productFormik = formik;
+    setProduct(product) {
+        this.products.push(product);
     }
 
-    getProductFormik() {
-        return this.productFormik;
+    async submitStep3(data) {
+        console.log("Enviando dados do Produto:", data);
+        try {
+            if (!data) {
+                console.error("Erro: Formulário de produtos não foi encontrado.");
+                return;
+            }
+
+            console.log("Enviando dados dos produtos:", data);
+            // Primeira requisição: Envia os dados dos produtos
+            const responseProduct = await axios.post(`/registar-vendedor-produto/${this.store_id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+
+            if (responseProduct.data.product) {
+                this.setProduct(responseProduct.data.product);
+            }
+            console.log("Produtos registados com sucesso!", responseProduct.data.product);
+
+        } catch (error) {
+            console.error("Erro ao enviar os formulários:", error);
+        }
     }
 
 }

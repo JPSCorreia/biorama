@@ -14,48 +14,51 @@ class ProductController extends Controller
         return response()->json(Product::with('categories')->get());
     }
 
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
+        $request->merge([
+            'sold_at_unit' => filter_var($request->sold_at_unit, FILTER_VALIDATE_BOOLEAN),
+        ]);
 
-        $product = Product::create(
-            [
-                'name' => $data['name'],
-                'sold_at_unit' => $data['sold_at_unit'],
-                'description' => $data['description'],
-                'price' => $data['price'],
-                'discount' => $data['discount'],
-                'stock' => $data['stock'],
-            ]
-        );
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'sold_at_unit' => 'boolean',
+            'price' => 'required|numeric|min:0',
+            'discount' => 'numeric|min:0',
+            'stock' => 'integer|min:0',
+            'imagesProduct' => 'nullable|array',
+            'imagesProduct.*' => 'file|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-        // Processar o campo image_link (array de imagens)
-        $imageLinks = []; // Array para armazenar os caminhos das imagens
-        if (!empty($validated['image_link'])) {
-            foreach ($validated['image_link'] as $index => $base64Image) {
-                // Decodifica a string base64 para conteúdo binário
-                $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
+        // Criar o produto
+        $product = Product::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'sold_at_unit' => $validated['sold_at_unit'] ?? false,
+            'price' => $validated['price'],
+            'discount' => $validated['discount'] ?? 0.0,
+            'stock' => $validated['stock'] ?? 0,
+        ]);
 
-                // Gera o nome do ficheiro
-                $imageName = 'product_' . $product->id . '_img' . ($index + 1) . '.jpg';
+        // Processar e armazenar as imagens
+        if ($request->hasFile('imagesProduct')) {
+            foreach ($request->file('imagesProduct') as $index => $imageFile) {
+                // Criar nome do ficheiro
+                $imageName = 'product_' . $product->id . '_img' . ($index + 1) . '.' . $imageFile->extension();
 
-                // Salva a imagem no diretório "storage/app/public/store"
-                $imagePath = 'product/' . $imageName;
-                file_put_contents(storage_path('app/public/' . $imagePath), $imageData);
+                // Guardar a imagem no storage (pasta public)
+                $imagePath = $imageFile->storeAs('public/product', $imageName);
 
-                // Adiciona o caminho ao array
-                $imageLinks[] = 'storage/' . $imagePath;
-
-                // Cria o registro na galeria
-                $product->galleries()->create([
-                    'image_link' => 'storage/' . $imagePath,
+                // Guardar o link na tabela product_galleries
+                ProductGallery::create([
+                    'product_id' => $product->id,
+                    'image_link' => Storage::url($imagePath), // Gera um caminho acessível
                 ]);
             }
         }
 
-        return response()->json([
-            'product' => $product,
-        ], 201);
+        return response()->json(['message' => 'Produto criado com sucesso!', 'product' => $product], 201);
     }
 
     public function show(Product $product)

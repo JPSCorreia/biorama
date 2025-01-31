@@ -81,7 +81,7 @@ class StoreController extends Controller
                         $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.' . $imageType;
 
                         // Caminho para armazenar a imagem
-                        $imagePath = "/stores/{$imageName}";
+                        $imagePath = "store/{$imageName}";
 
                         // Salva o ficheiro na pasta pública do storage
                         Storage::disk('public')->put($imagePath, $imageData);
@@ -97,6 +97,20 @@ class StoreController extends Controller
                 }
             }
 
+            // Formatar a loja para JSON
+            $formattedStore = Store::select(
+                'id',
+                'name',
+                'description',
+                'phone_number',
+                'email',
+                'rating',
+                DB::raw('ST_X(coordinates) as longitude'),
+                DB::raw('ST_Y(coordinates) as latitude')
+            )
+                ->where('id', $store->id) // 🔥 Pega apenas a loja recém-criada
+                ->with(['addresses', 'products', 'reviews', 'galleries'])
+                ->first(); // 🔥 Como só há uma, usa `first()` ao invés de `get()`
 
             // Retornar as lojas atualizadas do vendor
             $stores = Store::where('vendor_id', $vendor->id)
@@ -118,6 +132,7 @@ class StoreController extends Controller
                 'message' => 'Loja criada com sucesso!',
                 'images' => $imageLinks,
                 'stores' => $stores,
+                'store' => $formattedStore,
             ], 201);
         } catch (\Exception $e) {
             // Retorna uma resposta JSON de erro

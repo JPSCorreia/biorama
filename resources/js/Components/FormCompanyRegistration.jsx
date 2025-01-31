@@ -155,7 +155,7 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
     }, [formErrors]);
 
     return (
-        <Paper
+        <Box
             sx={{
                 mt: 4,
                 width: "100%",
@@ -165,6 +165,9 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
                 pl: 5,
                 pb: 5,
                 pt: 3,
+                border: "1px solid #ccc",
+                borderRadius: "15px",
+                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
             }}
         >
             <Box
@@ -330,7 +333,7 @@ const FormCompanyRegistration = forwardRef(({formErrors, onCloseCompanyForm}, re
                     </Grid>
                 </Grid>
             </form>
-        </Paper>
+        </Box>
     );
 });
 
