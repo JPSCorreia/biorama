@@ -158,7 +158,7 @@ const HomeMap = observer(({ radius }) => {
                     <MapContainer
                         center={mapCenter || [38.7071, -9.1355]} // Default para Lisboa
                         zoom={14}
-                        style={{ height: "100%", width: "100%" }}
+                        style={{ height: "100%", width: "100%", minHeight: "300px", minWidth: "300px" }}
                     >
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

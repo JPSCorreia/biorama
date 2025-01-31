@@ -11,7 +11,7 @@ const HomeStoreCard = observer(({ store }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
     const isHovered = hoverStore.hoveredStoreId === store.id;
 
 
@@ -19,14 +19,11 @@ const HomeStoreCard = observer(({ store }) => {
     return (
         <Paper
             sx={{
-                flex: isSmallScreen
+                flex: smallerThanMedium
                     ? "1 1 100%" // Full width for small screens
-                    : isMediumScreen
-                    ? "1 1 calc(50% - 16px)" // Two cards per row for medium screens
                     : "1 1 calc(50% - 16px)", // Three cards per row for larger screens
                 display: "flex",
                 flexDirection: "column",
-                boxSizing: "border-box",
                 borderRadius: "8px",
                 border: `1px solid ${theme.palette.primary.main}`,
                 cursor: "pointer",
@@ -64,7 +61,7 @@ const HomeStoreCard = observer(({ store }) => {
             >
                 {/* Nome da loja sobre a imagem */}
                 <Typography
-                    variant="h4"
+                    variant={smallerThanMedium? "h5" : "h4"}
                     sx={{
                         position: "absolute",
                         top: "50%",

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
+import { Box, CircularProgress, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { HomeStoreCard } from "./";
 
 export const NearbyStores = ({ radius }) => {
@@ -9,6 +9,7 @@ export const NearbyStores = ({ radius }) => {
     const [loading, setLoading] = useState(true); // Estado de carregamento
     const [error, setError] = useState(null); // Mensagem de erro
     const theme = useTheme();
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
         const fetchNearbyStores = async (latitude, longitude) => {
@@ -52,7 +53,7 @@ export const NearbyStores = ({ radius }) => {
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
-                    width: "60%",
+                    width: smallerThanMedium? "100%" : "60%",
                     minWidth: "300px",
                     minHeight: "500px",
                 }}
@@ -95,7 +96,7 @@ export const NearbyStores = ({ radius }) => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                width: "60%",
+                width: smallerThanMedium? "100%" : "60%",
                 alignItems: "center",
                 mr: 2,
                 mt: 2,

@@ -17,7 +17,7 @@ const Home = observer(() => {
     const theme = useTheme();
 
     // Get media queries
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const Home = observer(() => {
                     }}
                 />
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "row", mb: 8 }}>
+            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", mb: 8 }}>
                 {/* Nearby Stores */}
                 <NearbyStores radius={50000} />
                 {/* Map */}
@@ -80,7 +80,8 @@ const Home = observer(() => {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "40%",
+                        width: smallerThanMedium? "100%" : "40%",
+                        minWidth: smallerThanMedium? "100%" : "40%",
                         minHeight: "100%",
                         mt: 2,
                     }}
