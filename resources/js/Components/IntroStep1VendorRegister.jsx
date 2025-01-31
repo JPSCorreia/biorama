@@ -1,4 +1,5 @@
 import {Box, Grid2, Typography} from '@mui/material';
+import {fixImagePath} from "../utils/utils.js";
 
 const IntroStep1VendorRegister = () => {
 
@@ -49,7 +50,7 @@ const IntroStep1VendorRegister = () => {
                 </Box>
                 <Box
                     component="img"
-                    src="/images/Fase1-registo vendor.png"
+                    src='/images/Fase 1 - registoVendor.png'
                     alt="Imagem ilustrativa de registo"
                     sx={{
                         width: "40%",
