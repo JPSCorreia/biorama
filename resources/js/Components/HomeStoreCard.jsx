@@ -23,11 +23,10 @@ const HomeStoreCard = observer(({ store }) => {
                     ? "1 1 100%" // Full width for small screens
                     : isMediumScreen
                     ? "1 1 calc(50% - 16px)" // Two cards per row for medium screens
-                    : "1 1 calc(33.33% - 16px)", // Three cards per row for larger screens
+                    : "1 1 calc(50% - 16px)", // Three cards per row for larger screens
                 display: "flex",
                 flexDirection: "column",
                 boxSizing: "border-box",
-                margin: "2px",
                 borderRadius: "8px",
                 border: `1px solid ${theme.palette.primary.main}`,
                 cursor: "pointer",
@@ -93,7 +92,7 @@ const HomeStoreCard = observer(({ store }) => {
                     color="text.secondary"
                     sx={{ marginBottom: 1, fontSize: 14 }}
                 >
-                    <ReactMarkdown>{truncateDescription(store.description)}</ReactMarkdown>
+                    <ReactMarkdown>{truncateDescription(store.description, 150, 175)}</ReactMarkdown>
                 </Box>
                 <Typography variant="caption" sx={{ fontWeight: "bold" }}>
                     Distância: {(store.distance / 1000).toFixed(2)} km

@@ -52,6 +52,8 @@ export const NearbyStores = ({ radius }) => {
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
+                    width: "60%",
+                    minWidth: "300px",
                     minHeight: "500px",
                 }}
             >
@@ -93,8 +95,10 @@ export const NearbyStores = ({ radius }) => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
+                width: "60%",
                 alignItems: "center",
-                mb: "60px"
+                mr: 2,
+                mt: 2,
             }}
         >
             <Box

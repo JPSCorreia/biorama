@@ -12,12 +12,12 @@ class ProductFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->word(),
-            'sold_at_unit' => $this->faker->boolean(),
-            'description' => $this->faker->sentence(),
-            'stock' => $this->faker->numberBetween(0, 100),
-            'price' => $this->faker->randomFloat(2, 1, 1000),
-            'discount' => $this->faker->randomFloat(2, 0, 100),
+            'name' => null, // O nome será preenchido no Seeder
+            'description' => null, // A descrição será preenchida no Seeder
+            'sold_at_unit' => false, // Definido no Seeder
+            'price' => 0.00, // Definido no Seeder
+            'discount' => 0.00,
+            'stock' => 50,
             'created_at' => now(),
             'updated_at' => now(),
         ];
