@@ -1,14 +1,15 @@
 import { Paper, Typography, Box } from "@mui/material";
+import { ProductCard } from "../";
 
-const StoreProductsContainer = ({ products }) => {
-
-    console.log(products)
+const StoreProductsContainer = ({ products, image_test }) => {
     return (
         <Paper
             elevation={4}
             sx={{
                 padding: 3,
                 borderRadius: "10px",
+                mt: 2,
+                mb: 1,
             }}
         >
             <Typography
@@ -20,23 +21,21 @@ const StoreProductsContainer = ({ products }) => {
                     sx={{
                         display: "flex",
                         flexDirection: "column",
+                        alignItems: "center",
                         ml: 2,
                         mt: 4,
                     }}
                 >
-                    {products.map((product) => (
-                        <Box
-                            key={product.id}
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                mb: 1,
-                                fontSize: "1.2rem",
-                            }}
-                        >
-                            {product.name}
-                        </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row"}}>
+                    {products.slice(0, 5).map((product) => (
+                        <ProductCard key={product.id} product={product} image_test={image_test}/>
                     ))}
+                    </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", mt: 2}}>
+                        {products.slice(5, 10).map((product) => (
+                        <ProductCard key={product.id} product={product} image_test={image_test}/>
+                    ))}
+                    </Box>
                 </Box>
             </Typography>
         </Paper>

@@ -33,14 +33,18 @@ class ShopStore {
     // Define os dados das lojas
     setStoresData(storesData) {
         runInAction(() => {
-            this.stores = storesData;
+            if (!this.stores[0] ) {
+                this.stores = storesData;
+            }
         });
     }
 
     // Define os dados da loja selecionada
     setStoreData(storeData) {
         runInAction(() => {
-            this.currentStore = storeData;
+                this.currentStore = storeData;
+
+
             this.storeRating = storeData?.rating || null;
             this.storeAddresses = storeData?.addresses || [];
             this.storeProducts = storeData?.products || [];
@@ -51,7 +55,6 @@ class ShopStore {
 
     // Cria uma nova loja e o endereço associado
     async createStore(storeData) {
-        console.log("store Data antes do processamento", storeData);
 
         try {
             const processedData = { ...storeData };
@@ -60,15 +63,13 @@ class ShopStore {
                 delete processedData.image_link; // Remove o campo se não houver imagens
             }
 
-            console.log("Dados processados para envio", processedData);
-
             // Envia os dados para o backend
             const response = await axios.post("/create/store", processedData);
 
-            console.log("resposta:", response.data);
             if (response.data.success) {
                 console.log("Loja criada com sucesso:", response.data);
             }
+            this.stores = response.data.stores;
 
             return { success: true };
         } catch (error) {
@@ -77,7 +78,9 @@ class ShopStore {
         }
     }
 
-
+    navigateToStore(storeId) {
+        router.get(`/dashboard/store/${storeId}`); // Rota dinâmica para exibir informações da loja
+    }
 
 
 

@@ -1,17 +1,19 @@
 import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
 import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription } from "../Components";
-import { Container, Box, useTheme, useMediaQuery  } from "@mui/material";
+import { Container, Typography, Box, useTheme, useMediaQuery  } from "@mui/material";
 import { AlertBox } from "../Components";
 
 const Store = observer(() => {
 
-    const { store, vendor, products, user } = usePage().props;
+    const { store, vendor, products, user, gallery, address, other } = usePage().props;
 
     const theme = useTheme();
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+    const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
         <Container
@@ -27,31 +29,23 @@ const Store = observer(() => {
             <AlertBox />
 
             {/* Store Banner */}
-            <StoreBanner imageLink={store.image_link} title={store.name} />
+            <StoreBanner title={store.name} gallery={gallery} />
 
             {/* Store Information */}
             <StoreDescription store={store} />
+            <StoreProductsContainer products={products} image_test={gallery[0].image_link}/>
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: 2,
+                    flexDirection: smallerThanMediumScreen? "column" : "row",
+                    justifyContent: "center",
+                    mt: 4,
+                    mb: 4,
                     flexWrap: "wrap",
-                    // height: "300px"
                 }}
             >
-                <StoreVendorCard store={store} vendor={vendor} user={user} />
-                <StoreMap store={store} />
-            </Box>
-
-            {/* Products */}
-            <Box
-                sx={{
-                    marginTop: 2,
-                }}
-            >
-                {/* <StoreProductsContainer products={products} /> */}
+                <StoreVendorCard store={store} vendor={vendor} user={user} other={other} />
+                <StoreMap store={store} address={address} />
             </Box>
         </Container>
     );
