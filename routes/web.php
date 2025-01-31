@@ -208,6 +208,6 @@ Route::get('/vendorinfo', function () {
 })->name('vendor.information');
 
 Route::get('/teste', function () {
-    return Inertia::render('FeatureTesting');
+    return Inertia::render('FormStoreRegistration');
 })->name('teste');
 

@@ -23,6 +23,7 @@ const RegisterVendor = observer(({ genders }) => {
     const progress = (currentStep / 6) * 100;
 
     const [formErrors, setFormErrors] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
 
     // Reference to the personal and company forms
     const personalFormRef = useRef(null);
@@ -35,6 +36,7 @@ const RegisterVendor = observer(({ genders }) => {
     const [showWarning, setShowWarning] = useState(true);
 
     const [images, setImages] = useState([]);
+    console.log("RegisterVendor -> images:", images);
 
     const validateFormik = async (formik) => {
         const errors = await formik.validateForm();
@@ -48,21 +50,39 @@ const RegisterVendor = observer(({ genders }) => {
         return Object.keys(errors).length === 0; // Retorna true se não houver erros
     };
 
-    const handleImageUpload = (e) => {
-        const files = Array.from(e.target.files);
+    const handleImageUpload = (event) => {
+        if (!event.target.files) return;
+
+        const files = Array.from(event.target.files);
+
+        // Verifica se ultrapassa o limite de 3 imagens
+        if (images.length + files.length > 3) {
+            setShowAlert(true);
+            return;
+        }
+
         const newImages = [];
 
         files.forEach((file) => {
             const reader = new FileReader();
-            reader.onload = () => {
-                newImages.push(reader.result);
-                if (newImages.length === files.length) {
-                    setImages((prevImages) => [...prevImages, ...newImages]);
+            reader.onload = (e) => {
+                if (e.target.result) {
+                    newImages.push(e.target.result);
+
+                    // Apenas adiciona ao estado quando todas as imagens forem carregadas
+                    if (newImages.length === files.length) {
+                        setImages((prevImages) => {
+                            const updatedImages = [...prevImages, ...newImages].slice(0, 3);
+                            return updatedImages;
+                        });
+                    }
                 }
             };
             reader.readAsDataURL(file);
         });
     };
+
+
 
     // Function to close the company form and validate the personal info form
     const handleCloseCompanyForm = () => {
@@ -132,6 +152,7 @@ const RegisterVendor = observer(({ genders }) => {
 
             if (isPersonalValid && (vendorRegistrationStore.isCompany ? isCompanyValid : true)) {
                 await vendorRegistrationStore.submitStep1();
+                setFormErrors(null);
                 setCurrentStep((prev) => prev + 1); // Avança apenas se todos os formulários forem válidos
             } else {
                 console.log("Erros encontrados:", { personalErrors, companyErrors });
@@ -145,6 +166,11 @@ const RegisterVendor = observer(({ genders }) => {
                     {}
                 )
             );
+
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                store: storeErrors,
+            }));
 
             const isStoreValid = Object.keys(storeErrors).length === 0;
             if (isStoreValid) {
@@ -188,7 +214,7 @@ const RegisterVendor = observer(({ genders }) => {
                 return <IntroStep2VendorRegister />;
             case 3:
                 return (
-                    <Step2StoreDetails ref={storeFormRef} formErrors={formErrors} images={images} handleImageUpload={handleImageUpload} />
+                    <Step2StoreDetails ref={storeFormRef} formErrors={formErrors} setImages={setImages} images={images} showAlert={showAlert} handleImageUpload={handleImageUpload} />
                 );
             case 4:
                 return <IntroStep3VendorRegister />;
