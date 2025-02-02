@@ -1,24 +1,21 @@
 import { observer } from "mobx-react";
 import {
     Box,
-    Button,
     Card,
     CardContent,
     CardMedia,
-    Divider,
     Typography,
     Tooltip,
     IconButton,
-    Avatar,
-    Rating,
     useTheme,
     useMediaQuery,
 } from "@mui/material";
 
 import { AddShoppingCartSharp as AddShoppingCartSharpIcon } from "@mui/icons-material";
 import { cartStore } from "../Stores";
+import ReactMarkdown from "react-markdown";
 
-const StoreVendorCard = observer(({ product, image_test }) => {
+const StoreVendorCard = observer(({ product }) => {
     console.log(product);
 
     const theme = useTheme();
@@ -34,7 +31,7 @@ const StoreVendorCard = observer(({ product, image_test }) => {
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
-                minHeight: 250,
+                minHeight: 380,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
@@ -56,79 +53,101 @@ const StoreVendorCard = observer(({ product, image_test }) => {
 
             <CardMedia
                 sx={{
-                    height: 180,
+                    height: 120,
                     width: "100%",
                     objectFit: "cover",
                     backgroundColor: theme.palette.primary.main,
                 }}
-                image={image_test}
+                image={product.image_link}
             />
 
             {/* Informações */}
             <CardContent
                 sx={{
-                    pb: "0.25rem !important",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    alignItems: "center",
+                    pb: "0 !important",
                 }}
             >
-                <Box sx={{ mb: 1 }}>
-                    <Typography variant="body2" sx={{ mb: 1 }}>Preço por unidade:</Typography>
-                    {product.discount > 0 ? (
-                        <Box display="flex" alignItems="center" gap={1}>
-                            <Typography
-                                sx={{
-                                    textDecoration: "line-through",
-                                    color: "red",
-                                }}
-                            >
-                                {Number(product.price).toFixed(2)}€
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {(
-                                    Number(product.price) *
-                                    (1 - product.discount / 100)
-                                ).toFixed(2)}
-                                €
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    fontSize: 12,
-                                }}
-                            >
-                                (-{Number(product.discount).toFixed(0)}%)
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Typography
+                <Box sx={{ mb: 1, display: "flex", flexDirection: "column" }}>
+                    <Box
+                        sx={{ minHeight: "140px", fontSize: 14, fontWeight: "normal" }}
+                    >
+                        <ReactMarkdown>{product.description}</ReactMarkdown>
+                    </Box>
+                    <Typography sx={{ fontSize: 12 }}>
+                        Preço por unidade:
+                    </Typography>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Box
                             sx={{
-                                wordWrap: "break-word",
-                                overflowWrap: "break-word",
-                                whiteSpace: "pre-wrap",
-                                fontWeight: "bold",
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
                             }}
                         >
-                            {Number(product.price).toFixed(2)}€
-                        </Typography>
-                    )}
+                            {product.discount > 0 ? (
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <Typography
+                                        sx={{
+                                            textDecoration: "line-through",
+                                            color: "red",
+                                        }}
+                                    >
+                                        {Number(product.price).toFixed(2)}€
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {(
+                                            Number(product.price) *
+                                            (1 - product.discount / 100)
+                                        ).toFixed(2)}
+                                        €
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            fontSize: 12,
+                                        }}
+                                    >
+                                        (-{Number(product.discount).toFixed(0)}
+                                        %)
+                                    </Typography>
+                                </Box>
+                            ) : (
+                                <Typography
+                                    sx={{
+                                        wordWrap: "break-word",
+                                        overflowWrap: "break-word",
+                                        whiteSpace: "pre-wrap",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    {Number(product.price).toFixed(2)}€
+                                </Typography>
+                            )}
+                        </Box>
+                        <Tooltip title="Adicionar ao carrinho">
+                            <IconButton
+                                color="textSecondary"
+                                sx={{ width: 40, height: 40 }}
+                                onClick={() =>
+                                    cartStore.addItem(product.name, 1)
+                                }
+                            >
+                                <AddShoppingCartSharpIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
                 </Box>
-                <Tooltip title="Adicionar ao carrinho">
-                    <IconButton
-                        color="textSecondary"
-                        sx={{ width: 40, height: 40 }}
-                        onClick={() => cartStore.addItem(product.name, 1)}
-                    >
-                        <AddShoppingCartSharpIcon />
-                    </IconButton>
-                </Tooltip>
             </CardContent>
         </Card>
     );

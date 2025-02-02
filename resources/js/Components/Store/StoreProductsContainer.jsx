@@ -20,15 +20,17 @@ const StoreProductsContainer = ({ products, image_test }) => {
                         display: "flex",
                         flexDirection: "column",
                         mt: 4,
+                        justifyContent: "center",
+                        alignItems: "center",
                     }}
                 >
                     <Box sx={{ display: "flex", flexDirection: "row"}}>
-                    {products.slice(0, 5).map((product) => (
+                    {products.slice(0, 6).map((product) => (
                         <ProductCard key={product.id} product={product} image_test={image_test}/>
                     ))}
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", mt: 2}}>
-                        {products.slice(5, 10).map((product) => (
+                        {products.slice(6, 12).map((product) => (
                         <ProductCard key={product.id} product={product} image_test={image_test}/>
                     ))}
                     </Box>

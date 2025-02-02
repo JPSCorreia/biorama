@@ -36,8 +36,8 @@ class Product extends Model
             ->withTimestamps();
     }
 
-    public function photos()
+    public function gallery()
     {
-        return $this->hasMany(ProductGallery::class);
+        return $this->hasMany(ProductGallery::class, 'product_id');
     }
 }

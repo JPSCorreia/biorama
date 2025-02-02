@@ -253,8 +253,21 @@ class StoreController extends Controller
         // Get the user
         $user = User::where('id', $vendor->user_id)->first();
 
-        // Get all products
-        $products = $store->load('products')->products;
+
+        // Get all products and load the product images
+        $products = $store->load('products.gallery')->products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'stock' => $product->stock,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+                'image_link' => $product->gallery->first()?->image_link, // Pega a primeira imagem associada ao produto
+            ];
+        });
 
         // Get all store images
         $storeGallery = StoreGallery::where('store_id', $id)->get();
