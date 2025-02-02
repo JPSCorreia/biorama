@@ -13,6 +13,9 @@ use Inertia\Inertia;
 use App\Models\StoreGallery;
 use App\Models\Vendor;
 use App\Models\User;
+use App\Models\StoreReview;
+use App\Models\OrderStoreProduct;
+
 
 class StoreController extends Controller
 {
@@ -218,7 +221,6 @@ class StoreController extends Controller
 
     }
 
-
     public function showStore($id)
     {
         // Get the store
@@ -263,6 +265,12 @@ class StoreController extends Controller
         // Calculate vendor rating (average rating of all vendor stores)
         $vendorRating = Store::where('vendor_id', $store->vendor_id)->avg('rating');
 
+        // Get number of reviews
+        $reviewCount = StoreReview::whereIn('store_id', Store::where('vendor_id', $store->vendor_id)->pluck('id'))->count();
+
+        // Get number of sold orders
+        $orderCount = OrderStoreProduct::where('store_id', $id)->count();
+
         // Format for JSON compatibility
         $formattedStore = [
             'id' => $store->id,
@@ -282,6 +290,8 @@ class StoreController extends Controller
         // Other section with additional information
         $other = [
             'vendor_rating' => $vendorRating,
+            'review_count' => $reviewCount,
+            'order_count' => $orderCount,
         ];
 
         return Inertia::render('Store', [
@@ -294,7 +304,5 @@ class StoreController extends Controller
             'other' => $other
         ]);
     }
-
-
 
 }

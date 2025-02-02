@@ -79,7 +79,6 @@ const CreateProductModal = observer(({ open, handleClose }) => {
         initialValues: {
             name: "",
             description: "",
-            sold_at_unit: false,
             price: "",
             discount: "",
         },
@@ -90,7 +89,6 @@ const CreateProductModal = observer(({ open, handleClose }) => {
             description: Yup.string()
                 .max(500, "A descrição deve ter no máximo 500 caracteres")
                 .required("A descrição é obrigatória"),
-            sold_at_unit: Yup.boolean(),
             price: Yup.number()
                 .typeError("O preço deve ser um número")
                 .positive("O preço deve ser positivo")

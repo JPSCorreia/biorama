@@ -26,10 +26,10 @@ class OrderSeeder extends Seeder
 
         foreach ($orders as $order) {
             $store = $stores->random(); // Seleciona uma loja aleatória
-            $products = $store->products->random(rand(1, 5)); // Seleciona entre 1 e 5 produtos da loja
+            $products = $store->products->random(rand(5, 10)); // Seleciona entre 1 e 5 produtos da loja
 
             foreach ($products as $product) {
-                $quantity = rand(1, 10); // Quantidade aleatória
+                $quantity = rand(30, 40); // Quantidade aleatória
 
                 // Calcula o desconto e o preço final
                 $originalPrice = $product->price * $quantity;

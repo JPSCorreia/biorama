@@ -30,6 +30,7 @@ const StoreVendorCard = observer(({ product, image_test }) => {
             sx={{
                 minWidth: 220,
                 width: smallerThanMediumScreen ? "40%" : "20%",
+                maxWidth: "220px",
                 ml: 1,
                 mr: 1,
                 borderRadius: "16px",
@@ -51,7 +52,6 @@ const StoreVendorCard = observer(({ product, image_test }) => {
                 }}
             >
                 <Typography
-                    variant="h6"
                     fontWeight="bold"
                     noWrap
                     sx={{ color: "white" }}

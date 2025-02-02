@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->mediumText('description')->nullable();
-            $table->boolean('sold_at_unit')->default(false);
             $table->decimal('price', 8, 2);
             $table->decimal('discount', 8, 2)->default(0.0);
             $table->integer('stock')->default(0);

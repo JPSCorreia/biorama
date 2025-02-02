@@ -24,7 +24,6 @@ class ProductRequest extends FormRequest
         return [
             'name' => 'required|string|max:100', // O nome é obrigatório, deve ser texto e ter no máximo 100 caracteres
             'description' => 'nullable|string', // A descrição é opcional e deve ser texto
-            'sold_at_unit' => 'required|boolean', // Este campo é obrigatório e deve ser booleano (true ou false)
             'price' => 'required|numeric|min:0', // O preço é obrigatório, deve ser um número e não pode ser negativo
             'discount' => 'nullable|numeric|min:0|max:100', // O desconto é opcional, deve ser um número entre 0 e 100
             'stock' => 'required|integer|min:0', // O stock é obrigatório, deve ser um número inteiro e não pode ser negativo
@@ -43,8 +42,6 @@ class ProductRequest extends FormRequest
             'name.string' => 'O nome do produto deve ser uma string', // Mensagem de erro para o campo 'name' que deve ser texto
             'name.max' => 'O nome do produto não pode ter mais de 100 caracteres', // Mensagem de erro para o campo 'name' que não pode ter mais de 100 caracteres
             'description.string' => 'A descrição do produto deve ser uma string', // Mensagem de erro para o campo 'description' que deve ser texto
-            'sold_at_unit.required' => 'O campo "sold_at_unit" é obrigatório', // Mensagem de erro para o campo 'sold_at_unit' obrigatório
-            'sold_at_unit.boolean' => 'O campo "sold_at_unit" deve ser um booleano', // Mensagem de erro para o campo 'sold_at_unit' que deve ser booleano
             'price.required' => 'O preço do produto é obrigatório', // Mensagem de erro para o campo 'price' obrigatório
             'price.numeric' => 'O preço do produto deve ser um número', // Mensagem de erro para o campo 'price' que deve ser um número
             'price.min' => 'O preço do produto não pode ser negativo', // Mensagem de erro para o campo 'price' que não pode ser negativo
