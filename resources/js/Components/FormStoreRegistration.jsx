@@ -33,13 +33,11 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
 
-    console.log(usePage().props);
-
     const handleFormSubmit = async (values) => {
-        try {
-            console.log("Dados submetidos:", values);
-        } catch (error) {
-            console.error("Erro ao submeter o formulário:", error);
+        const isValid = await validationSchema.isValid(values);
+        console.log("SUBMETER", isValid);
+        if (isValid) {
+            vendorRegistrationStore.setStoreFormik(formik);
         }
     };
 
@@ -69,15 +67,15 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
 
     const formik = useFormik({
         initialValues: {
-            name: "Loja 1",
-            phone_number: "961970027",
-            email: "loja1@example.com",
-            description: "lojja1",
+            name: "",
+            phone_number: "",
+            email: "",
+            description: "",
             street_address:"",
             city: "",
             comment: "",
             coordinates: "",
-            postal_code: "2925-266",
+            postal_code: "",
             image_link: [],
         },
         validationSchema: validationSchema,
@@ -215,11 +213,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                             onChange={formik.handleChange}
                             value={formik.values.name}
                             error={Boolean(formik.errors.name)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.name && formik.errors.name}
-                                </Box>
-                            }
+                            helperText={formik.touched.name && formik.errors.name}
                             fullWidth
                         />
 
@@ -229,11 +223,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                             onChange={formik.handleChange}
                             value={formik.values.phone_number}
                             error={Boolean(formik.errors.phone_number)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.phone_number && formik.errors.phone_number}
-                                </Box>
-                            }
+                            helperText={formik.touched.phone_number && formik.errors.phone_number}
                             fullWidth
                         />
 
@@ -253,11 +243,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                             onChange={formik.handleChange}
                             value={formik.values.email}
                             error={Boolean(formik.errors.email)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.email && formik.errors.email}
-                                </Box>
-                            }
+                            helperText={formik.touched.email && formik.errors.email}
                             fullWidth
                         />
 
@@ -269,11 +255,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                             onChange={formik.handleChange}
                             value={formik.values.description}
                             error={Boolean(formik.errors.description)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.description && formik.errors.description}
-                                </Box>
-                            }
+                            helperText={formik.touched.description && formik.errors.description}
                             fullWidth
                             multiline
                             rows={4}
@@ -284,20 +266,26 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
                             gap: 5,
-                            mb:2
+                            mb:2,
+                            mt:2
                         }}
                     >
                         <TextField
-                            label="Morada"
-                            name="street_address"
+                            label="Código Postal"
+                            name="postal_code"
+                            onChange={handlePostalCodeChange}
+                            value={formik.values.postal_code}
+                            error={Boolean(formik.errors.postal_code)}
+                            helperText={formik.touched.postal_code && formik.errors.postal_code}
+                            fullWidth
+                        />
+                        <TextField
+                            label="Localidade"
+                            name="city"
                             onChange={formik.handleChange}
-                            value={formik.values.street_address}
-                            error={Boolean(formik.errors.street_address)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.street_address && formik.errors.street_address}
-                                </Box>
-                            }
+                            value={formik.values.city}
+                            error={Boolean(formik.errors.city)}
+                            helperText={formik.touched.city && formik.errors.city}
                             fullWidth
                         />
                     </Box>
@@ -306,38 +294,19 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
                             gap: 5,
-                            mb:2
+                            mb:2,
                         }}
                     >
                         <TextField
-                            label="Localidade"
-                            name="city"
+                            label="Morada"
+                            name="street_address"
                             onChange={formik.handleChange}
-                            value={formik.values.city}
-                            error={Boolean(formik.errors.city)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.city && formik.errors.city}
-                                </Box>
-                            }
-                            fullWidth
-                        />
-
-                        <TextField
-                            label="Código Postal"
-                            name="postal_code"
-                            onChange={handlePostalCodeChange}
-                            value={formik.values.postal_code}
-                            error={Boolean(formik.errors.postal_code)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.postal_code && formik.errors.postal_code}
-                                </Box>
-                            }
+                            value={formik.values.street_address}
+                            error={Boolean(formik.errors.street_address)}
+                            helperText={formik.touched.street_address && formik.errors.street_address}
                             fullWidth
                         />
                     </Box>
-
                 </Box>
                 <Box
                     sx={{
@@ -346,7 +315,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                 >
                     <Box
                         sx={{
-                            height: "400px",
+                            height: "100%",
                             width: "100%",
                             border: "1px solid #ccc",
                             borderRadius: "8px",
