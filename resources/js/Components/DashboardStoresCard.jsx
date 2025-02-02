@@ -40,7 +40,7 @@ const DashboardStoresCard = observer(({ store, user }) => {
                 boxShadow: 3,
                 margin: "auto",
                 mt: 5,
-                minHeight: 500,
+                minHeight: 610,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",

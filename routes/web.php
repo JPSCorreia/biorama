@@ -83,7 +83,8 @@ Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa'
 Route::get('/loja/{id}', [StoreController::class, 'showStore'])->name('store.show');
 
 
-//Route to save a store
+Route::post('/stores/{store}/update', [StoreController::class, 'update'])->name('stores.update');
+
 Route::post('/create/store', [StoreController::class, 'Store'])->name('create.store');
 // Guest routes (only accessible when not authenticated)
 Route::middleware('guest')->group(function () {
@@ -196,7 +197,8 @@ if (env('APP_ENV') === 'local') {
     Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
 }
 
-
+Route::middleware(['auth'])->get('/stores/{id}/reviews', [DashboardController::class, 'DasboardstoreReviews']);
+Route::middleware(['auth'])->get('/stores/{id}/products', [DashboardController::class, 'productStorelist']);
 
 //TODO: routes to sort, also change route names to be standardized
 Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);

@@ -84,6 +84,29 @@ class ShopStore {
         router.get(`/dashboard/store/${storeId}`); // Rota dinâmica para exibir informações da loja
     }
 
+    // Dentro do shopStore.js
+
+    async updateStore(storeId, updatedData) {
+        try {
+            const response = await axios.post(`/stores/${storeId}/update`, updatedData);
+
+            if (response.data.success) {
+                runInAction(() => {
+                    // Atualiza os dados da loja no estado local
+                    this.currentStore = response.data.store;
+                });
+                return { success: true };
+            } else {
+                console.error("Erro ao atualizar a loja:", response.data.message);
+                return { success: false };
+            }
+        } catch (error) {
+            console.error("Erro ao enviar atualização da loja:", error);
+            return { success: false };
+        }
+    }
+
+
 
 
     // Limpa os dados da loja atual

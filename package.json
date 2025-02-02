@@ -33,6 +33,7 @@
         "vite": "^6.0.2"
     },
     "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
         "@inertiajs/react": "^2.0.2",
         "@mui/x-date-pickers": "^7.23.6",
         "@toolpad/core": "^0.12.0",

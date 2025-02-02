@@ -146,7 +146,7 @@ const DashboardStorePage = observer(() => {
                             boxShadow: 3, // Sombra igual ao card
                             margin: "auto", // Centraliza horizontalmente
                             mt: 5, // Mesma margem superior do card
-                            minHeight: 500, // Altura mínima garantida igual ao card
+                            minHeight: 620, // Altura mínima garantida igual ao card
                             display: "flex", // Exibe o conteúdo em um layout flexível
                             flexDirection: "column", // Alinha conteúdo em coluna
                             alignItems: "center", // Centraliza o conteúdo horizontalmente

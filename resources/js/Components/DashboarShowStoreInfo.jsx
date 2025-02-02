@@ -12,9 +12,12 @@ import {MapContainer, TileLayer, Marker} from "react-leaflet";
 import {fixImagePath} from "../utils/utils.js";
 import {useTheme} from "@mui/material/styles";
 import {StoreMap} from "@/Components/index.js";
-import React from "react";
+import React, {useState} from "react";
 import DashboardStoreShortCutCard from "@/Components/DashboardStoreShortCutCard.jsx";
 import ReactMarkdown from "react-markdown";
+import DashboardProductList from "@/Components/DashboardProductList.jsx";
+import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
+import DashboardStoreEditModal from "@/Components/DashboardStoreEditModal.jsx";
 
 const DashboarShowStoreInfo = observer(({store, user}) => {
 
@@ -29,6 +32,30 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
     const latitude = store?.latitude || 38.7071;
     const longitude = store?.longitude || -9.1355;
+
+    const [showProductList, setShowProductList] = useState(false)
+    // Função para lidar com o clique no card "Produtos"
+    const handleProductCardClick = () => {
+        setShowProductList(!showProductList); // Alterna entre mostrar/esconder
+        setShowReviewList(false);
+    };
+
+    const [showReviewList, setShowReviewList] = useState(false);
+
+    const handleReviewCardClick = () => {
+        setShowReviewList(!showReviewList);
+        setShowProductList(false); // Fecha o componente de produtos se estiver aberto
+    };
+
+    const [showEditModal, setShowEditModal] = useState(false);
+    const handleEditClick = () => {
+        setShowEditModal(true);
+    };
+
+    // Função para fechar o modal de edição
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+    };
 
     return (
         <Paper
@@ -192,15 +219,40 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
 
             {/* Botão de Editar */}
             <Box sx={{mt: 3, textAlign: "right"}}>
-                <Button variant="contained" color="primary">Editar</Button>
+                <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
             </Box>
 
             <Divider/>
 
             {/* container dos cards*/}
             <Box sx={{pb:3}}>
-                <DashboardStoreShortCutCard store={store}/>
+                <DashboardStoreShortCutCard
+                    store={store}
+                    onProductClick={handleProductCardClick}
+                    onReviewClick={handleReviewCardClick}
+                />
             </Box>
+
+            {/* Renderiza condicionalmente o DashboardProductList */}
+            {showProductList && (
+                <Box sx={{ mt: 2 }}>
+                    <DashboardProductList
+                        storeId={store.id}/>
+                </Box>
+            )}
+
+            {showReviewList && (
+                <Box sx={{ mt: 2 }}>
+                    <DashboardStoreReviewList storeId={store.id} />
+                </Box>
+            )}
+
+            {/* Modal de Edição */}
+            <DashboardStoreEditModal
+                open={showEditModal}
+                onClose={handleCloseEditModal}
+                store={store}
+            />
         </Paper>
     );
 });

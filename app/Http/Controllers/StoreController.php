@@ -151,19 +151,74 @@ class StoreController extends Controller
 
     public function update(Request $request, Store $store)
     {
+        // Validação dos dados recebidos
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:100|unique:stores,name,' . $store->id,
-            'email' => 'nullable|email|max:255|unique:stores,email,' . $store->id,
+            'name' => 'required|string|max:255',
             'phone_number' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255',
             'description' => 'nullable|string',
-            'street_address' => 'sometimes|string|max:255',
-            'city' => 'sometimes|string|max:50',
-            'postal_code' => 'sometimes|string|max:10',
-            'rating' => 'nullable|numeric|min:0|max:5',
+            'street_address' => 'required|string|max:255',
+            'city' => 'required|string|max:50',
+            'postal_code' => 'required|string|max:10',
+            'new_images' => 'nullable|array',
+            'new_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Limite de 2MB por imagem
+            'delete_images' => 'nullable|array', // IDs das imagens a serem excluídas
         ]);
 
-        $store->update($validated);
-        return response()->json($store);
+        try {
+            // Obter a loja
+            $store = Store::findOrFail($storeId);
+
+            // Atualizar os dados principais da loja
+            $store->update([
+                'name' => $validated['name'],
+                'phone_number' => $validated['phone_number'],
+                'email' => $validated['email'],
+                'description' => $validated['description'],
+            ]);
+
+            // Atualizar o endereço da loja
+            $store->addresses()->update([
+                'street_address' => $validated['street_address'],
+                'city' => $validated['city'],
+                'postal_code' => $validated['postal_code'],
+            ]);
+
+            // Excluir imagens marcadas para exclusão (soft delete)
+            if (!empty($validated['delete_images'])) {
+                $store->galleries()->whereIn('id', $validated['delete_images'])->delete();
+            }
+
+            // Processar novas imagens, se houver
+            if (!empty($validated['new_images'])) {
+                foreach ($validated['new_images'] as $image) {
+                    // Gerar um nome de arquivo único
+                    $imageName = 'store_' . $store->id . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+                    // Salvar a imagem no disco público
+                    $imagePath = $image->storeAs("store", $imageName, 'public');
+
+                    // Registrar a imagem na galeria
+                    $store->galleries()->create([
+                        'image_link' => "storage/$imagePath",
+                    ]);
+                }
+            }
+
+            // Retornar os dados atualizados da loja
+            $updatedStore = $store->load(['addresses', 'galleries']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Loja atualizada com sucesso!',
+                'store' => $updatedStore,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar a loja: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy(Store $store)

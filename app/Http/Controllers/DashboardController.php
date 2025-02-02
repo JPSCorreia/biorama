@@ -191,26 +191,48 @@ class DashboardController extends Controller
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
 
-public function dashboardShowStore( $id){
-
-        $store = Store::select('id',
-            'name',
-            'description',
-            'phone_number',
-            'email',
-            'rating',
+    public function dashboardShowStore($id)
+    {
+        $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating',
             DB::raw('ST_X(coordinates) as longitude'),
             DB::raw('ST_Y(coordinates) as latitude')
         )
-            ->with(['addresses', 'products', 'reviews', 'galleries'])
+            ->with(['addresses', 'reviews', 'galleries'])
             ->findOrFail($id);
 
-    return inertia('Dashboard/Store', [
-        'store' => $store,
-    ]);
-}
+        // Paginar produtos da loja
+        $products = $store->products()->paginate(10);  // 10 produtos por página
+
+        // Anexa os produtos ao objeto store
+        $store->setRelation('products', $products);
+
+        return inertia('Dashboard/Store', [
+            'store' => $store,
+        ]);
+    }
+
+    public function productStorelist($storeId)
+    {
+        // Busca a loja pelo ID
+        $store = Store::findOrFail($storeId);
+
+        // Retorna os produtos paginados
+        $products = $store->products()->paginate(10);
+
+        return response()->json($products);
+    }
 
 
+    public function DasboardstoreReviews($storeId)
+    {
+        // Busca a loja pelo ID
+        $store = Store::findOrFail($storeId);
+
+        // Retorna as reviews com o utilizador associado
+        $reviews = $store->reviews()->with('user')->paginate(10);
+
+        return response()->json($reviews);
+    }
 
 
 

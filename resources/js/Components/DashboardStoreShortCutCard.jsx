@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
-const DashboardStoreShortCutCard = observer(({store}) => {
+const DashboardStoreShortCutCard = observer(({store, onProductClick, onReviewClick  }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Lógica para dispositivos móveis
 
@@ -20,7 +20,7 @@ const DashboardStoreShortCutCard = observer(({store}) => {
             >
                 {/* Card - Produtos */}
                 <Box
-                    onClick={() => console.log("Produtos clicado")} // Ação ao clicar
+                    onClick={onProductClick} // Ação ao clicar
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -105,7 +105,7 @@ const DashboardStoreShortCutCard = observer(({store}) => {
 
                 {/* Card - Reviews */}
                 <Box
-                    onClick={() => console.log("Reviews clicado")}
+                    onClick={onReviewClick}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
