@@ -25,12 +25,12 @@ const StoreProductsContainer = ({ products, image_test }) => {
                     }}
                 >
                     <Box sx={{ display: "flex", flexDirection: "row"}}>
-                    {products.slice(0, 6).map((product) => (
+                    {products.reverse().slice(0, 6).map((product) => (
                         <ProductCard key={product.id} product={product} image_test={image_test}/>
                     ))}
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", mt: 2}}>
-                        {products.slice(6, 12).map((product) => (
+                        {products.reverse().slice(6, 12).map((product) => (
                         <ProductCard key={product.id} product={product} image_test={image_test}/>
                     ))}
                     </Box>

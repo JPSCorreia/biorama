@@ -17,14 +17,10 @@ class ProductSeeder extends Seeder
     {
         // Lista de 20 produtos fixos
         $products = [
-            ['name' => 'Maçã Royal Gala', 'price' => 2.49, 'description' => "**1kg por unidade**\n\nMaçãs doces e crocantes, ideais para snacks ou sumos naturais."],
-            ['name' => 'Laranja do Algarve', 'price' => 1.99, 'description' => "**1kg por unidade**\n\nLaranjas sumarentas e ricas em vitamina C, perfeitas para sumos frescos."],
-            ['name' => 'Abacate Hass', 'price' => 2.29, 'description' => "**250g por unidade**\n\nAbacate cremoso e nutritivo, ideal para saladas, tostas ou guacamole."],
+
             ['name' => 'Cenoura biológica', 'price' => 1.79, 'description' => "**1kg por unidade**\n\nCenouras crocantes e naturalmente doces, ótimas para sopas e acompanhamentos."],
-            ['name' => 'Batata-doce roxa', 'price' => 2.29, 'description' => "**1kg por unidade**\n\nRica em antioxidantes e de sabor adocicado, excelente para purés e assados."],
             ['name' => 'Cogumelos Shiitake', 'price' => 3.99, 'description' => "**250g por unidade**\n\nSabor intenso e textura carnuda, ideais para refogados e pratos asiáticos."],
             ['name' => 'Espinafres', 'price' => 1.49, 'description' => "**200g por unidade**\n\nFolhas frescas e ricas em ferro, ótimas para saladas ou salteados."],
-            ['name' => 'Cebola roxa', 'price' => 1.69, 'description' => "**1kg por unidade**\n\nDoce e ligeiramente picante, ideal para saladas e pratos grelhados."],
             ['name' => 'Alho biológico', 'price' => 0.89, 'description' => "**100g por unidade**\n\nAromático e essencial para temperos naturais e pratos tradicionais."],
             ['name' => 'Amêndoa com casca', 'price' => 9.99, 'description' => "**500g por unidade**\n\nRica em proteínas e gorduras saudáveis, perfeita para snacks ou confeitaria."],
             ['name' => 'Noz portuguesa', 'price' => 12.49, 'description' => "**500g por unidade**\n\nFonte de ómega-3 e antioxidantes, excelente para snacks e saladas."],
@@ -37,31 +33,36 @@ class ProductSeeder extends Seeder
             ['name' => 'Leite de amêndoa', 'price' => 2.49, 'description' => "**1L por unidade**\n\nSem açúcares adicionados, uma alternativa vegetal ao leite tradicional."],
             ['name' => 'Chocolate negro', 'price' => 2.99, 'description' => "**100g por unidade**\n\n85% cacau, intenso e sem açúcar refinado, ideal para apreciadores de chocolate puro."],
             ['name' => 'Café moído biológico', 'price' => 5.99, 'description' => "**250g por unidade**\n\nCafé de torrefação artesanal, com aroma encorpado e sabor equilibrado."],
+            ['name' => 'Maçã Royal Gala', 'price' => 2.49, 'description' => "**1kg por unidade**\n\nMaçãs doces e crocantes, ideais para snacks ou sumos naturais."],
+            ['name' => 'Laranja do Algarve', 'price' => 1.99, 'description' => "**1kg por unidade**\n\nLaranjas sumarentas e ricas em vitamina C, perfeitas para sumos frescos."],
+            ['name' => 'Abacate Hass', 'price' => 2.29, 'description' => "**250g por unidade**\n\nAbacate cremoso e nutritivo, ideal para saladas, tostas ou guacamole."],
+            ['name' => 'Batata-doce roxa', 'price' => 2.29, 'description' => "**1kg por unidade**\n\nRica em antioxidantes e de sabor adocicado, excelente para purés e assados."],
+            ['name' => 'Cebola roxa', 'price' => 1.69, 'description' => "**1kg por unidade**\n\nDoce e ligeiramente picante, ideal para saladas e pratos grelhados."],
         ];
 
 
         // Lista dos nomes das imagens, garantindo correspondência com os produtos
         $imageFiles = [
-            'product-1.png',
+            'product-1.webp',
             'product-2.jpg',
-            'product-3.webp',
+            'product-3.jpg',
             'product-4.webp',
             'product-5.jpg',
             'product-6.jpg',
-            'product-7.jpg',
+            'product-7.png',
             'product-8.jpg',
-            'product-9.webp',
-            'product-10.jpg',
-            'product-11.jpg',
-            'product-12.png',
+            'product-9.jpg',
+            'product-10.webp',
+            'product-11.webp',
+            'product-12.jpg',
             'product-13.jpg',
-            'product-14.jpg',
-            'product-15.webp',
-            'product-16.webp',
+            'product-14.webp',
+            'product-15.avif',
+            'product-16.png',
             'product-17.jpg',
-            'product-18.jpg',
-            'product-19.webp',
-            'product-20.avif',
+            'product-18.webp',
+            'product-19.jpg',
+            'product-20.jpg',
         ];
 
         // Opções de desconto possíveis (0 é mais comum)

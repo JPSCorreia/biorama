@@ -16,7 +16,6 @@ import { cartStore } from "../Stores";
 import ReactMarkdown from "react-markdown";
 
 const StoreVendorCard = observer(({ product }) => {
-    console.log(product);
 
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -31,7 +30,7 @@ const StoreVendorCard = observer(({ product }) => {
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
-                minHeight: 380,
+                minHeight: 360,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
@@ -65,6 +64,7 @@ const StoreVendorCard = observer(({ product }) => {
             <CardContent
                 sx={{
                     pb: "0 !important",
+                    pt: ".5rem !important",
                 }}
             >
                 <Box sx={{ mb: 1, display: "flex", flexDirection: "column" }}>
