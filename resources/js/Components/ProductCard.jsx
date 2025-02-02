@@ -20,7 +20,6 @@ import { cartStore } from "../Stores";
 
 const StoreVendorCard = observer(({ product, image_test }) => {
     console.log(product);
-    console.log(image_test);
 
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -31,8 +30,7 @@ const StoreVendorCard = observer(({ product, image_test }) => {
                 minWidth: 220,
                 width: smallerThanMediumScreen ? "40%" : "20%",
                 maxWidth: "220px",
-                ml: 1,
-                mr: 1,
+                mr: 2,
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
@@ -51,12 +49,8 @@ const StoreVendorCard = observer(({ product, image_test }) => {
                     backgroundColor: theme.palette.primary.main,
                 }}
             >
-                <Typography
-                    fontWeight="bold"
-                    noWrap
-                    sx={{ color: "white" }}
-                >
-                    { product.name || "Produto sem nome"}
+                <Typography fontWeight="bold" noWrap sx={{ color: "white" }}>
+                    {product.name || "Produto sem nome"}
                 </Typography>
             </CardContent>
 
@@ -71,18 +65,60 @@ const StoreVendorCard = observer(({ product, image_test }) => {
             />
 
             {/* Informações */}
-            <CardContent sx={{ pb: "0.25rem !important", display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
+            <CardContent
+                sx={{
+                    pb: "0.25rem !important",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    alignItems: "center",
+                }}
+            >
                 <Box sx={{ mb: 1 }}>
-                    <Typography fontWeight="bold">Preço:</Typography>
-                    <Typography
-                        sx={{
-                            wordWrap: "break-word",
-                            overflowWrap: "break-word",
-                            whiteSpace: "pre-wrap",
-                        }}
-                    >
-                        {product.price}€
-                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>Preço por unidade:</Typography>
+                    {product.discount > 0 ? (
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Typography
+                                sx={{
+                                    textDecoration: "line-through",
+                                    color: "red",
+                                }}
+                            >
+                                {Number(product.price).toFixed(2)}€
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {(
+                                    Number(product.price) *
+                                    (1 - product.discount / 100)
+                                ).toFixed(2)}
+                                €
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    fontSize: 12,
+                                }}
+                            >
+                                (-{Number(product.discount).toFixed(0)}%)
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography
+                            sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                                whiteSpace: "pre-wrap",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            {Number(product.price).toFixed(2)}€
+                        </Typography>
+                    )}
                 </Box>
                 <Tooltip title="Adicionar ao carrinho">
                     <IconButton
