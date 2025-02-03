@@ -489,7 +489,7 @@ const Navbar = observer(() => {
                                             paddingRight: "5px",
                                             marginLeft: "5px",
                                         }}
-                                        badgeContent={cartStore.total}
+                                        badgeContent={cartStore.totalQuantity}
                                         color="success"
                                         overlap="circular"
                                     >

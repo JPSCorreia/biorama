@@ -18,6 +18,7 @@ import DashboardProductList from "@/Components/DashboardProductList.jsx";
 import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
 import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
 import {shopStore} from "@/Stores/index.js";
+import DashBoardImageCarousel from "@/Components/DashBoardImageCarousel.jsx";
 
 const DashboarShowStoreInfo = observer(({store}) => {
 
@@ -52,6 +53,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
     };
 
     const prepareImages = (existingImages, newImages, deleteImages) => {
+        console.log("Prepar imagens para apagar", deleteImages);
         return {
             newImages: newImages.filter(Boolean), // Filtra as novas imagens válidas
             deleteImages, // IDs das imagens a serem excluídas
@@ -60,6 +62,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
 
     const handleSubmitEdit = async (updatedValues, existingImages, newImages, deleteImages) => {
         try {
+
             // Prepara as imagens corretamente
             const { newImages: preparedNewImages, deleteImages: preparedDeleteImages } = prepareImages(existingImages, newImages, deleteImages);
 
@@ -88,6 +91,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
             formDataValues.deleteImages.forEach((id, index) => {
                 formData.append(`delete_images[${index}]`, id);
             });
+            console.log("Apos adicionar imagem para apagar", formData)
 
             console.log("FormData preparado para envio: ", Array.from(formData.entries()));
 
@@ -103,12 +107,6 @@ const DashboarShowStoreInfo = observer(({store}) => {
             console.error("Erro ao enviar dados para o backend:", error);
         }
     };
-
-
-
-
-
-
 
 
     return (
@@ -129,19 +127,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
         >
             {/* Carrossel */}
             <Box sx={{position: "relative", height: 200, overflow: "hidden"}}>
-                <Carousel autoPlay={true} indicators={true}>
-                    {store?.galleries?.map((gallery, index) => (
-                        <Box
-                            key={index}
-                            sx={{
-                                height: "300px",
-                                backgroundImage: `url(${fixImagePath(gallery.image_link)})`,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                            }}
-                        ></Box>
-                    ))}
-                </Carousel>
+                <DashBoardImageCarousel galleries={store?.galleries}/>
             </Box>
 
             {/* Nome da loja */}

@@ -81,7 +81,8 @@ class StoreController extends Controller
                         }
 
                         // Gera um nome de ficheiro único
-                        $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.' . $imageType;
+                        $imageName = 'store_' . $store->id . '_' . uniqid() . '.' . $imageType;
+
 
                         // Caminho para armazenar a imagem
                         $imagePath = "store/{$imageName}";

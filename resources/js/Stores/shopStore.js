@@ -94,6 +94,7 @@ class ShopStore {
                 runInAction(() => {
                     // Atualiza o estado local com os dados retornados
                     this.currentStore = response.data.store;
+                    console.log("informação devolvida", response.data.store)
                 });
                 return { success: true };
             } else {
