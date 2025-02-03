@@ -21,7 +21,9 @@ import ReactMarkdown from "react-markdown";
 const CartProductCard = observer(({ product }) => {
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
-    const cartItem = cartStore.cart.find((item) => item.id === product.id);
+    const storeId = product.store.id;
+    const cartItems = cartStore.cart[storeId] || [];
+    const cartItem = cartItems.find((item) => item.id === product.id);
     const quantity = cartItem ? cartItem.quantity : 0;
     const totalPrice = cartItem
         ? (
@@ -107,17 +109,17 @@ const CartProductCard = observer(({ product }) => {
                         ml={1}
                         p={0.5}
                     >
-                        <Tooltip title="Remover produto">
+                        <Tooltip title="Remover quantidade">
                         <IconButton
                             sx={{ color: "red" }}
-                            disabled={quantity === 0}
-                            onClick={() => cartStore.deleteItem(product.id)}
+                            disabled={quantity <= 1}
+                            onClick={() => cartStore.deleteItem(storeId, product.id)}
                         >
                             <RemoveIcon />
                         </IconButton>
                         </Tooltip>
                         <Typography sx={{ minWidth: "20px", textAlign: "center" }}>{quantity}</Typography>
-                        <Tooltip title="Adicionar produto">
+                        <Tooltip title="Adicionar quantidade">
                         <IconButton
                             sx={{ color: "green" }}
                             onClick={() => cartStore.addItem({ ...product, quantity: 1 })}
@@ -130,7 +132,7 @@ const CartProductCard = observer(({ product }) => {
                             <IconButton
                                 color="textSecondary"
                                 sx={{ width: 40, height: 40 }}
-                                onClick={() => cartStore.removeAllOfItem(product.id)}
+                                onClick={() => cartStore.removeAllOfItem(storeId, product.id)}
                             >
                                 <DeleteIcon />
                             </IconButton>
