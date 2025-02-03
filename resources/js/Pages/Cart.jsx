@@ -31,7 +31,7 @@ const Cart = observer(() => {
                 </Typography>
                 {cartStore.totalQuantity ? (
                     <Typography variant="h7" gutterBottom sx={{ ml: 1 }}>
-                        ({cartStore.totalQuantity} artigos)
+                        ({cartStore.totalQuantity} {cartStore.totalQuantity === 1 ? "artigo" : "artigos"})
                     </Typography>
                 ) : (
                     ""
