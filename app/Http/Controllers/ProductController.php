@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\ProductGallery;
 
 class ProductController extends Controller
 {
@@ -16,14 +17,10 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $request->merge([
-            'sold_at_unit' => filter_var($request->sold_at_unit, FILTER_VALIDATE_BOOLEAN),
-        ]);
 
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'description' => 'nullable|string',
-            'sold_at_unit' => 'boolean',
             'price' => 'required|numeric|min:0',
             'discount' => 'numeric|min:0',
             'stock' => 'integer|min:0',
@@ -35,7 +32,6 @@ class ProductController extends Controller
         $product = Product::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
-            'sold_at_unit' => $validated['sold_at_unit'] ?? false,
             'price' => $validated['price'],
             'discount' => $validated['discount'] ?? 0.0,
             'stock' => $validated['stock'] ?? 0,
@@ -71,7 +67,6 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:100|unique:products,name,' . $product->id,
             'image_link' => 'nullable|url',
-            'sold_at_unit' => 'sometimes|boolean',
         ]);
 
         $product->update($validated);

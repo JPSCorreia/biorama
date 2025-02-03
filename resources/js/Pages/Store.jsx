@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
 import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription } from "../Components";
-import { Container, Typography, Box, useTheme, useMediaQuery  } from "@mui/material";
+import { Container, Box, useTheme, useMediaQuery  } from "@mui/material";
 import { AlertBox } from "../Components";
 
 const Store = observer(() => {
@@ -33,7 +33,7 @@ const Store = observer(() => {
 
             {/* Store Information */}
             <StoreDescription store={store} />
-            <StoreProductsContainer products={products} image_test={gallery[0].image_link}/>
+            <StoreProductsContainer products={products} />
             <Box
                 sx={{
                     display: "flex",

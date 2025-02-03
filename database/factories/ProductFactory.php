@@ -14,7 +14,6 @@ class ProductFactory extends Factory
         return [
             'name' => null, // O nome será preenchido no Seeder
             'description' => null, // A descrição será preenchida no Seeder
-            'sold_at_unit' => false, // Definido no Seeder
             'price' => 0.00, // Definido no Seeder
             'discount' => 0.00,
             'stock' => 50,

@@ -13,6 +13,9 @@ use Inertia\Inertia;
 use App\Models\StoreGallery;
 use App\Models\Vendor;
 use App\Models\User;
+use App\Models\StoreReview;
+use App\Models\OrderStoreProduct;
+
 
 class StoreController extends Controller
 {
@@ -311,7 +314,6 @@ class StoreController extends Controller
 
     }
 
-
     public function showStore($id)
     {
         // Get the store
@@ -344,8 +346,21 @@ class StoreController extends Controller
         // Get the user
         $user = User::where('id', $vendor->user_id)->first();
 
-        // Get all products
-        $products = $store->load('products')->products;
+
+        // Get all products and load the product images
+        $products = $store->load('products.gallery')->products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'stock' => $product->stock,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+                'image_link' => $product->gallery->first()?->image_link, // Pega a primeira imagem associada ao produto
+            ];
+        });
 
         // Get all store images
         $storeGallery = StoreGallery::where('store_id', $id)->get();
@@ -355,6 +370,12 @@ class StoreController extends Controller
 
         // Calculate vendor rating (average rating of all vendor stores)
         $vendorRating = Store::where('vendor_id', $store->vendor_id)->avg('rating');
+
+        // Get number of reviews
+        $reviewCount = StoreReview::whereIn('store_id', Store::where('vendor_id', $store->vendor_id)->pluck('id'))->count();
+
+        // Get number of sold orders
+        $orderCount = OrderStoreProduct::where('store_id', $id)->count();
 
         // Format for JSON compatibility
         $formattedStore = [
@@ -375,6 +396,8 @@ class StoreController extends Controller
         // Other section with additional information
         $other = [
             'vendor_rating' => $vendorRating,
+            'review_count' => $reviewCount,
+            'order_count' => $orderCount,
         ];
 
         return Inertia::render('Store', [

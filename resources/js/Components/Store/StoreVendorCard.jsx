@@ -83,6 +83,9 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
                     readOnly
                     sx={{ fontSize: 18 }}
                 />
+                <Typography
+                    variant="body2"
+                    color="text.secondary">{other?.review_count} avaliações</Typography>
             </CardContent>
             <Divider
                 sx={{

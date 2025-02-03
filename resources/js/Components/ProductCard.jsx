@@ -1,26 +1,21 @@
 import { observer } from "mobx-react";
 import {
     Box,
-    Button,
     Card,
     CardContent,
     CardMedia,
-    Divider,
     Typography,
     Tooltip,
     IconButton,
-    Avatar,
-    Rating,
     useTheme,
     useMediaQuery,
 } from "@mui/material";
 
 import { AddShoppingCartSharp as AddShoppingCartSharpIcon } from "@mui/icons-material";
 import { cartStore } from "../Stores";
+import ReactMarkdown from "react-markdown";
 
-const StoreVendorCard = observer(({ product, image_test }) => {
-    console.log(product);
-    console.log(image_test);
+const StoreVendorCard = observer(({ product }) => {
 
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -30,12 +25,12 @@ const StoreVendorCard = observer(({ product, image_test }) => {
             sx={{
                 minWidth: 220,
                 width: smallerThanMediumScreen ? "40%" : "20%",
-                ml: 1,
-                mr: 1,
+                maxWidth: "220px",
+                mr: 2,
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
-                minHeight: 250,
+                minHeight: 360,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
@@ -50,49 +45,109 @@ const StoreVendorCard = observer(({ product, image_test }) => {
                     backgroundColor: theme.palette.primary.main,
                 }}
             >
-                <Typography
-                    variant="h6"
-                    fontWeight="bold"
-                    noWrap
-                    sx={{ color: "white" }}
-                >
-                    { product.name || "Produto sem nome"}
+                <Typography fontWeight="bold" noWrap sx={{ color: "white" }}>
+                    {product.name || "Produto sem nome"}
                 </Typography>
             </CardContent>
 
             <CardMedia
                 sx={{
-                    height: 180,
+                    height: 120,
                     width: "100%",
                     objectFit: "cover",
                     backgroundColor: theme.palette.primary.main,
                 }}
-                image={image_test}
+                image={product.image_link}
             />
 
             {/* Informações */}
-            <CardContent sx={{ pb: "0.25rem !important", display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
-                <Box sx={{ mb: 1 }}>
-                    <Typography fontWeight="bold">Preço:</Typography>
-                    <Typography
+            <CardContent
+                sx={{
+                    pb: "0 !important",
+                    pt: ".5rem !important",
+                }}
+            >
+                <Box sx={{ mb: 1, display: "flex", flexDirection: "column" }}>
+                    <Box
+                        sx={{ minHeight: "140px", fontSize: 14, fontWeight: "normal" }}
+                    >
+                        <ReactMarkdown>{product.description}</ReactMarkdown>
+                    </Box>
+                    <Typography sx={{ fontSize: 12 }}>
+                        Preço por unidade:
+                    </Typography>
+                    <Box
+                        display="flex"
+                        alignItems="center"
                         sx={{
-                            wordWrap: "break-word",
-                            overflowWrap: "break-word",
-                            whiteSpace: "pre-wrap",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
                         }}
                     >
-                        {product.price}€
-                    </Typography>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            {product.discount > 0 ? (
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <Typography
+                                        sx={{
+                                            textDecoration: "line-through",
+                                            color: "red",
+                                        }}
+                                    >
+                                        {Number(product.price).toFixed(2)}€
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {(
+                                            Number(product.price) *
+                                            (1 - product.discount / 100)
+                                        ).toFixed(2)}
+                                        €
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            fontSize: 12,
+                                        }}
+                                    >
+                                        (-{Number(product.discount).toFixed(0)}
+                                        %)
+                                    </Typography>
+                                </Box>
+                            ) : (
+                                <Typography
+                                    sx={{
+                                        wordWrap: "break-word",
+                                        overflowWrap: "break-word",
+                                        whiteSpace: "pre-wrap",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    {Number(product.price).toFixed(2)}€
+                                </Typography>
+                            )}
+                        </Box>
+                        <Tooltip title="Adicionar ao carrinho">
+                            <IconButton
+                                color="textSecondary"
+                                sx={{ width: 40, height: 40 }}
+                                onClick={() =>
+                                    cartStore.addItem(product.name, 1)
+                                }
+                            >
+                                <AddShoppingCartSharpIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
                 </Box>
-                <Tooltip title="Adicionar ao carrinho">
-                    <IconButton
-                        color="textSecondary"
-                        sx={{ width: 40, height: 40 }}
-                        onClick={() => cartStore.addItem(product.name, 1)}
-                    >
-                        <AddShoppingCartSharpIcon />
-                    </IconButton>
-                </Tooltip>
             </CardContent>
         </Card>
     );
