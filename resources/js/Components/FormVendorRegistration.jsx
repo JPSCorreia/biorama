@@ -1,7 +1,7 @@
 import {
     Box,
     FormControl,
-    Grid,
+    Grid2,
     InputLabel,
     MenuItem,
     Select,
@@ -158,9 +158,9 @@ const FormVendorRegistration = forwardRef(
                     </Typography>
 
                     <form onSubmit={formik.handleSubmit}>
-                        <Grid container spacing={10}>
+                        <Grid2 container >
                             {/* Coluna Esquerda */}
-                            <Grid item xs={12} md={6}>
+                            <Grid2 item xs={12} md={6}>
                                 <TextField
                                     label="Nome"
                                     name="first_name"
@@ -195,8 +195,8 @@ const FormVendorRegistration = forwardRef(
                                     required
                                 />
 
-                                <Grid container>
-                                    <Grid item xs={12} md={6}>
+                                <Grid2 container>
+                                    <Grid2 item xs={12} md={6}>
                                         <FormControl
                                             sx={{ width: "80%", mt: 2 }}
                                             error={
@@ -223,8 +223,8 @@ const FormVendorRegistration = forwardRef(
                                                     ))}
                                             </Select>
                                         </FormControl>
-                                    </Grid>
-                                    <Grid
+                                    </Grid2>
+                                    <Grid2
                                         item
                                         xs={12}
                                         md={6}
@@ -245,12 +245,12 @@ const FormVendorRegistration = forwardRef(
                                             required
                                             sx={{ width: isSmallScreen ? "80%":"70%" }}
                                         />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+                                    </Grid2>
+                                </Grid2>
+                            </Grid2>
 
                             {/* Coluna Direita */}
-                            <Grid item xs={12} md={6}>
+                            <Grid2 item xs={12} md={6}>
                                 <TextField
                                     label="Apelido"
                                     name="last_name"
@@ -282,8 +282,8 @@ const FormVendorRegistration = forwardRef(
                                     required
                                 />
 
-                                <Grid container>
-                                    <Grid item xs={12} md={6}>
+                                <Grid2 container>
+                                    <Grid2 item xs={12} md={6}>
                                         <Box sx={{ width: "80%", mt: 2 }}>
                                             {/* MobileDatePicker (para telas pequenas) */}
                                             <MobileDatePicker
@@ -335,8 +335,8 @@ const FormVendorRegistration = forwardRef(
                                                 }}
                                             />
                                         </Box>
-                                    </Grid>
-                                    <Grid
+                                    </Grid2>
+                                    <Grid2
                                         item
                                         xs={12}
                                         md={6}
@@ -360,10 +360,10 @@ const FormVendorRegistration = forwardRef(
                                             required
 
                                         />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                                    </Grid2>
+                                </Grid2>
+                            </Grid2>
+                        </Grid2>
                     </form>
                 </Box>
             </LocalizationProvider>

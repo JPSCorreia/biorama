@@ -8,20 +8,20 @@ import {
 import { makePersistable } from "mobx-persist-store";
 
 class CartStore {
-    // Observable state properties
-    cart = []; // Array to store cart items
+    // Em vez de um array, agora é um objeto onde cada chave é uma store.id e o valor é um array de produtos
+    cart = {};
 
-    /**
-     * Initializes the CartStore with MobX observables and persistence
-     */
     constructor() {
         makeObservable(this, {
             cart: observable,
             addItem: action,
             deleteItem: action,
+            removeAllOfItem: action,
             clearCart: action,
+            clearStore: action,
             totalQuantity: computed,
             totalPrice: computed,
+            storeTotals: computed, // Cálculo dos totais por loja
         });
         makePersistable(this, {
             name: "cartStore",
@@ -31,76 +31,109 @@ class CartStore {
     }
 
     /**
-     * Adds an item to the cart
-     * If the item already exists, increases its quantity
-     * If it's a new item, adds it as a new entry
-     * @param {Object} item - The item to add (must contain all necessary properties)
+     * Adiciona um item ao carrinho, agrupando por store.id
      */
     addItem = action((item) => {
         runInAction(() => {
-            const existingItem = this.cart.find((cartItem) => cartItem.id === item.id);
+            const storeId = item.store.id;
+
+            if (!this.cart[storeId]) {
+                this.cart[storeId] = [];
+            }
+
+            const existingItem = this.cart[storeId].find((cartItem) => cartItem.id === item.id);
             if (existingItem) {
                 existingItem.quantity += item.quantity ?? 1;
             } else {
-                this.cart.push({ ...item, quantity: item.quantity ?? 1 });
+                this.cart[storeId].push({ ...item, quantity: item.quantity ?? 1 });
             }
         });
     });
 
     /**
-     * Removes all items from the cart
+     * Remove uma unidade de um item do carrinho
      */
-    clearCart = action(() => {
-        this.cart = [];
-    });
-
-    /**
-     * Decrements the quantity of an item
-     * If quantity becomes 0, removes the item completely
-     * @param {number} id - The ID of the item to remove
-     */
-    deleteItem = action((id) => {
+    deleteItem = action((storeId, id) => {
         runInAction(() => {
-            const itemIndex = this.cart.findIndex((item) => item.id === id);
+            if (!this.cart[storeId]) return;
+
+            const itemIndex = this.cart[storeId].findIndex((item) => item.id === id);
             if (itemIndex !== -1) {
-                if (this.cart[itemIndex].quantity > 1) {
-                    this.cart[itemIndex].quantity -= 1;
+                if (this.cart[storeId][itemIndex].quantity > 1) {
+                    this.cart[storeId][itemIndex].quantity -= 1;
                 } else {
-                    this.cart.splice(itemIndex, 1);
+                    this.cart[storeId].splice(itemIndex, 1);
                 }
             }
+
+            // Se a loja não tiver mais produtos, remove a chave da store
+            if (this.cart[storeId].length === 0) {
+                delete this.cart[storeId];
+            }
         });
     });
 
+    /**
+     * Remove todos os itens de um produto específico
+     */
+    removeAllOfItem = action((storeId, id) => {
+        runInAction(() => {
+            if (!this.cart[storeId]) return;
+
+            this.cart[storeId] = this.cart[storeId].filter(item => item.id !== id);
+
+            // Se a loja ficar vazia, remove a chave
+            if (this.cart[storeId].length === 0) {
+                delete this.cart[storeId];
+            }
+        });
+    });
 
     /**
-     * Computed property that returns the total number of items in the cart
-     * @returns {number} The sum of all item quantities
+     * Limpa todos os produtos de uma loja específica
+     */
+    clearStore = action((storeId) => {
+        runInAction(() => {
+            delete this.cart[storeId];
+        });
+    });
+
+    /**
+     * Limpa todo o carrinho
+     */
+    clearCart = action(() => {
+        this.cart = {};
+    });
+
+    /**
+     * Retorna o número total de produtos no carrinho
      */
     get totalQuantity() {
-        return this.cart.reduce((total, item) => total + (item.quantity ?? 1), 0);
+        return Object.values(this.cart).flat().reduce((total, item) => total + (item.quantity ?? 1), 0);
     }
 
     /**
-     * Computed property that returns the total price of items in the cart
-     * @returns {number} The total cost of all items
+     * Retorna o preço total considerando descontos
      */
     get totalPrice() {
-        return this.cart.reduce((total, item) =>
+        return Object.values(this.cart).flat().reduce((total, item) =>
             total + item.price * (item.quantity ?? 1) * (1 - (item.discount ?? 0) / 100),
         0).toFixed(2);
     }
 
-
     /**
-     * Removes all instances of an item from the cart
-     * @param {number} id
+     * Retorna um objeto com os totais de cada loja
      */
-    removeAllOfItem = action((id) => {
-        runInAction(() => {
-            this.cart = this.cart.filter((item) => item.id !== id);
-        });
-    });
+    get storeTotals() {
+        const totals = {};
+        for (const storeId in this.cart) {
+            if (!Array.isArray(this.cart[storeId])) continue; // Garante que é um array
+            totals[storeId] = this.cart[storeId].reduce((total, item) =>
+                total + item.price * (item.quantity ?? 1) * (1 - (item.discount ?? 0) / 100),
+            0).toFixed(2);
+        }
+        return totals;
+    }
 }
 
 export const cartStore = new CartStore();
