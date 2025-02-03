@@ -23,7 +23,7 @@ class StoreController extends Controller
 
     public function store(Request $request)
     {
-        Log::info($request->all());
+
 
         // Validação dos dados recebidos
         $validated = $request->validate([
@@ -151,6 +151,7 @@ class StoreController extends Controller
 
     public function update(Request $request, Store $store)
     {
+        //dd($request);
         // Validação dos dados recebidos
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -160,59 +161,96 @@ class StoreController extends Controller
             'street_address' => 'required|string|max:255',
             'city' => 'required|string|max:50',
             'postal_code' => 'required|string|max:10',
+            'coordinates' => 'required|string',
             'new_images' => 'nullable|array',
-            'new_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Limite de 2MB por imagem
-            'delete_images' => 'nullable|array', // IDs das imagens a serem excluídas
+            'new_images.*' => 'nullable|string',
+            'delete_images' => 'nullable|array', // IDs das imagens a serem apagadas
+
         ]);
 
         try {
-            // Obter a loja
-            $store = Store::findOrFail($storeId);
+            // Separa latitude e longitude
+            [$latitude, $longitude] = explode(',', $validated['coordinates']);
 
-            // Atualizar os dados principais da loja
-            $store->update([
+            // Atualiza a loja com os novos dados
+            DB::table('stores')->where('id', $store->id)->update([
                 'name' => $validated['name'],
                 'phone_number' => $validated['phone_number'],
                 'email' => $validated['email'],
                 'description' => $validated['description'],
+                'coordinates' => DB::raw("ST_GeomFromText('POINT({$longitude} {$latitude})')")
             ]);
 
-            // Atualizar o endereço da loja
+            // Atualiza a morada da loja
             $store->addresses()->update([
                 'street_address' => $validated['street_address'],
                 'city' => $validated['city'],
                 'postal_code' => $validated['postal_code'],
             ]);
 
-            // Excluir imagens marcadas para exclusão (soft delete)
+            // Apaga imagens marcadas para exclusão (soft delete)
             if (!empty($validated['delete_images'])) {
                 $store->galleries()->whereIn('id', $validated['delete_images'])->delete();
             }
 
-            // Processar novas imagens, se houver
+            // processa as novas imagens em base64, se houver
             if (!empty($validated['new_images'])) {
-                foreach ($validated['new_images'] as $image) {
-                    // Gerar um nome de arquivo único
-                    $imageName = 'store_' . $store->id . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $imageLinks = []; // Array para armazenar os caminhos das novas imagens
 
-                    // Salvar a imagem no disco público
-                    $imagePath = $image->storeAs("store", $imageName, 'public');
+                foreach ($validated['new_images'] as $index => $base64Image) {
+                    // Verifica e extrai o tipo da imagem base64
+                    if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+                        $imageType = $matches[1]; // Obtém a extensão do ficheiro
+                        $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
 
-                    // Registrar a imagem na galeria
-                    $store->galleries()->create([
-                        'image_link' => "storage/$imagePath",
-                    ]);
+                        if ($imageData === false) {
+                            throw new \Exception("Erro ao decodificar imagem base64.");
+                        }
+
+                        // Gera um nome de ficheiro único
+                        $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.' . $imageType;
+
+                        // Caminho para armazenar a imagem
+                        $imagePath = "store/{$imageName}";
+
+                        // Salva o ficheiro na pasta pública do storage
+                        Storage::disk('public')->put($imagePath, $imageData);
+
+                        // Guarda o caminho no array
+                        $imageLinks[] = "storage/{$imagePath}";
+
+                        // Registra no banco de dados
+                        $store->galleries()->create([
+                            'image_link' => "storage/{$imagePath}",
+                        ]);
+                    } else {
+                        throw new \Exception("Formato de imagem inválido.");
+                    }
                 }
             }
 
-            // Retornar os dados atualizados da loja
-            $updatedStore = $store->load(['addresses', 'galleries']);
+
+            // Formata a store para enviar as coordinadas separadas
+            $updatedStore = Store::select(
+                'id',
+                'name',
+                'description',
+                'phone_number',
+                'email',
+                'rating',
+                DB::raw('ST_X(coordinates) as longitude'),
+                DB::raw('ST_Y(coordinates) as latitude')
+            )
+                ->where('id', $store->id)
+                ->with(['addresses', 'galleries', 'reviews', 'products'])
+                ->first();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Loja atualizada com sucesso!',
                 'store' => $updatedStore,
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -221,15 +259,15 @@ class StoreController extends Controller
         }
     }
 
+
+
     public function destroy(Store $store)
     {
         $store->delete();
         return response()->json(null, 204);
     }
 
-    /**
-     * Retorna as lojas próximas com base na localização do utilizador.
-     */
+
     public function getNearbyStores(Request $request)
     {
 
@@ -349,7 +387,5 @@ class StoreController extends Controller
             'other' => $other
         ]);
     }
-
-
 
 }

@@ -11,23 +11,18 @@ import Carousel from "react-material-ui-carousel";
 import {MapContainer, TileLayer, Marker} from "react-leaflet";
 import {fixImagePath} from "../utils/utils.js";
 import {useTheme} from "@mui/material/styles";
-import {StoreMap} from "@/Components/index.js";
 import React, {useState} from "react";
 import DashboardStoreShortCutCard from "@/Components/DashboardStoreShortCutCard.jsx";
 import ReactMarkdown from "react-markdown";
 import DashboardProductList from "@/Components/DashboardProductList.jsx";
 import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
-import DashboardStoreEditModal from "@/Components/DashboardStoreEditModal.jsx";
+import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
+import {shopStore} from "@/Stores/index.js";
 
-const DashboarShowStoreInfo = observer(({store, user}) => {
+const DashboarShowStoreInfo = observer(({store}) => {
 
     const theme = useTheme();
 
-    const backgroundImage = fixImagePath(store?.galleries?.[0]?.image_link)
-        || "https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp";
-
-    const profileImage = fixImagePath(user?.image_profile)
-        || "https://img.freepik.com/free-photo/sideways-black-person-looking-away_23-2148749548.jpg?t=st=1738098181~exp=1738101781~hmac=37201112c86819d842272cc0f3c10da8c78de0e39ee9a77845680f10018abde5&w=1800";
     // Get media queries
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
     const latitude = store?.latitude || 38.7071;
@@ -47,15 +42,74 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
         setShowProductList(false); // Fecha o componente de produtos se estiver aberto
     };
 
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const handleEditClick = () => {
-        setShowEditModal(true);
+        setIsEditing(true); // Alterna para o modo de edição
     };
 
-    // Função para fechar o modal de edição
-    const handleCloseEditModal = () => {
-        setShowEditModal(false);
+    const handleCancelEdit = () => {
+        setIsEditing(false); // Volta para o modo de visualização
     };
+
+    const prepareImages = (existingImages, newImages, deleteImages) => {
+        return {
+            newImages: newImages.filter(Boolean), // Filtra as novas imagens válidas
+            deleteImages, // IDs das imagens a serem excluídas
+        };
+    };
+
+    const handleSubmitEdit = async (updatedValues, existingImages, newImages, deleteImages) => {
+        try {
+            // Prepara as imagens corretamente
+            const { newImages: preparedNewImages, deleteImages: preparedDeleteImages } = prepareImages(existingImages, newImages, deleteImages);
+
+            // Adiciona as imagens ao updatedValues antes de enviar
+            const formDataValues = {
+                ...updatedValues,
+                newImages: preparedNewImages,
+                deleteImages: preparedDeleteImages,
+            };
+
+            const formData = new FormData();
+
+            // Adicionar dados básicos
+            for (const key in formDataValues) {
+                if (key !== 'existingImages' && key !== 'newImages' && key !== 'deleteImages') {
+                    formData.append(key, formDataValues[key]);
+                }
+            }
+
+            // Adicionar novas imagens (base64)
+            formDataValues.newImages.forEach((img, index) => {
+                formData.append(`new_images[${index}]`, img);
+            });
+
+            // Adicionar imagens para exclusão (IDs)
+            formDataValues.deleteImages.forEach((id, index) => {
+                formData.append(`delete_images[${index}]`, id);
+            });
+
+            console.log("FormData preparado para envio: ", Array.from(formData.entries()));
+
+            // Enviar para o backend
+            const result = await shopStore.updateStore(store.id, formData);
+            if (result.success) {
+                console.log("Loja atualizada com sucesso!");
+                setIsEditing(false);
+            } else {
+                console.error("Erro ao atualizar a loja.");
+            }
+        } catch (error) {
+            console.error("Erro ao enviar dados para o backend:", error);
+        }
+    };
+
+
+
+
+
+
+
 
     return (
         <Paper
@@ -115,112 +169,111 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
             </Box>
 
             <Divider/>
-            <Box sx={{flex: 1}}>
-
-            </Box>
-            {/* Informações da loja */}
-            <Box sx={{display: "flex", gap: 2, mb: 3, pt:3, flexDirection: isSmallScreen ? "column" : "row",}}>
-                {/* Informações da loja */}
-                <Box sx={{flex: "1 1 50%", marginBottom: "3%", p: 2}}>
-                    {/* Linha 1 - Email & Telemóvel */}
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 3
-                    }}>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Email:</Typography>
-                            <Typography sx={{fontSize: "1rem"}}>{store?.email || "Sem email"}</Typography>
+            {/* Conteúdo alternado: visualização ou formulário */}
+            {!isEditing ? (
+            <Box>
+                <Box sx={{display: "flex", gap: 2, mb: 1, pt:3, flexDirection: isSmallScreen ? "column" : "row",}}>
+                    {/* Informações da loja */}
+                    <Box sx={{flex: "1 1 50%", marginBottom: "3%", p: 2}}>
+                        {/* Linha 1 - Email & Telemóvel */}
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            flexWrap: "wrap",
+                            gap: 2,
+                            mb: 3
+                        }}>
+                            <Box sx={{flex: "1 1 45%"}}>
+                                <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Email:</Typography>
+                                <Typography sx={{fontSize: "1rem"}}>{store?.email || "Sem email"}</Typography>
+                            </Box>
+                            <Box sx={{flex: "1 1 45%"}}>
+                                <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Telemóvel:</Typography>
+                                <Typography
+                                    sx={{fontSize: "1rem"}}>{store?.phone_number || "Sem número de telemóvel"}</Typography>
+                            </Box>
                         </Box>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Telemóvel:</Typography>
-                            <Typography
-                                sx={{fontSize: "1rem"}}>{store?.phone_number || "Sem número de telemóvel"}</Typography>
+
+                        {/* Linha 2 - Localidade & Código Postal */}
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            flexWrap: "wrap",
+                            gap: 2,
+                            mb: 3
+                        }}>
+                            <Box sx={{flex: "1 1 45%"}}>
+                                <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Localidade:</Typography>
+                                <Typography sx={{fontSize: "1rem"}}>
+                                    {store?.addresses?.[0]?.city || "Código postal não disponível"}
+                                </Typography>
+                            </Box>
+                            <Box sx={{flex: "1 1 45%"}}>
+                                <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Código Postal:</Typography>
+                                <Typography sx={{fontSize: "1rem"}}>
+                                    {store?.addresses?.[0]?.postal_code || "Não disponível"}
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        {/* Linha 3 - Morada */}
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            flexWrap: "wrap",
+                            gap: 2,
+                            mb: 3
+                        }}>
+                            <Box sx={{flex: "1 1 45%"}}>
+                                <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Morada:</Typography>
+                                <Typography sx={{fontSize: "1rem"}}>
+                                    {store?.addresses?.[0]?.street_address || "Código postal não disponível"}
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        {/* Linha 4 - Descrição */}
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: isSmallScreen ? "column" : "row",
+                            flexWrap: "wrap",
+                            gap: 2,
+                            mb: 3
+                        }}>
+                            <Box sx={{flex: "1 1 45%"}}>
+                                <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Descrição:</Typography>
+                                <ReactMarkdown>
+                                    {store?.description || "Sem descrição"}
+                                </ReactMarkdown>
+                            </Box>
                         </Box>
                     </Box>
 
-                    {/* Linha 2 - Localidade & Código Postal */}
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 3
-                    }}>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Localidade:</Typography>
-                            <Typography sx={{fontSize: "1rem"}}>
-                                {store?.addresses?.[0]?.city || "Código postal não disponível"}
-                            </Typography>
-                        </Box>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Código Postal:</Typography>
-                            <Typography sx={{fontSize: "1rem"}}>
-                                {store?.addresses?.[0]?.postal_code || "Não disponível"}
-                            </Typography>
+                    {/* Localização no Mapa */}
+                    <Box sx={{flex: "1 1 50%"}}>
+                        <Typography variant="h5" sx={{mb: 2}}>
+                            Localização no Mapa
+                        </Typography>
+                        <Box sx={{height: "400px", width: "100%", borderRadius: "8px", overflow: "hidden"}}>
+                            <MapContainer center={[latitude, longitude]} zoom={13} style={{height: "100%", width: "100%"}}>
+                                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                <Marker position={[latitude, longitude]}/>
+                            </MapContainer>
                         </Box>
                     </Box>
 
-                    {/* Linha 3 - Morada */}
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 3
-                    }}>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Morada:</Typography>
-                            <Typography sx={{fontSize: "1rem"}}>
-                                {store?.addresses?.[0]?.street_address || "Código postal não disponível"}
-                            </Typography>
-                        </Box>
-                    </Box>
-
-                    {/* Linha 4 - Descrição */}
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 3
-                    }}>
-                        <Box sx={{flex: "1 1 45%"}}>
-                            <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Descrição:</Typography>
-                            <ReactMarkdown>
-                                {store?.description || "Sem descrição"}
-                            </ReactMarkdown>
-                        </Box>
-                    </Box>
                 </Box>
-
-                {/* Localização no Mapa */}
-                <Box sx={{flex: "1 1 50%"}}>
-                    <Typography variant="h5" sx={{mb: 2}}>
-                        Localização no Mapa
-                    </Typography>
-                    <Box sx={{height: "400px", width: "100%", borderRadius: "8px", overflow: "hidden"}}>
-                        <MapContainer center={[latitude, longitude]} zoom={13} style={{height: "100%", width: "100%"}}>
-                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-                            <Marker position={[latitude, longitude]}/>
-                        </MapContainer>
-                    </Box>
+                <Box sx={{mt: 1, textAlign: "right"}}>
+                    <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
                 </Box>
             </Box>
-
-
-
-
-
-            {/* Mapa */}
-
-
-            {/* Botão de Editar */}
-            <Box sx={{mt: 3, textAlign: "right"}}>
-                <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
-            </Box>
+            ):(
+                <DashboardStoreEditForm
+                    store={store}
+                    onCancel={handleCancelEdit}
+                    onSubmit={handleSubmitEdit} // Recebe as informações do formulário
+                />
+            )}
 
             <Divider/>
 
@@ -246,13 +299,6 @@ const DashboarShowStoreInfo = observer(({store, user}) => {
                     <DashboardStoreReviewList storeId={store.id} />
                 </Box>
             )}
-
-            {/* Modal de Edição */}
-            <DashboardStoreEditModal
-                open={showEditModal}
-                onClose={handleCloseEditModal}
-                store={store}
-            />
         </Paper>
     );
 });
