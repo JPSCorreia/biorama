@@ -1,6 +1,6 @@
 import {
     Box,
-    Button,
+    Button, useMediaQuery, useTheme,
 } from "@mui/material";
 import {forwardRef} from "react";
 import { useEffect } from "react";
@@ -9,6 +9,8 @@ import {vendorRegistrationStore} from "@/Stores/index.js";
 
 
 const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyRef, onCloseCompanyForm }, ref) => {
+
+    const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
     useEffect(() => {
         console.log("Step1PersonalInfo -> Recebeu refs:", { ref, companyRef });
@@ -19,7 +21,7 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: "85%",
+                width: isSmallScreen ? "100%":"65%",
                 "& > :first-of-type": {
                     mb: 4,
                 },

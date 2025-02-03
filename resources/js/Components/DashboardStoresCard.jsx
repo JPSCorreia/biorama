@@ -123,7 +123,7 @@ const DashboardStoresCard = observer(({ store, user }) => {
                         <Box>
                             <Typography fontWeight="bold">Rating:</Typography>
                             <Rating
-                                value={store?.rating || 0}
+                                value={Number(store?.rating) || 0}
                                 precision={0.5} // Permite meio ponto (exemplo: 4.5 estrelas)
                                 readOnly
                             />
