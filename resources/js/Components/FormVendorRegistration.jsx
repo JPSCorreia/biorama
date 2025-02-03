@@ -26,7 +26,9 @@ const FormVendorRegistration = forwardRef(
         { genders, formErrors, handleCloseCompanyForm, refCompany, isCompany },
         ref
     ) => {
-        const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
+        const theme = useTheme();
+        const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+        const isMediumScreen = useMediaQuery(useTheme().breakpoints.between("sm", "md"));
 
         const validationSchema = yup.object().shape({
             first_name: yup.string().required("O nome é obrigatório"),
@@ -80,33 +82,27 @@ const FormVendorRegistration = forwardRef(
 
         useImperativeHandle(
             ref,
-            () => {
-                console.log("useImperativeHandle foi chamado!"); // Para depuração
-                return {
-                    validateForm: formik.validateForm,
-                    setTouched: formik.setTouched,
-                    setFieldValue: formik.setFieldValue,
-                    values: formik.values,
-                    handleSubmit: formik.handleSubmit,
-                };
-            },
+            () => ({
+                validateForm: formik.validateForm,
+                setTouched: formik.setTouched,
+                setFieldValue: formik.setFieldValue,
+                values: formik.values,
+                handleSubmit: formik.handleSubmit,
+            }),
             [formik]
         );
 
         useEffect(() => {
             if (formErrors) {
                 formik.setErrors(formErrors);
-
-                // Marca todos os campos como "touched" para que os erros apareçam sempre
+                // Marca todos os campos como "touched" para exibir os erros
                 formik.setTouched(
                     Object.keys(formErrors).reduce((acc, key) => {
                         acc[key] = true;
                         return acc;
                     }, {})
                 );
-
-                // Força uma revalidação para garantir que os erros aparecem
-                console.log("Revalidar formulário"); // Para depuração
+                console.log("Revalidar formulário");
                 formik.validateForm();
             }
         }, [formErrors]);
@@ -143,6 +139,7 @@ const FormVendorRegistration = forwardRef(
                         <Typography sx={{ fontSize: "2.5rem", fontWeight: "bold" }}>
                             Dados Pessoais
                         </Typography>
+
                     </Box>
                     {/* Texto explicativo */}
                     <Typography
@@ -153,217 +150,386 @@ const FormVendorRegistration = forwardRef(
                             mb: 2,
                         }}
                     >
-                        *Certifique-se que preenche corretamente os seus dados antes de avançar no
-                        processo de registo enquanto vendedor.
+                        *Certifique-se que preenche corretamente os seus dados antes de avançar
+                        no processo de registo enquanto vendedor.
                     </Typography>
 
                     <form onSubmit={formik.handleSubmit}>
-                        <Grid container spacing={10}>
-                            {/* Coluna Esquerda */}
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label="Nome"
-                                    name="first_name"
-                                    fullWidth
-                                    margin="normal"
-                                    value={formik.values.first_name}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={
-                                        formik.touched.first_name &&
-                                        Boolean(formik.errors.first_name)
-                                    }
-                                    helperText={
-                                        formik.touched.first_name ? formik.errors.first_name : ""
-                                    }
-                                    required
-                                />
-
-                                <TextField
-                                    label="Email"
-                                    name="email"
-                                    type="email"
-                                    fullWidth
-                                    margin="normal"
-                                    value={formik.values.email}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.email && Boolean(formik.errors.email)}
-                                    helperText={
-                                        formik.touched.email ? formik.errors.email : ""
-                                    }
-                                    required
-                                />
-
-                                <Grid container>
-                                    <Grid item xs={12} md={6}>
-                                        <FormControl
-                                            sx={{ width: "80%", mt: 2 }}
-                                            error={
-                                                formik.touched.gender_id &&
-                                                Boolean(formik.errors.gender_id)
-                                            }
+                        {isSmallScreen || isMediumScreen ? (
+                            // Layout Mobile: campos empilhados em uma única coluna
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="Nome"
+                                        name="first_name"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.first_name}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.first_name &&
+                                            Boolean(formik.errors.first_name)
+                                        }
+                                        helperText={
+                                            formik.touched.first_name
+                                                ? formik.errors.first_name
+                                                : ""
+                                        }
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="Email"
+                                        name="email"
+                                        type="email"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.email && Boolean(formik.errors.email)
+                                        }
+                                        helperText={
+                                            formik.touched.email ? formik.errors.email : ""
+                                        }
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="NIF"
+                                        name="nif"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.nif}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.nif && Boolean(formik.errors.nif)
+                                        }
+                                        helperText={formik.touched.nif ? formik.errors.nif : ""}
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="Nrº Telemóvel"
+                                        name="phone"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.phone}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.phone && Boolean(formik.errors.phone)
+                                        }
+                                        helperText={
+                                            formik.touched.phone ? formik.errors.phone : ""
+                                        }
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="Apelido"
+                                        name="last_name"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.last_name}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.last_name &&
+                                            Boolean(formik.errors.last_name)
+                                        }
+                                        helperText={
+                                            formik.touched.last_name ? formik.errors.last_name : ""
+                                        }
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="IBAN"
+                                        name="iban"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.iban}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.iban && Boolean(formik.errors.iban)
+                                        }
+                                        helperText={formik.touched.iban ? formik.errors.iban : ""}
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <MobileDatePicker
+                                        label="Data de Nascimento"
+                                        value={formik.values.date_of_birth}
+                                        onChange={(value) =>
+                                            formik.setFieldValue("date_of_birth", value)
+                                        }
+                                        onBlur={() =>
+                                            formik.setFieldTouched("date_of_birth", true)
+                                        }
+                                        slotProps={{
+                                            textField: {
+                                                error:
+                                                    formik.touched.date_of_birth &&
+                                                    Boolean(formik.errors.date_of_birth),
+                                                helperText: formik.touched.date_of_birth
+                                                    ? formik.errors.date_of_birth
+                                                    : "",
+                                            },
+                                        }}
+                                        sx={{ width: "80%" }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl
+                                        sx={{ width: isSmallScreen
+                                                ? "80%"
+                                                : isSmallScreen
+                                                    ? "50%"
+                                                    : "80%" }}
+                                        margin="normal"
+                                        error={
+                                            formik.touched.gender_id &&
+                                            Boolean(formik.errors.gender_id)
+                                        }
+                                    >
+                                        <InputLabel id="gender-select-label">
+                                            Género
+                                        </InputLabel>
+                                        <Select
+                                            labelId="gender-select-label"
+                                            id="gender-select"
+                                            name="gender_id"
+                                            value={formik.values.gender_id}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                         >
-                                            <InputLabel id="gender-select-label">
-                                                Género
-                                            </InputLabel>
-                                            <Select
-                                                labelId="gender-select-label"
-                                                id="gender-select"
-                                                name="gender_id"
-                                                value={formik.values.gender_id}
+                                            {Array.isArray(genders) &&
+                                                genders.map((gender) => (
+                                                    <MenuItem key={gender.id} value={gender.id}>
+                                                        {gender.name}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        ) : (
+                            // Layout Desktop: duas colunas (layout existente)
+                            <Grid container spacing={10}>
+                                {/* Coluna Esquerda */}
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        label="Nome"
+                                        name="first_name"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.first_name}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.first_name &&
+                                            Boolean(formik.errors.first_name)
+                                        }
+                                        helperText={
+                                            formik.touched.first_name
+                                                ? formik.errors.first_name
+                                                : ""
+                                        }
+                                        required
+                                    />
+
+                                    <TextField
+                                        label="Email"
+                                        name="email"
+                                        type="email"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.email && Boolean(formik.errors.email)
+                                        }
+                                        helperText={
+                                            formik.touched.email ? formik.errors.email : ""
+                                        }
+                                        required
+                                    />
+
+                                    <Grid container>
+                                        <Grid item xs={12} md={6}>
+                                            <FormControl
+                                                sx={{ width: "95%", mt: 2 }}
+                                                error={
+                                                    formik.touched.gender_id &&
+                                                    Boolean(formik.errors.gender_id)
+                                                }
+                                            >
+                                                <InputLabel id="gender-select-label">
+                                                    Género
+                                                </InputLabel>
+                                                <Select
+                                                    labelId="gender-select-label"
+                                                    id="gender-select"
+                                                    name="gender_id"
+                                                    value={formik.values.gender_id}
+                                                    onChange={formik.handleChange}
+                                                    onBlur={formik.handleBlur}
+                                                >
+                                                    {Array.isArray(genders) &&
+                                                        genders.map((gender) => (
+                                                            <MenuItem key={gender.id} value={gender.id}>
+                                                                {gender.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            md={6}
+                                            sx={{ textAlign: isSmallScreen ? "left" : "right" }}
+                                        >
+                                            <TextField
+                                                label="NIF"
+                                                name="nif"
+                                                fullWidth
+                                                margin="normal"
+                                                value={formik.values.nif}
                                                 onChange={formik.handleChange}
                                                 onBlur={formik.handleBlur}
-                                            >
-                                                {Array.isArray(genders) &&
-                                                    genders.map((gender) => (
-                                                        <MenuItem key={gender.id} value={gender.id}>
-                                                            {gender.name}
-                                                        </MenuItem>
-                                                    ))}
-                                            </Select>
-                                        </FormControl>
+                                                error={
+                                                    formik.touched.nif && Boolean(formik.errors.nif)
+                                                }
+                                                helperText={formik.touched.nif ? formik.errors.nif : ""}
+                                                required
+                                                sx={{ width: isSmallScreen ? "80%" : "70%" }}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        md={6}
-                                        sx={{ textAlign: isSmallScreen ? "left":"right" }}
-                                    >
-                                        <TextField
-                                            label="NIF"
-                                            name="nif"
-                                            fullWidth
-                                            margin="normal"
-                                            value={formik.values.nif}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.nif && Boolean(formik.errors.nif)
-                                            }
-                                            helperText={formik.touched.nif ? formik.errors.nif : ""}
-                                            required
-                                            sx={{ width: isSmallScreen ? "80%":"70%" }}
-                                        />
+                                </Grid>
+
+                                {/* Coluna Direita */}
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        label="Apelido"
+                                        name="last_name"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.last_name}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.last_name &&
+                                            Boolean(formik.errors.last_name)
+                                        }
+                                        helperText={
+                                            formik.touched.last_name ? formik.errors.last_name : ""
+                                        }
+                                        required
+                                    />
+
+                                    <TextField
+                                        label="IBAN"
+                                        name="iban"
+                                        fullWidth
+                                        margin="normal"
+                                        value={formik.values.iban}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.iban && Boolean(formik.errors.iban)
+                                        }
+                                        helperText={formik.touched.iban ? formik.errors.iban : ""}
+                                        required
+                                    />
+
+                                    <Grid container>
+                                        <Grid item xs={12} md={6}>
+                                            <Box sx={{ width: "95%", mt: 2 }}>
+                                                <MobileDatePicker
+                                                    label="Data de Nascimento"
+                                                    value={formik.values.date_of_birth}
+                                                    onChange={(value) =>
+                                                        formik.setFieldValue("date_of_birth", value)
+                                                    }
+                                                    onBlur={() =>
+                                                        formik.setFieldTouched("date_of_birth", true)
+                                                    }
+                                                    slotProps={{
+                                                        textField: {
+                                                            error:
+                                                                formik.touched.date_of_birth &&
+                                                                Boolean(formik.errors.date_of_birth),
+                                                            helperText: formik.touched.date_of_birth
+                                                                ? formik.errors.date_of_birth
+                                                                : "",
+                                                        },
+                                                    }}
+                                                    sx={{ display: isSmallScreen ? "block" : "none" }}
+                                                />
+                                                <DatePicker
+                                                    label="Data de Nascimento"
+                                                    value={formik.values.date_of_birth}
+                                                    onChange={(value) =>
+                                                        formik.setFieldValue("date_of_birth", value)
+                                                    }
+                                                    onBlur={() =>
+                                                        formik.setFieldTouched("date_of_birth", true)
+                                                    }
+                                                    slotProps={{
+                                                        textField: {
+                                                            error:
+                                                                formik.touched.date_of_birth &&
+                                                                Boolean(formik.errors.date_of_birth),
+                                                            helperText: formik.touched.date_of_birth
+                                                                ? formik.errors.date_of_birth
+                                                                : "",
+                                                        },
+                                                    }}
+                                                    sx={{ display: isSmallScreen ? "none" : "block" }}
+                                                />
+                                            </Box>
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            md={6}
+                                            sx={{ textAlign: isSmallScreen ? "left" : "right" }}
+                                        >
+                                            <TextField
+                                                label="Nrº Telemóvel"
+                                                name="phone"
+                                                margin="normal"
+                                                value={formik.values.phone}
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                                error={
+                                                    formik.touched.phone && Boolean(formik.errors.phone)
+                                                }
+                                                helperText={
+                                                    formik.touched.phone ? formik.errors.phone : ""
+                                                }
+                                                sx={{ width: "70%" }}
+                                                required
+                                            />
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </Grid>
-
-                            {/* Coluna Direita */}
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label="Apelido"
-                                    name="last_name"
-                                    fullWidth
-                                    margin="normal"
-                                    value={formik.values.last_name}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={
-                                        formik.touched.last_name &&
-                                        Boolean(formik.errors.last_name)
-                                    }
-                                    helperText={
-                                        formik.touched.last_name ? formik.errors.last_name : ""
-                                    }
-                                    required
-                                />
-
-                                <TextField
-                                    label="IBAN"
-                                    name="iban"
-                                    fullWidth
-                                    margin="normal"
-                                    value={formik.values.iban}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.iban && Boolean(formik.errors.iban)}
-                                    helperText={formik.touched.iban ? formik.errors.iban : ""}
-                                    required
-                                />
-
-                                <Grid container>
-                                    <Grid item xs={12} md={6}>
-                                        <Box sx={{ width: "80%", mt: 2 }}>
-                                            {/* MobileDatePicker (para telas pequenas) */}
-                                            <MobileDatePicker
-                                                label="Data de Nascimento"
-                                                value={formik.values.date_of_birth}
-                                                onChange={(value) =>
-                                                    formik.setFieldValue("date_of_birth", value)
-                                                }
-                                                onBlur={() =>
-                                                    formik.setFieldTouched("date_of_birth", true)
-                                                }
-                                                slotProps={{
-                                                    textField: {
-                                                        error:
-                                                            formik.touched.date_of_birth &&
-                                                            Boolean(formik.errors.date_of_birth),
-                                                        helperText: formik.touched.date_of_birth
-                                                            ? formik.errors.date_of_birth
-                                                            : "",
-                                                    },
-                                                }}
-                                                sx={{
-                                                    display: isSmallScreen ? "block" : "none",
-                                                }}
-                                            />
-
-                                            {/* DatePicker (para telas maiores) */}
-                                            <DatePicker
-                                                label="Data de Nascimento"
-                                                value={formik.values.date_of_birth}
-                                                onChange={(value) =>
-                                                    formik.setFieldValue("date_of_birth", value)
-                                                }
-                                                onBlur={() =>
-                                                    formik.setFieldTouched("date_of_birth", true)
-                                                }
-                                                slotProps={{
-                                                    textField: {
-                                                        error:
-                                                            formik.touched.date_of_birth &&
-                                                            Boolean(formik.errors.date_of_birth),
-                                                        helperText: formik.touched.date_of_birth
-                                                            ? formik.errors.date_of_birth
-                                                            : "",
-                                                    },
-                                                }}
-                                                sx={{
-                                                    display: isSmallScreen ? "none" : "block",
-                                                }}
-                                            />
-                                        </Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        md={6}
-                                        sx={{ textAlign: isSmallScreen ? "left" : "right" }}
-                                    >
-                                        <TextField
-                                            label="Nrº Telemóvel"
-                                            name="phone"
-                                            margin="normal"
-                                            value={formik.values.phone}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.phone &&
-                                                Boolean(formik.errors.phone)
-                                            }
-                                            helperText={
-                                                formik.touched.phone ? formik.errors.phone : ""
-                                            }
-                                            sx={{ width: "70%" }}
-                                            required
-
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                        )}
                     </form>
                 </Box>
             </LocalizationProvider>

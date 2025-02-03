@@ -21,7 +21,6 @@ import {vendorStore} from "../Stores";
 const VendorInformation = observer(() => {
     const {genders, auth} = usePage().props;
 
-
     // Load vendor data into the MobX store when component mounts or user changes
     vendorStore.setVendorData(auth.user.vendor);
 

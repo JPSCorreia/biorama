@@ -10,7 +10,7 @@ import { router } from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { alertStore } from "../Stores";
-import BannerImage from "../../images/banner2.png";
+import BannerImage from "../../images/banner3.png";
 
 const Home = observer(() => {
     // Get theme

@@ -11,6 +11,7 @@ import {vendorRegistrationStore} from "@/Stores/index.js";
 const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyRef, onCloseCompanyForm }, ref) => {
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(useTheme().breakpoints.between("sm", "md"));
 
     useEffect(() => {
         console.log("Step1PersonalInfo -> Recebeu refs:", { ref, companyRef });
@@ -21,13 +22,17 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: isSmallScreen ? "100%":"65%",
+                width: isSmallScreen
+                    ? "100%"
+                    : isMediumScreen
+                        ? "90%"
+                        : "100%",
                 "& > :first-of-type": {
                     mb: 4,
                 },
             }}
         >
-            {/* Formulário de registo pessoal */}
+            {/* Form Vendor personal Info */}
             <FormVendorRegistration
                 genders={genders}
                 ref={ref}
@@ -38,22 +43,31 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
             <Button
                 variant="outlined"
                 onClick={() => {
-                    if (ref.current) {  // Garante que `ref.current` existe antes de chamar `setFieldValue`
-                        ref.current.setFieldValue("is_company", true); // Atualiza o estado do formulário
+                    if (ref.current) {
+                        ref.current.setFieldValue("is_company", true);
                     }
 
-                    vendorRegistrationStore.setIsCompany(true); // Atualiza o estado na store
+                    vendorRegistrationStore.setIsCompany(true);
                 }}
                 sx={{
-                    display: vendorRegistrationStore.isCompany ? "none" : "block", // Verifica `is_company` de forma segura
+                    display: vendorRegistrationStore.isCompany ? "none" : "block",
                     color: "#000",
                     borderColor: "#000",
+                    borderRadius: 2,
+                    width: isSmallScreen
+                        ? "75%"
+                        : isMediumScreen
+                            ? "47%"
+                            : "35%",
+                    fontSize: "0.85rem",
+                    textAlign: "left",
+                    textTransform: "none",
                 }}
             >
                 Quero registar a minha empresa
             </Button>
 
-            {/* Formulário de empresa (aparece apenas se for empresa) */}
+            {/* Company form show only if user want be company */}
             {isCompany && (
                 <FormCompanyRegistration
                     ref={companyRef}

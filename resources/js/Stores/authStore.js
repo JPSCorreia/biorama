@@ -1,6 +1,7 @@
 import { action, makeObservable, observable } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import { homeAddressStore } from "./homeAddressStore.js";
+import { vendorStore } from "./vendorsStore.js";
 import axios from "axios";
 
 class AuthStore {
@@ -38,6 +39,7 @@ class AuthStore {
             homeAddressStore.addresses = homeAddressStore.fetchAddresses(); // Fetch user addresses if authenticated
         } else {
             homeAddressStore.clearAddresses(); // Clear addresses if not authenticated
+            vendorStore.clearVendorData(); // Clear vendor data if not authenticated
         }
     }
 
