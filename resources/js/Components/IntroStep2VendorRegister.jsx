@@ -1,15 +1,18 @@
-import { Box, Typography } from '@mui/material';
+import {Box, Typography, useMediaQuery, useTheme} from '@mui/material';
 
 const IntroStep2VendorRegister = () => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
     return (
         <Box sx={{ mt: 4, px: 2 }}>
             <Box
                 sx={{
-                    width: "90%",
+                    width: isSmallScreen || isMediumScreen ? "100%" : "90%",
                     display: "flex",
-                    flexDirection: "row",
+                    flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
                     justifyContent: "space-between",
-                    alignItems: "center",
+                    alignItems: isSmallScreen ? "center" : "flex-start",
                     m: "auto",
                 }}
             >
@@ -17,10 +20,14 @@ const IntroStep2VendorRegister = () => {
                 <Box
                     sx={{
                         textAlign: "justify",
-                        width: "50%",
+                        width: isSmallScreen
+                            ? "100%"
+                            : isMediumScreen
+                                ? "100%"
+                                : "50%",
                         display: "flex",
                         flexDirection: "column",
-                        mt: "5%",
+                        m: "auto",
                     }}
                 >
                     <Typography variant="h6" gutterBottom>
@@ -52,16 +59,14 @@ const IntroStep2VendorRegister = () => {
                 </Box>
                 <Box
                     component="img"
-                    src='/images/Fase 2 - registoVendor.png'
-                    alt="Imagem ilustrativa do registo da loja"
+                    src="/images/Fase 2 - registoVendor.png"
+                    alt="Imagem ilustrativa de registo"
                     sx={{
-                        width: "40%",
+                        width: isSmallScreen || isMediumScreen ? "100%" : "40%",
                         objectFit: "cover",
                         borderRadius: "8px",
                         minHeight: "400px",
-                        display: "flex",
-                        alignItems: "flex-end",
-                        mt: "10%",
+                        mt: isSmallScreen ? "5%" : isMediumScreen ? "0" : "10%",
                     }}
                 />
             </Box>

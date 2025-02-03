@@ -58,9 +58,9 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
                         ? "75%"
                         : isMediumScreen
                             ? "47%"
-                            : "35%",
+                            : "16%",
                     fontSize: "0.85rem",
-                    textAlign: "left",
+                    textAlign: "center",
                     textTransform: "none",
                 }}
             >

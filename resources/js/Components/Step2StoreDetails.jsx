@@ -1,4 +1,4 @@
-import { Paper, Box, Typography, IconButton } from "@mui/material";
+import {Paper, Box, Typography, IconButton, useTheme, useMediaQuery} from "@mui/material";
 import FormStoreRegistration from "./FormStoreRegistration";
 import { ArrowBackIos, ArrowForwardIos, Delete, PhotoCamera } from "@mui/icons-material";
 import { forwardRef, useEffect, useState } from "react";
@@ -8,6 +8,10 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
     useEffect(() => {
         console.log("Step2StoreDetails -> Recebeu refs:", { ref });
     }, [ref]);
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -21,7 +25,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
     return (
         <Box
             sx={{
-                width: "80%",
+                width: isSmallScreen || isMediumScreen ? "100%" : "80%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -34,7 +38,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
             {/* Div para o botão de upload e miniaturas */}
             {images.length >= 1 && (
 
-                <Box sx={{ width: "80%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent:"center", m: "auto" }}>
+                <Box sx={{ width: isSmallScreen || isMediumScreen ? "100%" : "80%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent:"center", m: "auto" }}>
                     {images.length < 3 && (
                         <IconButton
                             onClick={() => document.getElementById("imageUpload")?.click()}
@@ -71,7 +75,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
             )}
 
             {/* Carrossel de imagens */}
-            <Box sx={{ width: "80%", height: 350, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Box sx={{ width: isSmallScreen || isMediumScreen ? "100%" : "80%", height: 350, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Box sx={{ width: "100%", height: "100%", position: "relative" }}>
                     <input hidden id="imageUpload" accept="image/*" type="file" multiple onChange={handleImageUpload} />
                     {images.length === 0 ? (
@@ -144,17 +148,26 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
             <Paper
                 sx={{
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: isSmallScreen || isMediumScreen ? "row" : "column",
                     p: 5,
                     backgroundColor: "rgba(255, 255, 255, 0.9)",
                     boxShadow: 3,
-                    width: "70%",
+                    width: isSmallScreen || isMediumScreen ? "96%" : "70%",
                     position: "relative",
                     mt: -5,
                     mb: 7,
                 }}
             >
-                <Box>
+                <Box
+                    sx={{
+                        width: isSmallScreen || isMediumScreen ? "100%" : "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        m: "auto",
+                    }}
+
+                >
                     <Typography sx={{ fontSize: "2rem", fontWeight: "bold", textAlign: "left" }}>
                         Dados da sua Loja
                     </Typography>

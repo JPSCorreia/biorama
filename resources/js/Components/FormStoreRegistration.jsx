@@ -31,6 +31,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(useTheme().breakpoints.between("sm", "md"));
     const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
 
     const handleFormSubmit = async (values) => {
@@ -188,23 +189,23 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "row",
+                    flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
                     justifyContent: "space-between",
                     width: "100%",
-                    gap: 5,
+                    gap: isSmallScreen || isMediumScreen ? 0 : 5,
                 }}
             >
                 <Box
                     sx={{
-                        width: "55%",
+                        width: isSmallScreen || isMediumScreen ? "100%" : "55%",
                     }}
                 >
                     <Box
                         sx={{
                             display: 'flex',
-                            flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: 5,
-                            mb:2
+                            flexDirection: isSmallScreen || isMediumScreen ? 'column' : 'row',
+                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
+                            mb: isSmallScreen || isMediumScreen ? 2 : 2
                         }}
                     >
                         <TextField
@@ -232,9 +233,9 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                     <Box
                         sx={{
                             display: 'flex',
-                            flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: 5,
-                            mb:2
+                            flexDirection: isSmallScreen || isMediumScreen ? 'column' : 'row',
+                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
+                            mb: isSmallScreen || isMediumScreen ? 2 : 2
                         }}
                     >
                         <TextField
@@ -265,9 +266,9 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                         sx={{
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: 5,
-                            mb:2,
-                            mt:2
+                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
+                            mb: isSmallScreen || isMediumScreen ? 2 : 5,
+                            mt: isSmallScreen || isMediumScreen ? 2 : 5
                         }}
                     >
                         <TextField
@@ -293,8 +294,8 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                         sx={{
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: 5,
-                            mb:2,
+                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
+                            mb: isSmallScreen || isMediumScreen ? 2 : 5,
                         }}
                     >
                         <TextField
@@ -310,19 +311,21 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                 </Box>
                 <Box
                     sx={{
-                        width: "45%",
+                        width: isSmallScreen || isMediumScreen ? "100%" : "45%",
                     }}
                 >
                     <Box
                         sx={{
-                            height: "100%",
+                            maxHeight: "500px",
+                            height: "500px", // Adiciona uma altura fixa aqui
                             width: "100%",
                             border: "1px solid #ccc",
                             borderRadius: "8px",
                             marginBottom: "16px",
                         }}
                     >
-                        <MapContainer
+
+                    <MapContainer
                             center={formik.values.coordinates
                                 ? formik.values.coordinates.split(",").map(Number)
                                 : [38.7071, -9.1355]}
