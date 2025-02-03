@@ -9,7 +9,7 @@ import { makePersistable } from "mobx-persist-store";
 
 class CartStore {
     // Observable state properties
-    cart = []; // Array to store cart items with their id, name and quantity
+    cart = []; // Array to store cart items
 
     /**
      * Initializes the CartStore with MobX observables and persistence
@@ -20,7 +20,8 @@ class CartStore {
             addItem: action,
             deleteItem: action,
             clearCart: action,
-            total: computed,
+            totalQuantity: computed,
+            totalPrice: computed,
         });
         makePersistable(this, {
             name: "cartStore",
@@ -32,25 +33,16 @@ class CartStore {
     /**
      * Adds an item to the cart
      * If the item already exists, increases its quantity
-     * If it's a new item, adds it with a new ID
-     * @param {string} name - The name of the item
-     * @param {number} quantity - The quantity to add
+     * If it's a new item, adds it as a new entry
+     * @param {Object} item - The item to add (must contain all necessary properties)
      */
-    addItem = action((name, quantity) => {
-        const newItem = {
-            id:
-                this.cart.length > 0
-                    ? this.cart[this.cart.length - 1].id + 1
-                    : 1,
-            name,
-            quantity,
-        };
+    addItem = action((item) => {
         runInAction(() => {
-            if (this.cart.find((item) => item.name === name)) {
-                this.cart.find((item) => item.name === name).quantity +=
-                    quantity;
+            const existingItem = this.cart.find((cartItem) => cartItem.id === item.id);
+            if (existingItem) {
+                existingItem.quantity += item.quantity ?? 1;
             } else {
-                this.cart.push(newItem);
+                this.cart.push({ ...item, quantity: item.quantity ?? 1 });
             }
         });
     });
@@ -63,26 +55,38 @@ class CartStore {
     });
 
     /**
-     * Decrements the quantity of an item at the specified index
+     * Decrements the quantity of an item
      * If quantity becomes 0, removes the item completely
-     * @param {number} index - The index of the item in the cart array
+     * @param {number} id - The ID of the item to remove
      */
-    deleteItem = action((index) => {
+    deleteItem = action((id) => {
         runInAction(() => {
-            if (this.cart[index].quantity > 1) {
-                this.cart[index].quantity -= 1;
-            } else {
-                this.cart.splice(index, 1);
+            const itemIndex = this.cart.findIndex((item) => item.id === id);
+            if (itemIndex !== -1) {
+                if (this.cart[itemIndex].quantity > 1) {
+                    this.cart[itemIndex].quantity -= 1;
+                } else {
+                    this.cart.splice(itemIndex, 1);
+                }
             }
         });
     });
+
 
     /**
      * Computed property that returns the total number of items in the cart
      * @returns {number} The sum of all item quantities
      */
-    get total() {
-        return this.cart.reduce((total, item) => total + item.quantity, 0);
+    get totalQuantity() {
+        return this.cart.reduce((total, item) => total + (item.quantity ?? 1), 0);
+    }
+
+    /**
+     * Computed property that returns the total price of items in the cart
+     * @returns {number} The total cost of all items
+     */
+    get totalPrice() {
+        return this.cart.reduce((total, item) => total + item.price * (item.quantity ?? 1), 0);
     }
 }
 

@@ -13,8 +13,9 @@ import {
 } from "@mui/material";
 
 const CartProduct = observer(({ cartProduct, index }) => {
+
     const deleteUser = () => {
-        cartStore.deleteItem(index);
+        cartStore.deleteItem(cartProduct.id);
     };
 
     return (
