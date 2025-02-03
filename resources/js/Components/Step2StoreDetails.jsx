@@ -32,7 +32,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
             {showAlert && <AlertBox />}
 
             {/* Div para o botão de upload e miniaturas */}
-            {images.length > 1 && (
+            {images.length >= 1 && (
 
                 <Box sx={{ width: "80%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent:"center", m: "auto" }}>
                     {images.length < 3 && (
