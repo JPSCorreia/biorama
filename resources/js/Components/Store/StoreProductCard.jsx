@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 
 import { AddShoppingCartSharp as AddShoppingCartSharpIcon } from "@mui/icons-material";
-import { cartStore } from "../Stores";
+import { cartStore } from "../../Stores";
 import ReactMarkdown from "react-markdown";
 
-const ProductCard = observer(({ product, vendor }) => {
+const ProductCard = observer(({ product, vendor, store }) => {
 
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -140,7 +140,7 @@ const ProductCard = observer(({ product, vendor }) => {
                                 color="textSecondary"
                                 sx={{ width: 40, height: 40 }}
                                 onClick={() =>
-                                    cartStore.addItem({...product, vendor: vendor })
+                                    cartStore.addItem({...product, vendor: vendor, store: store })
                                 }
                             >
                                 <AddShoppingCartSharpIcon />

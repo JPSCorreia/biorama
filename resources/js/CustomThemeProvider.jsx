@@ -1,6 +1,6 @@
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { green } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import { observer } from "mobx-react";
 
 const CustomThemeProvider = observer(({ appStore, children }) => {
@@ -24,6 +24,10 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             hover: {
                 main: green[400],
                 dark: green[500],
+            },
+
+            delete: {
+                main: red[500],
             },
 
             // Background colors for different elements based on theme mode

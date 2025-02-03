@@ -26,7 +26,7 @@ class CartStore {
         makePersistable(this, {
             name: "cartStore",
             properties: ["cart"],
-            storage: window.sessionStorage,
+            storage: window.localStorage,
         });
     }
 
@@ -86,8 +86,21 @@ class CartStore {
      * @returns {number} The total cost of all items
      */
     get totalPrice() {
-        return this.cart.reduce((total, item) => total + item.price * (item.quantity ?? 1), 0);
+        return this.cart.reduce((total, item) =>
+            total + item.price * (item.quantity ?? 1) * (1 - (item.discount ?? 0) / 100),
+        0).toFixed(2);
     }
+
+
+    /**
+     * Removes all instances of an item from the cart
+     * @param {number} id
+     */
+    removeAllOfItem = action((id) => {
+        runInAction(() => {
+            this.cart = this.cart.filter((item) => item.id !== id);
+        });
+    });
 }
 
 export const cartStore = new CartStore();

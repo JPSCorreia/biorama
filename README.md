@@ -1,7 +1,5 @@
 # Biorama
 
----
-
 ## 💬 Description
 
 ![Biorama Logo](resources/images/logo.webp)

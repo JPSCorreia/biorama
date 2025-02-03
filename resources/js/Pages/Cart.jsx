@@ -1,5 +1,10 @@
 import { observer } from "mobx-react";
 import { cartStore } from "../Stores";
+import {
+    Delete as DeleteIcon,
+    AddShoppingCartSharp as AddShoppingCartSharpIcon,
+    ShoppingCartSharp,
+} from "@mui/icons-material";
 import { CartList } from "../Components";
 import { Box, Button, Typography } from "@mui/material";
 
@@ -33,15 +38,30 @@ const Cart = observer(() => {
                 >
                     {/* List of items in the cart */}
                     <CartList />
-
-                    {/* Button to clear the cart */}
-                    <Button
-                        sx={{ mt: 3 }}
-                        variant="contained"
-                        onClick={cartStore.clearCart}
-                    >
-                        Limpar Carrinho
-                    </Button>
+                    <Box sx={{ mt: 3, display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"  }}>
+                        <Typography variant="h5">
+                            Subtotal: €{cartStore.totalPrice}
+                        </Typography>
+                        <Box>
+                            {/* Button to clear the cart */}
+                            <Button
+                                variant="outlined"
+                                sx={{ mr: 2 }}
+                                color="delete"
+                                onClick={cartStore.clearCart}
+                                startIcon={<DeleteIcon />}
+                            >
+                                Limpar Carrinho
+                            </Button>
+                            {/* Button to go to the checkout page */}
+                            <Button
+                                variant="contained"
+                                startIcon={<ShoppingCartSharp />}
+                            >
+                                Comprar
+                            </Button>
+                        </Box>
+                    </Box>
                 </Box>
             ) : (
                 // Message if the cart is empty

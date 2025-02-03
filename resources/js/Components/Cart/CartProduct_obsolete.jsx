@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { stringAvatar } from "../utils/utils";
-import { cartStore } from "../Stores";
+import { stringAvatar } from "../../utils/utils";
+import { cartStore } from "../../Stores";
 import {
     Divider,
     ListItem,
@@ -48,3 +48,4 @@ const CartProduct = observer(({ cartProduct, index }) => {
 });
 
 export default CartProduct;
+

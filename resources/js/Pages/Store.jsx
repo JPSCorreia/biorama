@@ -33,7 +33,7 @@ const Store = observer(() => {
 
             {/* Store Information */}
             <StoreDescription store={store} />
-            <StoreProductsContainer products={products} vendor={vendor} />
+            <StoreProductsContainer products={products} vendor={vendor} store={store}/>
             <Box
                 sx={{
                     display: "flex",
