@@ -33,7 +33,6 @@ const DashboardProductList = ({ storeId }) => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell><strong>ID</strong></TableCell>
                         <TableCell><strong>Nome</strong></TableCell>
                         <TableCell><strong>Descrição</strong></TableCell>
                         <TableCell><strong>Preço</strong></TableCell>
@@ -42,7 +41,6 @@ const DashboardProductList = ({ storeId }) => {
                 <TableBody>
                     {products.map((product) => (
                         <TableRow key={product.id}>
-                            <TableCell>{product.id}</TableCell>
                             <TableCell>{product.name}</TableCell>
                             <TableCell>{product.description}</TableCell>
                             <TableCell>{product.price}</TableCell>

@@ -29,7 +29,9 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
     const [loading, setLoading] = useState(false);
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
-    const [existingImages, setExistingImages] = useState(store?.galleries.map(img => img.image_link) || []);
+    const [existingImages, setExistingImages] = useState(
+        store?.galleries.map(img => ({ id: img.id, imageLink: img.image_link })) || []
+    );
     const [newImages, setNewImages] = useState([]);
     const [deleteImages, setDeleteImages] = useState([]); // Novos IDs de imagens a excluir
 
@@ -47,18 +49,19 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
         });
     };
 
-    const handleRemoveImage = (index, isNewImage) => {
+    const handleRemoveImage = (imageId, index, isNewImage) => {
         if (isNewImage) {
             setNewImages(newImages.filter((_, i) => i !== index));
         } else {
-            // Pegar o ID da imagem e adicionar à lista de exclusão
-            const imageToDelete = store?.galleries[index]?.id;
-            if (imageToDelete) {
-                setDeleteImages(prev => [...prev, imageToDelete]); // Marca para exclusão
+            console.log("Imagem a apagar (ID):", imageId);
+            if (imageId) {
+                setDeleteImages(prev => [...prev, imageId]); // Marca o ID da imagem para exclusão
             }
-            setExistingImages(existingImages.filter((_, i) => i !== index));
+            setExistingImages(existingImages.filter((_, i) => i !== index)); // Remove a imagem da lista visual
         }
     };
+
+
 
 
     const validationSchema = yup.object().shape({
@@ -362,13 +365,13 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
             <Box>
                 <Typography variant="h6" sx={{ mt: 4 }}>Imagens Existentes</Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-                    {existingImages.map((image, index) => (
-                        <Box key={index} sx={{ position: "relative", width: 100, height: 100 }}>
-                            <img src={fixImagePath(image)}  alt={`Imagem ${index}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    {existingImages.map((imageObj, index) => (
+                        <Box key={imageObj.id} sx={{ position: "relative", width: 100, height: 100 }}>
+                            <img src={fixImagePath(imageObj.imageLink)}  alt={`Imagem ${index}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                             <IconButton
                                 size="small"
                                 sx={{ position: "absolute", top: 0, right: 0 }}
-                                onClick={() => handleRemoveImage(index, false)}
+                                onClick={() => handleRemoveImage(imageObj.id, index, false)}
                             >
                                 <DeleteIcon color="error" />
                             </IconButton>
