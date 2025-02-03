@@ -1,7 +1,7 @@
 import { Typography, Box } from "@mui/material";
 import { ProductCard } from "../";
 
-const StoreProductsContainer = ({ products, image_test }) => {
+const StoreProductsContainer = ({ products, vendor }) => {
     return (
         <Box
             sx={{
@@ -26,12 +26,12 @@ const StoreProductsContainer = ({ products, image_test }) => {
                 >
                     <Box sx={{ display: "flex", flexDirection: "row"}}>
                     {products.reverse().slice(0, 6).map((product) => (
-                        <ProductCard key={product.id} product={product} image_test={image_test}/>
+                        <ProductCard key={product.id} product={product} vendor={vendor} />
                     ))}
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", mt: 2}}>
                         {products.reverse().slice(6, 12).map((product) => (
-                        <ProductCard key={product.id} product={product} image_test={image_test}/>
+                        <ProductCard key={product.id} product={product} vendor={vendor} />
                     ))}
                     </Box>
                 </Box>

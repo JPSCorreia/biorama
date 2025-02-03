@@ -21,7 +21,7 @@ const Cart = observer(() => {
             </Typography>
 
             {/* Conditional rendering if there are any items in the cart or not*/}
-            {cartStore.total ? (
+            {cartStore.totalQuantity ? (
                 // Container for the list of items in the cart
                 <Box
                     sx={{
