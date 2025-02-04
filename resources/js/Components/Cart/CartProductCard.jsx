@@ -86,18 +86,20 @@ const CartProductCard = observer(({ product }) => {
                         <ReactMarkdown>{product.description}</ReactMarkdown>
                     </Box>
                     {/* Preço Total */}
-                    <Box display="flex" alignItems="baseline" sx={{ flexDirection: "row", mb: 1 }}>
-                    <Typography
-                        sx={{ fontWeight: "bold", fontSize: 14 }}
+                    <Box
+                        display="flex"
+                        alignItems="baseline"
+                        sx={{ flexDirection: "row", mb: 1 }}
                     >
-                        Total:
-                    </Typography>
-                    <Typography
-                        color="terciary"
-                        sx={{ fontWeight: "bold", fontSize: 18, ml: 1 }}
-                    >
-                        €{totalPrice}
-                    </Typography>
+                        <Typography sx={{ fontWeight: "bold", fontSize: 14 }}>
+                            Total:
+                        </Typography>
+                        <Typography
+                            color="terciary"
+                            sx={{ fontWeight: "bold", fontSize: 18, ml: 1 }}
+                        >
+                            €{totalPrice}
+                        </Typography>
                     </Box>
                     {/* Contador de Quantidade */}
                     <Box

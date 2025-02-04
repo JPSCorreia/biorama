@@ -6,8 +6,19 @@ import {
     AddShoppingCartSharp as AddShoppingCartSharpIcon,
     ShoppingCartSharp,
 } from "@mui/icons-material";
-import { CartList } from "../Components";
-import { Box, Button, Typography, IconButton, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { CartList, CartPaymentIcons } from "../Components";
+import {
+    Box,
+    Button,
+    Typography,
+    IconButton,
+    Tooltip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from "@mui/material";
 
 const Cart = observer(() => {
     function ClearCartButton() {
@@ -50,7 +61,8 @@ const Cart = observer(() => {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Tem a certeza de que deseja remover todos os produtos do seu carrinho de compras?
+                            Tem a certeza de que deseja remover todos os
+                            produtos do seu carrinho de compras?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -110,14 +122,18 @@ const Cart = observer(() => {
                         sx={{
                             display: "flex",
                             flexDirection: "column",
-                            alignItems: "flex-end",
-                            // border: "1px solid #ccc",
+                            alignItems: "center",
+                            border: "1px solid #ccc",
                             borderRadius: 4,
-                            width: "35%",
+                            width: "400px",
+                            // minHeight: "400px",
+                            height: "100%",
                             ml: 1,
                             p: 3,
+                            mt: 7,
                         }}
                     >
+
                         <Box
                             sx={{
                                 mt: 3,
@@ -127,8 +143,8 @@ const Cart = observer(() => {
                                 width: "100%",
                             }}
                         >
-                            <Typography variant="h5">
-                                Subtotal: €{cartStore.totalPrice}
+                            <Typography variant="h6">
+                                Total: €{cartStore.totalPrice}
                             </Typography>
                             <Box>
                                 {/* Button to clear the cart */}
@@ -136,12 +152,14 @@ const Cart = observer(() => {
                                 {/* Button to go to the checkout page */}
                                 <Button
                                     variant="outlined"
+                                    color="terciary"
                                     startIcon={<ShoppingCartSharp />}
                                 >
                                     Comprar
                                 </Button>
                             </Box>
                         </Box>
+                        <CartPaymentIcons />
                     </Box>
                 </Box>
             ) : (
