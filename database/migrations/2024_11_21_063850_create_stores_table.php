@@ -20,13 +20,9 @@ return new class extends Migration
             $table->string('email', 255)->nullable()->unique();
             $table->mediumText('description')->nullable();
             $table->decimal('rating', 3, 2)->default(0.0);
-            //$table->point('coordinates')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
-
-        // Add the spatial column using raw SQL
-        DB::statement('ALTER TABLE stores ADD coordinates POINT NOT NULL');
     }
 
 

@@ -36,25 +36,12 @@ const RegisterVendor = observer(({ genders }) => {
     const [showWarning, setShowWarning] = useState(true);
 
     const [images, setImages] = useState([]);
-    console.log("RegisterVendor -> images:", images);
 
     useEffect(() => {
         if (currentStep === 6) {
-            router.get("/");
+            router.get("/dashboard/");
         }
     }, [currentStep]);
-
-    const validateFormik = async (formik) => {
-        const errors = await formik.validateForm();
-        formik.setErrors(errors);
-        await formik.setTouched(
-            Object.keys(formik.values).reduce(
-                (acc, key) => ({...acc, [key]: true}),
-                {}
-            )
-        );
-        return Object.keys(errors).length === 0; // Retorna true se não houver erros
-    };
 
     const handleImageUpload = (event) => {
         if (!event.target.files) return;
@@ -87,8 +74,6 @@ const RegisterVendor = observer(({ genders }) => {
             reader.readAsDataURL(file);
         });
     };
-
-
 
     // Function to close the company form and validate the personal info form
     const handleCloseCompanyForm = () => {
@@ -195,11 +180,6 @@ const RegisterVendor = observer(({ genders }) => {
         }
     };
 
-    // Function to handle the "Back" button click event
-    const handleBack = () => {
-        setCurrentStep((prev) => prev - 1);
-    };
-
     // Function to render the appropriate component based on the current step
     const renderStepContent = () => {
         switch (currentStep) {
@@ -270,9 +250,6 @@ const RegisterVendor = observer(({ genders }) => {
             <Box
                 sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
             >
-                <Button disabled={currentStep === 0} onClick={handleBack}>
-                    Recuar
-                </Button>
                 <Button
                     variant="contained"
                     onClick={handleNext}

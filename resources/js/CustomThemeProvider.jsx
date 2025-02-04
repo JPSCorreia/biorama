@@ -22,7 +22,7 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             },
 
             terciary: {
-                main: green[800],
+                main: appStore.themeType === "dark" ? green[600] :green[800],
             },
 
             hover: {

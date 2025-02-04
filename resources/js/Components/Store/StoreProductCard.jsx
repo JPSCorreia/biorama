@@ -92,6 +92,7 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                 display: "flex",
                                 flexDirection: "row",
                                 justifyContent: "space-between",
+                                minWidth: "155px",
                             }}
                         >
                             {product.discount > 0 ? (
@@ -146,6 +147,7 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                     </Typography>
                                 </Box>
                             ) : (
+
                                 <Typography
                                     sx={{
                                         wordWrap: "break-word",

@@ -37,18 +37,28 @@ class DashboardController extends Controller
                     'description',
                     'phone_number',
                     'email',
-                    'rating',
-                    DB::raw('ST_X(coordinates) as longitude'),
-                    DB::raw('ST_Y(coordinates) as latitude')
+                    'rating'
                 )
                 ->with([
-                    'addresses', // Inclui endereços
-                    'products',  // Inclui produtos
-                    'reviews',   // Inclui avaliações
-                    'galleries'  // Inclui galerias de imagens
+                    'addresses' => function ($query) {
+                        $query->select(
+                            'id',
+                            'store_id',
+                            'street_address',
+                            'city',
+                            'postal_code',
+                            'comment',
+                            DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
+                            DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
+                        );
+                    },
+                    'products',
+                    'reviews',
+                    'galleries'
                 ])
-                ->take(3) // Limita o número de lojas a 3
+                ->take(3)
                 ->get();
+
 
             // Renderiza a página com as informações do vendor
             return Inertia::render('Dashboard/Home', [
@@ -167,17 +177,26 @@ class DashboardController extends Controller
                     'description',
                     'phone_number',
                     'email',
-                    'rating',
-                    DB::raw('ST_X(coordinates) as longitude'),
-                    DB::raw('ST_Y(coordinates) as latitude')
+                    'rating'
                 )
                 ->with([
-                    'addresses', // Inclui endereços
-                    'products',  // Inclui produtos
-                    'reviews',   // Inclui avaliações
-                    'galleries'  // Inclui galerias de imagens
+                    'addresses' => function ($query) {
+                        $query->select(
+                            'id',
+                            'store_id',
+                            'street_address',
+                            'city',
+                            'postal_code',
+                            'comment',
+                            DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
+                            DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
+                        );
+                    },
+                    'products',
+                    'reviews',
+                    'galleries'
                 ])
-                ->take(3) // Limita o número de lojas a 3
+                ->take(3)
                 ->get();
 
             // Retorna as lojas para o front-end
@@ -193,11 +212,24 @@ class DashboardController extends Controller
 
     public function dashboardShowStore($id)
     {
-        $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating',
-            DB::raw('ST_X(coordinates) as longitude'),
-            DB::raw('ST_Y(coordinates) as latitude')
-        )
-            ->with(['addresses', 'reviews', 'galleries'])
+        $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating')
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        'comment',
+                        DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
+                        DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
+                    );
+                },
+                'products',
+                'reviews',
+                'galleries'
+            ])
             ->findOrFail($id);
 
         // Paginar produtos da loja

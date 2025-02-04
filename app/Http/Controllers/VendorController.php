@@ -47,7 +47,7 @@ class VendorController extends Controller
             $validatedVendorData = $vendorRequest->validated();
             $validatedVendorData['date_of_birth'] = date('Y-m-d', strtotime($validatedVendorData['date_of_birth']));
 
-            $vendor = Vendor::create($validatedVendorData);
+            $vendor = $user->vendor()->create($validatedVendorData);
             $user->assignRole('vendor');
             $user->load(['roles', 'vendor']);
 
@@ -58,8 +58,6 @@ class VendorController extends Controller
                 'vendor' => $vendor,
             ], 200);
 
-
-            return redirect()->route('alguma_rota'); // Se não for Inertia, redireciona
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erro ao registar o vendedor.',
