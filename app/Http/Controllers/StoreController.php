@@ -26,8 +26,6 @@ class StoreController extends Controller
 
     public function store(Request $request)
     {
-
-
         // Validação dos dados recebidos
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -112,9 +110,9 @@ class StoreController extends Controller
                 DB::raw('ST_X(coordinates) as longitude'),
                 DB::raw('ST_Y(coordinates) as latitude')
             )
-                ->where('id', $store->id) // 🔥 Pega apenas a loja recém-criada
+                ->where('id', $store->id)
                 ->with(['addresses', 'products', 'reviews', 'galleries'])
-                ->first(); // 🔥 Como só há uma, usa `first()` ao invés de `get()`
+                ->first();
 
             // Retornar as lojas atualizadas do vendor
             $stores = Store::where('vendor_id', $vendor->id)

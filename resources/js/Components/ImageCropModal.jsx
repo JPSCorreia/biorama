@@ -7,51 +7,31 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
-    const aspectRatio = 4 / 3; // Mantém o ratio 4:3
+    const aspectRatio = 4 / 3; // Mantém 800x600
 
+    console.log("Imagem recebida no CropModal:", image);
+
+    // Captura a área recortada
     const onCropAreaChange = useCallback((_, areaPixels) => {
         setCroppedAreaPixels(areaPixels);
     }, []);
 
-    const handleCrop = () => {
+    // Processa e corta a imagem
+    const handleCrop = async () => {
         if (!croppedAreaPixels || !image) return;
 
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const img = new Image();
-        img.src = image;
+        try {
+            const { base64, file } = await getCroppedImage(image, croppedAreaPixels, "cropped-image.png");
 
-        img.onload = () => {
-            // Configurar a resolução de saída (800x600)
-            canvas.width = 800;
-            canvas.height = 600;
-
-            // Desenhar a área recortada na resolução correta
-            ctx.drawImage(
-                img,
-                croppedAreaPixels.x,
-                croppedAreaPixels.y,
-                croppedAreaPixels.width,
-                croppedAreaPixels.height,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-            // Converter para Base64 no formato PNG
-            const croppedImageBase64 = canvas.toDataURL("image/png", 1.0); // Qualidade máxima (100%)
-
-            // Converter Base64 para Objeto File
-            const croppedImageFile = base64ToFile(croppedImageBase64, "cropped-image.png");
-
-            // Enviar o ficheiro para o componente pai
+            // Retorna o Base64 para preview e o File para envio
             if (onCropComplete) {
-                onCropComplete(croppedImageFile); // Retorna o arquivo File
+                onCropComplete(base64, file);
             }
 
             onClose(); // Fecha o modal
-        };
+        } catch (error) {
+            console.error("Erro ao processar a imagem:", error);
+        }
     };
 
     // Função para converter Base64 em File
@@ -65,6 +45,46 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
             u8arr[n] = bstr.charCodeAt(n);
         }
         return new File([u8arr], filename, { type: mime });
+    };
+
+    // Processar e cortar a imagem para 800x600
+    const getCroppedImage = (imageSrc, cropPixels, filename) => {
+        return new Promise((resolve, reject) => {
+            const image = new Image();
+            image.src = imageSrc;
+            image.crossOrigin = "anonymous";
+
+            image.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                // Define a resolução exata do corte
+                canvas.width = 800;
+                canvas.height = 600;
+
+                ctx.drawImage(
+                    image,
+                    cropPixels.x,
+                    cropPixels.y,
+                    cropPixels.width,
+                    cropPixels.height,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                // Converter a imagem cortada para Base64
+                const croppedImageBase64 = canvas.toDataURL("image/png", 1.0);
+
+                // Converter Base64 para File
+                const croppedImageFile = base64ToFile(croppedImageBase64, filename);
+
+                resolve({ base64: croppedImageBase64, file: croppedImageFile });
+            };
+
+            image.onerror = (error) => reject(error);
+        });
     };
 
     return (
@@ -93,17 +113,24 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
                 <Typography variant="h6" sx={{ mb: 2 }}>
                     Ajuste a sua imagem para 800x600 (Ratio 4:3)
                 </Typography>
-                <Box sx={{ position: "relative", width: "100%", height: "70%" }}>
-                    <Cropper
-                        image={image}
-                        crop={crop}
-                        zoom={zoom}
-                        aspect={aspectRatio} // Força o ratio 4:3
-                        onCropChange={setCrop}
-                        onZoomChange={setZoom}
-                        onCropComplete={onCropAreaChange}
-                    />
-                </Box>
+
+                {/* Verificar se há uma imagem antes de renderizar o Cropper */}
+                {image ? (
+                    <Box sx={{ position: "relative", width: "100%", height: "70%" }}>
+                        <Cropper
+                            image={image}
+                            crop={crop}
+                            zoom={zoom}
+                            aspect={aspectRatio} // Mantém 4:3
+                            onCropChange={setCrop}
+                            onZoomChange={setZoom}
+                            onCropComplete={onCropAreaChange}
+                        />
+                    </Box>
+                ) : (
+                    <Typography color="error">Nenhuma imagem carregada.</Typography>
+                )}
+
                 <Slider
                     value={zoom}
                     min={1}
@@ -112,6 +139,7 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
                     onChange={(e, value) => setZoom(value)}
                     sx={{ mt: 2, width: "90%" }}
                 />
+
                 <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                     <Button variant="contained" onClick={handleCrop}>
                         Confirmar

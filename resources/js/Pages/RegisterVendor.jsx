@@ -9,7 +9,7 @@ import {
     Step3CreateProduct,
 } from "../Components";
 import { vendorRegistrationStore } from "../Stores";
-import { usePage } from "@inertiajs/react";
+import {router, usePage} from "@inertiajs/react";
 import { observer } from "mobx-react";
 import { useEffect } from "react";
 
@@ -37,6 +37,12 @@ const RegisterVendor = observer(({ genders }) => {
 
     const [images, setImages] = useState([]);
     console.log("RegisterVendor -> images:", images);
+
+    useEffect(() => {
+        if (currentStep === 6) {
+            router.get("/");
+        }
+    }, [currentStep]);
 
     const validateFormik = async (formik) => {
         const errors = await formik.validateForm();
@@ -220,12 +226,6 @@ const RegisterVendor = observer(({ genders }) => {
                 return <IntroStep3VendorRegister />;
             case 5:
                 return <Step3CreateProduct />;
-            default:
-                return (
-                    <Typography variant="h6">
-                        Final do registo! Obrigado por completar as etapas.
-                    </Typography>
-                );
         }
     };
 
