@@ -99,40 +99,61 @@ const CartProductCard = observer(({ product }) => {
                         gap={1}
                         mb={0.5}
                     >
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        border="1px solid #ccc"
-                        borderRadius="4px"
-                        gap={1}
-                        ml={1}
-                        p={0.5}
-                    >
-                        <Tooltip title="Remover quantidade">
-                        <IconButton
-                            sx={{ color: "red" }}
-                            disabled={quantity <= 1}
-                            onClick={() => cartStore.deleteItem(storeId, product.id)}
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            border="1px solid #ccc"
+                            borderRadius="4px"
+                            gap={1}
+                            ml={1}
+                            p={0.5}
                         >
-                            <RemoveIcon />
-                        </IconButton>
-                        </Tooltip>
-                        <Typography sx={{ minWidth: "20px", textAlign: "center" }}>{quantity}</Typography>
-                        <Tooltip title="Adicionar quantidade">
-                        <IconButton
-                            sx={{ color: "green" }}
-                            onClick={() => cartStore.addItem({ ...product, quantity: 1 })}
-                        >
-                            <AddIcon />
-                        </IconButton>
-                        </Tooltip>
+                            <Tooltip title="Remover quantidade">
+                                <span>
+                                    <IconButton
+                                        sx={{ color: "red" }}
+                                        disabled={quantity <= 1}
+                                        onClick={() =>
+                                            cartStore.deleteItem(
+                                                storeId,
+                                                product.id,
+                                            )
+                                        }
+                                    >
+                                        <RemoveIcon />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                            <Typography
+                                sx={{ minWidth: "20px", textAlign: "center" }}
+                            >
+                                {quantity}
+                            </Typography>
+                            <Tooltip title="Adicionar quantidade">
+                                <IconButton
+                                    sx={{ color: "green" }}
+                                    onClick={() =>
+                                        cartStore.addItem({
+                                            ...product,
+                                            quantity: 1,
+                                        })
+                                    }
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                            </Tooltip>
                         </Box>
                         <Tooltip title="Remover todos">
                             <IconButton
                                 color="textSecondary"
                                 sx={{ width: 40, height: 40 }}
-                                onClick={() => cartStore.removeAllOfItem(storeId, product.id)}
+                                onClick={() =>
+                                    cartStore.removeAllOfItem(
+                                        storeId,
+                                        product.id,
+                                    )
+                                }
                             >
                                 <DeleteIcon />
                             </IconButton>

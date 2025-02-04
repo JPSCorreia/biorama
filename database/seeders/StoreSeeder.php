@@ -25,8 +25,36 @@ class StoreSeeder extends Seeder
             'store-5.jpg',
         ];
 
-        // Cria 20 lojas
-        $stores = Store::factory()->count(20)->create();
+        $storeNames = [
+            'EcoVida Market',
+            'Verde Natural',
+            'SustentaShop',
+            'BioRaiz',
+            'EcoEssência',
+            'Planeta Verde',
+            'Natureza Pura',
+            'Raízes Sustentáveis',
+            'GreenChoice',
+            'EcoSabores',
+            'Sementes do Futuro',
+            'Terra Viva',
+            'BioHarmonia',
+            'Verde & Puro',
+            'EcoAlternativa',
+            'Sustentável.pt',
+            'Natureza Essencial',
+            'Vida Verde',
+            'Orgânico & Local',
+            'EcoConsciente',
+        ];
+
+
+        // Cria 20 lojas com os nomes sustentáveis
+        $stores = Store::factory()->count(20)->create()->each(function ($store, $index) use ($storeNames) {
+            if (isset($storeNames[$index])) {
+                $store->update(['name' => $storeNames[$index]]);
+            }
+        });
 
         $products = Product::all();
 

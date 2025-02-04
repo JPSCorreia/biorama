@@ -31,6 +31,8 @@ class HomeAddressRequest extends FormRequest
             'city' => 'required|string|max:50',
             'is_primary' => 'nullable|boolean',
             'comment' => 'nullable|string',
+            'longitude' => 'string|required',
+            'latitude' => 'string|required',
         ];
     }
 
@@ -61,6 +63,9 @@ class HomeAddressRequest extends FormRequest
             'city.max' => 'A cidade deve ter no máximo :max caracteres',
             'is_primary.boolean' => 'O campo "is_primary" deve ser um booleano',
             'comment.string' => 'O comentário deve ser uma string',
+
+            'longitude.required' => 'A longitude é obrigatória',
+            'latitude.required' => 'A latitude é obrigatória',
         ];
     }
 }

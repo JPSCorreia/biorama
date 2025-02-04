@@ -21,6 +21,8 @@ class HomeAddressFactory extends Factory
             'city' => $this->faker->city(),
             'is_primary' => $this->faker->boolean(),
             'comment' => $this->faker->sentence(),
+            'longitude' => $this->faker->longitude(),
+            'latitude' => $this->faker->latitude(),
             'created_at' => now(),
             'updated_at' => now(),
         ];
