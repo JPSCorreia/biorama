@@ -2,11 +2,9 @@
 /node_modules
 /public/build
 /public/hot
+/public/storage
 /storage/*.key
 /storage/pail
-/storage/store
-/storage/User
-/storage/vendor_photos
 /vendor
 *.bak
 .env
