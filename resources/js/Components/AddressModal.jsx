@@ -149,7 +149,6 @@ const AddressModal = ({ open, handleClose }) => {
                 alignItems: "center",
             }}
         >
-            {console.log(formik.latitude)}
             <Box
                 sx={{
                     display: "flex",
