@@ -14,7 +14,7 @@ class VendorRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id'       => 'required|exists:users,id', // Deve existir na tabela users
+            'user_id' => 'required|exists:users,id|unique:vendors,user_id',
             'first_name'    => 'required|string|max:100',
             'last_name'     => 'required|string|max:100',
             'email'         => 'required|string|email|max:255|unique:vendors,email',
