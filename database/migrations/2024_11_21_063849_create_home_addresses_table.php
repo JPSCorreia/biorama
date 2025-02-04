@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('city', 50);
             $table->boolean('is_primary')->default(false);
             $table->mediumText('comment')->nullable();
-            $table->text('longitude')->nullable();
-            $table->text('latitude')->nullable();
+            $table->text('longitude');
+            $table->text('latitude');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
             $table->softDeletes();

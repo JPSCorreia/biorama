@@ -35,6 +35,8 @@ const AddressEditModal = ({ open, handleClose, address }) => {
         city: address.city || "",
         phone_number: address.phone_number || "",
         comment: address.comment || "",
+        longitude: "",
+        latitude: "",
         is_primary: address.is_primary || false,
     };
 
@@ -126,6 +128,8 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                     const data = response.data[0];
                     formik.setFieldValue("street_address", data.morada || "");
                     formik.setFieldValue("city", data.distrito || "");
+                    formik.setFieldValue("longitude", data.longitude || "");
+                    formik.setFieldValue("latitude", data.latitude || "");
                 } else {
                     formik.setFieldError("postal_code", "Código Postal não encontrado");
                 }

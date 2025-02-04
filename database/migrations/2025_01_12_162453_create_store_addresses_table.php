@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -21,6 +22,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        // Add the spatial column using raw SQL
+        DB::statement('ALTER TABLE store_addresses ADD coordinates POINT NOT NULL');
     }
 
     /**

@@ -60,7 +60,6 @@ class StoreFactory extends Factory
                 "📦 Encomende já e faça parte do movimento sustentável. Juntos, construímos um futuro mais verde! 🍃"
             ]), 'UTF-8', 'auto'),
             'rating' => $this->faker->randomFloat(2, 0, 5),
-            'coordinates' => DB::raw("POINT({$this->faker->longitude(-8.9236, -8.8957)}, {$this->faker->latitude(38.5244, 38.5417)})"),
             'created_at' => now(),
             'updated_at' => now(),
         ];

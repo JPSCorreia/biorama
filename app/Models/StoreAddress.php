@@ -18,6 +18,11 @@ class StoreAddress extends Model
         'postal_code',
         'city',
         'comment',
+        'coordinates',
+    ];
+
+    protected $casts = [
+        'coordinates' => 'string', // Mantém como string para trabalhar com POINT
     ];
 
     public function store()

@@ -122,7 +122,6 @@ const AddressModal = ({ open, handleClose }) => {
                 formik.setFieldError("postal_code", "Erro ao validar o Código Postal");
                 formik.setFieldValue("street_address", "");
                 formik.setFieldValue("city", "");
-                formik.setFieldValue("number", "");
                 formik.setFieldValue("longitude", "");
                 formik.setFieldValue("latitude", "");
                 setisDisabled(true);
@@ -149,7 +148,6 @@ const AddressModal = ({ open, handleClose }) => {
                 alignItems: "center",
             }}
         >
-            {console.log(formik.latitude)}
             <Box
                 sx={{
                     display: "flex",

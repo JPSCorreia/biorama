@@ -26,6 +26,8 @@ const VendorInformation = observer(() => {
 
     // Get the current vendor data from the MobX store
     const vendor = vendorStore.currentVendor;
+    console.log("Vendor->",vendor);
+    console.log("Auth->",auth);
 
     // Check if the authenticated user is associated with a company
     const isCompany = vendor.is_company;
