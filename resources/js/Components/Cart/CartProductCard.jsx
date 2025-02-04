@@ -86,11 +86,19 @@ const CartProductCard = observer(({ product }) => {
                         <ReactMarkdown>{product.description}</ReactMarkdown>
                     </Box>
                     {/* Preço Total */}
+                    <Box display="flex" alignItems="baseline" sx={{ flexDirection: "row", mb: 1 }}>
                     <Typography
-                        sx={{ fontWeight: "bold", fontSize: 14, mb: 1, ml: 1 }}
+                        sx={{ fontWeight: "bold", fontSize: 14 }}
                     >
-                        Total: €{totalPrice}
+                        Total:
                     </Typography>
+                    <Typography
+                        color="terciary"
+                        sx={{ fontWeight: "bold", fontSize: 18, ml: 1 }}
+                    >
+                        €{totalPrice}
+                    </Typography>
+                    </Box>
                     {/* Contador de Quantidade */}
                     <Box
                         display="flex"
@@ -106,7 +114,6 @@ const CartProductCard = observer(({ product }) => {
                             border="1px solid #ccc"
                             borderRadius="4px"
                             gap={1}
-                            ml={1}
                             p={0.5}
                         >
                             <Tooltip title="Remover quantidade">

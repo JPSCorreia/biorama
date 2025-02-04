@@ -21,6 +21,10 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 dark: green[700], // Dark green for contrast
             },
 
+            terciary: {
+                main: green[800],
+            },
+
             hover: {
                 main: green[400],
                 dark: green[500],
