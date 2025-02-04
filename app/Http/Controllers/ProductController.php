@@ -102,15 +102,78 @@ class ProductController extends Controller
         return response()->json($product->load('categories', 'storeProducts'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $product_id)
     {
+
+
+        // Find the product and throw 404 if it doesn't exist.
+        $product = Product::where('id', $product_id)->firstOrFail();
+
+        // Validate the product data coming from the request.
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:100|unique:products,name,' . $product->id,
-            'image_link' => 'nullable|url',
+            'name'            => 'required|string|max:100',
+            'description'     => 'nullable|string',
+            'price'           => 'required|numeric|min:0',
+            'discount'        => 'numeric|min:0',
+            'stock'           => 'integer|min:0',
+            'newImages'       => 'nullable|array',  // Novas imagens para upload
+            'newImages.*'     => 'file|mimes:jpg,jpeg,png|max:2048',
+            'deleteImages'    => 'nullable|array',  // IDs de imagens a excluir
+            'deleteImages.*'  => 'integer|exists:product_galleries,id',
         ]);
 
-        $product->update($validated);
-        return response()->json($product);
+        // Atualiza os dados do produto
+        $product->update([
+            'name'        => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'price'       => $validated['price'],
+            'discount'    => $validated['discount'] ?? 0.0,
+            'stock'       => $validated['stock'] ?? 0,
+        ]);
+
+        // Processa imagens a excluir
+        if (!empty($validated['deleteImages'])) {
+            foreach ($validated['deleteImages'] as $imageId) {
+                $image = ProductGallery::findOrFail($imageId);
+
+                // Remove o arquivo do sistema de armazenamento
+                if (Storage::exists('public/' . $image->image_link)) {
+                    Storage::delete('public/' . $image->image_link);
+                }
+
+                // Exclui o registro da galeria
+                $image->delete();
+            }
+        }
+
+        // Processa novas imagens, se houver
+        if ($request->hasFile('newImages')) {
+            foreach ($request->file('newImages') as $index => $imageFile) {
+                // Cria um nome único para a imagem
+                $imageName = 'product_' . $product->id . '_img' . ($index + 1) . '.' . $imageFile->extension();
+
+                // Define o diretório baseado no store ID e product ID
+                $directory = '/store_products/store' . $store->id;
+
+                // Armazena a imagem
+                $imagePath = $imageFile->storeAs($directory, $imageName, 'public');
+
+                // Cria o registro na tabela de galerias
+                ProductGallery::create([
+                    'product_id' => $product->id,
+                    'image_link' => Storage::url($imagePath),
+                ]);
+            }
+        }
+
+        // Recarrega a relação da galeria
+        $product->load('gallery');
+
+        // Retorna uma resposta JSON com a mensagem de sucesso
+        return response()->json([
+            'message' => 'Produto atualizado com sucesso!',
+            'product' => $product,
+        ], 200);
     }
 
     public function destroy(Product $product)
