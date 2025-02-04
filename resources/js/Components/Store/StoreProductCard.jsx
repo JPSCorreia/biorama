@@ -16,7 +16,6 @@ import { cartStore } from "../../Stores";
 import ReactMarkdown from "react-markdown";
 
 const ProductCard = observer(({ product, vendor, store }) => {
-
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -69,7 +68,11 @@ const ProductCard = observer(({ product, vendor, store }) => {
             >
                 <Box sx={{ mb: 1, display: "flex", flexDirection: "column" }}>
                     <Box
-                        sx={{ minHeight: "140px", fontSize: 14, fontWeight: "normal" }}
+                        sx={{
+                            minHeight: "140px",
+                            fontSize: 14,
+                            fontWeight: "normal",
+                        }}
                     >
                         <ReactMarkdown>{product.description}</ReactMarkdown>
                     </Box>
@@ -92,18 +95,32 @@ const ProductCard = observer(({ product, vendor, store }) => {
                             }}
                         >
                             {product.discount > 0 ? (
-                                <Box display="flex" alignItems="center" gap={1}>
+                                <Box
+                                    display="flex"
+                                    alignItems="baseline"
+                                    gap={1}
+                                >
                                     <Typography
                                         sx={{
                                             textDecoration: "line-through",
+                                            fontSize: 14,
                                             color: "red",
+                                            lineHeight: 1,
+                                            display: "flex",
+                                            alignItems: "baseline",
                                         }}
                                     >
                                         {Number(product.price).toFixed(2)}€
                                     </Typography>
                                     <Typography
+                                        color="primary"
                                         sx={{
                                             fontWeight: "bold",
+                                            fontSize: 20,
+                                            lineHeight: 1,
+                                            display: "flex",
+                                            alignItems: "baseline",
+                                            verticalAlign: "middle",
                                         }}
                                     >
                                         {(
@@ -115,7 +132,13 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                     <Typography
                                         variant="body2"
                                         sx={{
-                                            fontSize: 12,
+                                            fontSize: 14,
+                                            lineHeight: 1,
+                                            mb: "2px",
+                                            display: "flex",
+                                            alignItems: "baseline",
+                                            alignSelf: "center",
+                                            verticalAlign: "middle",
                                         }}
                                     >
                                         (-{Number(product.discount).toFixed(0)}
@@ -129,6 +152,7 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                         overflowWrap: "break-word",
                                         whiteSpace: "pre-wrap",
                                         fontWeight: "bold",
+                                        fontSize: 17,
                                     }}
                                 >
                                     {Number(product.price).toFixed(2)}€
@@ -137,10 +161,14 @@ const ProductCard = observer(({ product, vendor, store }) => {
                         </Box>
                         <Tooltip title="Adicionar ao carrinho">
                             <IconButton
-                                color="textSecondary"
+                                color="primary"
                                 sx={{ width: 40, height: 40 }}
                                 onClick={() =>
-                                    cartStore.addItem({...product, vendor: vendor, store: store })
+                                    cartStore.addItem({
+                                        ...product,
+                                        vendor: vendor,
+                                        store: store,
+                                    })
                                 }
                             >
                                 <AddShoppingCartSharpIcon />
