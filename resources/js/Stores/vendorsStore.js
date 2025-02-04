@@ -42,9 +42,12 @@ class VendorStore {
             if (!this.currentVendor  ) {
                 this.currentVendor = vendorData;
             }
-            this.companyDetails = vendorData.company;
-            this.companyContacts = vendorData.company.contacts;
-            this.companyAddresses = vendorData.company.addresses;
+            if (this.currentVendor.isCompany){
+                this.companyDetails = vendorData.company;
+                this.companyContacts = vendorData.company.contacts;
+                this.companyAddresses = vendorData.company.addresses;
+            }
+
         });
     }
 

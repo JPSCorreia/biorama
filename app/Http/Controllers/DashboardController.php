@@ -217,11 +217,12 @@ class DashboardController extends Controller
         $store = Store::findOrFail($storeId);
 
         // Retorna os produtos paginados
-        $products = $store->products()->paginate(10);
+        $products = $store->products()
+            ->with('gallery')
+            ->paginate(10);
 
         return response()->json($products);
     }
-
 
     public function DasboardstoreReviews($storeId)
     {
@@ -233,6 +234,7 @@ class DashboardController extends Controller
 
         return response()->json($reviews);
     }
+
 
 
 }
