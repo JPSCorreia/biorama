@@ -18,7 +18,7 @@ import ReactMarkdown from "react-markdown";
 const DashboardStoresCard = observer(({ store, user }) => {
     // Pega a primeira imagem da galeria como fundo e a segunda como perfil
     const backgroundImage =
-        fixImagePath(store?.galleries[0].image_link) ||
+        fixImagePath(store?.galleries[0]?.image_link) ||
         "https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp";
     const profileImage =
         fixImagePath(user?.image_profile) ||
@@ -55,7 +55,7 @@ const DashboardStoresCard = observer(({ store, user }) => {
                     objectFit: "cover",
                 }}
                 image={backgroundImage}
-                alt="Não encontrou a imagem"
+                alt="Sem imagem"
             />
 
             {/* Avatar Circular no Centro */}

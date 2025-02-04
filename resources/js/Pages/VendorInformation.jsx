@@ -31,6 +31,8 @@ const VendorInformation = observer(() => {
 
     // Check if the authenticated user is associated with a company
     const isCompany = vendor.is_company;
+    console.log("Auth", auth);
+    console.log("Vendor", vendor);
 
     // State to control which fields are currently being edited
     const [isEditing, setIsEditing] = useState({
