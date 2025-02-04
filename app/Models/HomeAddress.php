@@ -20,6 +20,8 @@ class HomeAddress extends Model
         'is_primary',
         'comment',
         'user_id',
+        'longitude',
+        'latitude',
     ];
 
     public function user()

@@ -35,6 +35,8 @@ const AddressModal = ({ open, handleClose }) => {
         comment: "",
         number: "",
         is_primary: false,
+        longitude: "",
+        latitude: "",
     };
 
     const handleFormSubmit = async (values, { resetForm }) => {
@@ -104,12 +106,16 @@ const AddressModal = ({ open, handleClose }) => {
                     const data = response.data[0];
                     formik.setFieldValue("street_address", data.morada || "");
                     formik.setFieldValue("city", data.distrito || "");
+                    formik.setFieldValue("longitude", data.longitude || "");
+                    formik.setFieldValue("latitude", data.latitude || "");
                     setisDisabled(false);
                 } else {
                     formik.setFieldError("postal_code", "Código Postal não encontrado na API");
                     formik.setFieldValue("street_address", "");
                     formik.setFieldValue("city", "");
                     formik.setFieldValue("number", "");
+                    formik.setFieldValue("longitude", "");
+                    formik.setFieldValue("latitude", "");
                     setisDisabled(true);
                 }
             } catch {
@@ -117,12 +123,16 @@ const AddressModal = ({ open, handleClose }) => {
                 formik.setFieldValue("street_address", "");
                 formik.setFieldValue("city", "");
                 formik.setFieldValue("number", "");
+                formik.setFieldValue("longitude", "");
+                formik.setFieldValue("latitude", "");
                 setisDisabled(true);
             }
         } else {
             formik.setFieldValue("street_address", "");
             formik.setFieldValue("city", "");
             formik.setFieldValue("number", "");
+            formik.setFieldValue("longitude", "");
+            formik.setFieldValue("latitude", "");
             setisDisabled(true);
         }
     };
@@ -139,6 +149,7 @@ const AddressModal = ({ open, handleClose }) => {
                 alignItems: "center",
             }}
         >
+            {console.log(formik.latitude)}
             <Box
                 sx={{
                     display: "flex",
