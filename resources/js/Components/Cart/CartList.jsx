@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
 import { cartStore } from "../../Stores";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { Typography, List, Box, Tooltip, IconButton } from "@mui/material";
+import { Typography, Box, Tooltip, IconButton, Divider } from "@mui/material";
 import { CartProductCard } from "..";
+import React from "react";
 
 const CartList = observer(() => {
     return (
-        <Box sx={{ display: "flex", width: "60%", border: "1px solid red" }}>
+        <Box sx={{ display: "flex", width: "65%", justifyContent: "center" }}>
             <Box
                 sx={{
                     p: 0,
@@ -20,18 +21,22 @@ const CartList = observer(() => {
                     gap: 3,
                 }}
             >
-                {Object.entries(cartStore.cart).map(([storeId, products]) => (
+                {Object.entries(cartStore.cart).map(([storeId, products], index, arr) => (
+                    <React.Fragment key={storeId}>
                     <Box
                         key={storeId}
                         sx={{
-                            border: "1px solid #ccc",
-                            borderRadius: 4,
                             p: 2,
+                            pt: 0,
+                            pb: 0,
                             gap: 3,
                             width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
                         }}
                     >
-                        <Typography variant="h6" sx={{ mb: 2 }}>
+                        {console.log(cartStore.cart[storeId][0].store.longitude)}
+                        <Typography variant="h6">
                             {cartStore.cart[storeId][0].store.name}
                         </Typography>
 
@@ -52,7 +57,7 @@ const CartList = observer(() => {
                                 />
                             ))}
                         </Box>
-                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", mt: 2, justifyContent: "space-between" }}>
+                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                             <Typography variant="h6" >
                                 Total: {cartStore.storeTotals[storeId]}€
                             </Typography>
@@ -71,6 +76,8 @@ const CartList = observer(() => {
                             </Tooltip>
                         </Box>
                     </Box>
+                    {index !== arr.length - 1 && <Divider variant="middle" />}
+                    </React.Fragment>
                 ))}
             </Box>
         </Box>

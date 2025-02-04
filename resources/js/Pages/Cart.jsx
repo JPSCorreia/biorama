@@ -1,14 +1,69 @@
 import { observer } from "mobx-react";
 import { cartStore } from "../Stores";
+import { useState } from "react";
 import {
     Delete as DeleteIcon,
     AddShoppingCartSharp as AddShoppingCartSharpIcon,
     ShoppingCartSharp,
 } from "@mui/icons-material";
 import { CartList } from "../Components";
-import { Box, Button, Typography, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, Typography, IconButton, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 const Cart = observer(() => {
+    function ClearCartButton() {
+        const [open, setOpen] = useState(false);
+
+        const handleClickOpen = () => {
+            setOpen(true);
+        };
+
+        const handleClose = () => {
+            setOpen(false);
+        };
+
+        const handleConfirm = () => {
+            cartStore.clearCart();
+            setOpen(false);
+        };
+
+        return (
+            <>
+                <Tooltip title="Limpar carrinho">
+                    <IconButton
+                        variant="outlined"
+                        sx={{ mr: 2 }}
+                        color="delete"
+                        onClick={handleClickOpen}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        Limpar carrinho
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Tem a certeza de que deseja remover todos os produtos do seu carrinho de compras?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancelar</Button>
+                        <Button onClick={handleConfirm} color="error" autoFocus>
+                            Eliminar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
+        );
+    }
+
     return (
         <Box
             sx={{
@@ -31,7 +86,8 @@ const Cart = observer(() => {
                 </Typography>
                 {cartStore.totalQuantity ? (
                     <Typography variant="h7" gutterBottom sx={{ ml: 1 }}>
-                        ({cartStore.totalQuantity} {cartStore.totalQuantity === 1 ? "artigo" : "artigos"})
+                        ({cartStore.totalQuantity}{" "}
+                        {cartStore.totalQuantity === 1 ? "artigo" : "artigos"})
                     </Typography>
                 ) : (
                     ""
@@ -46,19 +102,19 @@ const Cart = observer(() => {
                         display: "flex",
                         flexDirection: "row",
                         width: "100%",
-                        border: "1px solid blue",
                     }}
                 >
                     {/* List of items in the cart */}
                     <CartList />
                     <Box
                         sx={{
-                            mt: 1,
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "flex-end",
-                            border: "1px solid #ccc",
-                            width: "40%",
+                            // border: "1px solid #ccc",
+                            borderRadius: 4,
+                            width: "35%",
+                            ml: 1,
                             p: 3,
                         }}
                     >
@@ -76,16 +132,7 @@ const Cart = observer(() => {
                             </Typography>
                             <Box>
                                 {/* Button to clear the cart */}
-                                <Tooltip title="Limpar carrinho">
-                                    <IconButton
-                                        variant="outlined"
-                                        sx={{ mr: 2 }}
-                                        color="delete"
-                                        onClick={cartStore.clearCart}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Tooltip>
+                                <ClearCartButton />
                                 {/* Button to go to the checkout page */}
                                 <Button
                                     variant="outlined"
