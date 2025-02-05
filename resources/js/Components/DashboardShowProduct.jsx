@@ -5,22 +5,18 @@ import { fixImagePath } from "../utils/utils.js";
 const DashboardShowProduct = ({ product }) => {
     // Verifica se há imagens na galeria e define a primeira corretamente
     const [selectedImage, setSelectedImage] = useState(
-        product.gallery && product.gallery.length > 0
-            ? fixImagePath(product.gallery[0].image_link)
+        product?.gallery && product?.gallery.length > 0
+            ? product?.gallery[0].image_link
             : "/images/default-image.jpg" // Imagem padrão caso não haja imagens
     );
 
     return (
         <Box>
-            {/* Cabeçalho do Modal */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                <Typography variant="h5">Detalhes do Produto</Typography>
-            </Box>
 
             <Box sx={{ display: "flex", gap: 2 }}>
                 {/* **Coluna das Miniaturas (Esquerda)** */}
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                    {product.gallery && product.gallery.map((image, index) => (
+                    {product?.gallery && product?.gallery.map((image, index) => (
                         <Box
                             key={index}
                             sx={{
@@ -28,13 +24,13 @@ const DashboardShowProduct = ({ product }) => {
                                 height: 80,
                                 borderRadius: "6px",
                                 overflow: "hidden",
-                                border: selectedImage === fixImagePath(image.image_link) ? "2px solid blue" : "1px solid grey",
+                                border: selectedImage === image.image_link ? "2px solid blue" : "1px solid grey",
                                 cursor: "pointer",
                             }}
-                            onClick={() => setSelectedImage(fixImagePath(image.image_link))}
+                            onClick={() => setSelectedImage(image.image_link)}
                         >
                             <img
-                                src={fixImagePath(image.image_link)}
+                                src={image.image_link}
                                 alt={`Thumb-${index}`}
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />

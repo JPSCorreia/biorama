@@ -201,7 +201,10 @@ if (env('APP_ENV') === 'local') {
 //Rotas ainda de dashboard
 Route::middleware(['auth'])->get('/stores/{id}/reviews', [DashboardController::class, 'DasboardstoreReviews']);
 Route::middleware(['auth'])->get('/stores/{id}/products', [DashboardController::class, 'productStorelist']);
-Route::middleware(['auth'])->put('/stores/products/{product_id}', [ProductController::class, 'update'])->name('product.update');
+Route::middleware(['auth'])->put('/stores/{id}/products/{product_id}', [ProductController::class, 'update'])->name('product.update');
+Route::get('/products/{product_id}', [ProductController::class, 'refreshProduct']);
+Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+
 
 
 
