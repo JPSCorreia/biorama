@@ -25,7 +25,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
     return (
         <Box
             sx={{
-                width: isSmallScreen || isMediumScreen ? "100%" : "80%",
+                width: "100%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -75,7 +75,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
             )}
 
             {/* Carrossel de imagens */}
-            <Box sx={{ width: isSmallScreen || isMediumScreen ? "100%" : "80%", height: 350, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Box sx={{ width: isSmallScreen || isMediumScreen ? "100%" : "85%", height: 350, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Box sx={{ width: "100%", height: "100%", position: "relative" }}>
                     <input hidden id="imageUpload" accept="image/*" type="file" multiple onChange={handleImageUpload} />
                     {images.length === 0 ? (
@@ -152,7 +152,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
                     p: 5,
                     backgroundColor: "rgba(255, 255, 255, 0.9)",
                     boxShadow: 3,
-                    width: isSmallScreen || isMediumScreen ? "96%" : "70%",
+                    width: isSmallScreen || isMediumScreen ? "96%" : "80%",
                     position: "relative",
                     mt: -5,
                     mb: 7,
@@ -160,7 +160,7 @@ const Step2StoreDetails = forwardRef(({ formErrors, images, setImages, handleIma
             >
                 <Box
                     sx={{
-                        width: isSmallScreen || isMediumScreen ? "100%" : "100%",
+                        width: "100%",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",

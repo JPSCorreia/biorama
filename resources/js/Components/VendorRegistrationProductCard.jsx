@@ -1,59 +1,76 @@
-import { Card, CardContent, Typography, Divider, Box } from "@mui/material";
-import Carousel from "react-material-ui-carousel";
+import { Card, CardContent, CardMedia, Typography, Box, Tooltip, IconButton } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
+import AddShoppingCartSharpIcon from "@mui/icons-material/AddShoppingCartSharp";
 import ReactMarkdown from "react-markdown";
-import { truncateDescription } from "../utils/utils";
+import Carousel from "react-material-ui-carousel";
 
 const VendorRegistrationProductCard = ({ product }) => {
+    const theme = useTheme();
+    const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
     return (
         <Card
             sx={{
-                width: "100%", // Ocupa toda a célula da grid
-                height: "100%", // Mantém o tamanho uniforme com os outros cards
+                minWidth: 220,
+                width: smallerThanMediumScreen ? "50%" : "20%",
+                maxWidth: "220px",
+                mr: 2,
                 borderRadius: "16px",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                 overflow: "hidden",
+                boxShadow: 3,
+                minHeight: "100%",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
-                transition: "transform 0.3s ease-in-out",
-                "&:hover": {
-                    transform: "scale(1.02)", // Efeito suave sem ultrapassar limites
-                },
+                position: "relative",
             }}
         >
-            {/* Carrossel de Imagens - Com altura fixa */}
+            {/* Nome do Produto */}
+            <CardContent
+                sx={{
+                    textAlign: "center",
+                    pt: 1,
+                    pb: 0.75,
+                    backgroundColor: theme.palette.primary.main,
+                }}
+            >
+                <Typography fontWeight="bold" noWrap sx={{ color: "white" }}>
+                    {product.name || "Produto sem nome"}
+                </Typography>
+            </CardContent>
+
+            {/* Carrossel de Imagens */}
             <Box
                 sx={{
                     width: "100%",
-                    height: "155px", // Fixar altura do carrossel
+                    height: "180px",
                     overflow: "hidden",
                     "&:hover .MuiButtonBase-root": {
-                        opacity: 1, // Mostrar os botões ao passar o rato sobre a imagem
+                        opacity: 1,
                     }
                 }}
             >
                 <Carousel
                     autoPlay={false}
-                    indicators={false} // Esconder indicadores para um design mais limpo
+                    indicators={false}
                     navButtonsAlwaysVisible={true}
                     sx={{
                         width: "100%",
                         height: "100%",
                         "& .MuiButtonBase-root": {
-                            backgroundColor: "rgba(0, 0, 0, 0.2) !important", // Fundo cinza claro discreto
-                            color: "#fff", // Setas brancas
-                            boxShadow: "none !important", // Sem sombras
-                            borderRadius: "50%", // Fundo arredondado
-                            width: "30px", // Ajusta tamanho da área do botão
+                            backgroundColor: "rgba(0, 0, 0, 0.2) !important",
+                            color: "#fff",
+                            boxShadow: "none !important",
+                            borderRadius: "50%",
+                            width: "30px",
                             height: "30px",
-                            opacity: 0, // Esconde por padrão
+                            opacity: 0,
                             transition: "opacity 0.3s ease-in-out, background-color 0.3s ease-in-out",
                             "&:hover": {
-                                backgroundColor: "rgba(0, 0, 0, 0.3) !important", // Ligeiramente mais escuro ao passar o rato
+                                backgroundColor: "rgba(0, 0, 0, 0.3) !important",
                             },
                         },
                         "& .MuiSvgIcon-root": {
-                            fontSize: "2rem", // Ajusta o tamanho das setas
+                            fontSize: "2rem",
                         }
                     }}
                 >
@@ -65,57 +82,74 @@ const VendorRegistrationProductCard = ({ product }) => {
                             style={{
                                 width: "100%",
                                 height: "100%",
-                                objectFit: "cover", // Ajusta a imagem ao espaço sem distorcer
+                                objectFit: "cover",
                             }}
                         />
                     ))}
                 </Carousel>
             </Box>
 
-            {/* Informações do Produto */}
-            <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-                {/* Nome do Produto */}
-                <Typography
-                    variant="h6"
-                    sx={{ fontWeight: "bold", marginBottom: "4px", textAlign: "left" }}
-                >
-                    {product.name}
-                </Typography>
-
-                {/* Descrição */}
-                <Box
-                    sx={{
-                        fontSize: 14,
-                        maxHeight: "60px", // Define a altura máxima
-                        lineHeight: "20px", // Mantém espaçamento consistente
-                        overflow: "hidden", // Esconde conteúdo extra
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 3, // Limita a 3 linhas antes de cortar
-                        textOverflow: "ellipsis", // Adiciona "..." ao final
-                        whiteSpace: "normal", // Permite quebra de linha conforme necessário
-                        wordBreak: "break-word", // Garante que palavras longas sejam quebradas
-                    }}
-                >
-                    {product.description}
-                </Box>
-
-                {/* Stock e Preço */}
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <Typography variant="body2" sx={{ fontWeight: "500" }}>
-                        Stock: {product.stock}
-                    </Typography>
-
-                    <Typography
-                        variant="h6"
-                        color="primary"
-                        sx={{ fontWeight: "bold" }}
+            {/* Descrição e Preço */}
+            <CardContent
+                sx={{
+                    pb: "0 !important",
+                    pt: ".5rem !important",
+                }}
+            >
+                <Box sx={{ mb: 1, display: "flex", flexDirection: "column" }}>
+                    <Box
+                        sx={{
+                            minHeight: "140px",
+                            fontSize: 14,
+                            fontWeight: "normal",
+                        }}
                     >
-                        {product.price.toLocaleString("pt-PT", {
-                            style: "currency",
-                            currency: "EUR",
-                        })}
-                    </Typography>
+                        <ReactMarkdown>{product.description}</ReactMarkdown>
+                    </Box>
+                    <Typography sx={{ fontSize: 12 }}>Preço por unidade:</Typography>
+                    {product.discount > 0 ? (
+                        <Box display="flex" alignItems="baseline" gap={1}>
+                            <Typography
+                                sx={{
+                                    textDecoration: "line-through",
+                                    fontSize: 14,
+                                    color: "red",
+                                    lineHeight: 1,
+                                }}
+                            >
+                                {Number(product.price).toFixed(2)}€
+                            </Typography>
+                            <Typography
+                                color="primary"
+                                sx={{
+                                    fontWeight: "bold",
+                                    fontSize: 20,
+                                    lineHeight: 1,
+                                }}
+                            >
+                                {(Number(product.price) * (1 - product.discount / 100)).toFixed(2)}€
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    fontSize: 14,
+                                    lineHeight: 1,
+                                    mb: "2px",
+                                }}
+                            >
+                                (-{Number(product.discount).toFixed(0)}%)
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography
+                            sx={{
+                                fontWeight: "bold",
+                                fontSize: 17,
+                            }}
+                        >
+                            {Number(product.price).toFixed(2)}€
+                        </Typography>
+                    )}
                 </Box>
             </CardContent>
         </Card>

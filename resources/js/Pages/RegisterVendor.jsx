@@ -248,7 +248,7 @@ const RegisterVendor = observer(({ genders }) => {
 
             {/* Navigation buttons */}
             <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
+                sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}
             >
                 <Button
                     variant="contained"

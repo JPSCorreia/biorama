@@ -36,7 +36,6 @@ class StoreController extends Controller
             'street_address' => 'required|string|max:255',
             'city' => 'required|string|max:50',
             'postal_code' => 'required|string|max:10',
-            'comment' => 'nullable|string',
             'image_link' => 'nullable|array', // Array de imagens
             'image_link.*' => 'nullable|string', // Cada imagem deve ser uma string Base64
         ]);
@@ -61,7 +60,6 @@ class StoreController extends Controller
                 'street_address' => $validated['street_address'],
                 'postal_code' => $validated['postal_code'],
                 'city' => $validated['city'],
-                'comment' => $validated['comment'],
                 'coordinates' => DB::raw("POINT({$longitude}, {$latitude})"),
             ]);
 
@@ -117,7 +115,6 @@ class StoreController extends Controller
                             'street_address',
                             'city',
                             'postal_code',
-                            'comment',
                             DB::raw('ST_X(coordinates) as longitude'),
                             DB::raw('ST_Y(coordinates) as latitude')
                         );
@@ -146,7 +143,6 @@ class StoreController extends Controller
                             'street_address',
                             'city',
                             'postal_code',
-                            'comment',
                             DB::raw('ST_X(coordinates) as longitude'),
                             DB::raw('ST_Y(coordinates) as latitude')
                         );
@@ -275,7 +271,6 @@ class StoreController extends Controller
                             'street_address',
                             'city',
                             'postal_code',
-                            'comment',
                             DB::raw('ST_X(coordinates) as longitude'),
                             DB::raw('ST_Y(coordinates) as latitude')
                         );
@@ -407,7 +402,6 @@ class StoreController extends Controller
             street_address,
             city,
             postal_code,
-            comment,
             CAST(ST_X(coordinates) AS CHAR) as longitude,
             CAST(ST_Y(coordinates) AS CHAR) as latitude
         ")

@@ -5,7 +5,7 @@ import {
     Typography,
     IconButton,
     TextField,
-    Button,
+    Button, useMediaQuery, useTheme
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
@@ -16,12 +16,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { vendorRegistrationStore } from "../Stores/";
 
-const CreateProductModal = ({ open = false, handleClose }) => {
+const CreateProductModal = ({ open, handleClose }) => {
     const [previewImages, setPreviewImages] = useState([]); // Apenas para UI (Base64)
     const [serverImages, setServerImages] = useState([]); // Apenas para envio (File)
     const [previewIndex, setPreviewIndex] = useState(0); // Índice do carrossel
     const [cropModalOpen, setCropModalOpen] = useState(false);
     const [imageToCrop, setImageToCrop] = useState(null);
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     // **Abrir o modal de corte assim que `imageToCrop` for atualizado**
     useEffect(() => {
@@ -101,8 +105,25 @@ const CreateProductModal = ({ open = false, handleClose }) => {
     return (
         <>
             {/* Modal Principal */}
-            <Modal open={Boolean(open)} onClose={handleClose} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Box sx={{ display: "flex", flexDirection: "column", width: "50%", padding: "20px", borderRadius: "10px", backgroundColor: "background.paper", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)" }}>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: isSmallScreen ? "80%" : "40%",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    backgroundColor: "background.paper",
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)"
+                }}
+                >
 
                     {/* Cabeçalho do Modal */}
                     <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
@@ -110,100 +131,208 @@ const CreateProductModal = ({ open = false, handleClose }) => {
                         <IconButton onClick={handleClose}><CloseIcon /></IconButton>
                     </Box>
 
-                    <Box sx={{ display: "flex", gap: 2 }}>
-                        {/* **Preview da Imagem (Esquerda)** */}
-                        <Box sx={{ width: "40%", height: 250, border: "2px dashed grey", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden", position: "relative" }}>
-                            {previewImages.length > 0 ? (
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        height: "100%",
-                                        position: "relative",
-                                        "&:hover .MuiButtonBase-root": {
-                                            opacity: 1, // Mostrar os botões ao passar o rato sobre a imagem
-                                        }
-                                    }}
-                                >
-                                    <Carousel
-                                        autoPlay={false}
-                                        indicators={false}
-                                        navButtonsAlwaysVisible={true}
-                                        index={previewIndex}
-                                        onChange={(index) => setPreviewIndex(index)}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 2 ,
+                            flexDirection: isSmallScreen ? "column" : "row"
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 2,
+                                width: isSmallScreen ? "78%" : "35%",
+                                height: isSmallScreen ? "250px" : "100%",
+                                m: isSmallScreen ? "auto" : "0",
+                            }}
+                        >
+                            {/* **Preview da Imagem (Esquerda)** */}
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    aspectRatio: "4 / 3", // Mantém o rácio 4:3
+                                    maxHeight: "600px", // Define um máximo de 600px abaixo de 800px de largura
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    overflow: "hidden",
+                                    position: "relative",
+                                    m: isSmallScreen ? "auto" : "0",
+                                    backgroundColor: previewImages.length === 0 ? "rgba(200, 200, 200, 0.3)" : "transparent",
+                                }}
+                            >
+                                {previewImages.length > 0 ? (
+                                    <Box
                                         sx={{
                                             width: "100%",
                                             height: "100%",
-                                            "& .MuiButtonBase-root": {
-                                                backgroundColor: "rgba(0, 0, 0, 0.2) !important", // Fundo cinza claro discreto
-                                                color: "#fff", // Setas brancas
-                                                boxShadow: "none !important", // Sem sombras
-                                                borderRadius: "50%", // Fundo arredondado
-                                                width: "30px", // Ajusta tamanho da área do botão
-                                                height: "30px",
-                                                opacity: 0, // Esconde por padrão
-                                                transition: "opacity 0.3s ease-in-out, background-color 0.3s ease-in-out",
-                                                "&:hover": {
-                                                    backgroundColor: "rgba(0, 0, 0, 0.3) !important", // Ligeiramente mais escuro ao passar o rato
-                                                },
-                                            },
-                                            "& .MuiSvgIcon-root": {
-                                                fontSize: "2rem", // Ajusta o tamanho das setas
+                                            position: "relative",
+                                            "&:hover .MuiButtonBase-root": {
+                                                opacity: 1, // Mostrar os botões ao passar o rato sobre a imagem
                                             }
                                         }}
                                     >
-                                        {previewImages.map((image, index) => (
-                                            <img
-                                                key={index}
-                                                src={image}
-                                                alt={`Preview-${index}`}
-                                                style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                                            />
-                                        ))}
-                                    </Carousel>
-                                </Box>
-                            ) : (
-                                <IconButton component="label">
-                                    <PhotoCameraIcon fontSize="large" />
-                                    <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
-                                </IconButton>
-                            )}
-                        </Box>
+                                        <Carousel
+                                            autoPlay={false}
+                                            indicators={false}
+                                            navButtonsAlwaysVisible={true}
+                                            index={previewIndex}
+                                            onChange={(index) => setPreviewIndex(index)}
+                                            sx={{
+                                                width: "100%",
+                                                height: "100%",
+                                                "& .MuiButtonBase-root": {
+                                                    backgroundColor: "rgba(0, 0, 0, 0.2) !important",
+                                                    color: "#fff",
+                                                    boxShadow: "none !important",
+                                                    borderRadius: "50%",
+                                                    width: "30px",
+                                                    height: "30px",
+                                                    opacity: 0,
+                                                    transition: "opacity 0.3s ease-in-out, background-color 0.3s ease-in-out",
+                                                    "&:hover": {
+                                                        backgroundColor: "rgba(0, 0, 0, 0.3) !important",
+                                                    },
+                                                },
+                                                "& .MuiSvgIcon-root": {
+                                                    fontSize: "2rem",
+                                                }
+                                            }}
+                                        >
+                                            {previewImages.map((image, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={image}
+                                                    alt={`Preview-${index}`}
+                                                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                                                />
+                                            ))}
+                                        </Carousel>
+                                    </Box>
+                                ) : (
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: "100%",
+                                            height: "100%",
+                                            backgroundColor: "rgba(200, 200, 200, 0.4)", // Fundo cinza com opacidade
+                                            borderRadius: "12px",
+                                        }}
+                                    >
+                                        <IconButton component="label">
+                                            <PhotoCameraIcon fontSize="large" sx={{ color: "#555" }} />
+                                            <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                                        </IconButton>
+                                        <Typography sx={{ color: "#000", fontSize: "1rem", mb: 2, textAlign:"center", fontWeight:"bold" }}>
+                                            Adiciona as imagens do teu produto
+                                        </Typography>
+                                    </Box>
+                                )}
+                            </Box>
 
+                            {/* **Miniaturas abaixo do Preview** */}
+                            <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1 }}>
+                                {previewImages.map((image, index) => (
+                                    <Box key={index} sx={{ position: "relative", width: 80, height: 50, borderRadius: "6px", overflow: "hidden" }}>
+                                        <img src={image} alt={`thumb-${index}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                        <IconButton
+                                            sx={{
+                                                position: "absolute",
+                                                top: 0,
+                                                right: 0,
+                                                backgroundColor: "rgba(255, 0, 0, 0.6)",
+                                                color: "white",
+                                                padding: "2px"
+                                            }}
+                                            onClick={() => handleDeleteImage(index)}
+                                        >
+                                            <DeleteIcon fontSize="small" />
+                                        </IconButton>
+                                    </Box>
+                                ))}
+
+                                {/* Ícone da câmara para adicionar mais imagens */}
+                                {previewImages.length < 3 && previewImages.length > 0 && (
+                                    <IconButton component="label" sx={{ backgroundColor: "rgba(0, 0, 0, 0.1)", padding: 1 }}>
+                                        <PhotoCameraIcon />
+                                        <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                                    </IconButton>
+                                )}
+                            </Box>
+
+                        </Box>
                         {/* **Campos do Produto (Direita)** */}
                         <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
-                            <TextField fullWidth label="Nome" {...formik.getFieldProps("name")} />
-                            <TextField fullWidth label="Descrição" multiline rows={2} {...formik.getFieldProps("description")} />
-                            <Box sx={{ display: "flex", gap: 2 }}>
-                                <TextField label="Stock" {...formik.getFieldProps("stock")} />
-                                <TextField label="Desconto (%)" {...formik.getFieldProps("discount")} />
+                            <TextField
+                                fullWidth
+                                label="Nome"
+                                {...formik.getFieldProps("name")}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Descrição"
+                                multiline
+                                rows={6}
+                                {...formik.getFieldProps("description")}
+                            />
+                            <Box sx={{ display: "flex", justifyContent:"space-between", gap: 2 }}>
+                                <TextField
+                                    label="Stock"
+                                    {...formik.getFieldProps("stock")}
+                                    sx={{
+                                        width: isSmallScreen ? "40%" : "27%",
+                                        '& input': { textAlign: "center" }
+                                    }}
+                                />
+                                <TextField
+                                    label="Desconto (%)"
+                                    {...formik.getFieldProps("discount")}
+                                    sx={{
+                                        width: isSmallScreen ? "40%" : "27%",
+                                        '& input': { textAlign: "center" }
+                                    }}
+                                />
                             </Box>
-                            <TextField label="Preço (€)" {...formik.getFieldProps("price")} />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end", // Alinha o preço à direita
+                                }}
+                            >
+                                <TextField
+                                    label="Preço (€)"
+                                    {...formik.getFieldProps("price")}
+                                    sx={{
+                                        width: isSmallScreen ? "40%" : "27%",
+                                        '& input': { textAlign: "center" }
+                                }}
+                                />
+                            </Box>
                         </Box>
+
                     </Box>
-
-                    {/* **Miniaturas abaixo do Preview** */}
-                    <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1 }}>
-                        {previewImages.map((image, index) => (
-                            <Box key={index} sx={{ position: "relative", width: 80, height: 50, borderRadius: "6px", overflow: "hidden" }}>
-                                <img src={image} alt={`thumb-${index}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                <IconButton sx={{ position: "absolute", top: 0, right: 0, backgroundColor: "rgba(255, 0, 0, 0.6)", color: "white", padding: "2px" }} onClick={() => handleDeleteImage(index)}>
-                                    <DeleteIcon fontSize="small" />
-                                </IconButton>
-                            </Box>
-                        ))}
-
-                        {/* Ícone da câmara ao lado das miniaturas para adicionar mais imagens */}
-                        {previewImages.length < 3 && previewImages.length > 0 && (
-                            <IconButton component="label" sx={{ backgroundColor: "rgba(0, 0, 0, 0.1)", padding: 1 }}>
-                                <PhotoCameraIcon />
-                                <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
-                            </IconButton>
-                        )}
+                    <Box
+                        sx={{
+                            mt: 4,
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "flex-end",
+                        }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            onClick={formik.handleSubmit}
+                            sx={{ width: isSmallScreen ? "100%" : "22%" }}
+                        >
+                            Criar Produto
+                        </Button>
                     </Box>
-
-                    <Button variant="contained" color="primary" sx={{ mt: 2 }} type="submit" onClick={formik.handleSubmit}>
-                        Criar Produto
-                    </Button>
                 </Box>
             </Modal>
 

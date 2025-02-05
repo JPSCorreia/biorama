@@ -1,19 +1,14 @@
-import {useEffect, useImperativeHandle, useState, forwardRef} from "react";
+import { useEffect, useImperativeHandle, useState, forwardRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
-import {vendorRegistrationStore} from "../Stores/vendorRegistrationStore.js";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { vendorRegistrationStore } from "../Stores/vendorRegistrationStore.js";
 import { useTheme } from "@mui/material/styles";
-import L from "leaflet";
+import { useMediaQuery } from "@mui/material";
 import "leaflet/dist/leaflet.css";
-import {useMediaQuery} from "@mui/material";
-import * as yup from "yup";
-import { usePage } from "@inertiajs/react";
 
 // Componente para centralizar e ajustar o zoom no marcador
 const CenterMapOnPostalCode = ({ position }) => {
@@ -22,48 +17,31 @@ const CenterMapOnPostalCode = ({ position }) => {
         if (position) {
             map.flyTo(position, 17, { duration: 1.5 });
         }
-    }, [position, map]); // Recalcula quando `position` muda
+    }, [position, map]);
     return null;
 };
 
-const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
+const FormStoreRegistration = forwardRef(({ formErrors }, ref) => {
     const theme = useTheme();
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const isMediumScreen = useMediaQuery(useTheme().breakpoints.between("sm", "md"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
     const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
 
-    const handleFormSubmit = async (values) => {
-        const isValid = await validationSchema.isValid(values);
-        console.log("SUBMETER", isValid);
-        if (isValid) {
-            vendorRegistrationStore.setStoreFormik(formik);
-        }
-    };
-
-    const validationSchema = yup.object().shape({
-        name: yup.string()
-            .required("Nome é obrigatório"),
-        phone_number: yup.string()
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().required("Nome é obrigatório"),
+        phone_number: Yup.string()
             .matches(/^\d{9,15}$/, "Número de telefone inválido")
             .required("Telefone é obrigatório"),
-        email: yup.string()
-            .email("Email inválido")
-            .required("Email é obrigatório"),
-        description: yup.string()
-            .nullable(),
-        street_address: yup.string()
-            .required(" Morada é obrigatório"),
-        city: yup.string()
-            .required("localidade é obrigatória"),
-        comment: yup.string()
-            .nullable(),
-        postal_code: yup.string()
+        email: Yup.string().email("Email inválido").required("Email é obrigatório"),
+        description: Yup.string().required("Descrição é obrigatória"),
+        street_address: Yup.string().required("Morada é obrigatória"),
+        city: Yup.string().required("Localidade é obrigatória"),
+        postal_code: Yup.string()
             .matches(/^\d{4}-\d{3}$/, "Código Postal inválido")
             .required("Código Postal é obrigatório"),
-        coordinates: yup.string()
-            .required("Necessario coodernadas"),
+        coordinates: Yup.string().required("Necessário coordenadas"),
     });
 
     const formik = useFormik({
@@ -72,16 +50,39 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
             phone_number: "",
             email: "",
             description: "",
-            street_address:"",
+            street_address: "",
             city: "",
-            comment: "",
             coordinates: "",
             postal_code: "",
             image_link: [],
         },
-        validationSchema: validationSchema,
-        onSubmit: handleFormSubmit,
+        validationSchema,
+        onSubmit: async (values) => {
+            formik.setTouched(
+                Object.keys(values).reduce((acc, key) => {
+                    acc[key] = true;
+                    return acc;
+                }, {})
+            );
+            const isValid = await formik.validateForm();
+            if (Object.keys(isValid).length === 0) {
+                vendorRegistrationStore.setStoreFormik(formik);
+            }
+        },
     });
+
+    useEffect(() => {
+        if (formErrors) {
+            formik.setErrors(formErrors);
+            formik.setTouched(
+                Object.keys(formErrors).reduce((acc, key) => {
+                    acc[key] = true;
+                    return acc;
+                }, {})
+            );
+            formik.validateForm();
+        }
+    }, [formErrors]);
 
     const handlePostalCodeChange = async (e) => {
         let value = e.target.value.replace(/\D/g, "");
@@ -91,19 +92,18 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
         formik.setFieldValue("postal_code", value);
 
         if (/^\d{4}-\d{3}$/.test(value)) {
-            const [cp4, cp3] = value.split("-");
             try {
                 setLoading(true);
                 setIsReadOnly(true);
-                const url = `${import.meta.env.VITE_CTT_API_URL}/${import.meta.env.VITE_CTT_API_KEY}/${cp4}-${cp3}`;
-                const response = await axios.get(url);
+                const response = await axios.get(
+                    `${import.meta.env.VITE_CTT_API_URL}/${import.meta.env.VITE_CTT_API_KEY}/${value}`
+                );
                 if (response.status === 200 && response.data.length > 0) {
                     const data = response.data[0];
-                    const coordinates = `${data.latitude},${data.longitude}`;
                     formik.setFieldValue("street_address", data.morada || "");
                     formik.setFieldValue("city", data.distrito || "");
-                    formik.setFieldValue("coordinates", coordinates);
-                    setShouldUpdateMap(true); // Atualizar mapa apenas aqui
+                    formik.setFieldValue("coordinates", `${data.latitude},${data.longitude}`);
+                    setShouldUpdateMap(true);
                 } else {
                     formik.setFieldError("postal_code", "Código Postal não encontrado");
                 }
@@ -141,173 +141,109 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
         );
     };
 
-    const CenterMapOnMarker = () => {
-        const map = useMapEvents({});
-        const position = formik.values.coordinates
-            ? formik.values.coordinates.split(",").map(Number)
-            : [38.7071, -9.1355]; // Default position
-        map.setView(position, 13); // Center map on marker
-        return null;
-    };
-
-    useImperativeHandle(ref, () => {
-
-        return {
-            validateForm: formik.validateForm,
-            setTouched: formik.setTouched,
-            setFieldValue: formik.setFieldValue,
-            values: formik.values,
-            handleSubmit: formik.handleSubmit,
-        };
-    }, [formik]);
-    useEffect(() => {
-        if (formErrors) {
-            formik.setErrors(formErrors);
-
-            // Marca todos os campos como "touched" para que os erros apareçam sempre
-            formik.setTouched(
-                Object.keys(formErrors).reduce((acc, key) => {
-                    acc[key] = true;
-                    return acc;
-                }, {})
-            );
-
-            // Força uma revalidação para garantir que os erros aparecem
-            console.log("Revalidar formulário"); // Para depuração
-            formik.validateForm();
-        }
-    }, [formErrors]);
+    useImperativeHandle(ref, () => ({
+        validateForm: formik.validateForm,
+        setTouched: formik.setTouched,
+        setFieldValue: formik.setFieldValue,
+        values: formik.values,
+        handleSubmit: formik.handleSubmit,
+    }));
 
     return (
-        <Box
-            component="form"
-            onSubmit={formik.handleSubmit}
-            sx={{
-                mt:3,
-            }}
-        >
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    gap: isSmallScreen || isMediumScreen ? 0 : 5,
-                }}
-            >
-                <Box
-                    sx={{
-                        width: isSmallScreen || isMediumScreen ? "100%" : "55%",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: isSmallScreen || isMediumScreen ? 'column' : 'row',
-                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
-                            mb: isSmallScreen || isMediumScreen ? 2 : 2
-                        }}
-                    >
+        <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+            <Box sx={{ display: "flex", flexDirection: isSmallScreen ? "column" : "row", gap: 5 }}>
+                <Box sx={{ width: isSmallScreen ? "100%" : "50%" }}>
+                    <Box sx={{ display: "flex", gap: 2, mb:2 }}>
                         <TextField
                             label="Nome"
                             name="name"
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.name}
-                            error={Boolean(formik.errors.name)}
+                            error={formik.touched.name && Boolean(formik.errors.name)}
                             helperText={formik.touched.name && formik.errors.name}
                             fullWidth
+                            required
                         />
-
                         <TextField
                             label="Telefone"
                             name="phone_number"
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.phone_number}
-                            error={Boolean(formik.errors.phone_number)}
+                            error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
                             helperText={formik.touched.phone_number && formik.errors.phone_number}
                             fullWidth
+                            required
                         />
-
                     </Box>
-
+                    <TextField
+                        label="Email"
+                        name="email"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.email}
+                        error={formik.touched.email && Boolean(formik.errors.email)}
+                        helperText={formik.touched.email && formik.errors.email}
+                        fullWidth
+                        required
+                        sx={{mb:2}}
+                    />
+                    <TextField
+                        label="Descrição"
+                        name="description"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.description}
+                        error={formik.touched.description && Boolean(formik.errors.description)}
+                        helperText={formik.touched.description && formik.errors.description}
+                        fullWidth
+                        required
+                        multiline
+                        rows={4}
+                        sx={{mb:2}}
+                    />
                     <Box
                         sx={{
-                            display: 'flex',
-                            flexDirection: isSmallScreen || isMediumScreen ? 'column' : 'row',
-                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
-                            mb: isSmallScreen || isMediumScreen ? 2 : 2
-                        }}
-                    >
-                        <TextField
-                            label="Email"
-                            name="email"
-                            onChange={formik.handleChange}
-                            value={formik.values.email}
-                            error={Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                            fullWidth
-                        />
-
-                    </Box>
-                    <Box>
-                        <TextField
-                            label="Descrição"
-                            name="description"
-                            onChange={formik.handleChange}
-                            value={formik.values.description}
-                            error={Boolean(formik.errors.description)}
-                            helperText={formik.touched.description && formik.errors.description}
-                            fullWidth
-                            multiline
-                            rows={4}
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
-                            mb: isSmallScreen || isMediumScreen ? 2 : 5,
-                            mt: isSmallScreen || isMediumScreen ? 2 : 5
+                            display: "flex",
+                            gap: 2,
+                            mb: 2,
                         }}
                     >
                         <TextField
                             label="Código Postal"
                             name="postal_code"
                             onChange={handlePostalCodeChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.postal_code}
-                            error={Boolean(formik.errors.postal_code)}
+                            error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
                             helperText={formik.touched.postal_code && formik.errors.postal_code}
                             fullWidth
+                            required
                         />
                         <TextField
                             label="Localidade"
                             name="city"
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.city}
-                            error={Boolean(formik.errors.city)}
+                            error={formik.touched.city && Boolean(formik.errors.city)}
                             helperText={formik.touched.city && formik.errors.city}
                             fullWidth
+                            required
                         />
                     </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: isSmallScreen ? 'column' : 'row',
-                            gap: isSmallScreen || isMediumScreen ? 2 : 5,
-                            mb: isSmallScreen || isMediumScreen ? 2 : 5,
-                        }}
-                    >
-                        <TextField
-                            label="Morada"
-                            name="street_address"
-                            onChange={formik.handleChange}
-                            value={formik.values.street_address}
-                            error={Boolean(formik.errors.street_address)}
-                            helperText={formik.touched.street_address && formik.errors.street_address}
-                            fullWidth
-                        />
-                    </Box>
+                    <TextField
+                        label="Morada"
+                        name="street_address"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.street_address}
+                        error={formik.touched.street_address && Boolean(formik.errors.street_address)}
+                        helperText={formik.touched.street_address && formik.errors.street_address}
+                        fullWidth
+                        required
+                    />
                 </Box>
                 <Box
                     sx={{
@@ -325,7 +261,7 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                         }}
                     >
 
-                    <MapContainer
+                        <MapContainer
                             center={formik.values.coordinates
                                 ? formik.values.coordinates.split(",").map(Number)
                                 : [38.7071, -9.1355]}
@@ -347,16 +283,6 @@ const FormStoreRegistration = forwardRef(({formErrors}, ref) => {
                     </Box>
                 </Box>
             </Box>
-            <TextField
-                label="Coordenadas"
-                name="coordinates"
-                value={formik.values.coordinates}
-                error={Boolean(formik.errors.coordinates)}
-                helperText={formik.errors.coordinates}
-                InputProps={{ readOnly: true }}
-                fullWidth
-                sx={{ display: "none" }}
-            />
         </Box>
     );
 });

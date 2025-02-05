@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('street_address', 255);
             $table->string('postal_code', 10);
             $table->string('city', 50);
-            $table->mediumText('comment')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

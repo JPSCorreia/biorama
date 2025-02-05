@@ -47,7 +47,6 @@ class DashboardController extends Controller
                             'street_address',
                             'city',
                             'postal_code',
-                            'comment',
                             DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
                             DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
                         );
@@ -187,7 +186,6 @@ class DashboardController extends Controller
                             'street_address',
                             'city',
                             'postal_code',
-                            'comment',
                             DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
                             DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
                         );
@@ -221,7 +219,6 @@ class DashboardController extends Controller
                         'street_address',
                         'city',
                         'postal_code',
-                        'comment',
                         DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
                         DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
                     );

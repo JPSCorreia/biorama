@@ -122,6 +122,7 @@ class VendorRegistrationStore {
             });
 
             this.store_id = responseStore.data.store.id;
+            console.log("Loja registada com sucesso!", responseStore.data.store.id);
 
             console.log("Loja registada com sucesso!", responseStore.data.store);
 
@@ -153,7 +154,7 @@ class VendorRegistrationStore {
             if (responseProduct.data.product) {
                 this.setProduct(responseProduct.data.product);
             }
-            console.log("Produtos registados com sucesso!", responseProduct.data.product);
+            console.log("Product -> ", this.products);
 
         } catch (error) {
             console.error("Erro ao enviar os formulários:", error);

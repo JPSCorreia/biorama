@@ -76,12 +76,25 @@ class ProductController extends Controller
             'description',
             'phone_number',
             'email',
-            'rating',
-            DB::raw('ST_X(coordinates) as longitude'),
-            DB::raw('ST_Y(coordinates) as latitude')
+            'rating'
         )
             ->where('id', $store->id)
-            ->with(['addresses', 'products', 'reviews', 'galleries'])
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'products',
+                'reviews',
+                'galleries'
+            ])
             ->first();
 
         // Replace the product's "stores" relationship with the formatted store data.

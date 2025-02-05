@@ -17,7 +17,6 @@ class StoreAddress extends Model
         'street_address',
         'postal_code',
         'city',
-        'comment',
         'coordinates',
     ];
 

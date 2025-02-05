@@ -12,10 +12,12 @@ const AddProductCard = () => {
 
     const handleModalClose = () => {
         setModalOpen(false);
+        console.log(modalOpen);
     };
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     return (
         <Box
@@ -24,12 +26,13 @@ const AddProductCard = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                m: "auto 17% auto 11%",
                 justifyContent: "center",
                 backgroundColor: "#388e3c26",
                 border: "2px dashed",
                 borderColor: theme.palette.primary.main,
                 borderRadius: "10px",
-                width: "100%",  // Ocupar 100% da largura do espaço disponível
+                width: isMediumScreen ? "" : "100%",  // Ocupar 100% da largura do espaço disponível
                 height: "100%", // Ocupar 100% da altura do espaço disponível
                 cursor: "pointer",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
