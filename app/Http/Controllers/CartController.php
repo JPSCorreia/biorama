@@ -19,7 +19,6 @@ class CartController extends Controller
             'street_address',
             'postal_code',
             'city',
-            'comment',
             'created_at',
             'updated_at',
             'deleted_at',

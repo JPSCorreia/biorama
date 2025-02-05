@@ -36,7 +36,7 @@ const SideBar = () => {
     const handleNavigation = (text) => {
         switch (text) {
             case "Sair":
-                authStore.logout();
+                authStore.updateAuth({ user: null });
                 break;
             case "Dados Pessoais":
                 console.log("Navegar para Dados Pessoais");

@@ -9,6 +9,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    useTheme,
+    useMediaQuery
 } from "@mui/material";
 import {
     Delete as DeleteIcon,
@@ -21,6 +23,10 @@ import { CartPaymentIcons} from "../../Components";
 
 
 const CartSidebar = observer(() => {
+
+    const theme = useTheme();
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
+
     function ClearCartButton() {
         const [open, setOpen] = useState(false);
 
@@ -84,7 +90,7 @@ const CartSidebar = observer(() => {
                 alignItems: "center",
                 border: "1px solid #ccc",
                 borderRadius: 4,
-                minWidth: "400px",
+                minWidth: smallerThanSmall ? "100%" : "400px",
                 height: "100%",
                 ml: 1,
                 p: 2,

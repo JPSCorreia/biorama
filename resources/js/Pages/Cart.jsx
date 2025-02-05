@@ -37,7 +37,7 @@ const Cart = observer(() => {
             {/* Title for the cart page */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Typography
-                    variant="h4"
+                    variant={smallerThanLarge? "h7" : "h4"}
                     gutterBottom
                     sx={{ fontWeight: "bold" }}
                 >

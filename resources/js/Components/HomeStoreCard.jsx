@@ -12,6 +12,7 @@ const HomeStoreCard = observer(({ store }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+    const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const isHovered = hoverStore.hoveredStoreId === store.id;
 
 
@@ -61,7 +62,7 @@ const HomeStoreCard = observer(({ store }) => {
             >
                 {/* Nome da loja sobre a imagem */}
                 <Typography
-                    variant={smallerThanMedium? "h5" : "h4"}
+                    variant={smallerThanLarge? "h6" : smallerThanMedium? "h5" : "h4"}
                     sx={{
                         position: "absolute",
                         top: "50%",
