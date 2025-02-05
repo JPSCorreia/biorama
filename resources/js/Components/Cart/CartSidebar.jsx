@@ -114,6 +114,7 @@ const CartSidebar = observer(() => {
                             <Box key={storeId} sx={{ mb: 2 }}>
                                 <Typography
                                     variant="subtitle1"
+                                    color="terciary"
                                     sx={{
                                         fontWeight: "bold",
                                         color: "terciary",

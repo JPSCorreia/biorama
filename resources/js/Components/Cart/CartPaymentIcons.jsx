@@ -7,7 +7,7 @@ import multibancoDarkIcon from "../../../images/payment_icons/multibanco_dark.pn
 import paypalIcon from "../../../images/payment_icons/paypal.png";
 import mastercardIcon from "../../../images/payment_icons/mastercard.png";
 import mastercardDarkIcon from "../../../images/payment_icons/mastercard_dark.png";
-import { useTheme, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { Box } from "@mui/material";
 
 const CartPaymentIcons = () => {
@@ -15,25 +15,83 @@ const CartPaymentIcons = () => {
 
     return (
         <Box
-            display="flex"
-            flexWrap="wrap"
-            justifyContent="center"
-            gap={2}
-            sx={{ mt: 1 }}
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="center"
+        gap={2}
+        sx={{ mt: 1 }}
         >
-            {[visaIcon, mastercardIcon, americanExpressIcon, mbWayIcon, multibancoIcon, paypalIcon].map((icon, index) => (
                 <Box
-                    key={index}
                     component="img"
                     sx={{
                         height: 35,
                         width: 55,
                         objectFit: "contain",
                     }}
-                    alt="Método de Pagamento"
-                    src={icon}
+                    alt="VISA Icon"
+                    src={visaIcon}
                 />
-            ))}
+                <Box
+                    component="img"
+                    sx={{
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
+                    }}
+                    alt="Mastercard Icon"
+                    src={
+                        theme.palette.mode === "dark"
+                            ? mastercardDarkIcon
+                            : mastercardIcon
+                    }
+                />
+                <Box
+                    component="img"
+                    sx={{
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
+                    }}
+                    alt="American Express Icon"
+                    src={americanExpressIcon}
+                />
+                <Box
+                    component="img"
+                    sx={{
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
+                    }}
+                    alt="MBWay Icon"
+                    src={
+                        theme.palette.mode === "dark"
+                            ? mbWayDarkIcon
+                            : mbWayIcon
+                    }
+                />
+                <Box
+                    component="img"
+                    sx={{
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
+                    }}
+                    alt="Multibanco Icon"
+                    src={
+                        theme.palette.mode === "dark"
+                            ? multibancoDarkIcon
+                            : multibancoIcon
+                    }
+                />
+                <Box
+                    component="img"
+                    sx={{
+                        height: 35,
+                        width: 55,
+                    }}
+                    alt="Paypal Icon"
+                    src={paypalIcon}
+                />
         </Box>
     );
 };
