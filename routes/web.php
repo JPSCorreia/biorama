@@ -198,8 +198,12 @@ if (env('APP_ENV') === 'local') {
     Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
 }
 
+//Rotas ainda de dashboard
 Route::middleware(['auth'])->get('/stores/{id}/reviews', [DashboardController::class, 'DasboardstoreReviews']);
 Route::middleware(['auth'])->get('/stores/{id}/products', [DashboardController::class, 'productStorelist']);
+Route::middleware(['auth'])->put('/stores/products/{product_id}', [ProductController::class, 'update'])->name('product.update');
+
+
 
 //TODO: routes to sort, also change route names to be standardized
 Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
