@@ -89,10 +89,10 @@ const HomeStoreCard = observer(({ store }) => {
                     color="text.secondary"
                     sx={{ marginBottom: 1, fontSize: 14 }}
                 >
-                    <ReactMarkdown>{truncateDescription(store.description, 150, 175)}</ReactMarkdown>
+                    <ReactMarkdown>{truncateDescription(store.description, 150, 180)}</ReactMarkdown>
                 </Box>
                 <Typography variant="caption" sx={{ fontWeight: "bold" }}>
-                    Distância: {(store.distance / 1000).toFixed(2)} km
+                    Distância: {(store.distance / 1000).toFixed(1)} km
                 </Typography>
             </Box>
         </Paper>

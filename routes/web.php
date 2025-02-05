@@ -9,6 +9,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CartController;
 use App\Http\Requests\CompanyRequest;
 use App\Http\Requests\VendorRequest;
 use Inertia\Inertia;
@@ -51,7 +52,7 @@ Route::get('/lojas', fn () => Inertia::render('Stores'))->name('stores');
 Route::get('/contactos', fn () => Inertia::render('Contacts'))->name('contacts');
 
 // Shopping cart page
-Route::get('/carrinho', fn () => Inertia::render('Cart'))->name('cart');
+Route::get('/carrinho', [CartController::class, 'index'])->name('cart');
 
 // Search results page
 Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa');

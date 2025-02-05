@@ -32,6 +32,7 @@ import { SearchBar } from "./";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const Navbar = observer(() => {
+
     // Get user roles
     const userRoles = authStore.user?.roles || [];
 
@@ -60,6 +61,21 @@ const Navbar = observer(() => {
 
     // Access theme properties using Material UI's theme hook
     const theme = useTheme();
+
+    const testIsXs = useMediaQuery(theme.breakpoints.only('xs'));
+    const testIsSm = useMediaQuery(theme.breakpoints.only('sm'));
+    const testIsMd = useMediaQuery(theme.breakpoints.only('md'));
+    const testIsLg = useMediaQuery(theme.breakpoints.only('lg'));
+    const testIsXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+    const currentBreakpoint =
+      testIsXs ? 'xs' :
+      testIsSm ? 'sm' :
+      testIsMd ? 'md' :
+      testIsLg ? 'lg' :
+      testIsXl ? 'xl' :
+      'unknown';
+
 
     // Navigation pages with links and icons
     const pages = [
@@ -233,6 +249,8 @@ const Navbar = observer(() => {
                             navigate("/");
                         }}
                     >
+                            <Typography sx={{ mr: 1 }}>{currentBreakpoint}</Typography>
+
                         {isSm ? (
                             ""
                         ) : (

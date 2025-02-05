@@ -104,7 +104,7 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                     <Typography
                                         sx={{
                                             textDecoration: "line-through",
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             color: "red",
                                             lineHeight: 1,
                                             display: "flex",
@@ -117,7 +117,7 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                         color="primary"
                                         sx={{
                                             fontWeight: "bold",
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             lineHeight: 1,
                                             display: "flex",
                                             alignItems: "baseline",
@@ -133,9 +133,9 @@ const ProductCard = observer(({ product, vendor, store }) => {
                                     <Typography
                                         variant="body2"
                                         sx={{
-                                            fontSize: 14,
+                                            fontSize: 12,
                                             lineHeight: 1,
-                                            mb: "2px",
+                                            mb: "3px",
                                             display: "flex",
                                             alignItems: "baseline",
                                             alignSelf: "center",

@@ -10,6 +10,7 @@ export { default as StoreVendorCard } from "./Store/StoreVendorCard";
 export { default as CartList } from "./Cart/CartList";
 export { default as CartProductCard } from "./Cart/CartProductCard";
 export { default as CartPaymentIcons } from "./Cart/CartPaymentIcons";
+export { default as CartSidebar } from "./Cart/CartSidebar";
 export { default as Footer } from "./Footer";
 export { default as FormCompanyRegistration } from "./FormCompanyRegistration";
 export { default as FormStoreRegistration } from "./FormStoreRegistration";

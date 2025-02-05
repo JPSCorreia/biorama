@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'id' => 1, // ID manualmente atribuído
-            'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
+            'first_name' => 'Vladimiro', // Nome personalizado
             'last_name' => 'Bonaparte',
             'email' => 'vladimiro@example.com',
             'email_verified_at' => now(),
@@ -38,13 +38,12 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
             'password' => Hash::make('123456789'), // Cria uma hash segura
         ]);
+
         User::create([
             'id' => 2, // ID manualmente atribuído
-            'first_name' => 'Lucas', // Nome personalizado ou podes usar fake data
-
+            'first_name' => 'Lucas', // Nome personalizado
             'last_name' => 'Silvestre',
             'email' => 'lucassilvestre4@gmail.com',
-
             'email_verified_at' => now(),
             'nif'=> '239502051',
             'phone' => '912345678',
@@ -58,25 +57,41 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456789'), // Cria uma hash segura
         ]);
 
+        // Utilizador personalizado João Correia
+        User::create([
+            'id' => 3, // ID manualmente atribuído
+            'first_name' => 'João',
+            'last_name' => 'Correia',
+            'email' => 'jpscorreia@example.com',
+            'email_verified_at' => now(),
+            'nif'=> '239502052',
+            'phone' => '912345679',
+            'date_of_birth' => '1987-05-20',
+            'image_profile' => url('storage/mock_images/users/user_2.png'),
+            'remember_token' => Str::random(10),
+            'iban' => 'PT50000201231234567890155',
+            'gender_id' => 1, // ID do género
+            'created_at' => now(),
+            'updated_at' => now(),
+            'password' => Hash::make('password123'), // Cria uma hash segura
+        ]);
+
         User::factory()->count(25)->create()->each(function ($user) use ($images) {
             $user->update([
                 'image_profile' => url($images[array_rand($images)]), // Gera URL absoluto para imagens
             ]);
         });
 
-
         foreach (User::all() as $user) {
-            if($user->id === 1)
-            {
+            if ($user->id === 1) {
                 $user->assignRole('vendor');
             }
             $user->assignRole('user');
+
             HomeAddress::factory()->create([
                 'user_id' => $user->id,
+                'is_primary' => true, // Garante que o endereço principal seja sempre true (1)
             ]);
         }
-
-
     }
-
 }
