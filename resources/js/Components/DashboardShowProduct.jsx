@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
-import {
-    Modal,
-    Box,
-    Typography,
-    IconButton,
-    TextField,
-    Button,
-} from "@mui/material";
-import {fixImagePath} from "../utils/utils.js";
+import { Box, Typography } from "@mui/material";
+import { fixImagePath } from "../utils/utils.js";
 
-
-const DashboardShowProduct = ({ product}) => {
-    const [selectedImage, setSelectedImage] = useState(product.gallery ? product.gallery[0] : "");
-
+const DashboardShowProduct = ({ product }) => {
+    // Verifica se há imagens na galeria e define a primeira corretamente
+    const [selectedImage, setSelectedImage] = useState(
+        product.gallery && product.gallery.length > 0
+            ? fixImagePath(product.gallery[0].image_link)
+            : "/images/default-image.jpg" // Imagem padrão caso não haja imagens
+    );
 
     return (
         <Box>
@@ -24,7 +20,7 @@ const DashboardShowProduct = ({ product}) => {
             <Box sx={{ display: "flex", gap: 2 }}>
                 {/* **Coluna das Miniaturas (Esquerda)** */}
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                    {product.gallery.map((image, index) => (
+                    {product.gallery && product.gallery.map((image, index) => (
                         <Box
                             key={index}
                             sx={{

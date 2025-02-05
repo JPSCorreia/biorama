@@ -417,11 +417,6 @@ class StoreController extends Controller
         // Recupera a quantidade de pedidos vendidos
         $orderCount = OrderStoreProduct::where('store_id', $id)->count();
 
-        // Formata os dados da loja para compatibilidade com JSON (sem as coordenadas)
-        // Detecta a codificação da descrição
-        $originalEncoding = mb_detect_encoding($store->description, 'UTF-8, ISO-8859-1, Windows-1252', true);
-        $description = iconv($originalEncoding, 'UTF-8//IGNORE', $store->description);
-
         // Formata os dados para compatibilidade com JSON (sem as coordenadas na store)
         $formattedStore = [
             'id'           => $store->id,
@@ -429,7 +424,7 @@ class StoreController extends Controller
             'name'         => $store->name,
             'phone_number' => $store->phone_number,
             'email'        => $store->email,
-            'description'  => $description,
+            'description'  => $store->description,
             'rating'       => $store->rating,
             'created_at'   => $store->created_at,
             'updated_at'   => $store->updated_at,

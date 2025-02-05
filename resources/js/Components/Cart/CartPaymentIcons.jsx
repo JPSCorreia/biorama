@@ -20,7 +20,7 @@ const CartPaymentIcons = () => {
     display="flex"
     flexDirection="column"
     alignItems="center"
-    width="280px"
+    width="350px"
     sx= {{ mt: 2 }}
 >
     <Box

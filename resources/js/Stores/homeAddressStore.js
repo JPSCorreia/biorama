@@ -27,6 +27,8 @@ class HomeAddressStore {
             checkDuplicatePostalCode: action,
             clearAddresses: action,
             addressCount: computed,
+            fetchAddresses: action,
+            primaryAddress: computed,
         });
         makePersistable(this, {
             name: "homeAddressStore",
@@ -46,7 +48,7 @@ class HomeAddressStore {
         if (!address.street_address)
             throw new Error("O campo street_address é obrigatório.");
         if (!address.city) throw new Error("O campo city é obrigatório.");
-        if(!address.number) throw new Error("O campo number é obrigatório.");
+        if (!address.number) throw new Error("O campo number é obrigatório.");
         if (!address.postal_code)
             throw new Error("O campo postal_code é obrigatório.");
         return true;
@@ -56,7 +58,6 @@ class HomeAddressStore {
      * Fetches addresses from backend if not already loaded
      */
     fetchAddresses = action(async () => {
-        if (this.addresses.length > 0) return;
         try {
             const response = await axios.get("/get-moradas");
             runInAction(() => {
@@ -123,7 +124,7 @@ class HomeAddressStore {
     updateAddress(id, updatedAddress) {
         console.log("Antes da atualização:", this.addresses);
 
-        this.addresses = this.addresses.map(address => {
+        this.addresses = this.addresses.map((address) => {
             if (updatedAddress.is_primary) {
                 // Se a morada editada for favorita, desmarcar outras favoritas
                 return {
@@ -141,7 +142,6 @@ class HomeAddressStore {
 
         console.log("Depois da atualização:", this.addresses);
     }
-
 
     /**
      * Sets an address as primary and updates backend
@@ -211,10 +211,9 @@ class HomeAddressStore {
             (address) =>
                 address.postal_code === postalCode &&
                 address.number === number &&
-                address.id !== excludeId // Exclui a morada com o ID fornecido
+                address.id !== excludeId, // Exclui a morada com o ID fornecido
         );
     }
-
 
     /**
      * Clears all addresses from the store
@@ -228,6 +227,13 @@ class HomeAddressStore {
      */
     get addressCount() {
         return this.addresses.length;
+    }
+
+    /**
+     * Computed property that returns the primary address
+     */
+    get primaryAddress() {
+        return Array.isArray(this.addresses) ? this.addresses.find(address => address.is_primary) || null : null;
     }
 }
 

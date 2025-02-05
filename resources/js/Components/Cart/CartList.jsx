@@ -1,24 +1,36 @@
 import { observer } from "mobx-react";
-import { cartStore } from "../../Stores";
+import { cartStore, homeAddressStore } from "../../Stores";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { Typography, Box, Tooltip, IconButton, Divider } from "@mui/material";
+import {
+    Typography,
+    Box,
+    Tooltip,
+    IconButton,
+    Divider,
+    useTheme,
+    useMediaQuery,
+} from "@mui/material";
 import { CartProductCard } from "..";
 import React from "react";
 
 const CartList = observer(() => {
     const shippingCosts = 5;
 
+
+    const theme = useTheme();
+    const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
+
     return (
-        <Box sx={{ display: "flex", width: "65%", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", width: "100%", justifyContent: "start" }}>
             <Box
                 sx={{
                     p: 0,
-                    width: "100%",
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 2,
                     backgroundColor: "background.paper",
-                    justifyContent: "center",
+                    justifySelf: "start",
+                    justifyContent: "start",
                     flexWrap: "wrap",
                     gap: 3,
                 }}
@@ -38,32 +50,37 @@ const CartList = observer(() => {
                                     flexDirection: "column",
                                 }}
                             >
-                                {/* {console.log(cartStore.cart[storeId][0].store.longitude)} */}
+                                {console.log("latitude da loja: ", cartStore.cart[storeId][0].store.latitude)}
+                                {console.log("longitude da loja: ",cartStore.cart[storeId][0].store.longitude)}
+                                {console.log("id da loja: ", storeId)}
+                                {console.log("primary address longitude: ", homeAddressStore?.primaryAddress?.longitude)}
+                                {console.log("primary address latitude: ", homeAddressStore?.primaryAddress?.latitude)}
+
 
                                 <Box
-                                        display="flex"
-                                        alignItems="baseline"
-                                        sx={{ flexDirection: "row"}}
+                                    display="flex"
+                                    alignItems="baseline"
+                                    sx={{ flexDirection: "row" }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontWeight: "bold",
+                                            fontSize: 14,
+                                        }}
                                     >
-                                        <Typography
-                                            sx={{
-                                                fontWeight: "bold",
-                                                fontSize: 14,
-                                            }}
-                                        >
-                                            Loja:
-                                        </Typography>
-                                        <Typography
-                                            color="terciary"
-                                            sx={{
-                                                fontWeight: "bold",
-                                                fontSize: 20,
-                                                ml: 1,
-                                            }}
-                                        >
-                                            {cartStore.cart[storeId][0].store.name}
-                                        </Typography>
-                                    </Box>
+                                        Loja:
+                                    </Typography>
+                                    <Typography
+                                        color="terciary"
+                                        sx={{
+                                            fontWeight: "bold",
+                                            fontSize: 20,
+                                            ml: 1,
+                                        }}
+                                    >
+                                        {cartStore.cart[storeId][0].store.name}
+                                    </Typography>
+                                </Box>
 
                                 <Box
                                     key={storeId}
@@ -72,6 +89,9 @@ const CartList = observer(() => {
                                         flexDirection: "row",
                                         gap: 3,
                                         flexWrap: "wrap",
+                                        justifyContent: smallerThanLarge
+                                            ? "center"
+                                            : "start",
                                     }}
                                 >
                                     {products.map((product) => (
@@ -94,7 +114,10 @@ const CartList = observer(() => {
                                     <Box
                                         display="flex"
                                         alignItems="baseline"
-                                        sx={{ flexDirection: "row" }}
+                                        sx={{
+                                            flexDirection: "row",
+                                            minWidth: "150px",
+                                        }}
                                     >
                                         <Typography
                                             sx={{
@@ -111,7 +134,10 @@ const CartList = observer(() => {
                                                 ml: 1,
                                             }}
                                         >
-                                            €{cartStore.storeTotals[storeId]}
+                                            €
+                                            {Number(
+                                                cartStore.storeTotals[storeId],
+                                            )}
                                         </Typography>
                                     </Box>
                                     {/* Shipping Costs */}
@@ -162,9 +188,13 @@ const CartList = observer(() => {
                                             }}
                                         >
                                             €
-                                            {Number(
-                                                cartStore.storeTotals[storeId],
-                                            ) + shippingCosts}
+                                            {(
+                                                Number(
+                                                    cartStore.storeTotals[
+                                                        storeId
+                                                    ],
+                                                ) + Number(shippingCosts)
+                                            ).toFixed(2)}
                                         </Typography>
                                     </Box>
 

@@ -83,7 +83,7 @@ const Home = observer(() => {
                         width: smallerThanMedium? "100%" : "40%",
                         minWidth: smallerThanMedium? "100%" : "40%",
                         minHeight: "100%",
-                        mt: 2,
+                        mt: 1.95,
                     }}
                 >
                     <HomeMap radius={50000} />

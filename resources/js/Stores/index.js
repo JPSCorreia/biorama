@@ -8,6 +8,7 @@ import { vendorRegistrationStore } from "./vendorRegistrationStore.js";
 import { vendorStore } from "./vendorsStore.js";
 import { shopStore } from "./shopStore.js";
 import { hoverStore } from "./hoverStore.js";
+import {productStore} from "./productStore.js"
 
 // Mobx-persist-store default configuration for all stores
 configurePersistable({
@@ -27,4 +28,5 @@ export {
     vendorRegistrationStore,
     vendorStore,
     shopStore,
+    productStore,
 };
