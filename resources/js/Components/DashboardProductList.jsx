@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -9,48 +9,55 @@ import {
     TablePagination,
     TableRow,
     Paper,
-    IconButton, Dialog, DialogTitle, DialogActions, Button
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogActions,
+    Button,
+    Box,
+    TextField,
+    Typography,
 } from "@mui/material";
-import axios from "axios";
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import DashboardProductModal from "@/Components/DashboardProductModal.jsx";
-import {productStore} from "@/Stores/index.js";
+import { observer } from "mobx-react";
+import { productStore } from "@/Stores/index.js";
 
-const DashboardProductList = ({storeId}) => {
-    const [products, setProducts] = useState([]);
+const DashboardProductList = observer(({ storeId }) => {
     const [page, setPage] = useState(0);
-    const [totalProducts, setTotalProducts] = useState(0);
+    const [searchTerm, setSearchTerm] = useState("");
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [initialEditMode, setInitialEditMode] = useState(false);
     const [deleteDialog, setDeleteDialog] = useState({ open: false, product: null });
-console.log("Store id", storeId);
-    // Função para buscar os produtos
-    const fetchProducts = async (pageNumber = 1) => {
-        try {
-            const response = await axios.get(`/stores/${storeId}/products?page=${pageNumber}`);
-            setProducts(response.data.data);  // Atualiza os produtos
-            setTotalProducts(response.data.total);  // Total de produtos
-        } catch (error) {
-            console.error("Erro ao buscar produtos:", error);
-        }
-    };
 
-    // Buscar produtos na montagem inicial e quando a página muda
+
     useEffect(() => {
-        fetchProducts(page + 1);  // Corrige para considerar a base 1 do Laravel
-    }, [page]);
+        productStore.fetchProductsPaginated(storeId, page + 1, searchTerm);
+    }, [page, searchTerm]);
 
     // Atualiza a página
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Abre o modal e define o produto selecionado
+    // Função para pesquisa
+
+
+
+    // Abre o modal e define o produto selecionado para visualização
     const handleViewProduct = (product) => {
         setSelectedProduct(product);
+        setInitialEditMode(false); // Modo de visualização
+        setShowProductModal(true);
+    };
+
+    // Abre o modal no modo de edição
+    const handleEditProduct = (product) => {
+        setSelectedProduct(product);
+        setInitialEditMode(true); // Abre no modo de edição
         setShowProductModal(true);
     };
 
@@ -60,13 +67,7 @@ console.log("Store id", storeId);
         setSelectedProduct(null);
     };
 
-
-    const handleEditProduct = (product) => {
-        setSelectedProduct(product);
-        setInitialEditMode(true); // Abre no modo de edição
-        setShowProductModal(true);
-    };
-
+    // Confirmação de exclusão
     const confirmDeleteProduct = (product) => {
         setDeleteDialog({ open: true, product });
     };
@@ -76,42 +77,71 @@ console.log("Store id", storeId);
         setDeleteDialog({ open: false, product: null });
     };
 
+    // Função para apagar produto via productStore
     const handleDeleteProduct = async () => {
         try {
-            console.log("Apagando o produto:", deleteDialog.product);
             await productStore.deleteProduct(deleteDialog.product);
             setDeleteDialog({ open: false, product: null }); // Fecha o diálogo após sucesso
+            productStore.fetchProductsPaginated(storeId, page + 1); // Atualiza os produtos após apagar
         } catch (error) {
             console.error("Erro ao apagar o produto:", error);
         }
     };
+
     return (
         <>
-            <TableContainer component={Paper} sx={{mt: 3, boxShadow: 3, borderRadius: 2}}>
+            {/* Barra verde com título e campo de pesquisa */}
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 3,
+                    p: 2,
+                    backgroundColor: "green",
+                    color: "white",
+                    borderRadius: 2,
+                }}
+            >
+                <Typography variant="h5">Os meus produtos</Typography>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Pesquisar produto"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        sx={{ backgroundColor: "white", borderRadius: 1 }}
+                    />
+                </Box>
+            </Box>
+
+            {/* Tabela de produtos */}
+            <TableContainer component={Paper} sx={{ mt: 3, boxShadow: 3, borderRadius: 2 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell><strong>Nome</strong></TableCell>
                             <TableCell><strong>Descrição</strong></TableCell>
                             <TableCell><strong>Preço</strong></TableCell>
-                            <TableCell><strong>Acção</strong> </TableCell>
+                            <TableCell><strong>Ações</strong></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products.map((product) => (
+                        {productStore.products.map((product) => (
                             <TableRow key={product.id}>
                                 <TableCell>{product.name}</TableCell>
                                 <TableCell>{product.description}</TableCell>
-                                <TableCell>{product.price}</TableCell>
+                                <TableCell>{product.price} €</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleViewProduct(product)}>
-                                        <VisibilityIcon/>
+                                        <VisibilityIcon />
                                     </IconButton>
                                     <IconButton onClick={() => handleEditProduct(product)}>
-                                        <BorderColorIcon/>
+                                        <BorderColorIcon />
                                     </IconButton>
                                     <IconButton onClick={() => confirmDeleteProduct(product)}>
-                                        < DeleteIcon/>
+                                        <DeleteIcon color="error" />
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
@@ -121,7 +151,7 @@ console.log("Store id", storeId);
                         <TableRow>
                             <TablePagination
                                 rowsPerPageOptions={[10]}
-                                count={totalProducts}
+                                count={productStore.totalProducts}
                                 rowsPerPage={10}
                                 page={page}
                                 onPageChange={handleChangePage}
@@ -130,7 +160,8 @@ console.log("Store id", storeId);
                     </TableFooter>
                 </Table>
             </TableContainer>
-            {/* Modal para visualizar o produto */}
+
+            {/* Modal para visualização/edição de produto */}
             {selectedProduct && (
                 <DashboardProductModal
                     open={showProductModal}
@@ -142,10 +173,7 @@ console.log("Store id", storeId);
             )}
 
             {/* Diálogo de confirmação de exclusão */}
-            <Dialog
-                open={deleteDialog.open}
-                onClose={handleCloseDeleteDialog}
-            >
+            <Dialog open={deleteDialog.open} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Tem a certeza que deseja apagar este produto?</DialogTitle>
                 <DialogActions>
                     <Button onClick={handleCloseDeleteDialog} color="primary">
@@ -156,9 +184,8 @@ console.log("Store id", storeId);
                     </Button>
                 </DialogActions>
             </Dialog>
-
         </>
     );
-};
+});
 
 export default DashboardProductList;

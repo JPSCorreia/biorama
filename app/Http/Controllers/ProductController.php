@@ -238,6 +238,31 @@ class ProductController extends Controller
             'message' => 'Produto e suas associações foram apagados com sucesso!',
         ], 200);
     }
+    public function ProductListSearch(Request $request, $storeId)
+    {
+        $searchTerm = $request->input('search', '');
+
+        // Base query para buscar os produtos da loja
+        $query = Product::whereHas('stores', function ($query) use ($storeId) {
+            $query->where('store_id', $storeId);
+        });
+
+        // Verificação manual do termo de busca
+        if (!empty($searchTerm)) {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        // Paginar os resultados
+        $products = $query
+            ->with('gallery')
+            ->paginate(10);
+
+        return response()->json($products);
+    }
+
+
+
+
 
 
 }
