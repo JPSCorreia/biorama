@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained('orders');
 
-            // Definir store_id e product_id sem FK direta
-            $table->foreignId('store_id')->constrained('store_products', 'store_id');
-            $table->foreignId('product_id')->constrained('store_products', 'product_id');
+            // Ligar diretamente às tabelas 'stores' e 'products'
+            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
 
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->nullable();

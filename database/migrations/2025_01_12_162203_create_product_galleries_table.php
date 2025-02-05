@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('product_galleries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products');
+            $table->foreignId('product_id')
+                ->constrained('products')
+                ->onDelete('cascade');  // Apaga automaticamente os registros relacionados
             $table->string('image_link', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();

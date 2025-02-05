@@ -22,7 +22,7 @@ class ProductStore{
             const response = await axios.get(`/products/${productId}`);
             runInAction(() => {
                 this.setProductData(response.data.product);
-                console.log("Product", response.data.product);
+                console.log("Product n a shot store quando dou fetch", response.data.product);
 
             });
         } catch (error) {

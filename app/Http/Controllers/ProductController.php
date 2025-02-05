@@ -26,22 +26,22 @@ class ProductController extends Controller
 
         // Validate the product data coming from the request.
         $validated = $request->validate([
-            'name'            => 'required|string|max:100',
-            'description'     => 'nullable|string',
-            'price'           => 'required|numeric|min:0',
-            'discount'        => 'numeric|min:0',
-            'stock'           => 'integer|min:0',
-            'imagesProduct'   => 'nullable|array',
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'discount' => 'numeric|min:0',
+            'stock' => 'integer|min:0',
+            'imagesProduct' => 'nullable|array',
             'imagesProduct.*' => 'file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // Create the product using the validated data.
         $product = Product::create([
-            'name'        => $validated['name'],
+            'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
-            'price'       => $validated['price'],
-            'discount'    => $validated['discount'] ?? 0.0,
-            'stock'       => $validated['stock'] ?? 0,
+            'price' => $validated['price'],
+            'discount' => $validated['discount'] ?? 0.0,
+            'stock' => $validated['stock'] ?? 0,
         ]);
 
         // Associate the product with the store using the many-to-many relationship.
@@ -110,24 +110,23 @@ class ProductController extends Controller
     }
 
 
-
     public function show(Product $product)
     {
         return response()->json($product->load('categories', 'storeProducts'));
     }
 
 
-        public function refreshProduct($product_id)
-        {
-            // Encontra o produto pelo ID, incluindo a galeria de imagens
-            $product = Product::with('gallery')->findOrFail($product_id);
+    public function refreshProduct($product_id)
+    {
+        // Encontra o produto pelo ID, incluindo a galeria de imagens
+        $product = Product::with('gallery')->findOrFail($product_id);
 
-            // Retorna o produto com suas imagens associadas
-            return response()->json([
-                'message' => 'Produto carregado com sucesso!',
-                'product' => $product,
-            ], 200);
-        }
+        // Retorna o produto com suas imagens associadas
+        return response()->json([
+            'message' => 'Produto carregado com sucesso!',
+            'product' => $product,
+        ], 200);
+    }
 
 
     public function update(Request $request, $Store_id, $product_id)
@@ -137,24 +136,24 @@ class ProductController extends Controller
 
         // Valida os dados do produto
         $validated = $request->validate([
-            'name'            => 'required|string|max:100',
-            'description'     => 'nullable|string',
-            'price'           => 'required|numeric|min:0',
-            'discount'        => 'numeric|min:0',
-            'stock'           => 'integer|min:0',
-            'newImages'       => 'nullable|array',  // Imagens em Base64
-            'newImages.*'     => 'nullable|string',  // Cada imagem deve ser uma string Base64
-            'deleteImages'    => 'nullable|array',
-            'deleteImages.*'  => 'integer|exists:product_galleries,id',
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'discount' => 'numeric|min:0',
+            'stock' => 'integer|min:0',
+            'newImages' => 'nullable|array',  // Imagens em Base64
+            'newImages.*' => 'nullable|string',  // Cada imagem deve ser uma string Base64
+            'deleteImages' => 'nullable|array',
+            'deleteImages.*' => 'integer|exists:product_galleries,id',
         ]);
 
         // Atualiza os dados básicos do produto
         $product->update([
-            'name'        => $validated['name'],
+            'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
-            'price'       => $validated['price'],
-            'discount'    => $validated['discount'] ?? 0.0,
-            'stock'       => $validated['stock'] ?? 0,
+            'price' => $validated['price'],
+            'discount' => $validated['discount'] ?? 0.0,
+            'stock' => $validated['stock'] ?? 0,
         ]);
 
         // Processa imagens a excluir
@@ -220,27 +219,27 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->load('gallery');
+        DB::transaction(function () use ($product) {
+            $product->load('gallery');
 
-        // Apagar as associações na tabela pivot 'category_product'
-        DB::table('category_product')->where('product_id', $product->id)->delete();
-
-        // Apagar as imagens do armazenamento
-        foreach ($product->gallery as $image) {
-            $cleanPath = str_replace('/storage/', '', $image->image_link);
-            if (Storage::disk('public')->exists($cleanPath)) {
-                Storage::disk('public')->delete($cleanPath);
+            // Apagar fisicamente as imagens do armazenamento
+            foreach ($product->gallery as $image) {
+                $cleanPath = str_replace('/storage/', '', $image->image_link);
+                if (Storage::disk('public')->exists($cleanPath)) {
+                    Storage::disk('public')->delete($cleanPath);
+                }
             }
-        }
 
-        // Apagar os registros da galeria
-        ProductGallery::where('product_id', $product->id)->delete();
-
-        // Apagar o produto
-        $product->delete();
+            // O MySQL cuidará de apagar os registros em 'product_galleries'
+            $product->delete();
+        });
 
         return response()->json([
-            'message' => 'Produto e suas imagens foram apagados com sucesso!',
+            'message' => 'Produto e suas associações foram apagados com sucesso!',
         ], 200);
     }
+
+
 }
+
+
