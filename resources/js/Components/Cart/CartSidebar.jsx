@@ -90,7 +90,7 @@ const CartSidebar = observer(() => {
                 alignItems: "center",
                 border: "1px solid #ccc",
                 borderRadius: 4,
-                minWidth: smallerThanSmall ? "100%" : "400px",
+                minWidth: smallerThanSmall ? "100%" : "500px",
                 height: "100%",
                 ml: 1,
                 p: 2,

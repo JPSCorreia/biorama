@@ -61,7 +61,7 @@ const userLocationIcon = L.divIcon({
 const SetViewOnPosition = ({ position }) => {
     const map = useMap();
     if (position) {
-        map.setView(position, 15); // Zoom level
+        map.setView(position, 11); // Zoom level
     }
     return null;
 };
