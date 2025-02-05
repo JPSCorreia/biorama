@@ -7,33 +7,26 @@ import multibancoDarkIcon from "../../../images/payment_icons/multibanco_dark.pn
 import paypalIcon from "../../../images/payment_icons/paypal.png";
 import mastercardIcon from "../../../images/payment_icons/mastercard.png";
 import mastercardDarkIcon from "../../../images/payment_icons/mastercard_dark.png";
-import { useTheme, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { Box } from "@mui/material";
 
 const CartPaymentIcons = () => {
     const theme = useTheme();
-    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            width={smallerThanSmall ? "100%" : "350px"}
-            sx={{ mt: 2 }}
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="center"
+        gap={2}
+        sx={{ mt: 1 }}
         >
-            <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                width="100%"
-                justifyContent="space-between"
-            >
                 <Box
                     component="img"
                     sx={{
-                        height: 75,
-                        width: 75,
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
                     }}
                     alt="VISA Icon"
                     src={visaIcon}
@@ -41,8 +34,9 @@ const CartPaymentIcons = () => {
                 <Box
                     component="img"
                     sx={{
-                        height: 60,
-                        width: 60,
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
                     }}
                     alt="Mastercard Icon"
                     src={
@@ -54,27 +48,19 @@ const CartPaymentIcons = () => {
                 <Box
                     component="img"
                     sx={{
-                        height: 60,
-                        width: 60,
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
                     }}
                     alt="American Express Icon"
                     src={americanExpressIcon}
                 />
-            </Box>
-            <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                width="100%"
-                justifyContent="space-between"
-            >
                 <Box
                     component="img"
                     sx={{
-                        height: 75,
-                        width: 75,
-                        ml: "5px",
-                        mb: "6px",
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
                     }}
                     alt="MBWay Icon"
                     src={
@@ -86,8 +72,9 @@ const CartPaymentIcons = () => {
                 <Box
                     component="img"
                     sx={{
-                        height: 60,
-                        width: 60,
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
                     }}
                     alt="Multibanco Icon"
                     src={
@@ -99,13 +86,12 @@ const CartPaymentIcons = () => {
                 <Box
                     component="img"
                     sx={{
-                        height: 60,
-                        width: 60,
+                        height: 35,
+                        width: 55,
                     }}
                     alt="Paypal Icon"
                     src={paypalIcon}
                 />
-            </Box>
         </Box>
     );
 };

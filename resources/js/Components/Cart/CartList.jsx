@@ -19,6 +19,8 @@ const CartList = observer(() => {
     const theme = useTheme();
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+    const smallerThanXl = useMediaQuery(theme.breakpoints.down("xl"));
+    const smallerThanSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     // Calcula o custo de envio baseado na distância
     function calculateShippingCost(distanceKm) {
@@ -48,9 +50,6 @@ const CartList = observer(() => {
             if (data.routes && data.routes.length > 0) {
                 const distanceMeters = data.routes[0].distance; // Distância em METROS
                 const distanceKm = distanceMeters / 1000; // 🔹 Converter para KM
-                console.log(
-                    `✅ Distância correta: ${distanceMeters}m (${distanceKm.toFixed(2)} km)`,
-                );
                 return distanceKm;
             } else {
                 console.error("⚠️ Erro ao obter rota do OSRM");
@@ -65,8 +64,6 @@ const CartList = observer(() => {
     // Calcula os portes para cada loja no carrinho
     useEffect(() => {
         async function calculateShipping() {
-            let costs = {};
-
             for (const [storeId] of Object.entries(cartStore.cart)) {
                 if (
                     cartStore.cart[storeId][0].store.latitude &&
@@ -82,14 +79,12 @@ const CartList = observer(() => {
                     );
 
                     if (distance !== null) {
-                        costs[storeId] = calculateShippingCost(distance);
+                        const cost = calculateShippingCost(distance);
+                        cartStore.setShippingCost(storeId, cost); // 🔹 Guarda os custos de envio na `cartStore`
                     }
                 }
             }
-
-            setShippingCosts(costs);
         }
-
         calculateShipping();
     }, [cartStore.cart, homeAddressStore?.primaryAddress]);
 
@@ -105,14 +100,22 @@ const CartList = observer(() => {
                     justifySelf: "start",
                     justifyContent: "start",
                     flexWrap: "wrap",
-                    minWidth: smallerThanLarge ? "100%" : "800px",
+                    minWidth: smallerThanSm
+                        ? "100%"
+                        : smallerThanMedium
+                          ? "450px"
+                          : smallerThanLarge
+                            ? "550px"
+                            : smallerThanXl
+                              ? "600px"
+                              : "800px",
+
                     gap: 3,
                 }}
             >
                 {Object.entries(cartStore.cart).map(
                     ([storeId, products], index, arr) => {
                         const store = products[0].store;
-                        const shippingCost = shippingCosts[storeId] || "N/A";
 
                         return (
                             <Fragment key={storeId}>
@@ -171,7 +174,12 @@ const CartList = observer(() => {
                                             />
                                         ))}
                                     </Box>
-                                    <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%">
+                                    <Box
+                                        display="flex"
+                                        flexDirection="row"
+                                        justifyContent="space-between"
+                                        width="100%"
+                                    >
                                         <Box
                                             sx={{
                                                 display: "flex",
@@ -241,10 +249,12 @@ const CartList = observer(() => {
                                                     }}
                                                 >
                                                     €
-                                                    {shippingCost !== "N/A"
-                                                        ? shippingCost.toFixed(
-                                                              2,
-                                                          )
+                                                    {cartStore.shippingCosts[
+                                                        storeId
+                                                    ] !== "N/A"
+                                                        ? cartStore.shippingCosts[
+                                                              storeId
+                                                          ]?.toFixed(2)
                                                         : "N/A"}
                                                 </Typography>
                                             </Box>
@@ -277,13 +287,14 @@ const CartList = observer(() => {
                                                             cartStore
                                                                 .storeTotals[
                                                                 storeId
-                                                            ],
+                                                            ] || 0,
                                                         ) +
-                                                        (shippingCost !== "N/A"
-                                                            ? Number(
-                                                                  shippingCost,
-                                                              )
-                                                            : 0)
+                                                        Number(
+                                                            cartStore
+                                                                .shippingCosts[
+                                                                storeId
+                                                            ] || 0,
+                                                        )
                                                     ).toFixed(2)}
                                                 </Typography>
                                             </Box>

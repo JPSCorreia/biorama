@@ -19,7 +19,7 @@ const Cart = observer(() => {
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
     useEffect(() => {
-        homeAddressStore.addresses = homeAddressStore.fetchAddresses();
+        homeAddressStore.fetchAddresses();
     }, []);
 
     return (
