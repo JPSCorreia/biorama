@@ -12,100 +12,28 @@ import { Box } from "@mui/material";
 
 const CartPaymentIcons = () => {
     const theme = useTheme();
-    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Box
             display="flex"
-            flexDirection="column"
-            alignItems="center"
-            width={smallerThanSmall ? "100%" : "350px"}
-            sx={{ mt: 2 }}
+            flexWrap="wrap"
+            justifyContent="center"
+            gap={2}
+            sx={{ mt: 1 }}
         >
-            <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                width="100%"
-                justifyContent="space-between"
-            >
+            {[visaIcon, mastercardIcon, americanExpressIcon, mbWayIcon, multibancoIcon, paypalIcon].map((icon, index) => (
                 <Box
+                    key={index}
                     component="img"
                     sx={{
-                        height: 75,
-                        width: 75,
+                        height: 35,
+                        width: 55,
+                        objectFit: "contain",
                     }}
-                    alt="VISA Icon"
-                    src={visaIcon}
+                    alt="Método de Pagamento"
+                    src={icon}
                 />
-                <Box
-                    component="img"
-                    sx={{
-                        height: 60,
-                        width: 60,
-                    }}
-                    alt="Mastercard Icon"
-                    src={
-                        theme.palette.mode === "dark"
-                            ? mastercardDarkIcon
-                            : mastercardIcon
-                    }
-                />
-                <Box
-                    component="img"
-                    sx={{
-                        height: 60,
-                        width: 60,
-                    }}
-                    alt="American Express Icon"
-                    src={americanExpressIcon}
-                />
-            </Box>
-            <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                width="100%"
-                justifyContent="space-between"
-            >
-                <Box
-                    component="img"
-                    sx={{
-                        height: 75,
-                        width: 75,
-                        ml: "5px",
-                        mb: "6px",
-                    }}
-                    alt="MBWay Icon"
-                    src={
-                        theme.palette.mode === "dark"
-                            ? mbWayDarkIcon
-                            : mbWayIcon
-                    }
-                />
-                <Box
-                    component="img"
-                    sx={{
-                        height: 60,
-                        width: 60,
-                    }}
-                    alt="Multibanco Icon"
-                    src={
-                        theme.palette.mode === "dark"
-                            ? multibancoDarkIcon
-                            : multibancoIcon
-                    }
-                />
-                <Box
-                    component="img"
-                    sx={{
-                        height: 60,
-                        width: 60,
-                    }}
-                    alt="Paypal Icon"
-                    src={paypalIcon}
-                />
-            </Box>
+            ))}
         </Box>
     );
 };

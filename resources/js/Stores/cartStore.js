@@ -10,18 +10,22 @@ import { makePersistable } from "mobx-persist-store";
 class CartStore {
     // Em vez de um array, agora é um objeto onde cada chave é uma store.id e o valor é um array de produtos
     cart = {};
+    shippingCosts = {};
 
     constructor() {
         makeObservable(this, {
             cart: observable,
+            shippingCosts: observable,
             addItem: action,
             deleteItem: action,
             removeAllOfItem: action,
             clearCart: action,
             clearStore: action,
+            setShippingCost: action,
             totalQuantity: computed,
             totalPrice: computed,
-            storeTotals: computed, // Cálculo dos totais por loja
+            storeTotals: computed,
+            grandTotal: computed,
         });
         makePersistable(this, {
             name: "cartStore",
@@ -134,6 +138,38 @@ class CartStore {
         }
         return totals;
     }
+
+        /**
+     * Define o custo de envio de uma loja específica
+     */
+        setShippingCost = action((storeId, cost) => {
+            runInAction(() => {
+                this.shippingCosts[storeId] = cost;
+            });
+        });
+
+        /**
+         * Calcula o total de cada loja
+         */
+        get storeTotals() {
+            const totals = {};
+            for (const storeId in this.cart) {
+                if (!Array.isArray(this.cart[storeId])) continue;
+                totals[storeId] = this.cart[storeId].reduce((total, item) =>
+                    total + item.price * (item.quantity ?? 1) * (1 - (item.discount ?? 0) / 100),
+                0).toFixed(2);
+            }
+            return totals;
+        }
+
+        /**
+         * Calcula o total geral (subtotal + envio)
+         */
+        get grandTotal() {
+            let total = Object.values(this.storeTotals).reduce((sum, subtotal) => sum + Number(subtotal), 0);
+            let shippingTotal = Object.values(this.shippingCosts).reduce((sum, cost) => sum + Number(cost || 0), 0);
+            return (total + shippingTotal).toFixed(2);
+        }
 }
 
 export const cartStore = new CartStore();
