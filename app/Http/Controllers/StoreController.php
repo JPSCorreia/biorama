@@ -126,7 +126,8 @@ class StoreController extends Controller
                 ->first();
 
             // Retornar as lojas atualizadas do vendor
-            $stores = Store::select(
+            $stores = Store::where('vendor_id', $vendor->id)
+                ->select(
                 'id',
                 'name',
                 'description',
@@ -151,7 +152,8 @@ class StoreController extends Controller
                     'reviews',
                     'galleries'
                 ])
-                ->first();
+                ->take(3)
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Loja criada com sucesso!',
@@ -233,7 +235,7 @@ class StoreController extends Controller
                         }
 
                         // Gera um nome de ficheiro único
-                        $imageName = 'store_' . $store->id . '_img' . ($index + 1) . '.' . $imageType;
+                        $imageName = 'store_' . $store->id . '_' . uniqid() . '.' . $imageType;
 
                         // Caminho para armazenar a imagem
                         $imagePath = "store/{$imageName}";

@@ -10,6 +10,7 @@ use App\Models\ProductGallery;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+
 class ProductController extends Controller
 {
     public function index()
@@ -115,27 +116,39 @@ class ProductController extends Controller
         return response()->json($product->load('categories', 'storeProducts'));
     }
 
-    public function update(Request $request, $product_id)
+
+        public function refreshProduct($product_id)
+        {
+            // Encontra o produto pelo ID, incluindo a galeria de imagens
+            $product = Product::with('gallery')->findOrFail($product_id);
+
+            // Retorna o produto com suas imagens associadas
+            return response()->json([
+                'message' => 'Produto carregado com sucesso!',
+                'product' => $product,
+            ], 200);
+        }
+
+
+    public function update(Request $request, $Store_id, $product_id)
     {
-
-
-        // Find the product and throw 404 if it doesn't exist.
+        // Verifica se o produto existe
         $product = Product::where('id', $product_id)->firstOrFail();
 
-        // Validate the product data coming from the request.
+        // Valida os dados do produto
         $validated = $request->validate([
             'name'            => 'required|string|max:100',
             'description'     => 'nullable|string',
             'price'           => 'required|numeric|min:0',
             'discount'        => 'numeric|min:0',
             'stock'           => 'integer|min:0',
-            'newImages'       => 'nullable|array',  // Novas imagens para upload
-            'newImages.*'     => 'file|mimes:jpg,jpeg,png|max:2048',
-            'deleteImages'    => 'nullable|array',  // IDs de imagens a excluir
+            'newImages'       => 'nullable|array',  // Imagens em Base64
+            'newImages.*'     => 'nullable|string',  // Cada imagem deve ser uma string Base64
+            'deleteImages'    => 'nullable|array',
             'deleteImages.*'  => 'integer|exists:product_galleries,id',
         ]);
 
-        // Atualiza os dados do produto
+        // Atualiza os dados básicos do produto
         $product->update([
             'name'        => $validated['name'],
             'description' => $validated['description'] ?? null,
@@ -149,7 +162,7 @@ class ProductController extends Controller
             foreach ($validated['deleteImages'] as $imageId) {
                 $image = ProductGallery::findOrFail($imageId);
 
-                // Remove o arquivo do sistema de armazenamento
+                // Remove o ficheiro do armazenamento
                 if (Storage::exists('public/' . $image->image_link)) {
                     Storage::delete('public/' . $image->image_link);
                 }
@@ -159,19 +172,22 @@ class ProductController extends Controller
             }
         }
 
-        // Processa novas imagens, se houver
-        if ($request->hasFile('newImages')) {
-            foreach ($request->file('newImages') as $index => $imageFile) {
-                // Cria um nome único para a imagem
-                $imageName = 'product_' . $product->id . '_img' . ($index + 1) . '.' . $imageFile->extension();
+        // Processa imagens em Base64
+        if (!empty($validated['newImages'])) {
+            foreach ($validated['newImages'] as $base64Image) {
+                // Decodifica a imagem Base64
+                $imageData = explode(',', $base64Image);
+                $imageContent = base64_decode(end($imageData));
+                $extension = $this->getImageExtension($base64Image);
 
-                // Define o diretório baseado no store ID e product ID
-                $directory = '/store_products/store' . $store->id;
+                // Gera um nome de ficheiro único
+                $imageName = 'product_' . $product->id . '_' . uniqid() . '.' . $extension;
+                $imagePath = "product/{$imageName}";
 
                 // Armazena a imagem
-                $imagePath = $imageFile->storeAs($directory, $imageName, 'public');
+                Storage::disk('public')->put($imagePath, $imageContent);
 
-                // Cria o registro na tabela de galerias
+                // Cria o registro na galeria de produtos
                 ProductGallery::create([
                     'product_id' => $product->id,
                     'image_link' => Storage::url($imagePath),
@@ -182,16 +198,49 @@ class ProductController extends Controller
         // Recarrega a relação da galeria
         $product->load('gallery');
 
-        // Retorna uma resposta JSON com a mensagem de sucesso
         return response()->json([
             'message' => 'Produto atualizado com sucesso!',
             'product' => $product,
         ], 200);
     }
 
+    /**
+     * Retorna a extensão de uma imagem Base64
+     */
+    private function getImageExtension($base64Image)
+    {
+        if (str_contains($base64Image, 'image/jpeg')) {
+            return 'jpg';
+        } elseif (str_contains($base64Image, 'image/png')) {
+            return 'png';
+        }
+        return 'jpg';  // Padrão
+    }
+
+
     public function destroy(Product $product)
     {
+        $product->load('gallery');
+
+        // Apagar as associações na tabela pivot 'category_product'
+        DB::table('category_product')->where('product_id', $product->id)->delete();
+
+        // Apagar as imagens do armazenamento
+        foreach ($product->gallery as $image) {
+            $cleanPath = str_replace('/storage/', '', $image->image_link);
+            if (Storage::disk('public')->exists($cleanPath)) {
+                Storage::disk('public')->delete($cleanPath);
+            }
+        }
+
+        // Apagar os registros da galeria
+        ProductGallery::where('product_id', $product->id)->delete();
+
+        // Apagar o produto
         $product->delete();
-        return response()->json(null, 204);
+
+        return response()->json([
+            'message' => 'Produto e suas imagens foram apagados com sucesso!',
+        ], 200);
     }
 }

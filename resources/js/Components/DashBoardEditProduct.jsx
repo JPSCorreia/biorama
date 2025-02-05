@@ -11,7 +11,7 @@ import { observer } from "mobx-react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { fixImagePath } from "../utils/utils.js";
 
-const DashboardEditProduct = observer(({ product, onCancel, onSubmit }) => {
+const DashboardEditProduct = observer(({ product, onCancel, onSubmit, storeId }) => {
     const [existingImages, setExistingImages] = useState(
         product?.gallery.map(img => ({ id: img.id, imageLink: img.image_link })) || []
     );

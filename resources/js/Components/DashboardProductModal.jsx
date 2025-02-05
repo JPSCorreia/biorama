@@ -1,19 +1,24 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, IconButton, Modal, Button, Snackbar, Alert } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { observer } from "mobx-react";
+import { productStore } from "@/Stores/index.js";
 import DashboardEditProduct from "@/Components/DashBoardEditProduct.jsx";
 import DashboardShowProduct from "@/Components/DashboardShowProduct.jsx";
-import {productStore } from "@/Stores/index.js";
 
-
-const DashboardProductModal = observer(({ open, onClose, product }) => {
-    productStore.setProductData(product)
-    const thisProduct = productStore.currentProduct
-
-    const [isEditing, setIsEditing] = useState(false);
+const DashboardProductModal = observer(({ open, onClose, product, storeid, initialEditMode }) => {
+    const [isEditing, setIsEditing] = useState(initialEditMode ||false);
     const [loading, setLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+
+    // Atualiza o produto no store sempre que o modal abrir com um novo produto
+    useEffect(() => {
+        if (open && product) {
+            productStore.fetchProductData(product.id);
+            setIsEditing(initialEditMode);
+        }
+    }, [open, product]);
+    console.log("Produto actual", productStore.currentProduct);
 
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
@@ -22,13 +27,10 @@ const DashboardProductModal = observer(({ open, onClose, product }) => {
     const handleUpdateProduct = async (updatedProduct) => {
         try {
             setLoading(true);
+            await productStore.updateProduct(storeid, product.id, updatedProduct);
 
-            // Chama a função existente no store para fazer o update
-            await productStore.updateProduct(product.id, updatedProduct);
-
-            // Mensagem de sucesso e saída do modo de edição
             setSnackbar({ open: true, message: "Produto atualizado com sucesso!", severity: "success" });
-            setIsEditing(false); // Fecha o modo de edição
+            setIsEditing(false);
         } catch (error) {
             console.error("Erro ao atualizar o produto:", error);
             setSnackbar({ open: true, message: "Erro ao atualizar o produto!", severity: "error" });
@@ -50,7 +52,6 @@ const DashboardProductModal = observer(({ open, onClose, product }) => {
                     outline: "none",
                 }}
             >
-                {/* Cabeçalho do Modal */}
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
                     <Typography variant="h5">
                         {isEditing ? "Editar Produto" : "Detalhes do Produto"}
@@ -60,16 +61,16 @@ const DashboardProductModal = observer(({ open, onClose, product }) => {
                     </IconButton>
                 </Box>
 
-                {/* Conteúdo principal do modal */}
                 {isEditing ? (
                     <DashboardEditProduct
-                        product={thisProduct}
+                        product={productStore.currentProduct}
+                        storeId={storeid}
                         onCancel={() => setIsEditing(false)}
                         onSubmit={handleUpdateProduct}
                     />
                 ) : (
                     <>
-                        <DashboardShowProduct product={thisProduct} />
+                        <DashboardShowProduct product={productStore.currentProduct} />
                         <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
                             <Button variant="contained" onClick={handleToggleEdit}>
                                 Editar
@@ -78,7 +79,6 @@ const DashboardProductModal = observer(({ open, onClose, product }) => {
                     </>
                 )}
 
-                {/* Snackbar para feedback visual */}
                 <Snackbar
                     open={snackbar.open}
                     autoHideDuration={3000}
