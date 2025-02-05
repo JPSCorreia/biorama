@@ -33,11 +33,11 @@ class VendorRegistrationStore {
             setProduct: action,
             store_id: observable,
 
-
-
             submitStep1: action,
             submitStep2: action,
             submitStep3: action,
+
+            clearStore: action,
 
         });
         makePersistable(this, {
@@ -85,11 +85,15 @@ class VendorRegistrationStore {
                     const responseCompany = await axios.post(`/registar-vendedor-dados-empresa/${responseVendor.data.user.vendor.id}`, {
                         ...(this.companyFormik?.values || {}),
                     });
-
                     console.log("Empresa registada com sucesso!", responseCompany);
+
+                    return responseCompany;
                 } catch (error) {
                     console.error("Erro ao registar empresa:", error.response?.data || error);
                 }
+            }
+            else {
+                return responseVendor;
             }
 
         } catch (error) {
@@ -122,9 +126,7 @@ class VendorRegistrationStore {
             });
 
             this.store_id = responseStore.data.store.id;
-            console.log("Loja registada com sucesso!", responseStore.data.store.id);
-
-            console.log("Loja registada com sucesso!", responseStore.data.store);
+            return responseStore;
 
         } catch (error) {
             console.error("Erro ao enviar os formulários:", error);
@@ -154,11 +156,21 @@ class VendorRegistrationStore {
             if (responseProduct.data.product) {
                 this.setProduct(responseProduct.data.product);
             }
-            console.log("Product -> ", this.products);
+
+            return responseProduct;
 
         } catch (error) {
             console.error("Erro ao enviar os formulários:", error);
         }
+    }
+
+    clearStore() {
+        this.vendorFormik = null;
+        this.isCompany = false;
+        this.companyFormik = null;
+        this.storeFormik = null;
+        this.products = [];
+        this.store_id = null;
     }
 
 }

@@ -74,31 +74,35 @@ const CreateProductModal = ({ open, handleClose }) => {
         },
         validationSchema: Yup.object({
             name: Yup.string().max(100, "Máximo 100 caracteres").required("Nome obrigatório"),
-            description: Yup.string().max(500, "Máximo 500 caracteres").required("Descrição obrigatória"),
-            stock: Yup.number().min(1, "Mínimo 1").required("Stock obrigatório"),
+            description: Yup.string().max(3500, "Máximo 3500 caracteres").required("Descrição obrigatória"),
+            stock: Yup.number().min(0.01, "Mínimo 0.01€").required("Stock obrigatório"),
             price: Yup.number().positive("Deve ser positivo").required("Preço obrigatório"),
-            discount: Yup.number().min(0, "Mínimo 0%").max(100, "Máximo 100%"),
+            discount: Yup.number().min(0, "Mínimo 0%").max(100, "Máximo 100%").required("Desconto obrigatório"),
         }),
         onSubmit: async (values) => {
-            const formData = new FormData();
-            formData.append("name", values.name);
-            formData.append("description", values.description);
-            formData.append("stock", values.stock);
-            formData.append("price", values.price);
-            formData.append("discount", values.discount);
+            const isValid = await formik.validateForm();
+            if (isValid) {
+                const formData = new FormData();
+                formData.append("name", values.name);
+                formData.append("description", values.description);
+                formData.append("stock", values.stock);
+                formData.append("price", values.price);
+                formData.append("discount", values.discount);
 
-            // Corrigir envio de imagens no formato esperado pelo backend
-            serverImages.forEach((img) => formData.append("imagesProduct[]", img));
+                // Corrigir envio de imagens no formato esperado pelo backend
+                serverImages.forEach((img) => formData.append("imagesProduct[]", img));
 
-            try {
-                await vendorRegistrationStore.submitStep3(formData);
-                formik.resetForm();
-                setPreviewImages([]);
-                setServerImages([]);
-                handleClose();
-            } catch (error) {
-                console.error("Erro ao submeter o formulário:", error);
+                try {
+                    await vendorRegistrationStore.submitStep3(formData);
+                    formik.resetForm();
+                    setPreviewImages([]);
+                    setServerImages([]);
+                    handleClose();
+                } catch (error) {
+                    console.error("Erro ao submeter o formulário:", error);
+                }
             }
+
         },
     });
 
@@ -114,7 +118,9 @@ const CreateProductModal = ({ open, handleClose }) => {
                     alignItems: "center"
                 }}
             >
-                <Box sx={{
+                <Box
+                    onClick={(e) => e.stopPropagation()}
+                    sx={{
                     display: "flex",
                     flexDirection: "column",
                     width: isSmallScreen ? "80%" : "40%",
@@ -135,7 +141,7 @@ const CreateProductModal = ({ open, handleClose }) => {
                         sx={{
                             display: "flex",
                             gap: 2 ,
-                            flexDirection: isSmallScreen ? "column" : "row"
+                            flexDirection: isSmallScreen || isMediumScreen ? "column" : "row"
                         }}
                     >
                         <Box
@@ -143,7 +149,7 @@ const CreateProductModal = ({ open, handleClose }) => {
                                 display: "flex",
                                 flexDirection: "column",
                                 gap: 2,
-                                width: isSmallScreen ? "78%" : "35%",
+                                width: isSmallScreen || isMediumScreen ? "78%" : "35%",
                                 height: isSmallScreen ? "250px" : "100%",
                                 m: isSmallScreen ? "auto" : "0",
                             }}
@@ -270,30 +276,51 @@ const CreateProductModal = ({ open, handleClose }) => {
                         <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
                             <TextField
                                 fullWidth
+                                name="name"
                                 label="Nome"
-                                {...formik.getFieldProps("name")}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.name && Boolean(formik.errors.name)}
+                                helperText={formik.touched.name && formik.errors.name}
+                                required
                             />
                             <TextField
                                 fullWidth
                                 label="Descrição"
+                                name="description"
                                 multiline
                                 rows={6}
-                                {...formik.getFieldProps("description")}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.description}
+                                error={formik.touched.description && Boolean(formik.errors.description)}
+                                helperText={formik.touched.description && formik.errors.description}
+                                required
                             />
                             <Box sx={{ display: "flex", justifyContent:"space-between", gap: 2 }}>
                                 <TextField
                                     label="Stock"
-                                    {...formik.getFieldProps("stock")}
+                                    name="stock"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.stock && Boolean(formik.errors.stock)}
+                                    helperText={formik.touched.stock && formik.errors.stock}
+                                    required
                                     sx={{
-                                        width: isSmallScreen ? "40%" : "27%",
+                                        width: isSmallScreen ? "40%" : "33%",
                                         '& input': { textAlign: "center" }
                                     }}
                                 />
                                 <TextField
                                     label="Desconto (%)"
-                                    {...formik.getFieldProps("discount")}
+                                    name="discount"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.discount && Boolean(formik.errors.discount)}
+                                    helperText={formik.touched.discount && formik.errors.discount}
+                                    required
                                     sx={{
-                                        width: isSmallScreen ? "40%" : "27%",
+                                        width: isSmallScreen ? "40%" : "33%",
                                         '& input': { textAlign: "center" }
                                     }}
                                 />
@@ -306,9 +333,14 @@ const CreateProductModal = ({ open, handleClose }) => {
                             >
                                 <TextField
                                     label="Preço (€)"
-                                    {...formik.getFieldProps("price")}
+                                    name="price"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.price && Boolean(formik.errors.price)}
+                                    helperText={formik.touched.price && formik.errors.price}
+                                    required
                                     sx={{
-                                        width: isSmallScreen ? "40%" : "27%",
+                                        width: isSmallScreen ? "40%" : "33%",
                                         '& input': { textAlign: "center" }
                                 }}
                                 />

@@ -56,7 +56,7 @@ class VendorController extends Controller
                 'message' => 'Vendedor registado com sucesso.',
                 'user' => $user,
                 'vendor' => $vendor,
-            ], 200);
+            ], 201);
 
         } catch (\Exception $e) {
             return response()->json([

@@ -18,7 +18,7 @@ import { useEffect } from "react";
 const RegisterVendor = observer(({ genders }) => {
     // Tracks the current step in the registration process
     const [currentStep, setCurrentStep] = useState(0);
-    const [isEnableNext, setIsEnableNext] = useState(true);
+    const [isEnableNext, setIsEnableNext] = useState(vendorRegistrationStore.products.length > 0);
     // Calculates progress percentage
     const progress = (currentStep / 6) * 100;
 
@@ -40,6 +40,8 @@ const RegisterVendor = observer(({ genders }) => {
     useEffect(() => {
         if (currentStep === 6) {
             router.get("/dashboard/");
+            vendorRegistrationStore.clearStore();
+
         }
     }, [currentStep]);
 
@@ -142,9 +144,18 @@ const RegisterVendor = observer(({ genders }) => {
             }
 
             if (isPersonalValid && (vendorRegistrationStore.isCompany ? isCompanyValid : true)) {
-                await vendorRegistrationStore.submitStep1();
-                setFormErrors(null);
-                setCurrentStep((prev) => prev + 1); // Avança apenas se todos os formulários forem válidos
+                try {
+                    const response = await vendorRegistrationStore.submitStep1();
+                    setFormErrors(null);
+
+                    if (response && response.status === 201) {
+                        setCurrentStep((prev) => prev + 1);
+                    } else {
+                        console.warn("esposta inesperada. Código de status:", response?.status);
+                    }
+                } catch (error) {
+                    console.error("Erro ao submeter a loja:", error);
+                }
             } else {
                 console.log("Erros encontrados:", { personalErrors, companyErrors });
             }
@@ -167,13 +178,25 @@ const RegisterVendor = observer(({ genders }) => {
             if (isStoreValid) {
                 vendorRegistrationStore.setStoreFormik(storeFormRef.current);
                 vendorRegistrationStore.setStoreImages(images);
-                await vendorRegistrationStore.submitStep2();
-                setCurrentStep((prev) => prev + 1);
+                try {
+                    const response = await vendorRegistrationStore.submitStep2();
+                    if (response && response.status === 201) {
+                        setCurrentStep((prev) => prev + 1);
+                    }
+                    else {
+                        console.warn("Resposta inesperada. Código de status:", response?.status);
+                    }
+                }
+                catch (error) {
+                    console.error("Erro ao submeter a loja:", error);
+                }
             }
         }
         else if (currentStep === 5) {
-            await vendorRegistrationStore.submitStep3();
-            setCurrentStep((prev) => prev + 1);
+            if (vendorRegistrationStore.products.length > 0) {
+                setIsEnableNext(true);
+                setCurrentStep((prev) => prev + 1);
+            }
         }
         else {
             setCurrentStep((prev) => prev + 1);

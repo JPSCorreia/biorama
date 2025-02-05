@@ -1,23 +1,22 @@
 import { Typography, Box, useTheme, useMediaQuery } from '@mui/material';
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CreateProductModal from "./CreateProductModal";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import {IconButton} from "@mui/material";
 
 const AddProductCard = () => {
-    const [modalOpen, setModalOpen] = useState(false);
 
-    const handleModalOpen = () => {
-        setModalOpen(true);
-    };
-
-    const handleModalClose = () => {
-        setModalOpen(false);
-        console.log(modalOpen);
-    };
+    const [modalCreateProductOpen, setModalCreateProductOpen] = useState(false);
+    const handleModalOpen = () => console.log("Modal Aberto") || setModalCreateProductOpen(true);
+    const handleModalClose = () => console.log("Modal fechado") || setModalCreateProductOpen(false);
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+    useEffect(() => {
+        console.log("Estado modalCreateProductOpen:", modalCreateProductOpen);
+    }, [modalCreateProductOpen]);
 
     return (
         <Box
@@ -42,12 +41,14 @@ const AddProductCard = () => {
                 },
             }}
         >
+
             <AddCircleIcon
                 sx={{
                     fontSize: isSmallScreen ? 30 : 40,
                     color: theme.palette.primary.main,
                 }}
             />
+
             <Typography
                 sx={{
                     mt: 1,
@@ -60,7 +61,7 @@ const AddProductCard = () => {
                 Criar Novo Produto
             </Typography>
             <CreateProductModal
-                open={modalOpen}
+                open={modalCreateProductOpen}
                 handleClose={handleModalClose}
             />
         </Box>
