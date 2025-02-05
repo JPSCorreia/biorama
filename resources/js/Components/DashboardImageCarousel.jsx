@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import { fixImagePath } from "../utils/utils.js";
 
-const DashBoardImageCarousel = ({ galleries }) => {
+const DashboardImageCarousel = ({ galleries }) => {
 
     return (
         <Box sx={{ position: "relative", height: 200, overflow: "hidden" }}>
@@ -24,4 +24,4 @@ const DashBoardImageCarousel = ({ galleries }) => {
     );
 };
 
-export default DashBoardImageCarousel;
+export default DashboardImageCarousel;
