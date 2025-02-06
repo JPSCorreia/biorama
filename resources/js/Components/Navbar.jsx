@@ -137,6 +137,8 @@ const Navbar = observer(() => {
         ),
     };
 
+    console.log("é vendedor:" , hasRole("vendor"));
+
     // User account settings options
     const settings = [
         {
@@ -146,7 +148,7 @@ const Navbar = observer(() => {
                 router.get("/perfil");
             },
         },
-        { id: 2, name: "Definições", link: "/definições" },
+        { id: 2, name: hasRole("vendor")? "Área de Gestão" : "Abrir Loja", link: hasRole("vendor")? "/dashboard" : "/vendedores/registo" },
         {
             id: 3,
             name: "Terminar Sessão",
@@ -598,18 +600,6 @@ const Navbar = observer(() => {
                                         )}
                                     </Box>
                                 </MenuItem>
-                                {/* Render if the user has the "vendor" role */}
-                                {hasRole("vendor") && (
-                                    <MenuItem
-                                        key={1}
-                                        onClick={() => router.get("/dashboard")}
-                                        sx={{ height: "40px" }}
-                                    >
-                                        <Box textAlign="center">
-                                            Painel de Gestão
-                                        </Box>
-                                    </MenuItem>
-                                )}
                                 {settings.map((setting) => (
                                     <MenuItem
                                         key={setting.id}

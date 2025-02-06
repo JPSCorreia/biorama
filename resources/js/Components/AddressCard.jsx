@@ -46,7 +46,7 @@ const AddressCard = observer(({ address, theme }) => {
                 alignItems: "flex-start",
                 justifyContent: "space-between",
                 borderRadius: "10px",
-                width: "250px",
+                width: isSmallScreen?  "100%" : "250px",
                 minHeight: "354px",
             }}
         >

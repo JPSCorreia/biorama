@@ -1,34 +1,50 @@
-import {observer} from "mobx-react";
-import {Box, Typography, useMediaQuery, useTheme,} from "@mui/material";
+import { observer } from "mobx-react";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import AddressCard from "../../Components/AddressCard.jsx";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddressModal from "../../Components/AddressModal.jsx";
-import {homeAddressStore} from "../../Stores/index";
+import { homeAddressStore } from "../../Stores/index";
 import { useState } from "react";
-
 
 const ProfileHomeAddress = observer(() => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
+    const smallerThanMd = useMediaQuery(theme.breakpoints.down("md"));
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 
-    console.log("MORADAS",addresses);
+    console.log("MORADAS", addresses);
 
     const [addressModalOpen, setAddressModalOpen] = useState(false);
     const handleAddressModalOpen = () => setAddressModalOpen(true);
     const handleAddressModalClose = () => setAddressModalOpen(false);
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, width: "100%" }}>Gestão de Moradas</Typography>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                mb: 3,
+                ml: smallerThanLg ? 0 : 4,
+                maxWidth: smallerThanLg ? "100%" : "75%",
+                flexGrow: 1,
+            }}
+        >
+            <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", mb: 2, width: "100%" }}
+            >
+                Gestão de Moradas
+            </Typography>
             {addresses.length > 0 ? (
                 <Box
                     sx={{
                         display: "flex",
                         flexDirection: isSmallScreen ? "column" : "row",
-                        alignItems: "flex-start",
+                        alignItems: "center",
                         width: "100%",
-                        justifyContent: "start",
+                        justifyContent: smallerThanMd ? "center" : "flex-start",
                         flexWrap: "wrap",
                         gap: 3,
                     }}
@@ -39,7 +55,6 @@ const ProfileHomeAddress = observer(() => {
                                 key={address.id}
                                 address={address}
                                 theme={theme}
-                                sx={{ maxHeight: "350px" }}
                             />
                         );
                     })}
@@ -52,14 +67,13 @@ const ProfileHomeAddress = observer(() => {
                                 flexDirection: "column",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                ml: isSmallScreen ? "auto" : 0,
-                                mr: isSmallScreen ? "auto" : 0,
                                 backgroundColor: "#388e3c26",
                                 border: "2px dashed",
                                 borderColor: theme.palette.primary.main,
                                 borderRadius: "10px",
-                                minHeight: "354px",
+                                minHeight: "352px",
                                 minWidth: "250px",
+                                width: isSmallScreen?  "100%" : "250px",
                                 cursor: "pointer",
                                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                                 transition: "all 0.3s ease",
@@ -94,13 +108,13 @@ const ProfileHomeAddress = observer(() => {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        backgroundColor: "#f5f5f5", // Cor de fundo do card
+                        justifySelf: "flex-start",
                         border: "2px dashed #9e9e9e", // Borda estilizada
                         borderRadius: "10px", // Cantos arredondados
-                        width: isSmallScreen? "100%" : "30%", // Largura do card
-                        height: "150px", // Altura do card
+                        minWidth: "250px",
+                        minHeight: "352px", // Altura do card
+                        width: isSmallScreen?  "100%" : "250px",
                         cursor: "pointer", // Indica que é clicável
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar efeito de card
                         transition: "all 0.3s ease", // Animação suave no hover
                         "&:hover": {
                             backgroundColor: "#e0e0e0", // Cor de fundo no hover
@@ -108,17 +122,21 @@ const ProfileHomeAddress = observer(() => {
                         },
                     }}
                 >
-                    <AddCircleIcon sx={{ fontSize: 40, color: "#757575" }} /> {/* Ícone central */}
-                    <Typography sx={{ mt: 1, fontWeight: "bold", color: "#757575" }}>
+                    <AddCircleIcon sx={{ fontSize: 40, color: "#757575" }} />{" "}
+                    {/* Ícone central */}
+                    <Typography
+                        sx={{ mt: 1, fontWeight: "bold", color: "#757575" }}
+                    >
                         Adicionar Morada
                     </Typography>
                 </Box>
             )}
-            <AddressModal open={addressModalOpen} handleClose={handleAddressModalClose} />
+            <AddressModal
+                open={addressModalOpen}
+                handleClose={handleAddressModalClose}
+            />
         </Box>
-
-    )
-
+    );
 });
 
 export default ProfileHomeAddress;
