@@ -71,15 +71,13 @@ class CompanyController extends Controller
 
             DB::commit();
 
-            // Se for um pedido Inertia, envia JSON corretamente
-            if ($request->header('X-Inertia')) {
-                return response()->json([
-                    'message'  => 'Empresa registada com sucesso!',
-                    'company'  => $company,
-                    'contact'  => $contact,
-                    'address'  => $address,
-                ], 201);
-            }
+            return response()->json([
+                'message'  => 'Empresa registada com sucesso!',
+                'company'  => $company,
+                'contact'  => $contact,
+                'address'  => $address,
+            ], 201);
+
 
         } catch (\Exception $e) {
             DB::rollBack();

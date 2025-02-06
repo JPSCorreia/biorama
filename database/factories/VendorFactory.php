@@ -13,7 +13,7 @@ class VendorFactory extends Factory
 
     public function definition()
     {
-        $user_id = User::all()->random()->id;
+        $user_id = User::where('id', '!=', 2)->get()->random()->id;
         $is_company = $this->faker->boolean;
         return [
             'user_id' => $user_id,

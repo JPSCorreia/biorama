@@ -124,14 +124,13 @@ Route::middleware('guest')->group(function () {
 
 });
 
-Route::post('/registar-vendedor-dados-empresa/{vendor_id}', [CompanyController::class, 'store'])
-    ->name('registar_empresa');
 // Protected routes (requires authentication)
 Route::middleware(['auth'])->group(function () {
 
     // Routes to register as vendor
     Route::get('/vendedores/registo', [VendorController::class, 'create'])->name('criarVendedor');
     Route::post('/registar-vendedor-dados-pessoais', [VendorController::class, 'store'])->name('registar_vendedor');
+    Route::post('/registar-vendedor-dados-empresa/{vendor_id}', [CompanyController::class, 'store'])->name('registar_empresa');
     Route::post('/registar-vendedor-loja', [StoreController::class, 'store'])->name('registar_store');
     Route::post('/registar-vendedor-produto/{store_id}', [ProductController::class, 'store'])->name('registar_produto');
 

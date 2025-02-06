@@ -26,7 +26,7 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
                     ? "100%"
                     : isMediumScreen
                         ? "90%"
-                        : "100%",
+                        : "80%",
                 "& > :first-of-type": {
                     mb: 4,
                 },
@@ -58,7 +58,7 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
                         ? "75%"
                         : isMediumScreen
                             ? "47%"
-                            : "16%",
+                            : "20%",
                     fontSize: "0.85rem",
                     textAlign: "center",
                     textTransform: "none",

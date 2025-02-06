@@ -96,15 +96,15 @@ const FormCompanyRegistration = forwardRef(({ formErrors, onCloseCompanyForm }, 
 
     const formik = useFormik({
         initialValues: {
-            name: "Lucas",
-            nif: "245910069",
-            phone: "961970027",
-            email: "lucas@example.com",
-            street: "Rua Sebastião josé da Costa",
-            number: "25",
-            postal_code: "2925-266",
-            district: "Setúbal",
-            country: "Portugal",
+            name: "",
+            nif: "",
+            phone: "",
+            email: "",
+            street: "",
+            number: "",
+            postal_code: "",
+            district: "",
+            country: "",
             vendor_id: "",
         },
         validationSchema: validationSchema,
@@ -389,20 +389,6 @@ const FormCompanyRegistration = forwardRef(({ formErrors, onCloseCompanyForm }, 
 
                         {/* Coluna Direita */}
                         <Grid item xs={12} md={6}>
-                            <TextField
-                                label="Morada"
-                                name="street"
-                                fullWidth
-                                type="text"
-                                margin="normal"
-                                value={formik.values.street}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                error={formik.touched.street && Boolean(formik.errors.street)}
-                                helperText={formik.touched.street ? formik.errors.street : ""}
-                                required
-                                disabled={isReadOnly}
-                            />
 
                             <Grid container>
                                 <Grid item xs={12} md={6}>
@@ -469,6 +455,20 @@ const FormCompanyRegistration = forwardRef(({ formErrors, onCloseCompanyForm }, 
                                         sx={{ width: "80%" }}
                                     />
                                 </Grid>
+                                <TextField
+                                    label="Morada"
+                                    name="street"
+                                    fullWidth
+                                    type="text"
+                                    margin="normal"
+                                    value={formik.values.street}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.street && Boolean(formik.errors.street)}
+                                    helperText={formik.touched.street ? formik.errors.street : ""}
+                                    required
+                                    disabled={isReadOnly}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
