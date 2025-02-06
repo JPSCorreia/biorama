@@ -5,7 +5,7 @@ const SidebarContext = createContext();
 
 // Provider para envolver a aplicação
 export const SidebarProvider = ({ children }) => {
-    const [activeItem, setActiveItem] = useState(""); // Estado do item ativo na sidebar
+    const [activeItem, setActiveItem] = useState("Dados Pessoais"); // Estado do item ativo na sidebar
 
     return (
         <SidebarContext.Provider value={{ activeItem, setActiveItem }}>

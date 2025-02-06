@@ -18,13 +18,13 @@ const ProfileHomeAddress = observer(() => {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
-            <Typography sx={{ fontWeight: "bold", fontSize: "2rem", mb: 2, width: "100%" }}>Gestão de Moradas</Typography>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, width: "100%" }}>Gestão de Moradas</Typography>
             {addresses.length > 0 ? (
                 <Box
                     sx={{
                         display: "flex",
                         flexDirection: isSmallScreen ? "column" : "row",
-                        alignItems: isSmallScreen ? "baseline" : "center",
+                        alignItems: "flex-start",
                         width: "100%",
                         justifyContent: "start",
                         flexWrap: "wrap",
@@ -56,7 +56,7 @@ const ProfileHomeAddress = observer(() => {
                                 border: "2px dashed",
                                 borderColor: theme.palette.primary.main,
                                 borderRadius: "10px",
-                                minHeight: "410px",
+                                minHeight: "354px",
                                 minWidth: "250px",
                                 cursor: "pointer",
                                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",

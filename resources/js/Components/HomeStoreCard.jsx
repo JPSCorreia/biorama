@@ -15,8 +15,6 @@ const HomeStoreCard = observer(({ store }) => {
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const isHovered = hoverStore.hoveredStoreId === store.id;
 
-
-
     return (
         <Paper
             sx={{

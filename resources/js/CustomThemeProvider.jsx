@@ -34,6 +34,16 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 main: red[500],
             },
 
+            profile: {
+                sidebar: {
+                    text: appStore.themeType === "dark" ? "#ffffff" : "#242424",
+                    textActive: appStore.themeType === "dark" ? "#242424" : "#ffffff",
+                    iconActive: appStore.themeType === "dark" ? "#242424" : "#ffffff",
+                    arrow: appStore.themeType === "dark" ? "#ffffff" : "#242424",
+                    arrowActive: appStore.themeType === "dark" ? "#242424" : "#ffffff",
+                }
+            },
+
             // Background colors for different elements based on theme mode
             background: {
                 default:

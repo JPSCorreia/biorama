@@ -152,7 +152,7 @@ const AddressModal = ({ open, handleClose }) => {
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: isSmallScreen ? "80%" : "20%",
+                    width: isSmallScreen ? "90%" : "400px",
                     justifyContent: "center",
                     alignItems: "center",
                     padding: isSmallScreen ? "10px" : "20px",
@@ -168,7 +168,7 @@ const AddressModal = ({ open, handleClose }) => {
                         width: "100%",
                     }}
                 >
-                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold", ml: 4.5 }}>
+                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold"}}>
                         Criar morada
                     </Typography>
                     <IconButton onClick={handleClose}>
@@ -188,7 +188,7 @@ const AddressModal = ({ open, handleClose }) => {
                         FormHelperTextProps={{
                             sx: {
                                 minHeight: "20px", // Altura mínima
-                                background: "white", // Fundo branco
+                                // background: "white", // Fundo branco
                                 padding: "2px 4px", // Espaçamento interno (opcional)
                                 borderRadius: "4px", // Bordas arredondadas (opcional)
                             },
@@ -207,7 +207,7 @@ const AddressModal = ({ open, handleClose }) => {
                             FormHelperTextProps={{
                                 sx: {
                                     minHeight: "20px", // Altura mínima
-                                    background: "white", // Fundo branco
+                                    // background: "white", // Fundo branco
                                     padding: "2px 4px", // Espaçamento interno (opcional)
                                     borderRadius: "4px", // Bordas arredondadas (opcional)
                                 },
@@ -228,14 +228,14 @@ const AddressModal = ({ open, handleClose }) => {
                             FormHelperTextProps={{
                                 sx: {
                                     minHeight: "20px", // Altura mínima
-                                    background: "white", // Fundo branco
+                                    // background: "white", // Fundo branco
                                 },
                             }}
                             required
                             disabled={isDisabled}
                             sx={{
                                 width: "40%",
-                                backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
+                                // backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
                             }}
                         />
                     </Box>
@@ -251,14 +251,14 @@ const AddressModal = ({ open, handleClose }) => {
                             FormHelperTextProps={{
                                 sx: {
                                     minHeight: "20px", // Altura mínima
-                                    background: "white", // Fundo branco
+                                    // background: "white", // Fundo branco
                                 },
                             }}
                             required
                             disabled={isDisabled}
                             sx={{
                                 width: "40%",
-                                backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
+                                // backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
                             }}
                         />
                         <TextField
@@ -273,7 +273,7 @@ const AddressModal = ({ open, handleClose }) => {
                             FormHelperTextProps={{
                                 sx: {
                                     minHeight: "20px", // Altura mínima
-                                    background: "white", // Fundo branco
+                                    // background: "white", // Fundo branco
                                 },
                             }}
                             sx={{ width: "40%" }}
@@ -291,13 +291,13 @@ const AddressModal = ({ open, handleClose }) => {
                         FormHelperTextProps={{
                             sx: {
                                 minHeight: "20px", // Altura mínima
-                                background: "white", // Fundo branco
+                                // background: "white", // Fundo branco
                             },
                         }}
                         required
                         disabled={isDisabled}
                         sx={{
-                            backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
+                            // backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
                         }}
                     />
                     <FormControlLabel
