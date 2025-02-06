@@ -40,3 +40,5 @@ export {default as DashboardStoresCard} from "./DashboardStoresCard";
 export {default as DashboardShowStoreInfo} from "./DashboarShowStoreInfo";
 export {default as VendorRegistrationProductCard} from "./VendorRegistrationProductCard";
 export {default as DashboardStoreProductsCard} from "./DashboardStoreShortCutCard.jsx"
+export {default as StoreCardPesquisa} from "./StoreCardPesquisa.jsx"
+
