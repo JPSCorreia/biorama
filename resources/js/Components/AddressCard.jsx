@@ -38,8 +38,8 @@ const AddressCard = observer(({ address, theme }) => {
                 alignItems: "flex-start",
                 justifyContent: "space-between",
                 borderRadius: "10px",
-                width: isSmallScreen ? "100%" : "25%",
-                minHeight: isSmallScreen ? "auto" : "350px",
+                width: "250px",
+                minHeight: "410px",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                 border: "1px solid #e0e0e0",
             }}

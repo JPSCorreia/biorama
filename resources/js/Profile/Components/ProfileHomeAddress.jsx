@@ -17,19 +17,18 @@ const ProfileHomeAddress = observer(() => {
     const handleAddressModalClose = () => setAddressModalOpen(false);
 
     return (
-        <Box sx={{ mt: 4 }}>
-            <Typography sx={{ fontWeight: "bold", fontSize: "2rem", mb: 2 }}>Gestão de Moradas</Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
+            <Typography sx={{ fontWeight: "bold", fontSize: "2rem", mb: 2, width: "100%" }}>Gestão de Moradas</Typography>
             {addresses.length > 0 ? (
                 <Box
                     sx={{
                         display: "flex",
                         flexDirection: isSmallScreen ? "column" : "row",
                         alignItems: isSmallScreen ? "baseline" : "center",
+                        width: "100%",
+                        justifyContent: "start",
                         flexWrap: "wrap",
-                        m: isSmallScreen ? "auto" : 0,
-                        '& > :first-of-type': {
-                            mr: '10%',
-                        },
+                        gap: 3,
                     }}
                 >
                     {addresses.map((address) => {
@@ -38,7 +37,7 @@ const ProfileHomeAddress = observer(() => {
                                 key={address.id}
                                 address={address}
                                 theme={theme}
-
+                                sx={{ maxHeight: "350px" }}
                             />
                         );
                     })}
@@ -57,8 +56,8 @@ const ProfileHomeAddress = observer(() => {
                                 border: "2px dashed",
                                 borderColor: theme.palette.primary.main,
                                 borderRadius: "10px",
-                                width: isSmallScreen ? "100%" : "25%",
-                                minHeight: isSmallScreen ? "200px" : "350px",
+                                minHeight: "410px",
+                                minWidth: "250px",
                                 cursor: "pointer",
                                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                                 transition: "all 0.3s ease",
