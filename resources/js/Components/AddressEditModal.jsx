@@ -148,8 +148,8 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                     width: isSmallScreen ? "90%" : "400px",
                     justifyContent: "center",
                     alignItems: "center",
-                    padding: isSmallScreen ? "10px" : "20px",
-                    borderRadius: "10px",
+                    padding: 2,
+                    borderRadius: "8px",
                     backgroundColor: "background.paper",
                 }}
             >
@@ -280,7 +280,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         }
                         label="Morada Favorita?"
                     />
-                    <Box sx={{ mt: 2 }}>
+                    <Box sx={{ mt: 2, justifySelf: "flex-end" }}>
                         <Button
                             type="submit"
                             variant="contained"
