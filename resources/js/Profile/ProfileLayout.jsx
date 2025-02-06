@@ -1,12 +1,14 @@
 import { Box } from "@mui/material";
 import { SideBar } from "./Components/";
+import {AlertBox} from "../Components";
 import {SidebarProvider} from "../Context/SidebarContext.jsx"
 import DynamicContent from "./DynamicContent.jsx";
 
 export default function ProfileLayout() {
     return (
         <SidebarProvider>
-            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "88px" }}>
+            <AlertBox />
+            <Box sx={{ display: "flex", justifyContent: "space-between"}}>
                 {/* Sidebar fixa */}
                 <Box
                     sx={{

@@ -61,16 +61,8 @@ const AddressModal = ({ open, handleClose }) => {
         initialValues,
         validationSchema: Yup.object({
             postal_code: Yup.string()
-                .test(
-                    "check-duplicate-address",
-                    "Já existe uma morada com este Código Postal e Número",
-                    function (value) {
-                        const { number } = this.parent; // Acessa o campo número
-                        if (!value || !number) return true; // Ignora se um dos campos estiver vazio
-                        // Verifica duplicação usando a store
-                        return !homeAddressStore.checkDuplicatePostalCode(value, number, this.options.context?.excludeId);
-                    }
-                ),
+                .required("O Código Postal é obrigatório")
+                .matches(/^\d{4}-\d{3}$/, "Código Postal inválido (formato: 0000-000)"),
             address_name: Yup.string()
                 .max(20, "Defina um nome mais curto para a sua morada")
                 .required("O Nome da morada é obrigatório"),
@@ -300,6 +292,30 @@ const AddressModal = ({ open, handleClose }) => {
                             // backgroundColor: isDisabled ? "#d3d3d3" : "transparent",
                         }}
                     />
+                    <Box sx={{ display:'flex', flexDirection:'column', width: "100%",mt: 1, mb: 2 }}>
+                        <Input
+                            aria-label="Demo input"
+                            multiline
+                            placeholder="Nota sobre a morada (opcional)"
+                            name="comment"
+                            value={formik.values.comment || ""}
+                            onChange={formik.handleChange}
+                            error={formik.touched.comment && Boolean(formik.errors.comment)}
+                            fullWidth
+                        />
+                        {/* Contador de caracteres */}
+                        <Typography
+                            variant="caption"
+                            sx={{ alignSelf: "flex-end", mt: 1 }}
+                        >
+                            {formik.values.comment.length}/40
+                        </Typography>
+                        {formik.touched.comment && formik.errors.comment && (
+                            <Typography variant="caption" color="error.main">
+                                {formik.errors.comment}
+                            </Typography>
+                        )}
+                    </Box>
                     <FormControlLabel
                         control={
                             <Switch

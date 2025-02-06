@@ -207,11 +207,12 @@ class HomeAddressStore {
      * Checks for duplicate postal codes with same number, excluding a specific address ID
      */
     checkDuplicatePostalCode(postalCode, number, excludeId = null) {
+        console.log("Checking duplicate:", value, number, this.options.context?.excludeId);
         return this.addresses.some(
-            (address) =>
+            address =>
                 address.postal_code === postalCode &&
                 address.number === number &&
-                address.id !== excludeId, // Exclui a morada com o ID fornecido
+                (!excludeId || address.id !== excludeId) // Exclui a morada que está a ser editada
         );
     }
 

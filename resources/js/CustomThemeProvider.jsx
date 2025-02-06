@@ -44,6 +44,10 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 }
             },
 
+            store: {
+
+            },
+
             // Background colors for different elements based on theme mode
             background: {
                 default:
