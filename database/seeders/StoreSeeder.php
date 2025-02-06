@@ -33,103 +33,80 @@ class StoreSeeder extends Seeder
             'Sustentável.pt', 'Natureza Essencial', 'Vida Verde', 'Orgânico & Local', 'EcoConsciente',
         ];
 
-        // Lista de endereços nos distritos de Lisboa e Setúbal
+
         $locations = [
-            // Distrito de Braga
-            ['street' => 'Rua do Souto', 'postal_code' => '4700-329', 'city' => 'Braga', 'lat' => 41.5503, 'lng' => -8.4201],
-            ['street' => 'Avenida Central', 'postal_code' => '4710-229', 'city' => 'Braga', 'lat' => 41.5459, 'lng' => -8.4265],
-            ['street' => 'Rua de São Marcos', 'postal_code' => '4700-328', 'city' => 'Braga', 'lat' => 41.5507, 'lng' => -8.4213],
-            ['street' => 'Largo do Paço', 'postal_code' => '4704-553', 'city' => 'Braga', 'lat' => 41.5502, 'lng' => -8.4271],
+            ['street' => 'Rua Paiva Coelho', 'postal_code' => '2840-499', 'city' => 'Seixal', 'lat' => 38.6401, 'lng' => -9.1014],
+            ['street' => 'Avenida 25 de Abril', 'postal_code' => '2845-393', 'city' => 'Amora', 'lat' => 38.6205, 'lng' => -9.1157],
+            ['street' => 'Rua da Alembrança', 'postal_code' => '2840-728', 'city' => 'Corroios', 'lat' => 38.6302, 'lng' => -9.1498],
+            ['street' => 'Rua Quinta da Lobateira', 'postal_code' => '2840-575', 'city' => 'Fernão Ferro', 'lat' => 38.5632, 'lng' => -9.1267],
 
-            // Distrito do Porto
-            ['street' => 'Rua de Santa Catarina', 'postal_code' => '4000-447', 'city' => 'Porto', 'lat' => 41.1496, 'lng' => -8.6109],
-            ['street' => 'Avenida dos Aliados', 'postal_code' => '4000-065', 'city' => 'Porto', 'lat' => 41.1489, 'lng' => -8.6102],
-            ['street' => 'Rua das Flores', 'postal_code' => '4050-262', 'city' => 'Porto', 'lat' => 41.1446, 'lng' => -8.6147],
-            ['street' => 'Praça da Ribeira', 'postal_code' => '4050-513', 'city' => 'Porto', 'lat' => 41.1406, 'lng' => -8.6110],
+            // Almada
+            ['street' => 'Avenida Dom Nuno Álvares Pereira', 'postal_code' => '2800-174', 'city' => 'Almada', 'lat' => 38.6802, 'lng' => -9.1585],
+            ['street' => 'Rua Capitão Leitão', 'postal_code' => '2800-135', 'city' => 'Almada', 'lat' => 38.6789, 'lng' => -9.1567],
+            ['street' => 'Avenida 1º de Maio', 'postal_code' => '2810-079', 'city' => 'Cova da Piedade', 'lat' => 38.6703, 'lng' => -9.1492],
+            ['street' => 'Rua de Alvalade', 'postal_code' => '2825-450', 'city' => 'Costa da Caparica', 'lat' => 38.6457, 'lng' => -9.2354],
 
-            // Distrito de Coimbra
-            ['street' => 'Rua Ferreira Borges', 'postal_code' => '3000-179', 'city' => 'Coimbra', 'lat' => 40.2109, 'lng' => -8.4295],
-            ['street' => 'Praça do Comércio', 'postal_code' => '3000-116', 'city' => 'Coimbra', 'lat' => 40.2101, 'lng' => -8.4287],
-            ['street' => 'Largo da Portagem', 'postal_code' => '3000-337', 'city' => 'Coimbra', 'lat' => 40.2086, 'lng' => -8.4281],
-            ['street' => 'Rua Visconde da Luz', 'postal_code' => '3000-414', 'city' => 'Coimbra', 'lat' => 40.2105, 'lng' => -8.4290],
+            // Barreiro
+            ['street' => 'Rua Miguel Bombarda', 'postal_code' => '2830-356', 'city' => 'Barreiro', 'lat' => 38.6631, 'lng' => -9.0724],
+            ['street' => 'Avenida Alfredo da Silva', 'postal_code' => '2830-302', 'city' => 'Barreiro', 'lat' => 38.6639, 'lng' => -9.0698],
+            ['street' => 'Rua Stara Zagora', 'postal_code' => '2830-500', 'city' => 'Lavradio', 'lat' => 38.6765, 'lng' => -9.0562],
+            ['street' => 'Rua da Amizade', 'postal_code' => '2835-115', 'city' => 'Baixa da Banheira', 'lat' => 38.6667, 'lng' => -9.0403],
 
-            // Distrito de Faro
-            ['street' => 'Rua de Santo António', 'postal_code' => '8000-283', 'city' => 'Faro', 'lat' => 37.0194, 'lng' => -7.9304],
-            ['street' => 'Praça Dom Francisco Gomes', 'postal_code' => '8000-168', 'city' => 'Faro', 'lat' => 37.0166, 'lng' => -7.9332],
-            ['street' => 'Rua Conselheiro Bivar', 'postal_code' => '8000-255', 'city' => 'Faro', 'lat' => 37.0178, 'lng' => -7.9291],
-            ['street' => 'Largo da Sé', 'postal_code' => '8000-138', 'city' => 'Faro', 'lat' => 37.0156, 'lng' => -7.9338],
+            // Montijo
+            ['street' => 'Avenida dos Pescadores', 'postal_code' => '2870-114', 'city' => 'Montijo', 'lat' => 38.7054, 'lng' => -8.9732],
+            ['street' => 'Rua Joaquim de Almeida', 'postal_code' => '2870-156', 'city' => 'Montijo', 'lat' => 38.7078, 'lng' => -8.9739],
+            ['street' => 'Rua da Bela Vista', 'postal_code' => '2870-500', 'city' => 'Atalaia', 'lat' => 38.7162, 'lng' => -8.9651],
+            ['street' => 'Rua da Liberdade', 'postal_code' => '2870-632', 'city' => 'Sarilhos Grandes', 'lat' => 38.7145, 'lng' => -8.9537],
 
-            // Distrito de Évora
-            ['street' => 'Praça do Giraldo', 'postal_code' => '7000-508', 'city' => 'Évora', 'lat' => 38.5711, 'lng' => -7.9097],
-            ['street' => 'Rua 5 de Outubro', 'postal_code' => '7000-854', 'city' => 'Évora', 'lat' => 38.5705, 'lng' => -7.9089],
-            ['street' => 'Largo da Porta de Moura', 'postal_code' => '7000-647', 'city' => 'Évora', 'lat' => 38.5692, 'lng' => -7.9103],
-            ['street' => 'Rua de Serpa Pinto', 'postal_code' => '7000-537', 'city' => 'Évora', 'lat' => 38.5714, 'lng' => -7.9085],
+            // Pinhal Novo
+            ['street' => 'Avenida da Liberdade', 'postal_code' => '2955-114', 'city' => 'Pinhal Novo', 'lat' => 38.6312, 'lng' => -8.9135],
+            ['street' => 'Rua Infante Dom Henrique', 'postal_code' => '2955-212', 'city' => 'Pinhal Novo', 'lat' => 38.6338, 'lng' => -8.9087],
+            ['street' => 'Rua do Forno da Cal', 'postal_code' => '2955-028', 'city' => 'Pinhal Novo', 'lat' => 38.6351, 'lng' => -8.9202],
 
-            // Distrito de Leiria
-            ['street' => 'Rua Direita', 'postal_code' => '2400-174', 'city' => 'Leiria', 'lat' => 39.7436, 'lng' => -8.8070],
-            ['street' => 'Largo 5 de Outubro', 'postal_code' => '2400-134', 'city' => 'Leiria', 'lat' => 39.7430, 'lng' => -8.8065],
-            ['street' => 'Rua Barão de Viamonte', 'postal_code' => '2400-137', 'city' => 'Leiria', 'lat' => 39.7432, 'lng' => -8.8073],
-            ['street' => 'Praça Rodrigues Lobo', 'postal_code' => '2400-217', 'city' => 'Leiria', 'lat' => 39.7435, 'lng' => -8.8068],
-
-            // Distrito de Aveiro
-            ['street' => 'Rua João Mendonça', 'postal_code' => '3800-200', 'city' => 'Aveiro', 'lat' => 40.6405, 'lng' => -8.6538],
-            ['street' => 'Avenida Dr. Lourenço Peixinho', 'postal_code' => '3800-162', 'city' => 'Aveiro', 'lat' => 40.6412, 'lng' => -8.6536],
-            ['street' => 'Rua dos Mercadores', 'postal_code' => '3800-225', 'city' => 'Aveiro', 'lat' => 40.6409, 'lng' => -8.6543],
-            ['street' => 'Praça Marquês de Pombal', 'postal_code' => '3800-243', 'city' => 'Aveiro', 'lat' => 40.6415, 'lng' => -8.6530],
-
-            // Distrito de Beja
-            ['street' => 'Rua da Liberdade', 'postal_code' => '7800-462', 'city' => 'Beja', 'lat' => 38.0151, 'lng' => -7.8632],
-            ['street' => 'Largo do Lidador', 'postal_code' => '7800-427', 'city' => 'Beja', 'lat' => 38.0147, 'lng' => -7.8638],
-            ['street' => 'Rua Capitão João Francisco de Sousa', 'postal_code' => '7800-451', 'city' => 'Beja', 'lat' => 38.0154, 'lng' => -7.8641],
-            ['street' => 'Praça da República', 'postal_code' => '7800-427', 'city' => 'Beja', 'lat' => 38.0149, 'lng' => -7.8635],
-
-            // Distrito de Guarda
-            ['street' => 'Rua do Comércio', 'postal_code' => '6300-659', 'city' => 'Guarda', 'lat' => 40.5373, 'lng' => -7.2683],
-            ['street' => 'Praça Luís de Camões', 'postal_code' => '6300-725', 'city' => 'Guarda', 'lat' => 40.5378, 'lng' => -7.2679],
-            ['street' => 'Rua Augusto Gil', 'postal_code' => '6300-516', 'city' => 'Guarda', 'lat' => 40.5375, 'lng' => -7.2685],
-            ['street' => 'Largo João de Almeida', 'postal_code' => '6300-754', 'city' => 'Guarda', 'lat' => 40.5380, 'lng' => -7.2675],
-
-            // Distrito de Portalegre
-            ['street' => 'Rua 19 de Junho', 'postal_code' => '7300-155', 'city' => 'Portalegre', 'lat' => 39.2939, 'lng' => -7.4312],
-            ['street' => 'Praça da República', 'postal_code' => '7300-126', 'city' => 'Portalegre', 'lat' => 39.2945, 'lng' => -7.4298],
-            ['street' => 'Rua do Comércio', 'postal_code' => '7300-130', 'city' => 'Portalegre', 'lat' => 39.2942, 'lng' => -7.4305],
-            ['street' => 'Largo Serpa Pinto', 'postal_code' => '7300-101', 'city' => 'Portalegre', 'lat' => 39.2948, 'lng' => -7.4292],
-
-            // Distrito de Viana do Castelo
-            ['street' => 'Rua Manuel Espregueira', 'postal_code' => '4900-318', 'city' => 'Viana do Castelo', 'lat' => 41.6932, 'lng' => -8.8329],
-            ['street' => 'Praça da República', 'postal_code' => '4900-520', 'city' => 'Viana do Castelo', 'lat' => 41.6938, 'lng' => -8.8325],
-            ['street' => 'Rua Grande', 'postal_code' => '4900-542', 'city' => 'Viana do Castelo', 'lat' => 41.6935, 'lng' => -8.8332],
-            ['street' => 'Largo de São Domingos', 'postal_code' => '4900-330', 'city' => 'Viana do Castelo', 'lat' => 41.6940, 'lng' => -8.8320],
-
-            // Distrito de Vila Real
-            ['street' => 'Avenida Carvalho Araújo', 'postal_code' => '5000-657', 'city' => 'Vila Real', 'lat' => 41.3006, 'lng' => -7.7441],
-            ['street' => 'Rua Direita', 'postal_code' => '5000-634', 'city' => 'Vila Real', 'lat' => 41.3009, 'lng' => -7.7447],
-            ['street' => 'Praça Luís de Camões', 'postal_code' => '5000-651', 'city' => 'Vila Real', 'lat' => 41.3012, 'lng' => -7.7443],
-            ['street' => 'Rua António de Azevedo', 'postal_code' => '5000-670', 'city' => 'Vila Real', 'lat' => 41.3003, 'lng' => -7.7439],
-
-            // Distrito de Lisboa
-            ['street' => 'Avenida da Liberdade', 'postal_code' => '1250-140', 'city' => 'Lisboa', 'lat' => 38.7169, 'lng' => -9.1427],
-            ['street' => 'Rua Augusta', 'postal_code' => '1100-048', 'city' => 'Lisboa', 'lat' => 38.7103, 'lng' => -9.1356],
-            ['street' => 'Rua do Carmo', 'postal_code' => '1200-093', 'city' => 'Lisboa', 'lat' => 38.7115, 'lng' => -9.1395],
-            ['street' => 'Praça do Comércio', 'postal_code' => '1100-148', 'city' => 'Lisboa', 'lat' => 38.7077, 'lng' => -9.1366],
-
-            // Distrito de Castelo Branco
-            ['street' => 'Avenida Nuno Álvares', 'postal_code' => '6000-083', 'city' => 'Castelo Branco', 'lat' => 39.8197, 'lng' => -7.4928],
-            ['street' => 'Rua de São Sebastião', 'postal_code' => '6000-153', 'city' => 'Castelo Branco', 'lat' => 39.8202, 'lng' => -7.4939],
-            ['street' => 'Rua Bartolomeu da Costa', 'postal_code' => '6000-080', 'city' => 'Castelo Branco', 'lat' => 39.8215, 'lng' => -7.4915],
-            ['street' => 'Praça Camões', 'postal_code' => '6000-156', 'city' => 'Castelo Branco', 'lat' => 39.8211, 'lng' => -7.4942],
-
-            // Distrito de Santarém
-            ['street' => 'Rua Serpa Pinto', 'postal_code' => '2000-046', 'city' => 'Santarém', 'lat' => 39.2362, 'lng' => -8.6867],
-            ['street' => 'Largo do Seminário', 'postal_code' => '2000-063', 'city' => 'Santarém', 'lat' => 39.2368, 'lng' => -8.6859],
-            ['street' => 'Rua Capelo e Ivens', 'postal_code' => '2000-094', 'city' => 'Santarém', 'lat' => 39.2357, 'lng' => -8.6873],
-            ['street' => 'Praça Sá da Bandeira', 'postal_code' => '2000-135', 'city' => 'Santarém', 'lat' => 39.2351, 'lng' => -8.6861],
-
-            // Distrito de Setúbal
+            // Setúbal
             ['street' => 'Avenida Luísa Todi', 'postal_code' => '2900-461', 'city' => 'Setúbal', 'lat' => 38.5247, 'lng' => -8.8890],
             ['street' => 'Praça do Bocage', 'postal_code' => '2900-276', 'city' => 'Setúbal', 'lat' => 38.5244, 'lng' => -8.8901],
             ['street' => 'Rua Álvaro Castelões', 'postal_code' => '2900-229', 'city' => 'Setúbal', 'lat' => 38.5239, 'lng' => -8.8912],
             ['street' => 'Largo da Misericórdia', 'postal_code' => '2900-388', 'city' => 'Setúbal', 'lat' => 38.5235, 'lng' => -8.8905],
+
+            // Lisboa
+            ['street' => 'Avenida da Liberdade', 'postal_code' => '1250-140', 'city' => 'Lisboa', 'lat' => 38.7169, 'lng' => -9.1427],
+            ['street' => 'Rua Augusta', 'postal_code' => '1100-048', 'city' => 'Lisboa', 'lat' => 38.7103, 'lng' => -9.1356],
+            ['street' => 'Rua do Carmo', 'postal_code' => '1200-093', 'city' => 'Lisboa', 'lat' => 38.7115, 'lng' => -9.1395],
+            ['street' => 'Praça do Comércio', 'postal_code' => '1100-148', 'city' => 'Lisboa', 'lat' => 38.7077, 'lng' => -9.1366],
+            ['street' => 'Rua de Campolide', 'postal_code' => '1070-038', 'city' => 'Lisboa', 'lat' => 38.7289, 'lng' => -9.1638],
+            ['street' => 'Avenida Marechal Craveiro Lopes', 'postal_code' => '1700-284', 'city' => 'Lisboa', 'lat' => 38.7662, 'lng' => -9.1251],
+
+            // Oeiras
+            ['street' => 'Avenida Marginal', 'postal_code' => '2780-267', 'city' => 'Oeiras', 'lat' => 38.6915, 'lng' => -9.3125],
+            ['street' => 'Rua do Espargal', 'postal_code' => '2780-218', 'city' => 'Oeiras', 'lat' => 38.6941, 'lng' => -9.3092],
+            ['street' => 'Rua dos Lagares da Quinta', 'postal_code' => '2780-204', 'city' => 'Oeiras', 'lat' => 38.7012, 'lng' => -9.3037],
+
+            // Cascais
+            ['street' => 'Avenida 25 de Abril', 'postal_code' => '2750-512', 'city' => 'Cascais', 'lat' => 38.7004, 'lng' => -9.4215],
+            ['street' => 'Rua Frederico Arouca', 'postal_code' => '2750-632', 'city' => 'Cascais', 'lat' => 38.6972, 'lng' => -9.4197],
+            ['street' => 'Avenida de Sintra', 'postal_code' => '2750-494', 'city' => 'Cascais', 'lat' => 38.7051, 'lng' => -9.4152],
+
+            // Sintra
+            ['street' => 'Rua Consiglieri Pedroso', 'postal_code' => '2710-550', 'city' => 'Sintra', 'lat' => 38.7971, 'lng' => -9.3907],
+            ['street' => 'Rua das Padarias', 'postal_code' => '2710-602', 'city' => 'Sintra', 'lat' => 38.7962, 'lng' => -9.3918],
+            ['street' => 'Estrada Chão de Meninos', 'postal_code' => '2710-196', 'city' => 'Sintra', 'lat' => 38.7910, 'lng' => -9.3865],
+
+            // Loures
+            ['street' => 'Rua da República', 'postal_code' => '2670-469', 'city' => 'Loures', 'lat' => 38.8311, 'lng' => -9.1684],
+            ['street' => 'Avenida da Liberdade', 'postal_code' => '2670-367', 'city' => 'Loures', 'lat' => 38.8325, 'lng' => -9.1651],
+            ['street' => 'Rua de Santo António', 'postal_code' => '2670-387', 'city' => 'Loures', 'lat' => 38.8287, 'lng' => -9.1703],
+
+            // Odivelas
+            ['street' => 'Avenida D. Dinis', 'postal_code' => '2675-326', 'city' => 'Odivelas', 'lat' => 38.7956, 'lng' => -9.1827],
+            ['street' => 'Rua Pulido Valente', 'postal_code' => '2675-317', 'city' => 'Odivelas', 'lat' => 38.7912, 'lng' => -9.1769],
+            ['street' => 'Rua Guilherme Gomes Fernandes', 'postal_code' => '2675-357', 'city' => 'Odivelas', 'lat' => 38.7991, 'lng' => -9.1843],
+
+            // Almada
+            ['street' => 'Rua Capitão Leitão', 'postal_code' => '2800-135', 'city' => 'Almada', 'lat' => 38.6789, 'lng' => -9.1567],
+            ['street' => 'Avenida Dom Nuno Álvares Pereira', 'postal_code' => '2800-174', 'city' => 'Almada', 'lat' => 38.6802, 'lng' => -9.1585],
+            ['street' => 'Avenida 1º de Maio', 'postal_code' => '2810-079', 'city' => 'Cova da Piedade', 'lat' => 38.6703, 'lng' => -9.1492],
+            ['street' => 'Rua de Alvalade', 'postal_code' => '2825-450', 'city' => 'Costa da Caparica', 'lat' => 38.6457, 'lng' => -9.2354]
         ];
 
         // Cria 20 lojas com nomes e endereços
