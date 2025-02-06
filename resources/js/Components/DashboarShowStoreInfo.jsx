@@ -18,7 +18,7 @@ import DashboardProductList from "@/Components/DashboardProductList.jsx";
 import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
 import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
 import {shopStore} from "@/Stores/index.js";
-import DashboardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
+import DashboardImageCarousel from "@/Components/DashBoardImageCarousel.jsx";
 
 const DashboarShowStoreInfo = observer(({store}) => {
 
@@ -127,7 +127,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
         >
             {/* Carrossel */}
             <Box sx={{position: "relative", height: 200, overflow: "hidden"}}>
-                <DashBoardImageCarousel galleries={store?.galleries}/>
+                <DashboardImageCarousel galleries={store?.galleries}/>
             </Box>
 
             {/* Nome da loja */}

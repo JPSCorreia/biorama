@@ -74,17 +74,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
         validationSchema: Yup.object({
             postal_code: Yup.string()
                 .matches(/^\d{4}-\d{3}$/, "Código Postal inválido (formato: 0000-000)")
-                .required("O Código Postal é obrigatório")
-                .test(
-                    "check-duplicate-address",
-                    "Já existe uma morada com este Código Postal e Número",
-                    function (value) {
-                        const { number } = this.parent; // Acessa o campo número
-                        if (!value || !number) return true; // Ignora se um dos campos estiver vazio
-                        // Verifica duplicação usando a store
-                        return !homeAddressStore.checkDuplicatePostalCode(value, formik.values.number, this.options.context?.excludeId);
-                    }
-                ),
+                .required("O Código Postal é obrigatório"),
             address_name: Yup.string()
                 .max(20, "Defina um nome mais curto para a sua morada")
                 .required("O Nome da morada é obrigatório"),
@@ -284,7 +274,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         control={
                             <Switch
                                 name="is_primary"
-                                checked={formik.values.is_primary}
+                                checked={!!formik.values.is_primary} // Outra forma de converter para booleano
                                 onChange={formik.handleChange}
                             />
                         }
