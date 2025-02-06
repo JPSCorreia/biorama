@@ -1,16 +1,22 @@
-import {observer} from "mobx-react";
+import { observer } from "mobx-react";
 import axios from "axios";
-import {homeAddressStore} from "../Stores/index.js";
-import {Box, Typography, useMediaQuery, IconButton } from "@mui/material";
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import DeleteIcon from '@mui/icons-material/Delete';
-import StarIcon from '@mui/icons-material/Star';
-import EditIcon from '@mui/icons-material/Edit';
+import { homeAddressStore } from "../Stores/index.js";
+import {
+    Box,
+    Typography,
+    useMediaQuery,
+    IconButton,
+    Paper,
+    Tooltip,
+} from "@mui/material";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import DeleteIcon from "@mui/icons-material/Delete";
+import StarIcon from "@mui/icons-material/Star";
+import EditIcon from "@mui/icons-material/Edit";
 import AddressEditModal from "./AddressEditModal.jsx";
 import React from "react";
 
 const AddressCard = observer(({ address, theme }) => {
-
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
@@ -25,23 +31,23 @@ const AddressCard = observer(({ address, theme }) => {
     };
 
     const handleDeleteAddress = async (id) => {
-            await homeAddressStore.deleteAddress(id);
-            console.log('Morada Apagada com sucesso');
+        await homeAddressStore.deleteAddress(id);
+        console.log("Morada Apagada com sucesso");
     };
     return (
-        <Box
+        <Paper
+            elevation={4}
+            backgroundColor="background.paper"
             sx={{
-                backgroundColor: "#f3f0f063",
-                p: 2,
+                py: 1,
+                px: 2,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
                 justifyContent: "space-between",
                 borderRadius: "10px",
-                width: isSmallScreen ? "100%" : "25%",
-                minHeight: isSmallScreen ? "auto" : "350px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                border: "1px solid #e0e0e0",
+                width: "250px",
+                minHeight: "354px",
             }}
         >
             <Box
@@ -53,104 +59,120 @@ const AddressCard = observer(({ address, theme }) => {
                 }}
             >
                 <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        justifyContent: "space-between",
+                    }}
                 >
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1.2rem", color: "#333", mb: 1 }}>
+                    <Typography
+                        sx={{
+                            fontWeight: "bold",
+                            fontSize: "1.2rem",
+                            mb: 1,
+                            mt: 1,
+                        }}
+                        color="terciary"
+                    >
                         {address.address_name || "Nome da Morada"}
                     </Typography>
                 </Box>
-
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    {!address.is_primary ? (
-                        <IconButton
-                            onClick={() => handleSetPrimary(address)}
-                        >
-                            <StarBorderIcon sx={{ fontSize: "1.5rem" }} />
-                        </IconButton>
-                    ) : (
-                        <IconButton
-                            onClick={() => handleSetPrimary(address)}
-                            sx = {{
-                                "&:hover": {
-                                    backgroundColor : "#ffd7001f",
-                                },
-                            }}
-                        >
-                            <StarIcon sx={{ fontSize: "1.5rem", color: "gold"}} />
-                        </IconButton>
-                    )}
-                    <IconButton aria-label="edit" onClick={handleOpen}>
-                        <EditIcon
-                            sx={{
-                                color: theme.palette.primary.main,
-                            }}
-                        />
-                    </IconButton>
-                    <AddressEditModal open={open} handleClose={handleClose} address={address} />
-                    <IconButton aria-label="delete" onClick={() => handleDeleteAddress(address.id)}>
-                        <DeleteIcon
-                            sx={{
-                                color: theme.palette.error.main,
-                            }}
-                        />
-                    </IconButton>
-                </Box>
-
             </Box>
 
             <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Rua</Typography>
-                <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                    {address.street_address || "Rua não fornecida"}
+                <Typography sx={{ fontWeight: "bold"}}>
+                    Morada:
                 </Typography>
+                <Typography>
+                    {`${address.street_address}, ${address.number}` || "Rua não fornecida"}
+                </Typography>
+                <Typography>
+                        {`${address.postal_code}, ${address.city}`  || "Cidade não fornecida"}
+                    </Typography>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "row", mb: 1, justifyContent:"space-between", width:"95%" }}>
+
                 <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Número</Typography>
-                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                        {address.number || "Número não fornecido"}
+                    <Typography sx={{ fontWeight: "bold" }}>
+                       Telefone:
                     </Typography>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Cidade</Typography>
-                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                        {address.city || "Cidade não fornecida"}
-                    </Typography>
-                </Box>
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "row", mb: 1, justifyContent:"space-between", width:"95%" }}>
-                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Código Postal</Typography>
-                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                        {address.postal_code || "Código Postal não fornecido"}
-                    </Typography>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-                    <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Contacto</Typography>
-                    <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
+                    <Typography sx={{ mt: 0.5 }}>
                         {address.phone_number || "Contacto não fornecido"}
                     </Typography>
                 </Box>
-            </Box>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Comentário</Typography>
-                <Typography
-                    variant="body1"
-                    gutterBottom
-                    sx={{
-                        ml: 1,
-                        width: "100%",
-                        wordWrap: "break-word",
-                        overflowWrap: "break-word",
-                        whiteSpace: "pre-wrap",
-                    }}
+            <Typography sx={{ fontWeight: "bold"}}>
+                Comentário
+            </Typography>
+            <Typography
+                variant="body1"
+                gutterBottom
+                sx={{
+                    width: "100%",
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "pre-wrap",
+                }}
+            >
+                {address.comment || "Descrição não fornecida"}
+            </Typography>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "end",
+                    alignItems: "center",
+                    width: "100%",
+                }}
+            >
+                {!address.is_primary ? (
+                    <Tooltip title="Marcar como morada principal">
+                        <IconButton onClick={() => handleSetPrimary(address)}>
+                            <StarBorderIcon sx={{ fontSize: "1.5rem" }} />
+                        </IconButton>
+                    </Tooltip>
+                ) : (
+                    <Tooltip title="Marcar como morada principal">
+                        <IconButton
+                            onClick={() => handleSetPrimary(address)}
+                            sx={{
+                                "&:hover": {
+                                    backgroundColor: "#ffd7001f",
+                                },
+                            }}
+                        >
+                            <StarIcon
+                                sx={{ fontSize: "1.5rem", color: "gold" }}
+                            />
+                        </IconButton>
+                    </Tooltip>
+                )}
+                <Tooltip title="Editar morada">
+                <IconButton aria-label="edit" onClick={handleOpen}>
+                    <EditIcon
+                        sx={{
+                            color: theme.palette.primary.main,
+                        }}
+                    />
+                </IconButton>
+                </Tooltip>
+                <AddressEditModal
+                    open={open}
+                    handleClose={handleClose}
+                    address={address}
+                />
+                <Tooltip title="Apagar morada">
+                <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDeleteAddress(address.id)}
                 >
-                    {address.comment || "Descrição não fornecida"}
-                </Typography>
-        </Box>
+                    <DeleteIcon
+                        sx={{
+                            color: theme.palette.error.main,
+                        }}
+                    />
+                </IconButton>
+                </Tooltip>
+            </Box>
+        </Paper>
     );
 });
 

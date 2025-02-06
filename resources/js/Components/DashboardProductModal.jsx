@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Typography, IconButton, Modal, Button, Snackbar, Alert } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { observer } from "mobx-react";
-import { productStore } from "@/Stores/index.js";
-import DashboardEditProduct from "@/Components/DashBoardEditProduct.jsx";
+import DashboardEditProduct from "@/Components/DashboardEditProduct.jsx";
 import DashboardShowProduct from "@/Components/DashboardShowProduct.jsx";
+import { productStore } from "@/Stores/index.js";
 
 const DashboardProductModal = observer(({ open, onClose, product, storeid, initialEditMode }) => {
-    const [isEditing, setIsEditing] = useState(initialEditMode ||false);
+    const [isEditing, setIsEditing] = useState(initialEditMode || false);
     const [loading, setLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+    const [localProduct, setLocalProduct] = useState(product);  // Inicializa com o produto vindo via props
 
-    // Atualiza o produto no store sempre que o modal abrir com um novo produto
+    // Atualiza o produto no store sempre que o modal abrir
     useEffect(() => {
         if (open && product) {
-            productStore.fetchProductData(product.id);
+            // Atualiza o estado com o produto inicial e carrega os detalhes
+            setLocalProduct(product);
+            productStore.fetchProductData(product.id).then(() => {
+                // Atualiza o produto detalhado
+                setLocalProduct(productStore.currentProduct);
+            });
             setIsEditing(initialEditMode);
         }
     }, [open, product]);
-    console.log("Produto actual", productStore.currentProduct);
 
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
@@ -38,6 +43,10 @@ const DashboardProductModal = observer(({ open, onClose, product, storeid, initi
             setLoading(false);
         }
     };
+
+    if (!localProduct) {
+        return null;  // Evita renderizar o modal se o produto não estiver carregado
+    }
 
     return (
         <Modal open={open} onClose={onClose}>
@@ -63,14 +72,14 @@ const DashboardProductModal = observer(({ open, onClose, product, storeid, initi
 
                 {isEditing ? (
                     <DashboardEditProduct
-                        product={productStore.currentProduct}
+                        product={localProduct}
                         storeId={storeid}
                         onCancel={() => setIsEditing(false)}
                         onSubmit={handleUpdateProduct}
                     />
                 ) : (
                     <>
-                        <DashboardShowProduct product={productStore.currentProduct} />
+                        <DashboardShowProduct product={localProduct} />
                         <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
                             <Button variant="contained" onClick={handleToggleEdit}>
                                 Editar

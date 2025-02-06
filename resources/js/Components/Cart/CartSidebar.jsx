@@ -86,6 +86,7 @@ const CartSidebar = observer(() => {
                 border: "1px solid #ccc",
                 borderRadius: 4,
                 minWidth: smallerThanSmall ? "100%" : "500px",
+                minHeight: "402px",
                 height: "100%",
                 ml: smallerThanSmall ? 0 : 4,
                 p: 3,

@@ -210,6 +210,7 @@ Route::middleware(['auth'])->get('/stores/{id}/products', [DashboardController::
 Route::middleware(['auth'])->put('/stores/{id}/products/{product_id}', [ProductController::class, 'update'])->name('product.update');
 Route::get('/products/{product_id}', [ProductController::class, 'refreshProduct']);
 Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+Route::get('/search-products/{storeId}', [ProductController::class, 'productListSearch']);
 
 
 //TODO: routes to sort, also change route names to be standardized

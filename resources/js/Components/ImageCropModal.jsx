@@ -9,8 +9,6 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
 
     const aspectRatio = 4 / 3; // Mantém 800x600
 
-    console.log("Imagem recebida no CropModal:", image);
-
     // Captura a área recortada
     const onCropAreaChange = useCallback((_, areaPixels) => {
         setCroppedAreaPixels(areaPixels);

@@ -1,6 +1,7 @@
 import React from "react";
 import {
     Box,
+    Paper,
     Typography,
     List,
     ListItem,
@@ -18,8 +19,10 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { authStore } from "@/Stores";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useSidebar } from "../../Context/SidebarContext.jsx";
+import { observer } from "mobx-react";
+import { router } from "@inertiajs/react";
 
-const SideBar = () => {
+const SideBar = observer(() => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -36,7 +39,15 @@ const SideBar = () => {
     const handleNavigation = (text) => {
         switch (text) {
             case "Sair":
-                authStore.updateAuth({ user: null });
+                router.post(
+                    "/sair",
+                    {},
+                    {
+                        onSuccess: () => {
+                            authStore.updateAuth({ user: null });
+                        },
+                    },
+                );
                 break;
             case "Dados Pessoais":
                 console.log("Navegar para Dados Pessoais");
@@ -48,26 +59,39 @@ const SideBar = () => {
 
     return (
         <Box
+        sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mb: 3,
+        }}
+    >
+        <Box sx={{ display: "flex", flexDirection: "column",  width: "100%", alignItems: "baseline", justifyContent: "flex-start", ml: 2, mb: 1 }}>
+        <Typography
+            sx={{ fontWeight: "bold", alignItems: "baseline"}}
+        >
+            {authStore.user?.first_name} {authStore.user?.last_name}
+        </Typography>
+        <Typography
+            sx={{ fontWeight: "bold", fontSize: 12, ml: 1, alignItems: "baseline", color: "text.secondary" }}
+        >
+            ({authStore.user?.email})
+        </Typography>
+        </Box>
+        <Paper
+            elevation={4}
             sx={{
-                width: isSmallScreen ? "100vw" : "260px", // Largura responsiva
-                height: isSmallScreen ? "auto" : "auto", // Altura total em telas grandes
-                bgcolor: "#f5f5f5",
-                boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+                width: isSmallScreen ? "90%" : "280px", // Largura responsiva
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
-                p: isSmallScreen ? 1 : 2, // Padding menor em telas pequenas
-                borderRadius: isSmallScreen ? 0 : "10px",
-                overflowY: "none", // Permite rolagem se necessário
+                justifyContent: "center",
+                p: 2, // Padding menor em telas pequenas
+                borderRadius: "8px",
             }}
         >
-            <Typography variant="h6" sx={{ mb: 2, ml: 2 }}>
-                Olá, {authStore.user.first_name}
-            </Typography>
-
-            <List>
+            <List sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", maxHeight: "320px" }}>
                 {menuItems.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ width: "100%", m:"10% 0%" }}>
+                    <ListItem key={item.text} disablePadding sx={{ display: "flex", width: "100%", mb: 2 }}>
                         <ListItemButton
                             onClick={() => {
                                 setActiveItem(item.text); // Define o item ativo no contexto
@@ -78,19 +102,19 @@ const SideBar = () => {
                                 alignItems: "center",
                                 gap: 1.5, // Ícones mais próximos do texto
                                 bgcolor: activeItem === item.text ? "primary.light" : "inherit",
-                                color: activeItem === item.text ? "white" :  "#000", // Cor do texto baseada na seleção
+                                color: activeItem === item.text ? "profile.sidebar.textActive" :  "profile.sidebar.text", // Cor do texto baseada na seleção
                                 borderRadius: "5px",
 
                                 "&:hover": {
-                                    bgcolor: activeItem === item.text ? "success.dark" : "primary.light", // Hover verde mais escuro para item selecionado
-                                    color: "white", // Mantém o texto branco no hover
+                                    bgcolor: activeItem === item.text ? "secondary.dark" : "primary.light", // Hover verde mais escuro para item selecionado
+
                                 },
                             }}
                         >
                             <ListItemIcon
                                 sx={{
-                                    color: activeItem === item.text ? "white" : item.color, // Cor do ícone baseada na seleção
-                                    minWidth: 0, // Remove largura padrão para ajustar espaçamento
+                                    color: activeItem === item.text ? "profile.sidebar.iconActive" : item.color, // Cor do ícone baseada na seleção
+                                    minWidth: 0,
                                 }}
                             >
                                 {item.icon}
@@ -98,7 +122,7 @@ const SideBar = () => {
                             <ListItemText primary={item.text} />
                             <ArrowForwardIosIcon
                                 sx={{
-                                    color: activeItem === item.text ? "white" : "#000", // Ícone de seta baseado na seleção
+                                    color: activeItem === item.text ? "profile.sidebar.arrowActive" : "profile.sidebar.arrow", // Ícone de seta baseado na seleção
                                 }}
                             />
                         </ListItemButton>
@@ -106,8 +130,9 @@ const SideBar = () => {
                 ))}
             </List>
 
+        </Paper>
         </Box>
     );
-};
+});
 
 export default SideBar;

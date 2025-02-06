@@ -18,7 +18,7 @@ import DashboardProductList from "@/Components/DashboardProductList.jsx";
 import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
 import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
 import {shopStore} from "@/Stores/index.js";
-import DashBoardImageCarousel from "@/Components/DashBoardImageCarousel.jsx";
+import DashboardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
 
 const DashboarShowStoreInfo = observer(({store}) => {
 

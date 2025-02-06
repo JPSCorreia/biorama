@@ -35,8 +35,8 @@ const AddressEditModal = ({ open, handleClose, address }) => {
         city: address.city || "",
         phone_number: address.phone_number || "",
         comment: address.comment || "",
-        longitude: "",
-        latitude: "",
+        longitude: address.longitude || "",
+        latitude:  address.latitude || "",
         is_primary: address.is_primary || false,
     };
 
@@ -101,7 +101,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                 .nullable()
                 .matches(/^\d{9,15}$/, "Número de telefone inválido"),
             comment: Yup.string().nullable()
-                .max(50, "O Comentário deve ter no máximo 50 caracteres")
+                .max(40, "O Comentário deve ter no máximo 40 caracteres")
             ,
             is_primary: Yup.boolean().required("O campo é obrigatório")
         }),
@@ -155,7 +155,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: isSmallScreen ? "80%" : "20%",
+                    width: isSmallScreen ? "90%" : "400px",
                     justifyContent: "center",
                     alignItems: "center",
                     padding: isSmallScreen ? "10px" : "20px",
@@ -171,7 +171,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         width: "100%",
                     }}
                 >
-                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold", ml:4.5 }}>
+                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
                         Editar Morada
                     </Typography>
                     <IconButton onClick={handleClose}>
@@ -228,7 +228,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             error={formik.touched.number && Boolean(formik.errors.number)}
                             helperText={formik.touched.number && formik.errors.number}
                             required
-                            isabled={isDisabled}
+                            disabled={isDisabled}
                             sx={{ width: "40%" }}
                         />
                         <TextField
@@ -272,7 +272,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             variant="caption"
                             sx={{ alignSelf: "flex-end", mt: 1 }}
                         >
-                            {formik.values.comment.length}/50
+                            {formik.values.comment.length}/40
                         </Typography>
                         {formik.touched.comment && formik.errors.comment && (
                             <Typography variant="caption" color="error.main">

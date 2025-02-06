@@ -5,11 +5,18 @@ import {makePersistable} from "mobx-persist-store";
 class ProductStore{
     products= [];
     currentProduct =null;
+    totalProducts = 0;
+    searchTerm = "";
 
     constructor() {
         makeObservable(this, {
             products: observable,
             currentProduct:observable,
+            totalProducts: observable,
+            searchTerm: observable,
+            fetchProductsPaginated: action,
+            deleteProduct: action,
+            clearSearch: action,
         });
         makePersistable(this,{
             name: "ProductStore",
@@ -17,12 +24,33 @@ class ProductStore{
             storage: window.sessionStorage,
         })
     }
+
+
+    fetchProductsPaginated = async (storeId, page = 1, searchTerm = "") => {
+        console.log("Pesquisa", searchTerm);
+        console
+        try {
+            const response = await axios.get(`/search-products/${storeId}`, {
+                params: { page, search: searchTerm },
+            });
+            console.log("Reponse", response);
+            runInAction(() => {
+                this.products = response.data.data;
+                console.log("This products", this.products)
+                this.totalProducts = response.data.total;
+                this.searchTerm = searchTerm;
+            });
+        } catch (error) {
+            console.error("Erro ao buscar produtos:", error);
+        }
+    };
+
     async fetchProductData(productId) {
         try {
             const response = await axios.get(`/products/${productId}`);
             runInAction(() => {
                 this.setProductData(response.data.product);
-                console.log("Product", response.data.product);
+                console.log("Product n a shot store quando dou fetch", response.data.product);
 
             });
         } catch (error) {
@@ -85,6 +113,11 @@ class ProductStore{
             throw error;
         }
     };
+
+    // Limpa a pesquisa e volta a buscar todos os produtos
+    clearSearch(storeId) {
+        this.fetchProductsPaginated(storeId, 1, "");
+    }
 
 
 clearProductData(){

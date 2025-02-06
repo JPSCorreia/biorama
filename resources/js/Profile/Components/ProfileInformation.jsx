@@ -9,19 +9,15 @@ import {
     List,
     useTheme,
     useMediaQuery,
-    IconButton
+    IconButton,
 } from "@mui/material";
 import { authStore, homeAddressStore } from "../../Stores/index.js";
 import { observer } from "mobx-react";
 import ProfileEditModal from "../../Components/ProfileEditModal.jsx";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 
-
 const ProfileInformation = observer(() => {
-
-
-
     const theme = useTheme();
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 
@@ -31,7 +27,6 @@ const ProfileInformation = observer(() => {
     // Funções para abrir/fechar modais
     const handleProfileModalOpen = () => setProfileModalOpen(true);
     const handleProfileModalClose = () => setProfileModalOpen(false);
-
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -60,40 +55,34 @@ const ProfileInformation = observer(() => {
         <Box
             sx={{
                 display: "flex",
-                flexDirection: "row",
-                width: "100%",
-
+                flexDirection: "column",
+                alignItems: "center",
+                mb: 3,
             }}
         >
+            <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", mb: 2, width: "100%" }}
+            >
+                Dados Pessoais
+            </Typography>
             <Paper
                 elevation={4}
                 sx={{
-                    width: "100%",
-                    m: "auto",
-                    display: isSmallScreen ? 'none' : "flex",
+                    display: "flex",
                     flexDirection: "column",
-                    borderRadius: "10px",
+                    width: "100%",
+                    justifyContent: "start",
+                    p: 3,
+                    borderRadius: "8px",
                 }}
-
             >
-                {/* Avatar e Nome ECRÃ LARGE */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                        m:" 2% auto 2% auto",
-                        justifyContent: "center",
-
-                    }}
-                >
-                    <Box>
+                    <Box sx={{ display: "flex", justifyContent: "start" }}>
                         <Avatar
                             alt="Profile Image"
-                            variant = {isSmallScreen ? "" : "rounded"}
+                            variant={isSmallScreen ? "" : "rounded"}
                             src={authStore.user?.image_profile}
                             sx={{
-                                justifyContent: "flex-top",
                                 width: isSmallScreen ? 90 : 150,
                                 height: isSmallScreen ? 90 : 150,
                                 color: "background.secondary",
@@ -112,11 +101,6 @@ const ProfileInformation = observer(() => {
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
-                            ml: 2,
-                            mt: 5,
-                            width: "85%",
-
-
                         }}
                     >
                         <Box
@@ -129,122 +113,112 @@ const ProfileInformation = observer(() => {
                                 mb: 2,
                             }}
                         >
-                            <Typography sx={{
-                                fontWeight: "bold",
-                                fontSize: "2.3rem"
-                            }}
-                            >
-                                {authStore.user.first_name} {authStore.user.last_name}
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                sx={{ width: "140px",
-                                    alignContent: "center",
-                                    display: isSmallScreen ? "none" : "block",
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    fontWeight: "bold",
+                                    mt: 2,
                                 }}
-                                onClick={handleProfileModalOpen}
                             >
-                                Editar Perfil
-                            </Button>
+                                {authStore.user?.first_name}{" "}
+                                {authStore.user?.last_name}
+                            </Typography>
                         </Box>
-                        <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose}/>
+                        <ProfileEditModal
+                            open={profileModalOpen}
+                            handleClose={handleProfileModalClose}
+                        />
                         <Box
                             sx={{
                                 width: "100%",
                                 display: "flex",
                                 flexDirection: "column",
-                                justifyContent: "center",
-                                m: "auto",
                             }}
                         >
                             <Box
                                 sx={{
-                                    display: isSmallScreen ? "flex" : "none",
-                                    flexDirection: "row",
-                                    mb: 3,
-                                    ml: 2,
-                                    width: "50%",
-                                    borderBottom: "1px solid #e0e0e0",
-
+                                    display: "flex",
                                 }}
                             >
-                                <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>Dados Pessoais</Typography>
                                 <Box>
-                                    {authStore.isAuthenticated && (
-                                        <IconButton
-                                            aria-label="edit"
-                                            onClick={handleProfileModalOpen}
-                                            sx={{
-                                                display: isSmallScreen ? "block" : "none",
-                                                color: theme.palette.primary.main,
-                                                ml: 1,
-                                            }}
-                                        >
-                                            <EditIcon
-                                                sx={{
-                                                    fontSize: "1.6rem",
-                                                    color: theme.palette.primary.main,
-                                                }}
-                                            />
-                                        </IconButton>
-                                    )}
-                                    <ProfileEditModal open={profileModalOpen} handleClose={handleProfileModalClose} />
+                                    <ProfileEditModal
+                                        open={profileModalOpen}
+                                        handleClose={handleProfileModalClose}
+                                    />
                                 </Box>
                             </Box>
-                            <Box
-                                sx={{
-                                    mt: 9.5,
-                                }}
-                            >
-                                <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>Dados Pessoais</Typography>
+                            <Box>
                                 <List
-                                    sx={{
-                                        pl:2,
-                                        width: "80%",
-                                    }}
                                 >
                                     <ListItem
                                         sx={{
                                             display: "flex",
-                                            flexDirection: isSmallScreen ? "column" : "row",
-                                            justifyContent: isSmallScreen ? "" : "space-between",
-                                            alignItems: isSmallScreen ? "baseline" : "",
+                                            flexDirection: "row",
+                                            justifyContent: "space-between",
+                                            alignItems: "baseline",
                                             p: 0,
                                         }}
                                     >
-                                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Email</Typography>
-                                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                                {authStore.user.email}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "row",
+                                                alignItems: "baseline",
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.3rem",
+                                                }}
+                                            >
+                                                Email:
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                gutterBottom
+                                                sx={{ ml: 1 }}                                    >
+                                                {authStore.user?.email}
                                             </Typography>
                                         </Box>
-                                        <Divider
-                                            variant="middle"
+                                        <Box
                                             sx={{
-                                                display : isSmallScreen ? "block" : "none",
-                                                width: "100%",
-                                                mt: 1.5,
-                                                mb: 1.5,
-                                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
-                                                border: "none",
-                                                height: 1.5,
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: isSmallScreen
+                                                    ? "flex-start"
+                                                    : "flex-end",
                                             }}
-                                        />
-                                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Nº de Telemóvel</Typography>
-                                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                                {authStore.user.phone || "Não Fornecido"}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.5rem",
+                                                }}
+                                            >
+                                                Nº de Telemóvel
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                gutterBottom
+                                                sx={{ mt: 1, ml: 1 }}
+                                            >
+                                                {authStore.user?.phone ||
+                                                    "Não Fornecido"}
                                             </Typography>
                                         </Box>
                                     </ListItem>
                                     <Divider
                                         variant="middle"
                                         sx={{
-                                            display : isSmallScreen ? "block" : "none",
+                                            display: isSmallScreen
+                                                ? "block"
+                                                : "none",
                                             width: "100%",
                                             mt: 1.5,
                                             mb: 1.5,
-                                            background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                            background:
+                                                "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
                                             border: "none",
                                             height: 1.5,
                                         }}
@@ -252,45 +226,94 @@ const ProfileInformation = observer(() => {
                                     <ListItem
                                         sx={{
                                             display: "flex",
-                                            flexDirection: isSmallScreen ? "column" : "row",
-                                            justifyContent: isSmallScreen ? "" : "space-between",
-                                            alignItems: isSmallScreen ? "baseline" : "",
-                                            p: 0
+                                            flexDirection: isSmallScreen
+                                                ? "column"
+                                                : "row",
+                                            justifyContent: isSmallScreen
+                                                ? ""
+                                                : "space-between",
+                                            alignItems: isSmallScreen
+                                                ? "baseline"
+                                                : "",
+                                            p: 0,
                                         }}
                                     >
-                                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>NIF</Typography>
-                                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                                {authStore.user.nif || "Não Fornecido"}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.3rem",
+                                                }}
+                                            >
+                                                NIF
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                gutterBottom
+                                                sx={{ ml: 1 }}
+                                            >
+                                                {authStore.user?.nif ||
+                                                    "Não Fornecido"}
                                             </Typography>
                                         </Box>
                                         <Divider
                                             variant="middle"
                                             sx={{
-                                                display : isSmallScreen ? "block" : "none",
+                                                display: isSmallScreen
+                                                    ? "block"
+                                                    : "none",
                                                 width: "100%",
                                                 mt: 1.5,
                                                 mb: 1.5,
-                                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                                background:
+                                                    "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
                                                 border: "none",
                                                 height: 1.5,
                                             }}
                                         />
-                                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Género</Typography>
-                                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                                {authStore.user.gender?.name|| "Não Fornecido"}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: isSmallScreen
+                                                    ? "flex-start"
+                                                    : "flex-end",
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.5rem",
+                                                }}
+                                            >
+                                                Género
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                gutterBottom
+                                                sx={{ mt: 1, ml: 1 }}
+                                            >
+                                                {authStore.user?.gender?.name ||
+                                                    "Não Fornecido"}
                                             </Typography>
                                         </Box>
                                     </ListItem>
                                     <Divider
                                         variant="middle"
                                         sx={{
-                                            display : isSmallScreen ? "block" : "none",
+                                            display: isSmallScreen
+                                                ? "block"
+                                                : "none",
                                             width: "100%",
                                             mt: 1.5,
                                             mb: 1.5,
-                                            background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                            background:
+                                                "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
                                             border: "none",
                                             height: 1.5,
                                         }}
@@ -298,43 +321,103 @@ const ProfileInformation = observer(() => {
                                     <ListItem
                                         sx={{
                                             display: "flex",
-                                            flexDirection: isSmallScreen ? "column" : "row",
-                                            justifyContent: isSmallScreen ? "" : "space-between",
-                                            alignItems: isSmallScreen ? "baseline" : "",
+                                            flexDirection: isSmallScreen
+                                                ? "column"
+                                                : "row",
+                                            justifyContent: isSmallScreen
+                                                ? ""
+                                                : "space-between",
+                                            alignItems: isSmallScreen
+                                                ? "baseline"
+                                                : "",
                                             p: 0,
-                                            mt: 2
+                                            mt: 2,
                                         }}
                                     >
-                                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>Data de Nascimento</Typography>
-                                            <Typography variant="body1" gutterBottom sx={{ ml: 1 }}>
-                                                {authStore.user.date_of_birth || "Não Fornecida"}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.3rem",
+                                                }}
+                                            >
+                                                Data de Nascimento
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                gutterBottom
+                                                sx={{ ml: 1 }}
+                                            >
+                                                {authStore.user?.date_of_birth ||
+                                                    "Não Fornecida"}
                                             </Typography>
                                         </Box>
                                         <Divider
                                             variant="middle"
                                             sx={{
-                                                display : isSmallScreen ? "block" : "none",
+                                                display: isSmallScreen
+                                                    ? "block"
+                                                    : "none",
                                                 width: "100%",
                                                 mt: 1.5,
                                                 mb: 1.5,
-                                                background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
+                                                background:
+                                                    "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent)",
                                                 border: "none",
                                                 height: 1.5,
                                             }}
                                         />
-                                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: isSmallScreen ? "flex-start" : "flex-end" }}>
-                                            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>Tempo de Registo</Typography>
-                                            <Typography variant="body1" gutterBottom sx={{ mt: 1, ml: 1 }}>
-                                                {calculateRegisterTime(authStore.user.created_at)}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: isSmallScreen
+                                                    ? "flex-start"
+                                                    : "flex-end",
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.5rem",
+                                                }}
+                                            >
+                                                Tempo de Registo
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                gutterBottom
+                                                sx={{ mt: 1, ml: 1 }}
+                                            >
+                                                {calculateRegisterTime(
+                                                    authStore.user?.created_at,
+                                                )}
                                             </Typography>
                                         </Box>
                                     </ListItem>
                                 </List>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        width: "140px",
+                                        alignContent: "center",
+                                        justifySelf: "end",
+                                        display: isSmallScreen
+                                            ? "none"
+                                            : "block",
+                                    }}
+                                    onClick={handleProfileModalOpen}
+                                >
+                                    Editar Perfil
+                                </Button>
                             </Box>
                         </Box>
                     </Box>
-                </Box>
             </Paper>
         </Box>
     );

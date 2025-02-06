@@ -117,14 +117,14 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
 
     const formik = useFormik({
         initialValues: {
-            first_name: authStore.user.first_name || '',
-            last_name: authStore.user.last_name || '',
-            email: authStore.user.email || '',
-            phone: authStore.user.phone || '',
-            nif: authStore.user.nif || '',
-            gender_id: authStore.user.gender ? authStore.user.gender.id : null,
-            date_of_birth: authStore.user.date_of_birth ? dayjs(authStore.user.date_of_birth) : null,
-            image_profile: authStore.user.image_profile || '', // Link para a imagem na storage
+            first_name: authStore.user?.first_name || '',
+            last_name: authStore.user?.last_name || '',
+            email: authStore.user?.email || '',
+            phone: authStore.user?.phone || '',
+            nif: authStore.user?.nif || '',
+            gender_id: authStore.user?.gender ? authStore.user?.gender.id : null,
+            date_of_birth: authStore.user?.date_of_birth ? dayjs(authStore.user?.date_of_birth) : null,
+            image_profile: authStore.user?.image_profile || '', // Link para a imagem na storage
         },
         validationSchema: validationSchema,
         onSubmit: () => {},

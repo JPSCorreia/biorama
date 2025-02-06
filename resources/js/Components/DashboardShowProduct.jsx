@@ -41,19 +41,19 @@ const DashboardShowProduct = ({ product }) => {
                 {/* **Imagem Principal (Centro)** */}
                 <Box
                     sx={{
-                        width: "50%",
-                        height: 300,
-                        border: "2px dashed grey",
+                        width: "40%",
+                        height: 320,
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                         overflow: "hidden",
+                        borderRadius:"16px",
                     }}
                 >
                     <img
                         src={selectedImage}
                         alt="Selected"
-                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                 </Box>
 
