@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Order;
 use App\Models\Gender;
 use App\Models\Store;
 use App\Models\Vendor;
@@ -264,6 +265,52 @@ class DashboardController extends Controller
         return response()->json($reviews);
     }
 
+    // 1. Mostrar todas as encomendas das lojas do vendor
+    public function indexOrders()
+    {
+        $vendorStores = auth()->user()->stores; // Assumindo que o user tem relação com lojas
+        $orders = Order::whereIn('store_id', $vendorStores->pluck('id'))->with(['user', 'status'])->get();
 
+        return response()->json($orders);
+    }
+
+    // 2. Mostrar encomendas por loja
+    public function showOrdersByStore($storeId)
+    {
+        $orders = Order::where('store_id', $storeId)->with(['user', 'status'])->get();
+        return response()->json($orders);
+    }
+
+    // 3. Pesquisar encomendas por nome de utilizador ou ID
+    public function searchOrders(Request $request)
+    {
+        $query = $request->input('query');
+
+        $orders = Order::where('id', 'like', "%$query%")
+            ->orWhereHas('user', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->with(['user', 'status'])
+            ->get();
+
+        return response()->json($orders);
+    }
+
+    // 4. Ver detalhes da encomenda
+    public function viewOrder($orderId)
+    {
+        $order = Order::with(['user', 'status', 'products'])->findOrFail($orderId);
+        return response()->json($order);
+    }
+
+    // 5. Atualizar status da encomenda para "cancelado"
+    public function updateStatusToCancelled($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        $order->statuses_id = 3; // Exemplo: 3 representa "cancelado"
+        $order->save();
+
+        return response()->json(['message' => 'Status updated to cancelled successfully']);
+    }
 
 }

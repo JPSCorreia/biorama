@@ -193,24 +193,34 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-
-
-
-
-
 // Local development routes only for testing
 if (env('APP_ENV') === 'local') {
     Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
     Route::get('/dotenv', fn () => dd(['APP_NAME' => env('APP_NAME')]))->name('dotenv.debug');
 }
 
-//Rotas ainda de dashboard
+//Rotas de dashboard
 Route::middleware(['auth'])->get('/stores/{id}/reviews', [DashboardController::class, 'DasboardstoreReviews']);
 Route::middleware(['auth'])->get('/stores/{id}/products', [DashboardController::class, 'productStorelist']);
 Route::middleware(['auth'])->put('/stores/{id}/products/{product_id}', [ProductController::class, 'update'])->name('product.update');
 Route::get('/products/{product_id}', [ProductController::class, 'refreshProduct']);
 Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 Route::get('/search-products/{storeId}', [ProductController::class, 'productListSearch']);
+//Rotas dashboard para order
+//. Mostrar todas as encomendas do vendor
+Route::get('/dashboard/orders', [DashboardController::class, 'indexOrders'])->name('dashboard.orders');
+
+//  Mostrar encomendas por loja
+Route::get('/dashboard/orders/store/{storeId}', [DashboardController::class, 'showOrdersByStore'])->name('dashboard.orders.byStore');
+
+//  Pesquisar encomendas por nome de utilizador ou ID
+Route::get('/dashboard/orders/search', [DashboardController::class, 'searchOrders'])->name('dashboard.orders.search');
+
+//  Ver detalhes da encomenda
+Route::get('/dashboard/orders/{orderId}', [DashboardController::class, 'viewOrder'])->name('dashboard.orders.view');
+
+//  Atualizar status da encomenda para cancelado
+Route::post('/dashboard/orders/{orderId}/cancel', [DashboardController::class, 'updateStatusToCancelled'])->name('dashboard.orders.cancel');
 
 
 //TODO: routes to sort, also change route names to be standardized
