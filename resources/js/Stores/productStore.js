@@ -120,6 +120,33 @@ class ProductStore{
     }
 
 
+    async CreateProduct(data, storeid) {
+        console.log("Enviando dados do Produto:", data);
+        try {
+            if (!data) {
+                console.error("Erro: Formulário de produtos não foi encontrado.");
+                return;
+            }
+
+            console.log("Enviando dados dos produtos:", data);
+            // Primeira requisição: Envia os dados dos produtos
+            const responseProduct = await axios.post(`/registar-vendedor-produto/${storeid}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+
+            if (responseProduct.data.product) {
+                this.currentProduct = responseProduct.data.product;
+            }
+
+            return responseProduct;
+
+        } catch (error) {
+            console.error("Erro ao enviar os formulários:", error);
+        }
+    }
+
 clearProductData(){
     runInAction(() =>{
         this.currentProduct = null;

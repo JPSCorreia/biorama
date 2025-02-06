@@ -24,6 +24,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DashboardProductModal from "@/Components/DashboardProductModal.jsx";
 import { observer } from "mobx-react";
 import { productStore } from "@/Stores/index.js";
+import DashboardCreateProductModal from "@/Components/DashboardCreateProductModal.jsx";
 
 const DashboardProductList = observer(({ storeId }) => {
     const [page, setPage] = useState(0);
@@ -32,7 +33,7 @@ const DashboardProductList = observer(({ storeId }) => {
     const [showProductModal, setShowProductModal] = useState(false);
     const [initialEditMode, setInitialEditMode] = useState(false);
     const [deleteDialog, setDeleteDialog] = useState({ open: false, product: null });
-
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         productStore.fetchProductsPaginated(storeId, page + 1, searchTerm);
@@ -43,9 +44,13 @@ const DashboardProductList = observer(({ storeId }) => {
         setPage(newPage);
     };
 
-    // Função para pesquisa
+    const handleOpenCreateModal = () => {
+        setShowCreateModal(true);
+    };
 
-
+    const handleCloseCreateModal = () => {
+        setShowCreateModal(false);
+    };
 
     // Abre o modal e define o produto selecionado para visualização
     const handleViewProduct = (product) => {
@@ -115,6 +120,9 @@ const DashboardProductList = observer(({ storeId }) => {
                     />
                 </Box>
             </Box>
+            <Box>
+                <Button onClick={handleOpenCreateModal}>Adicionar Produto</Button>
+            </Box>
 
             {/* Tabela de produtos */}
             <TableContainer component={Paper} sx={{ mt: 3, boxShadow: 3, borderRadius: 2 }}>
@@ -160,6 +168,14 @@ const DashboardProductList = observer(({ storeId }) => {
                     </TableFooter>
                 </Table>
             </TableContainer>
+
+            {/* Modal de criação */}
+            <DashboardCreateProductModal
+                open={showCreateModal}
+                handleClose={handleCloseCreateModal}
+                storeId={storeId}
+                handleViewProduct={handleViewProduct}  // Passamos a função
+            />
 
             {/* Modal para visualização/edição de produto */}
             {selectedProduct && (
