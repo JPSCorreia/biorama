@@ -46,7 +46,7 @@ Route::get('/', fn () => Inertia::render('Home'))->name('home');
 Route::get('/produtos', fn () => Inertia::render('Products'))->name('products');
 
 // Stores page
-Route::get('/lojas', fn () => Inertia::render('Stores'))->name('stores');
+Route::get('/lojas', [StoreController::class, 'index'])->name('stores');
 
 // Contact page
 Route::get('/contactos', fn () => Inertia::render('Contacts'))->name('contacts');
@@ -144,7 +144,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/editar-perfil/{user}', [UserController::class, 'update'])->name('update_profile_user');
     //Route to get user information
     Route::get('/get-user', [UserController::class, 'get_user'])->name('get_user');
-
     // User settings
     Route::get('/definições', fn () => Inertia::render('Settings'))->name('settings');
 
@@ -192,6 +191,13 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+
+
+
+
+
+
+
 // Local development routes only for testing
 if (env('APP_ENV') === 'local') {
     Route::get('feature-testing', fn () => Inertia::render('FeatureTesting'))->name('feature.testing');
@@ -204,8 +210,6 @@ Route::middleware(['auth'])->get('/stores/{id}/products', [DashboardController::
 Route::middleware(['auth'])->put('/stores/{id}/products/{product_id}', [ProductController::class, 'update'])->name('product.update');
 Route::get('/products/{product_id}', [ProductController::class, 'refreshProduct']);
 Route::delete('/products/{product}', [ProductController::class, 'destroy']);
-
-
 
 
 //TODO: routes to sort, also change route names to be standardized

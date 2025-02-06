@@ -19,9 +19,83 @@ use App\Models\OrderStoreProduct;
 
 class StoreController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Store::with('vendor', 'products')->get());
+        // Obtém os filtros da query string
+        $search = $request->input('search');
+        $radius = $request->input('radius', 30); // Raio predefinido: 5km
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+
+        // Query base para buscar todas as lojas com as relações carregadas
+        $query = Store::select(
+            'id',
+            'name',
+            'description',
+            'phone_number',
+            'email',
+            'rating'
+        )
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'products',
+                'reviews',
+                'galleries'
+            ]);
+
+        // Aplicar filtros apenas se houver pesquisa
+        if ($search) {
+            // Primeiro, buscar todas as lojas que estão na cidade pesquisada
+            $query->whereHas('addresses', function ($q) use ($search) {
+                $q->where('city', 'LIKE', "%{$search}%");
+            });
+
+            // Obter as coordenadas médias (centroide) das lojas encontradas na cidade pesquisada
+            $center = DB::table('store_addresses')
+                ->selectRaw("AVG(ST_X(coordinates)) as avg_longitude, AVG(ST_Y(coordinates)) as avg_latitude")
+                ->where('city', 'LIKE', "%{$search}%")
+                ->first();
+
+            // Se tivermos pelo menos um resultado, aplicar o filtro de raio
+            if ($center->avg_latitude && $center->avg_longitude && $radius) {
+                $query->orWhereHas('addresses', function ($q) use ($center, $radius) {
+                    $q->whereRaw("ST_Distance_Sphere(coordinates, POINT(?, ?)) <= ?", [
+                        $center->avg_longitude, $center->avg_latitude, $radius * 1000
+                    ]);
+                });
+            }
+        }
+
+        // Filtrar por localização e raio
+        if ($latitude && $longitude) {
+            $query->whereHas('addresses', function ($q) use ($latitude, $longitude, $radius) {
+                $q->whereRaw("ST_Distance_Sphere(coordinates, ST_GeomFromText(?)) < ?",
+                    [
+                        "POINT($longitude $latitude)", // O formato correto para `ST_GeomFromText`
+                        $radius * 1000 // Converter de Km para Metros
+                    ]);
+                });
+        }
+
+        // Obter as lojas resultantes
+        $stores = $query->get();
+
+        // Passar os dados para a página Inertia
+        return Inertia::render('Stores', [
+            'stores' => $stores,
+            'search' => $search,
+            'radius' => $radius
+        ]);
     }
 
     public function store(Request $request)
