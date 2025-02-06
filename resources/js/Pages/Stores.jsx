@@ -240,6 +240,7 @@ const Stores = observer(() => {
                         <Typography
                             sx={{
                                 display: smallerThanMedium || smallerThanLarge || isLarger ? "none" : "block",
+                                fontWeight: "bold"
                             }}
                         >
                             Usar a minha Localização

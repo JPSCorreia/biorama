@@ -12,6 +12,8 @@ const ProfileHomeAddress = observer(() => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const addresses = homeAddressStore.addresses; // Obter moradas do Store
 
+    console.log("MORADAS",addresses);
+
     const [addressModalOpen, setAddressModalOpen] = useState(false);
     const handleAddressModalOpen = () => setAddressModalOpen(true);
     const handleAddressModalClose = () => setAddressModalOpen(false);
