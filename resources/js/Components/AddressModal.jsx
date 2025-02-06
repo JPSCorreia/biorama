@@ -155,7 +155,7 @@ const AddressModal = ({ open, handleClose }) => {
                     width: isSmallScreen ? "90%" : "400px",
                     justifyContent: "center",
                     alignItems: "center",
-                    padding: isSmallScreen ? "10px" : "20px",
+                    padding: 2,
                     borderRadius: "10px",
                     backgroundColor: "background.paper",
                 }}
@@ -310,7 +310,7 @@ const AddressModal = ({ open, handleClose }) => {
                         }
                         label="Morada Favorita?"
                     />
-                    <Box sx={{ mt: 2 }}>
+                    <Box sx={{ mt: 2, justifySelf: "flex-end" }}>
                         <Button
                             type="submit"
                             variant="contained"
