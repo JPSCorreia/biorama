@@ -265,14 +265,51 @@ class DashboardController extends Controller
         return response()->json($reviews);
     }
 
-    // 1. Mostrar todas as encomendas das lojas do vendor
-    public function indexOrders()
+    public function getOrders(Request $request)
     {
-        $vendorStores = auth()->user()->stores; // Assumindo que o user tem relação com lojas
-        $orders = Order::whereIn('store_id', $vendorStores->pluck('id'))->with(['user', 'status'])->get();
+        // Determinar o número de itens por página (padrão: 10)
+        $itemsPerPage = $request->query('limit', 10);
+        $searchTerm = $request->query('search', '');
 
+        // Verificar se o utilizador tem a role de 'vendor'
+        $user = Auth::user();
+        if (!$user->hasRole('vendor')) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+
+        // Obter o vendorId usando a relação Eloquent
+        $vendorId = $user->vendor->id ?? null;
+        if (!$vendorId) {
+            return response()->json(['error' => 'Vendedor não encontrado.'], 404);
+        }
+
+        // Buscar todas as lojas associadas ao vendor
+        $storeIds = Store::where('vendor_id', $vendorId)->pluck('id');
+
+        $query = Order::whereHas('stores', function ($q) use ($storeIds) {
+            $q->whereIn('stores.id', $storeIds);
+        })->with(['user', 'status','product', 'stores']);
+
+
+        // Aplicar filtro de pesquisa se o searchTerm for fornecido
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('id', 'like', "%$searchTerm%")
+                    ->orWhereHas('user', function ($q) use ($searchTerm) {
+                        $q->where('name', 'like', "%$searchTerm%");
+                    });
+            });
+        }
+
+        // Retornar resultados paginados
+        $orders = $query->paginate($itemsPerPage);
+
+        dd($orders->toArray());
         return response()->json($orders);
     }
+
+
+
 
     // 2. Mostrar encomendas por loja
     public function showOrdersByStore($storeId)
@@ -284,15 +321,28 @@ class DashboardController extends Controller
     // 3. Pesquisar encomendas por nome de utilizador ou ID
     public function searchOrders(Request $request)
     {
-        $query = $request->input('query');
+        // Determinar o número de itens por página (padrão: 10)
+        $itemsPerPage = $request->query('limit', 10);
+        $searchTerm = $request->query('search', '');
 
-        $orders = Order::where('id', 'like', "%$query%")
-            ->orWhereHas('user', function ($q) use ($query) {
-                $q->where('name', 'like', "%$query%");
+        // Obter o vendorId do utilizador autenticado
+        $vendorId = Auth::user()->vendor_id;
+
+        // Buscar todas as lojas do vendor
+        $storeIds = Store::where('vendor_id', $vendorId)->pluck('id');
+
+        // Buscar encomendas das lojas do vendor aplicando o filtro de pesquisa
+        $orders = Order::whereIn('store_id', $storeIds)
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('id', 'like', "%$searchTerm%")
+                    ->orWhereHas('user', function ($q) use ($searchTerm) {
+                        $q->where('name', 'like', "%$searchTerm%");
+                    });
             })
             ->with(['user', 'status'])
-            ->get();
+            ->paginate($itemsPerPage);
 
+        // Retornar a resposta paginada
         return response()->json($orders);
     }
 

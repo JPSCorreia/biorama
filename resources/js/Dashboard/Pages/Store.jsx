@@ -1,5 +1,6 @@
 import {Box, Typography} from "@mui/material";
 import DashboardShowStore from "@/Pages/DashboardShowStore.jsx";
+import {usePage} from "@inertiajs/react";
 
 
 

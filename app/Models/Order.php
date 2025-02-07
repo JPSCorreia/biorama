@@ -28,15 +28,15 @@ class Order extends Model
 
     public function status()
     {
-        return $this->belongsTo(HomeAddress::class);
+        return $this->belongsTo(Status::class, 'statuses_id');
     }
+
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'order_store_products')
-            ->withTrashed()
-            ->withPivot(['product_id','price', 'quantity', 'discount'])
-            ->using(OrderStoreProduct::class);
+        return $this->belongsToMany(Product::class, 'order_store_products', 'order_id', 'product_id')
+            ->withPivot(['price', 'quantity', 'discount', 'final_price'])
+            ->withTimestamps();
     }
     public function stores()
     {

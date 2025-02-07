@@ -190,6 +190,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/encomendas', function () {
             return Inertia::render('Dashboard/Orders');
         })->name('dashboard.orders');
+        Route::get('/orders', [DashboardController::class, 'getOrders'])->name('dashboard.get.orders');
 
     });
 });
@@ -210,21 +211,12 @@ Route::get('/products/{product_id}', [ProductController::class, 'refreshProduct'
 Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 Route::get('/search-products/{storeId}', [ProductController::class, 'productListSearch']);
 //Rotas dashboard para order
-//. Mostrar todas as encomendas do vendor
-Route::get('/dashboard/orders', [DashboardController::class, 'indexOrders'])->name('dashboard.orders');
 
-//  Mostrar encomendas por loja
-Route::get('/dashboard/orders/store/{storeId}', [DashboardController::class, 'showOrdersByStore'])->name('dashboard.orders.byStore');
+Route::get('/loja/{id}', [StoreController::class, 'showStore'])->name('store.show');
 
-//  Pesquisar encomendas por nome de utilizador ou ID
-Route::get('/dashboard/orders/search', [DashboardController::class, 'searchOrders'])->name('dashboard.orders.search');
+Route::post('/stores/{store}/update', [StoreController::class, 'update'])->name('stores.update');
 
-//  Ver detalhes da encomenda
-Route::get('/dashboard/orders/{orderId}', [DashboardController::class, 'viewOrder'])->name('dashboard.orders.view');
-
-//  Atualizar status da encomenda para cancelado
-Route::post('/dashboard/orders/{orderId}/cancel', [DashboardController::class, 'updateStatusToCancelled'])->name('dashboard.orders.cancel');
-
+Route::post('/create/store', [StoreController::class, 'Store'])->name('create.store');
 
 //TODO: routes to sort, also change route names to be standardized
 Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);

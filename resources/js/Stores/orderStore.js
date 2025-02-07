@@ -28,20 +28,34 @@ class OrderStore {
     }
 
     // Buscar todas as encomendas (ou com pesquisa)
-    fetchOrders = async (searchTerm = "") => {
+    fetchOrders = async (searchTerm = "", page = 1, limit = 10) => {
         try {
             const response = await axios.get(`/dashboard/orders`, {
-                params: { search: searchTerm },
+                params: { search: searchTerm, page, limit },
             });
+
             runInAction(() => {
-                this.orders = response.data;
+                this.orders = response.data.data;  // Corrigido de currentOrders para orders
                 this.searchTerm = searchTerm;
-                this.totalOrders = response.data.length;
+                this.totalOrders = response.data.total;
+                this.totalPages = response.data.last_page;
+                this.currentPage = response.data.current_page;
             });
         } catch (error) {
             console.error("Erro ao buscar encomendas:", error);
         }
     };
+
+
+    // Alterar a página atual e buscar novos dados
+    changePage(page) {
+        this.fetchOrders(this.searchTerm, page);
+    }
+
+    // Atualizar as encomendas filtradas dinamicamente
+    searchOrders(searchTerm) {
+        this.fetchOrders(searchTerm, 1);
+    }
 
     // Buscar detalhes de uma encomenda específica
     fetchOrderDetails = async (orderId) => {
