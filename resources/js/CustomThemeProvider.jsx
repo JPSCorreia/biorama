@@ -13,6 +13,7 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             // Primary color configuration
             primary: {
                 main: green[700],
+                title: green[300],
             },
 
             // Secondary color configuration
