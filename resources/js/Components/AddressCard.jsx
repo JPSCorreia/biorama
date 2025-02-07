@@ -16,7 +16,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddressEditModal from "./AddressEditModal.jsx";
 import React from "react";
 
-const AddressCard = observer(({ address, theme }) => {
+const AddressCard = observer(({ address, theme, checkout }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
@@ -45,7 +45,11 @@ const AddressCard = observer(({ address, theme }) => {
                 borderRadius: "10px",
                 width: isSmallScreen?  "100%" : "250px",
                 minHeight: "354px",
+                cursor: checkout ? "pointer" : "default",
+                // border: address.is_primary ? "1px solid gold" : "1px solid white",
+                boxShadow: address.is_primary ? `0px 0px 10px ${theme.palette.primary.main}` : "",
             }}
+            onClick={checkout ? () => handleSetPrimary(address) : ""}
         >
             <Box
                 sx={{

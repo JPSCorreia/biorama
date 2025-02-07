@@ -14,11 +14,11 @@ class AlertStore {
      */
     constructor() {
         makeAutoObservable(this);
-        makePersistable(this, {
-            name: "AlertStore",
-            properties: ["show", "message", "severity", "lastMessage"],
-            storage: window.sessionStorage,
-        });
+        // makePersistable(this, {
+        //     name: "AlertStore",
+        //     properties: ["show", "message", "severity", "lastMessage"],
+        //     storage: window.sessionStorage,
+        // });
     }
 
     /**
