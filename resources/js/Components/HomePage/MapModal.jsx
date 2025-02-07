@@ -33,7 +33,7 @@ const MapModal = ({ open, onClose }) => {
                         zIndex: 1, // Mantém o mapa no fundo
                     }}
                 >
-                    <HomeMap radius={100000} showAllStores={true} />
+                    <HomeMap/>
                 </Box>
 
                 {/* Botão "Ver Lista" fixo acima do mapa */}

@@ -1,206 +1,176 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import ReactDOMServer from "react-dom/server";
-import { Box, CircularProgress, useTheme } from "@mui/material";
-import { StoreSharp as StoreSharpIcon, MyLocation as MyLocationIcon } from "@mui/icons-material";
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    Tooltip,
-    useMap,
-} from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import PropTypes from "prop-types";
-import { router } from "@inertiajs/react";
-import { hoverStore } from "../../Stores/";
+import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
+import PropTypes from "prop-types";
+import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import L from "leaflet";
+import { Box, useTheme } from "@mui/material";
+import ReactDOMServer from "react-dom/server";
+import StoreSharpIcon from "@mui/icons-material/StoreSharp";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import {nearbyShopStore} from "../../Stores/nearbyShopStore";
 
-// Criar um ícone customizado para o marcador das lojas
-const createCustomIcon = (color) => {
-    return L.divIcon({
-        html: ReactDOMServer.renderToString(
-            <div
-                style={{
-                    fontSize: "24px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    border: `1px solid ${color}`,
-                    borderRadius: "50%",
-                    padding: "4px",
-                    boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`,
-                }}
-            >
-                <StoreSharpIcon
-                    fontSize="inherit"
-                    style={{ fill: color, width: "1em", height: "1em" }}
-                />
-            </div>,
-        ),
-        className: "custom-marker-icon",
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-    });
-};
-
-// Criar um ícone padrão para a localização do utilizador
+// Ícone para a localização do utilizador
 const userLocationIcon = L.divIcon({
     html: ReactDOMServer.renderToString(
         <div style={{ fontSize: "24px", display: "flex", justifyContent: "center", alignItems: "center" }}>
             <MyLocationIcon fontSize="inherit" style={{ fill: "blue", width: "1em", height: "1em" }} />
-        </div>,
+        </div>
     ),
     className: "user-location-icon",
     iconSize: [36, 36],
     iconAnchor: [18, 18],
 });
 
-// Componente para recentrar o mapa na posição fornecida
-const SetViewOnPosition = ({ position }) => {
-    const map = useMap();
-    if (position) {
-        map.setView(position, 11); // Zoom level
+// Função para obter coordenadas corretamente
+const getCoordinates = (store) => {
+    if (store.addresses && store.addresses.length > 0) {
+        const latitude = parseFloat(store.addresses[0].latitude);
+        const longitude = parseFloat(store.addresses[0].longitude);
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+            return [latitude, longitude];
+        }
     }
+    return null; // Retorna null se não houver endereço válido
+};
+
+// Componente para ajustar dinamicamente o mapa aos marcadores
+const FitMapToMarkers = ({ stores }) => {
+    const map = useMap();
+
+    useEffect(() => {
+        if (stores.length > 0) {
+            const validCoords = stores.map(getCoordinates).filter(coords => coords !== null);
+            if (validCoords.length > 0) {
+                const bounds = L.latLngBounds(validCoords);
+                map.fitBounds(bounds, { padding: [50, 50] }); // Ajusta para incluir todos os marcadores
+            }
+        }
+    }, [stores, map]);
+
     return null;
 };
 
-const HomeMap = observer(({ radius }) => {
-    const [position, setPosition] = useState(null); // Coordenadas do utilizador
-    const [mapCenter, setMapCenter] = useState(null); // Centro do mapa baseado nas lojas
-    const [loading, setLoading] = useState(true);
-    const [nearbyStores, setNearbyStores] = useState([]);
+// Ícone personalizado para marcadores individuais
+const createCustomIcon = (color) => L.divIcon({
+    html: ReactDOMServer.renderToString(
+        <div style={{
+            fontSize: "24px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            border: `1px solid ${color}`,
+            borderRadius: "50%",
+            padding: "4px",
+            boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`
+        }}>
+            <StoreSharpIcon fontSize="inherit" style={{ fill: color, width: "1em", height: "1em" }} />
+        </div>
+    ),
+    className: "custom-marker-icon",
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+});
+
+// Ícone personalizado para os clusters
+const createClusterCustomIcon = (cluster) => {
+    const count = cluster.getChildCount();
+    let color = "green"; // Pode ser dinâmico conforme a necessidade
+
+    return L.divIcon({
+        html: ReactDOMServer.renderToString(
+            <div style={{
+                fontSize: "14px",
+                fontWeight: "bold",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                border: `1px solid ${color}`,
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                backgroundColor: "#ffffffa9",
+                boxShadow: `0 0 2px ${color}, 0 0 4px ${color}`,
+                textAlign: "center"
+            }}>
+                <StoreSharpIcon fontSize="inherit" style={{ fill: color, fontSize: "28px" }} />
+                <span style={{ color: color, marginTop: "-4px" }}>{count}</span>
+            </div>
+        ),
+        className: "custom-cluster-icon",
+        iconSize: [50, 50],
+        iconAnchor: [25, 25],
+    });
+};
+
+const HomeMap = observer(() => {
+    const [position, setPosition] = useState(null);
+    const [mapCenter, setMapCenter] = useState([38.7071, -9.1355]); // Default para Lisboa
+    const mapRef = useRef(null);
     const theme = useTheme();
 
+
+    // Definir centro baseado nas lojas próximas
     useEffect(() => {
-        const fetchNearbyStores = async (latitude, longitude) => {
-            try {
-                const response = await axios.get("/stores/nearby", {
-                    params: { latitude, longitude, radius },
-                });
-
-                const limitedStores = response.data.slice(0, 6); // Apenas as 6 primeiras lojas mais próximas
-                setNearbyStores(limitedStores);
-
-                // Calcular a posição média das 6 primeiras lojas
-                if (limitedStores.length > 0) {
-                    const avgLat = limitedStores.reduce((sum, store) => sum + store.latitude, 0) / limitedStores.length;
-                    const avgLng = limitedStores.reduce((sum, store) => sum + store.longitude, 0) / limitedStores.length;
-                    setMapCenter([avgLat, avgLng]);
-                } else {
-                    setMapCenter([latitude, longitude]); // Se não houver lojas, fica na posição do utilizador
-                }
-            } catch (err) {
-                console.error("Erro ao buscar lojas próximas:", err.response?.data?.message || err.message);
-            } finally {
-                setLoading(false);
+        if (nearbyShopStore.nearbyStores.length > 0) {
+            const validStores = nearbyShopStore.nearbyStores.filter(store => getCoordinates(store) !== null);
+            if (validStores.length > 0) {
+                const avgLat = validStores.reduce((sum, store) => sum + getCoordinates(store)[0], 0) / validStores.length;
+                const avgLng = validStores.reduce((sum, store) => sum + getCoordinates(store)[1], 0) / validStores.length;
+                setMapCenter([avgLat, avgLng]);
             }
-        };
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                ({ coords }) => {
-                    const { latitude, longitude } = coords;
-                    setPosition([latitude, longitude]); // Define a posição do utilizador
-                    fetchNearbyStores(latitude, longitude);
-                },
-                () => {
-                    console.error("Não foi possível obter a localização.");
-                    setLoading(false);
-                },
-            );
-        } else {
-            console.error("Geolocalização não é suportada neste navegador.");
-            setLoading(false);
         }
-    }, [radius]);
-
-    const navigate = (path) => {
-        router.visit(path, {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    };
+    }, [nearbyShopStore.nearbyStores]);
 
     return (
-        <>
-            {loading ? (
-                <Box
-                    sx={{
-                        height: "100%",
-                        width: "100%",
-                        minHeight: "300px",
-                        minWidth: "300px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+        <Box sx={{ height: "100%", width: "100%", minHeight: "300px", minWidth: "300px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "6px", padding: "2px", border: `1px solid ${theme.palette.primary.main}` }}>
+            <MapContainer ref={mapRef} center={mapCenter} zoom={14} style={{ height: "100%", width: "100%", minHeight: "300px", minWidth: "300px" }}>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-                    }}
+                {/* Ajusta o mapa para incluir todos os marcadores */}
+                <FitMapToMarkers stores={nearbyShopStore.allStores} />
+
+                {/* Marcador do utilizador */}
+                {position && <Marker position={position} icon={userLocationIcon} />}
+
+                {/* Agrupamento de lojas */}
+                <MarkerClusterGroup
+                    chunkedLoading
+                    iconCreateFunction={createClusterCustomIcon}
                 >
-                    <CircularProgress size={60} sx={{ color: theme.palette.primary.main }} />
-                </Box>
-            ) : (
-                <Box
-                    sx={{
-                        height: "100%",
-                        width: "100%",
-                        minHeight: "300px",
-                        minWidth: "300px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "6px",
-                        padding: "2px",
-                        border: `1px solid ${theme.palette.primary.main}`,
-                    }}
-                >
-                    <MapContainer
-                        center={mapCenter || [38.7071, -9.1355]} // Default para Lisboa
-                        zoom={14}
-                        style={{ height: "100%", width: "100%", minHeight: "300px", minWidth: "300px" }}
-                    >
-                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {/* Todas as lojas */}
+                    {nearbyShopStore.allStores.map(store => {
+                        const coords = getCoordinates(store);
+                        return coords ? (
+                            <Marker key={store.id} position={coords} icon={createCustomIcon(theme.palette.primary.light)}>
+                                <Tooltip direction="top" offset={[0, -10]} opacity={1} permanent>
+                                    <div><strong>{store.name}</strong></div>
+                                </Tooltip>
+                            </Marker>
+                        ) : null;
+                    })}
 
-                        {/* Marcador do utilizador */}
-                        {position && <Marker position={position} icon={userLocationIcon} />}
-
-                        {/* Marcadores das lojas */}
-                        {nearbyStores.map((store) => {
-                            const isHovered = hoverStore.hoveredStoreId === store.id;
-                            return (
-                                <Marker
-                                    key={store.id}
-                                    position={[store.latitude, store.longitude]}
-                                    icon={createCustomIcon(
-                                        isHovered ? theme.palette.secondary.main : theme.palette.primary.main
-                                    )}
-                                    eventHandlers={{
-                                        click: () => navigate(`/loja/${store.id}`),
-                                        mouseover: () => hoverStore.setHoveredStore(store.id),
-                                        mouseout: () => hoverStore.setHoveredStore(null),
-                                    }}
-                                >
-                                    {isHovered && (
-                                        <Tooltip direction="top" offset={[0, -10]} opacity={1} permanent>
-                                            <div><strong>{store.name}</strong></div>
-                                        </Tooltip>
-                                    )}
-                                </Marker>
-                            );
-                        })}
-
-                        {/* Recentra no ponto médio das 6 primeiras lojas */}
-                        {mapCenter && <SetViewOnPosition position={mapCenter} />}
-                    </MapContainer>
-                </Box>
-            )}
-        </>
+                    {/* Lojas próximas destacadas */}
+                    {nearbyShopStore.nearbyStores.map(store => {
+                        const coords = getCoordinates(store);
+                        return coords ? (
+                            <Marker key={`nearby-${store.id}`} position={coords} icon={createCustomIcon(theme.palette.primary.main)}>
+                                <Tooltip direction="top" offset={[0, -10]} opacity={1} permanent>
+                                    <div><strong>{store.name}</strong></div>
+                                </Tooltip>
+                            </Marker>
+                        ) : null;
+                    })}
+                </MarkerClusterGroup>
+            </MapContainer>
+        </Box>
     );
 });
 
 HomeMap.propTypes = {
-    radius: PropTypes.number.isRequired,
+    allStores: PropTypes.array.isRequired, // Todas as lojas
+    nearbyStores: PropTypes.array.isRequired, // Lojas mais próximas
 };
 
 export default HomeMap;
