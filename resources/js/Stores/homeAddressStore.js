@@ -106,12 +106,20 @@ class HomeAddressStore {
      */
     deleteAddress = action(async (id) => {
         try {
+            // Encontra a morada a ser apagada
+            const addressToDelete = this.addresses.find(address => address.id === id);
+    
             const response = await axios.delete(`/apagar-morada/${id}`);
+    
             if (response.status === 200) {
                 runInAction(() => {
-                    this.addresses = this.addresses.filter(
-                        (address) => address.id !== id,
-                    );
+                    // Remove a morada da store
+                    this.addresses = this.addresses.filter(address => address.id !== id);
+    
+                    // ⚡ Se a morada apagada era a primária e ainda há moradas restantes, definir a primeira como nova primária
+                    if (addressToDelete?.is_primary && this.addresses.length > 0) {
+                        this.setPrimaryAddress(this.addresses[0].id);
+                    }
                 });
             }
         } catch (error) {
