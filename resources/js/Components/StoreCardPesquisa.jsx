@@ -83,15 +83,15 @@ const StoreCardPesquisa = observer(({store}) => {
                         mb:1
                     }}
                 >
-                    <Typography fontWeight="bold" sx={{fontSize:"1.2rem"}}>
+                    <Typography color="terciary"fontWeight="bold" sx={{fontSize:"1.2rem", ml: 3}}>
                         {store.name}
                     </Typography>
                 </Box>
                 <Box>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ ml: 3}}>
                         {store.addresses[0].street_address}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ ml: 3}}>
                         {store.addresses[0].postal_code}, {store.addresses[0].city}
                     </Typography>
                     <Box

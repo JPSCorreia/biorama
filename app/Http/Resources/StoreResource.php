@@ -13,6 +13,8 @@ class StoreResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'rating' => $this->rating,
+            'phone_number' => $this->phone_number,
+            'email' => $this->email,
             'addresses' => $this->addresses->map(function ($address) {
                 return [
                     'street_address' => $address->street_address,

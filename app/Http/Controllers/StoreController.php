@@ -32,7 +32,7 @@ class StoreController extends Controller
 
         $stores = Cache::remember($cacheKey, 60, function () use ($search, $latitude, $longitude, $radius) {
             // Query base para buscar lojas otimizadas
-            $query = Store::select('id', 'name', 'description', 'rating')
+            $query = Store::select('id', 'name', 'description', 'rating', 'phone_number', 'email', 'created_at', 'updated_at')
                 ->with([
                     'addresses' => function ($query) {
                         $query->select(
