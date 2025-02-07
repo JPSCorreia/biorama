@@ -41,4 +41,6 @@ export {default as DashboardShowStoreInfo} from "./DashboarShowStoreInfo";
 export {default as VendorRegistrationProductCard} from "./VendorRegistrationProductCard";
 export {default as DashboardStoreProductsCard} from "./DashboardStoreShortCutCard.jsx"
 export {default as StoreCardPesquisa} from "./StoreCardPesquisa.jsx"
-
+export {default as AddressStep} from "./Cart/AddressStep.jsx"
+export {default as ReviewStep} from "./Cart/ReviewStep.jsx"
+export {default as PaymentStep} from "./Cart/PaymentStep.jsx"

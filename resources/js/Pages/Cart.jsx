@@ -12,7 +12,6 @@ import { usePage } from "@inertiajs/react";
 import { useEffect } from "react";
 import { homeAddressStore } from "../Stores";
 
-
 const Cart = observer(() => {
 
     const theme = useTheme();

@@ -16,12 +16,14 @@ import {
 import { Delete as DeleteIcon, ShoppingCartSharp } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import { useState } from "react";
-import { cartStore, shopStore } from "../../Stores";
+import { cartStore } from "../../Stores";
 import { CartPaymentIcons } from "../../Components";
+import { router } from "@inertiajs/react";
 
 const CartSidebar = observer(() => {
     const theme = useTheme();
     const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
+    const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
     function ClearCartButton() {
         const [open, setOpen] = useState(false);
@@ -88,7 +90,7 @@ const CartSidebar = observer(() => {
                 minWidth: smallerThanSmall ? "100%" : "500px",
                 minHeight: "402px",
                 height: "100%",
-                ml: smallerThanSmall ? 0 : 4,
+                ml: smallerThanLarge ? 0 : 4,
                 p: 3,
                 pt: 2,
                 mt: 7,
@@ -206,6 +208,7 @@ const CartSidebar = observer(() => {
                         color="primary"
                         startIcon={<ShoppingCartSharp />}
                         sx={{ ml: 2 }}
+                        onClick={() => router.visit(`/checkout`)}
                     >
                         Comprar
                     </Button>

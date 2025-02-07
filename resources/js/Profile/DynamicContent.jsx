@@ -1,6 +1,7 @@
 import {ProfileInformation} from "../Profile/Components";
 import { useSidebar } from "../Context/SidebarContext";
 import { componentsMap } from "./utilis.jsx";
+import { Box } from "@mui/material";
 
 const DynamicContent = () => {
     const { activeItem } = useSidebar();
@@ -9,9 +10,7 @@ const DynamicContent = () => {
     const ComponentToRender = componentsMap[activeItem] || (() => <ProfileInformation />);
 
     return (
-        <div>
             <ComponentToRender />
-        </div>
     );
 };
 

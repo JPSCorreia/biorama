@@ -9,6 +9,7 @@ import { vendorStore } from "./vendorsStore.js";
 import { shopStore } from "./shopStore.js";
 import { hoverStore } from "./hoverStore.js";
 import {productStore} from "./productStore.js"
+import {orderStore} from "./orderStore.js";
 
 // Mobx-persist-store default configuration for all stores
 configurePersistable({
@@ -29,4 +30,5 @@ export {
     vendorStore,
     shopStore,
     productStore,
+    orderStore,
 };

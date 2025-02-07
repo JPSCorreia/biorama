@@ -10,7 +10,6 @@ const Home = observer(() => {
                 flexDirection: "column",
                 height: "100%",
                 width: "100%",
-
             }}
         >
             {/* Profile Information card*/}

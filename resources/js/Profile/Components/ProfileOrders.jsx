@@ -1,6 +1,9 @@
-import { Paper, Typography, Box } from "@mui/material";
+import { Paper, Typography, Box, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const ProfileOrders = () => {
+    const theme = useTheme();
+    const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
     return (
         <Box
             sx={{
@@ -8,6 +11,9 @@ const ProfileOrders = () => {
                 flexDirection: "column",
                 alignItems: "center",
                 mb: 3,
+                ml: smallerThanLg ? 0 : 4,
+                maxWidth: smallerThanLg ? "100%" : "75%",
+                flexGrow: 1,
             }}
         >
             <Typography
