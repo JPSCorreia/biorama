@@ -16,8 +16,9 @@ import {
 import { Delete as DeleteIcon, ShoppingCartSharp } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import { useState } from "react";
-import { cartStore, shopStore } from "../../Stores";
+import { cartStore } from "../../Stores";
 import { CartPaymentIcons } from "../../Components";
+import { router } from "@inertiajs/react";
 
 const CartSidebar = observer(() => {
     const theme = useTheme();
@@ -207,6 +208,7 @@ const CartSidebar = observer(() => {
                         color="primary"
                         startIcon={<ShoppingCartSharp />}
                         sx={{ ml: 2 }}
+                        onClick={() => router.visit(`/checkout`)}
                     >
                         Comprar
                     </Button>

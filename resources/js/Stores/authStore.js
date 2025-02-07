@@ -35,7 +35,7 @@ class AuthStore {
         this.isAuthenticated = !!auth?.user;
         this.user = auth?.user || null;
         if (this.isAuthenticated) {
-            homeAddressStore.addresses = homeAddressStore.fetchAddresses(); // Fetch user addresses if authenticated
+            // homeAddressStore.addresses = homeAddressStore.fetchAddresses(); // Fetch user addresses if authenticated
         } else {
             homeAddressStore.clearAddresses(); // Clear addresses if not authenticated
             vendorStore.clearVendorData(); // Clear vendor data if not authenticated

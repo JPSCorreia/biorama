@@ -13,7 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { observer } from "mobx-react";
-import { authStore } from "../Stores";
+import { homeAddressStore } from "../Stores";
 import { AlertBox } from "../Components";
 
 const Login = observer(() => {
@@ -34,6 +34,7 @@ const Login = observer(() => {
 
         router.post("/entrar", formData, {
             onSuccess: () => {
+                homeAddressStore.addresses = homeAddressStore.fetchAddresses();
                 // console.log("Login successful"); // For debugging
             },
             onError: (errors) => {

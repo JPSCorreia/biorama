@@ -35,7 +35,7 @@ const SideBar = observer(() => {
         {
             text: "Dados Pessoais",
             icon: <AccountCircleIcon />,
-            color: theme.palette.primary.main,
+            color: theme.palette.profile.sidebar.text,
         },
         {
             text: "Encomendas",
@@ -73,10 +73,7 @@ const SideBar = observer(() => {
                 );
                 break;
             case "Dados Pessoais":
-                console.log("Navegar para Dados Pessoais");
                 break;
-            default:
-                console.log(`Navegar para ${text}`);
         }
     };
 

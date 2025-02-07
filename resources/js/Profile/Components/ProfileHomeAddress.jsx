@@ -4,16 +4,20 @@ import AddressCard from "../../Components/AddressCard.jsx";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddressModal from "../../Components/AddressModal.jsx";
 import { homeAddressStore } from "../../Stores/index";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ProfileHomeAddress = observer(() => {
+
+    useEffect(() => {
+        console.log("fetching addresses")
+        homeAddressStore.fetchAddresses();
+    }, []);
+
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
     const smallerThanMd = useMediaQuery(theme.breakpoints.down("md"));
-    const addresses = homeAddressStore.addresses; // Obter moradas do Store
-
-    console.log("MORADAS", addresses);
+    const addresses = homeAddressStore.addresses;
 
     const [addressModalOpen, setAddressModalOpen] = useState(false);
     const handleAddressModalOpen = () => setAddressModalOpen(true);

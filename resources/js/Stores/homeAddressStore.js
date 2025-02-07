@@ -74,6 +74,7 @@ class HomeAddressStore {
      */
     addAddress = action((address) => {
         try {
+            console.log(address);
             this.validateAddress(address);
             this.checkIfHavePrimaryAddress(address.is_primary);
 

@@ -51,10 +51,12 @@ class HomeAddressController extends Controller
             }
             DB::commit();
 
-            return redirect()->route('profile')
-                ->with(['message' => 'Morada criada com sucesso!',
-                    'address' => $newAddress,
-                    'type' => 'success']);
+            return response()->json([
+                'message' => 'Morada criada com sucesso!',
+                'address' => $newAddress,
+                'type' => 'success'
+            ], 201);
+            
         } catch (\Exception $e) {
             DB::rollBack();
 

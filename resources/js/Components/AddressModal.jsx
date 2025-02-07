@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {homeAddressStore, vendorRegistrationStore} from "@/Stores/index.js";
 import { usePage } from "@inertiajs/react";
@@ -25,6 +25,11 @@ const AddressModal = ({ open, handleClose }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const [isDisabled, setisDisabled] = useState(true);
+    const hasAddresses = homeAddressStore.addresses.length > 0;
+
+    useEffect(() => {
+        formik.setFieldValue("is_primary", !hasAddresses);
+    }, [homeAddressStore.addresses.length]);
 
     const initialValues = {
         postal_code: "",
@@ -34,7 +39,7 @@ const AddressModal = ({ open, handleClose }) => {
         phone_number: "",
         comment: "",
         number: "",
-        is_primary: false,
+        is_primary: !(hasAddresses),
         longitude: "",
         latitude: "",
     };
@@ -47,10 +52,11 @@ const AddressModal = ({ open, handleClose }) => {
             });
 
             if (response.status === 201) {
-                homeAddressStore.addAddress(response.data.data);
+                homeAddressStore.addAddress(response.data.address);
                 setisDisabled(true);
                 resetForm();
                 handleClose();
+                homeAddressStore.fetchAddresses();
             }
         } catch (error) {
             console.error("Erro ao criar morada:", error);
@@ -322,6 +328,7 @@ const AddressModal = ({ open, handleClose }) => {
                                 name="is_primary"
                                 checked={formik.values.is_primary}
                                 onChange={formik.handleChange}
+                                disabled={!hasAddresses}
                             />
                         }
                         label="Morada Favorita?"

@@ -24,8 +24,6 @@ const AddressCard = observer(({ address, theme }) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    console.log(homeAddressStore.addresses);
-
     const handleSetPrimary = async (address) => {
         homeAddressStore.setPrimaryAddress(address.id);
     };
@@ -37,7 +35,6 @@ const AddressCard = observer(({ address, theme }) => {
     return (
         <Paper
             elevation={4}
-            backgroundColor="background.paper"
             sx={{
                 py: 1,
                 px: 2,
