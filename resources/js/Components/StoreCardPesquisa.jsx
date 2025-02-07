@@ -39,7 +39,7 @@ const StoreCardPesquisa = observer(({store}) => {
                         }
                     }}
                 >
-                    {store.galleries.length > 0 ? (
+                    {store.galleries?.length > 0 ? (
                         store.galleries.map((img, index) => (
                             <Box
                                 key={index}

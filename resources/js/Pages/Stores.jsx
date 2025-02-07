@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import {
     TextField,
@@ -9,21 +9,23 @@ import {
     FormControlLabel,
     Checkbox,
     Select,
-    MenuItem, FormControl, InputLabel, useMediaQuery
+    MenuItem,
+    FormControl,
+    InputLabel,
+    useMediaQuery,
 } from "@mui/material";
-import {MapContainer, TileLayer, Marker, Popup, useMap} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import {router, usePage} from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import ReactDOMServer from "react-dom/server";
-import {StoreSharp as StoreSharpIcon} from "@mui/icons-material";
+import { StoreSharp as StoreSharpIcon } from "@mui/icons-material";
 import { hoverStore } from "../Stores";
-import {AlertBox} from "../Components/";
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import SearchIcon from '@mui/icons-material/Search';
-import {StoreCardPesquisa} from "../Components/";
-
+import { AlertBox } from "../Components/";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import SearchIcon from "@mui/icons-material/Search";
+import { StoreCardPesquisa } from "../Components/";
 
 // Componente para ajustar o zoom dinamicamente
 const FitMapToMarkers = ({ stores }) => {
@@ -32,7 +34,10 @@ const FitMapToMarkers = ({ stores }) => {
     useEffect(() => {
         if (stores.length > 0) {
             const bounds = L.latLngBounds(
-                stores.map(store => [store.addresses[0].latitude, store.addresses[0].longitude])
+                stores.map((store) => [
+                    store.addresses[0].latitude,
+                    store.addresses[0].longitude,
+                ]),
             );
             map.fitBounds(bounds, { padding: [50, 50] }); // Ajusta com padding para evitar cortes
         }
@@ -71,9 +76,8 @@ const createCustomIcon = (color) => {
 
 // Função para personalizar os clusters com contagem e cor dinâmica
 const createClusterCustomIcon = (cluster) => {
-
     const count = cluster.getChildCount(); // Número de lojas agrupadas
-    let color = 'green'; // Cor padrão
+    let color = "green"; // Cor padrão
 
     return L.divIcon({
         html: ReactDOMServer.renderToString(
@@ -94,9 +98,12 @@ const createClusterCustomIcon = (cluster) => {
                     textAlign: "center",
                 }}
             >
-                <StoreSharpIcon fontSize="inherit" style={{ fill: color, fontSize: "28px" }} />
+                <StoreSharpIcon
+                    fontSize="inherit"
+                    style={{ fill: color, fontSize: "28px" }}
+                />
                 <span style={{ color: color, marginTop: "-4px" }}>{count}</span>
-            </div>
+            </div>,
         ),
         className: "custom-cluster-icon",
         iconSize: [50, 50],
@@ -111,11 +118,10 @@ const Stores = observer(() => {
     const [location, setLocation] = useState(null);
     const [mapCenter, setMapCenter] = useState([39.5, -8.0]);
     const [zoom, setZoom] = useState(6);
-    const { stores } = usePage().props;
+    const stores = usePage().props.stores.data;
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const isLarger = useMediaQuery(theme.breakpoints.only("lg"));
-    console.log(stores);
 
     // Função para obter a localização do utilizador
     const getUserLocation = () => {
@@ -129,7 +135,7 @@ const Stores = observer(() => {
                 },
                 (error) => {
                     console.error("Erro ao obter localização:", error);
-                }
+                },
             );
             handleSearch();
         } else {
@@ -138,42 +144,65 @@ const Stores = observer(() => {
     };
 
     const handleSearch = () => {
-        router.get('/lojas', {
-            search,
-            radius,
-            latitude: location ? location.lat : null,
-            longitude: location ? location.lng : null,
-        }, { preserveState: true });
+        router.get(
+            "/lojas",
+            {
+                search,
+                radius,
+                latitude: location ? location.lat : null,
+                longitude: location ? location.lng : null,
+            },
+            { preserveState: true },
+        );
     };
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+                mt: 2,
+            }}
+        >
             <AlertBox />
             {/* Pesquisa */}
-            <Box sx={{ display: "flex", gap: 2, justifyContent: "space-between", width: "98%", alignItems: "center" }}>
-
-
-                {/* Input de pesquisa */}
-                <Box sx={{
-                    width: "40%",
+            <Box
+                sx={{
                     display: "flex",
-                    flexDirection: smallerThanMedium ? "column" : "row",
+                    gap: 2,
+                    justifyContent: "space-between",
+                    width: "100%",
+                    alignItems: "center",
                 }}
+            >
+                {/* Input de pesquisa */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: smallerThanMedium ? "column" : "row",
+                    }}
                 >
                     <Box
                         sx={{
                             display: "flex",
                             gap: 2,
                             alignItems: "center",
-                            width: "100%",
+                            maxWidth: "200px",
                             mb: smallerThanMedium ? 2 : 0,
                         }}
                     >
-                        <Typography>Pesquisar</Typography>
                         <TextField
                             label="Morada ou Distrito"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
+                            spellCheck={false}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSearch(radius);
+                                }
+                            }}
                             sx={{
                                 width: 300,
                                 mr: 4,
@@ -186,11 +215,14 @@ const Stores = observer(() => {
                                 },
                             }}
                         />
+
                     </Box>
                     {/* CheckBox e seletor de raio */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <FormControl sx={{ width: 130 }}>
-                            <InputLabel id="demo-simple-select-label">Raio(km)</InputLabel>
+                            <InputLabel id="demo-simple-select-label">
+                                Raio(km)
+                            </InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
@@ -198,7 +230,6 @@ const Stores = observer(() => {
                                 value={radius}
                                 variant="outlined"
                                 onChange={(e) => setRadius(e.target.value)}
-
                                 sx={{
                                     height: 40,
                                     "& .MuiOutlinedInput-root": {
@@ -218,29 +249,53 @@ const Stores = observer(() => {
                     </Box>
                 </Box>
 
-
                 {/* Botões de pesquisa e localização */}
-                <Box sx={{ display: "flex", gap: 2, width: "40%", justifyContent: "flex-end", alignItems: "center" }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        gap: 2,
+                        // width: "40%",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                    }}
+                >
                     <Button
                         variant="contained"
-                        sx={{ width: "135px",borderRadius: "8px", backgroundColor: "#ff9900c4" }}
+                        sx={{
+                            backgroundColor: "#ff9900c4",
+                            borderRadius:
+                                smallerThanMedium || smallerThanLarge
+                                    ? "50px"
+                                    : "",
+                        }}
                         onClick={() => handleSearch(radius)}
                     >
-                        <Box sx={{ alignItems: "center", display: "flex" }}>
-                            <SearchIcon />
+                        <SearchIcon />
+                        <Typography
+                            sx={{
+                                display: smallerThanLarge ? "none" : "block",
+                                ml: 1,
+                            }}
+                        >
                             Pesquisar
-                        </Box>
+                        </Typography>
                     </Button>
                     <Button
-                        sx={{ color: "white", backgroundColor: "#A5C686", borderRadius: smallerThanMedium || smallerThanLarge ? "50px" : "8px" }}
+                        sx={{
+                            backgroundColor: "#A5C686",
+                            borderRadius:
+                                smallerThanMedium || smallerThanLarge
+                                    ? "50px"
+                                    : "",
+                        }}
                         variant="contained"
                         onClick={getUserLocation}
                     >
                         <LocationOnIcon />
                         <Typography
                             sx={{
-                                display: smallerThanMedium || smallerThanLarge || isLarger ? "none" : "block",
-                                fontWeight: "bold"
+                                display: smallerThanLarge ? "none" : "block",
+                                ml: 1,
                             }}
                         >
                             Usar a minha Localização
@@ -250,55 +305,93 @@ const Stores = observer(() => {
             </Box>
 
             {/* Mapa */}
-            <MapContainer center={mapCenter} zoom={zoom} style={{ width: "98%", height: "500px" }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {/* Ajusta o zoom automaticamente para incluir todos os markers */}
-                <FitMapToMarkers stores={stores} />
-                {location && (() => {
-                    return (
-                        <MarkerClusterGroup
-                            chunkedLoading
-                            maxClusterRadius={60} // Define a distância para agrupar markers
-                            iconCreateFunction={createClusterCustomIcon} // Personaliza a aparência dos clusters
-                            showCoverageOnHover={false} // Oculta os círculos ao passar o rato
-                        >
-                            {stores.map((store) => {
-                                const isHovered = hoverStore.hoveredStoreId === store.id;
-                                return (
-                                    <Marker
-                                        key={store.id}
-                                        position={[store.addresses[0].latitude, store.addresses[0].longitude]}
-                                        icon={createCustomIcon(
-                                            isHovered ? theme.palette.secondary.main : theme.palette.primary.main
-                                        )}>
-                                        <Popup>{store.name}</Popup>
-                                    </Marker>
-                                );
-                            })}
-                        </MarkerClusterGroup>
-                    );
-                })()}
-                <MarkerClusterGroup
-                    chunkedLoading
-                    maxClusterRadius={60} // Define a distância para agrupar markers
-                    iconCreateFunction={createClusterCustomIcon} // Personaliza a aparência dos clusters
-                    showCoverageOnHover={false} // Oculta os círculos ao passar o rato
+            <Box
+                sx={{
+                    height: "100%",
+                    width: "100%",
+                    minHeight: "300px",
+                    minWidth: "300px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "6px",
+                    padding: "2px",
+                    border: `1px solid ${theme.palette.primary.main}`,
+                }}
+            >
+                <MapContainer
+                    center={mapCenter}
+                    zoom={zoom}
+                    style={{ width: "100%", height: "500px" }}
                 >
-                    {stores.map((store) => {
-                        const isHovered = hoverStore.hoveredStoreId === store.id;
-                        return (
-                            <Marker
-                                key={store.id}
-                                position={[store.addresses[0].latitude, store.addresses[0].longitude]}
-                                icon={createCustomIcon(
-                                    isHovered ? theme.palette.secondary.main : theme.palette.primary.main
-                                )}>
-                                <Popup>{store.name}</Popup>
-                            </Marker>
-                        );
-                    })}
-                </MarkerClusterGroup>
-            </MapContainer>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {/* Ajusta o zoom automaticamente para incluir todos os markers */}
+                    <FitMapToMarkers stores={stores} />
+                    {location &&
+                        (() => {
+                            return (
+                                <MarkerClusterGroup
+                                    chunkedLoading
+                                    maxClusterRadius={60} // Define a distância para agrupar markers
+                                    iconCreateFunction={createClusterCustomIcon} // Personaliza a aparência dos clusters
+                                    showCoverageOnHover={false} // Oculta os círculos ao passar o rato
+                                >
+                                    {stores.map((store) => {
+                                        const isHovered =
+                                            hoverStore.hoveredStoreId ===
+                                            store.id;
+                                        return (
+                                            <Marker
+                                                key={store.id}
+                                                position={[
+                                                    store.addresses[0].latitude,
+                                                    store.addresses[0]
+                                                        .longitude,
+                                                ]}
+                                                icon={createCustomIcon(
+                                                    isHovered
+                                                        ? theme.palette
+                                                              .secondary.main
+                                                        : theme.palette.primary
+                                                              .main,
+                                                )}
+                                            >
+                                                <Popup>{store.name}</Popup>
+                                            </Marker>
+                                        );
+                                    })}
+                                </MarkerClusterGroup>
+                            );
+                        })()}
+                    <MarkerClusterGroup
+                        chunkedLoading
+                        maxClusterRadius={60} // Define a distância para agrupar markers
+                        iconCreateFunction={createClusterCustomIcon} // Personaliza a aparência dos clusters
+                        showCoverageOnHover={false} // Oculta os círculos ao passar o rato
+                    >
+                        {stores.map((store) => {
+                            const isHovered =
+                                hoverStore.hoveredStoreId === store.id;
+                            return (
+                                <Marker
+                                    key={store.id}
+                                    position={[
+                                        store.addresses[0].latitude,
+                                        store.addresses[0].longitude,
+                                    ]}
+                                    icon={createCustomIcon(
+                                        isHovered
+                                            ? theme.palette.secondary.main
+                                            : theme.palette.primary.main,
+                                    )}
+                                >
+                                    <Popup>{store.name}</Popup>
+                                </Marker>
+                            );
+                        })}
+                    </MarkerClusterGroup>
+                </MapContainer>
+            </Box>
             <Box
                 sx={{
                     display: "flex",
@@ -315,8 +408,7 @@ const Stores = observer(() => {
                         sx={{
                             fontWeight: "bold",
                             fontSize: "2rem",
-                            color: "#A5C686"
-
+                            color: "#A5C686",
                         }}
                     >
                         Resultado da Pesquisa
@@ -330,9 +422,9 @@ const Stores = observer(() => {
                         gap: 10,
                         width: "100%",
                         mt: 2,
+                        mb: 4,
                         justifyContent: "center",
                         alignItems: "center",
-
                     }}
                 >
                     {stores.length > 0 ? (

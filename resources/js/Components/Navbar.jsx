@@ -137,8 +137,6 @@ const Navbar = observer(() => {
         ),
     };
 
-    console.log("é vendedor:" , hasRole("vendor"));
-
     // User account settings options
     const settings = [
         {
