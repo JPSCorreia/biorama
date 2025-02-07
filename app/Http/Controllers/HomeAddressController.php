@@ -76,9 +76,9 @@ class HomeAddressController extends Controller
     public function update(HomeAddressRequest $request, $id)
     {
         $validated = $request->validated();
-
+    
         DB::beginTransaction();
-
+    
         try {
             // Se a morada editada for marcada como favorita, desmarcar outras favoritas
             if ($validated['is_primary']) {
@@ -87,40 +87,27 @@ class HomeAddressController extends Controller
                     ->where('id', '!=', $id) // Excluir a própria morada
                     ->update(['is_primary' => false]);
             }
-
-            // Verifica se há uma morada "apagada" com o mesmo código postal e número
-            $deletedAddress = HomeAddress::onlyTrashed()
-                ->where('postal_code', $validated['postal_code'])
-                ->where('number', $validated['number'])
-                ->first();
-
-            if ($deletedAddress) {
-                // Restaura a morada apagada e atualiza com os novos dados
-                $deletedAddress->restore();
-                $deletedAddress->update($validated);
-                $deletedAddress->save();
-            }
-            else {
-                // Atualizar a morada existente
-                $address = HomeAddress::findOrFail($id);
-                $address->update($validated);
-            }
-
+    
+            // Atualizar a morada existente normalmente
+            $address = HomeAddress::findOrFail($id);
+            $address->update($validated);
+    
             DB::commit();
-
+    
             return response()->json([
                 'message' => 'Morada atualizada com sucesso!',
                 'data' => $address,
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-
+    
             return response()->json([
                 'message' => 'Erro ao atualizar a morada.',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
+    
 
 
     public function destroy($id)

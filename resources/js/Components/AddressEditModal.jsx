@@ -12,8 +12,8 @@ import {
     Input,
 } from "@mui/material";
 
-import CloseIcon from '@mui/icons-material/Close';
-import { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { homeAddressStore } from "@/Stores/index.js";
 import { usePage } from "@inertiajs/react";
@@ -24,7 +24,24 @@ const AddressEditModal = ({ open, handleClose, address }) => {
     const { auth } = usePage().props;
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const [isDisabled , setIsDisabled] = useState(true);
+    const [isDisabled, setIsDisabled] = useState(true);
+
+    useEffect(() => {
+        if (address) {
+            formik.setValues({
+                postal_code: address.postal_code || "",
+                address_name: address.address_name || "",
+                street_address: address.street_address || "",
+                number: address.number || "",
+                city: address.city || "",
+                phone_number: address.phone_number || "",
+                comment: address.comment || "",
+                longitude: address.longitude || "",
+                latitude: address.latitude || "",
+                is_primary: address.is_primary || false,
+            });
+        }
+    }, [address]);
 
     // Valores iniciais vindos da morada para edição
     const initialValues = {
@@ -36,7 +53,7 @@ const AddressEditModal = ({ open, handleClose, address }) => {
         phone_number: address.phone_number || "",
         comment: address.comment || "",
         longitude: address.longitude || "",
-        latitude:  address.latitude || "",
+        latitude: address.latitude || "",
         is_primary: address.is_primary || false,
     };
 
@@ -46,7 +63,8 @@ const AddressEditModal = ({ open, handleClose, address }) => {
             if (
                 values.postal_code !== address.postal_code &&
                 homeAddressStore.addresses.find(
-                    (existingAddress) => existingAddress.postal_code === values.postal_code
+                    (existingAddress) =>
+                        existingAddress.postal_code === values.postal_code,
                 )
             ) {
                 throw new Error("Já existe uma morada com este código postal.");
@@ -67,13 +85,15 @@ const AddressEditModal = ({ open, handleClose, address }) => {
         }
     };
 
-
     // Configuração do `useFormik`
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
             postal_code: Yup.string()
-                .matches(/^\d{4}-\d{3}$/, "Código Postal inválido (formato: 0000-000)")
+                .matches(
+                    /^\d{4}-\d{3}$/,
+                    "Código Postal inválido (formato: 0000-000)",
+                )
                 .required("O Código Postal é obrigatório"),
             address_name: Yup.string()
                 .max(20, "Defina um nome mais curto para a sua morada")
@@ -84,21 +104,19 @@ const AddressEditModal = ({ open, handleClose, address }) => {
             city: Yup.string()
                 .max(50, "Cidade deve ter no máximo 50 caracteres")
                 .required("A Cidade é obrigatória"),
-            number: Yup.string()
-                .required("O Número é obrigatório")
-            ,
+            number: Yup.string().required("O Número é obrigatório"),
             phone_number: Yup.string()
                 .nullable()
                 .matches(/^\d{9,15}$/, "Número de telefone inválido"),
-            comment: Yup.string().nullable()
-                .max(40, "O Comentário deve ter no máximo 40 caracteres")
-            ,
-            is_primary: Yup.boolean().required("O campo é obrigatório")
+            comment: Yup.string()
+                .nullable()
+                .max(40, "O Comentário deve ter no máximo 40 caracteres"),
+            is_primary: Yup.boolean().required("O campo é obrigatório"),
         }),
         onSubmit: handleFormSubmit,
         context: {
-            originalPostalCode: address.postal_code
-        }
+            originalPostalCode: address.postal_code,
+        },
     });
 
     // Função para mudança do código postal
@@ -121,10 +139,16 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                     formik.setFieldValue("longitude", data.longitude || "");
                     formik.setFieldValue("latitude", data.latitude || "");
                 } else {
-                    formik.setFieldError("postal_code", "Código Postal não encontrado");
+                    formik.setFieldError(
+                        "postal_code",
+                        "Código Postal não encontrado",
+                    );
                 }
             } catch {
-                formik.setFieldError("postal_code", "Erro ao validar o Código Postal");
+                formik.setFieldError(
+                    "postal_code",
+                    "Erro ao validar o Código Postal",
+                );
             }
         }
     };
@@ -161,7 +185,12 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         width: "100%",
                     }}
                 >
-                    <Typography id="modal-title" variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
+                    <Typography
+                        id="modal-title"
+                        variant="h5"
+                        component="h2"
+                        sx={{ fontWeight: "bold" }}
+                    >
                         Editar Morada
                     </Typography>
                     <IconButton onClick={handleClose}>
@@ -176,19 +205,37 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         name="address_name"
                         value={formik.values.address_name}
                         onChange={formik.handleChange}
-                        error={formik.touched.address_name && Boolean(formik.errors.address_name)}
-                        helperText={formik.touched.address_name && formik.errors.address_name}
+                        error={
+                            formik.touched.address_name &&
+                            Boolean(formik.errors.address_name)
+                        }
+                        helperText={
+                            formik.touched.address_name &&
+                            formik.errors.address_name
+                        }
                         required
                     />
-                    <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                        }}
+                    >
                         <TextField
                             margin="normal"
                             label="Código Postal"
                             name="postal_code"
                             value={formik.values.postal_code}
                             onChange={handlePostalCodeChange}
-                            error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
-                            helperText={formik.touched.postal_code && formik.errors.postal_code}
+                            error={
+                                formik.touched.postal_code &&
+                                Boolean(formik.errors.postal_code)
+                            }
+                            helperText={
+                                formik.touched.postal_code &&
+                                formik.errors.postal_code
+                            }
                             required
                             sx={{ width: "40%" }}
                         />
@@ -199,15 +246,25 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             name="city"
                             value={formik.values.city}
                             onChange={formik.handleChange}
-                            error={formik.touched.city && Boolean(formik.errors.city)}
-                            helperText={formik.touched.city && formik.errors.city}
+                            error={
+                                formik.touched.city &&
+                                Boolean(formik.errors.city)
+                            }
+                            helperText={
+                                formik.touched.city && formik.errors.city
+                            }
                             required
                             disabled={isDisabled}
                             sx={{ width: "40%" }}
                         />
-
                     </Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                        }}
+                    >
                         <TextField
                             fullWidth
                             margin="normal"
@@ -215,8 +272,13 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             name="number"
                             value={formik.values.number}
                             onChange={formik.handleChange}
-                            error={formik.touched.number && Boolean(formik.errors.number)}
-                            helperText={formik.touched.number && formik.errors.number}
+                            error={
+                                formik.touched.number &&
+                                Boolean(formik.errors.number)
+                            }
+                            helperText={
+                                formik.touched.number && formik.errors.number
+                            }
                             required
                             disabled={isDisabled}
                             sx={{ width: "40%" }}
@@ -228,8 +290,14 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             name="phone_number"
                             value={formik.values.phone_number}
                             onChange={formik.handleChange}
-                            error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
-                            helperText={formik.touched.phone_number && formik.errors.phone_number}
+                            error={
+                                formik.touched.phone_number &&
+                                Boolean(formik.errors.phone_number)
+                            }
+                            helperText={
+                                formik.touched.phone_number &&
+                                formik.errors.phone_number
+                            }
                             sx={{ width: "40%" }}
                         />
                     </Box>
@@ -240,13 +308,27 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         name="street_address"
                         value={formik.values.street_address}
                         onChange={formik.handleChange}
-                        error={formik.touched.street_address && Boolean(formik.errors.street_address)}
-                        helperText={formik.touched.street_address && formik.errors.street_address}
+                        error={
+                            formik.touched.street_address &&
+                            Boolean(formik.errors.street_address)
+                        }
+                        helperText={
+                            formik.touched.street_address &&
+                            formik.errors.street_address
+                        }
                         required
                         disabled={isDisabled}
                     />
 
-                    <Box sx={{ display:'flex', flexDirection:'column', width: "100%",mt: 1, mb: 2 }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "100%",
+                            mt: 1,
+                            mb: 2,
+                        }}
+                    >
                         <Input
                             aria-label="Demo input"
                             multiline
@@ -254,7 +336,10 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                             name="comment"
                             value={formik.values.comment || ""}
                             onChange={formik.handleChange}
-                            error={formik.touched.comment && Boolean(formik.errors.comment)}
+                            error={
+                                formik.touched.comment &&
+                                Boolean(formik.errors.comment)
+                            }
                             fullWidth
                         />
                         {/* Contador de caracteres */}
@@ -274,8 +359,13 @@ const AddressEditModal = ({ open, handleClose, address }) => {
                         control={
                             <Switch
                                 name="is_primary"
-                                checked={!!formik.values.is_primary} // Outra forma de converter para booleano
+                                checked={!!formik.values.is_primary}
                                 onChange={formik.handleChange}
+                                disabled={
+                                    !!(homeAddressStore.addresses.filter(
+                                        (address) => address.is_primary,
+                                    ).length === 1 && address.is_primary )
+                                }
                             />
                         }
                         label="Morada Favorita?"
