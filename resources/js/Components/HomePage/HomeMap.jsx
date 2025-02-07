@@ -14,7 +14,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
 import { router } from "@inertiajs/react";
-import { hoverStore } from "../Stores";
+import { hoverStore } from "../../Stores/";
 import { observer } from "mobx-react-lite";
 
 // Criar um ícone customizado para o marcador das lojas

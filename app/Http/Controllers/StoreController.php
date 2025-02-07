@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Store;
 use App\Models\StoreAddress;
@@ -378,43 +379,113 @@ class StoreController extends Controller
         $latitude = $request->input('latitude');
         $radius = $request->input('radius', 10000);
 
-        // Realiza o join entre "stores" e "store_addresses"
-        $stores = Store::join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
+        // Buscar todas as lojas
+        $allStores = Store::select(
+            'stores.id',
+            'stores.name',
+            'stores.description',
+            'stores.phone_number',
+            'stores.email',
+            'stores.rating'
+        )
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'reviews',
+                'galleries'
+            ])
+            ->join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
+            ->get();
+
+        // Buscar lojas próximas
+        $nearbyStores = Store::select(
+            'stores.id',
+            'stores.name',
+            'stores.description',
+            'stores.phone_number',
+            'stores.email',
+            'stores.rating'
+        )
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'reviews',
+                'galleries'
+            ])
+            ->join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
             ->selectRaw("
-            stores.id,
-            stores.name,
-            stores.description,
-            ST_X(store_addresses.coordinates) AS longitude,
-            ST_Y(store_addresses.coordinates) AS latitude,
-            ST_Distance_Sphere(
-                store_addresses.coordinates,
-                POINT(?, ?)
-            ) AS distance
+            ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) AS distance
         ", [$longitude, $latitude])
-            ->with('galleries')
             ->whereRaw("
             ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) <= ?
         ", [$longitude, $latitude, $radius])
             ->orderBy('distance')
             ->get();
 
-        // Transforma os dados para um formato JSON-friendly
-        $stores = $stores->map(function ($store) {
-            $firstImage = $store->galleries->first();
+        // Associar produtos filtrados a cada loja
+        $nearbyStores->each(function ($store) {
+            // Produtos com maior desconto (usando a relação correta com store_product)
+            $highestDiscountProducts = Product::select(
+                'products.id',
+                'products.name',
+                'products.description',
+                'products.price',
+                'products.discount',
+                'products.stock',
+                DB::raw('(products.price - (products.price * (products.discount / 100))) AS final_price')
+            )
+                ->join('store_products', 'store_products.product_id', '=', 'products.id')
+                ->where('store_products.store_id', $store->id)
+                ->where('products.discount', '>', 0) // Apenas produtos com desconto
+                ->orderByDesc('products.discount')
+                ->limit(2) // Apenas os 2 produtos com maior desconto
+                ->get();
 
-            return [
-                'id' => $store->id,
-                'name' => $store->name,
-                'description' => mb_convert_encoding($store->description, 'UTF-8', 'auto'),
-                'longitude' => $store->longitude,
-                'latitude' => $store->latitude,
-                'distance' => $store->distance,
-                'image_link' => $firstImage ? $firstImage->image_link : '',
-            ];
+            // Produtos mais comprados (baseados na tabela order_store_product)
+            $mostOrderedProducts = Product::select(
+                'products.id',
+                'products.name',
+                'products.description',
+                'products.price',
+                'products.discount',
+                'products.stock',
+                DB::raw('(SELECT COUNT(*) FROM order_store_products WHERE order_store_products.product_id = products.id) AS order_count')
+            )
+                ->join('store_products', 'store_products.product_id', '=', 'products.id')
+                ->where('store_products.store_id', $store->id)
+                ->orderByDesc('order_count')
+                ->limit(2) // Apenas os 2 produtos mais comprados
+                ->get();
+
+            // Adicionar os produtos à loja
+            $store->highestDiscountProducts = $highestDiscountProducts;
+            $store->mostOrderedProducts = $mostOrderedProducts;
         });
 
-        return response()->json($stores);
+        return response()->json([
+            'allStores' => $allStores,
+            'nearbyStores' => $nearbyStores
+        ]);
     }
+
 
     public function showStore($id)
     {

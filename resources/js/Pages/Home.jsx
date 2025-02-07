@@ -1,43 +1,34 @@
-import {
-    Box,
-    Container,
-    Typography,
-    useTheme,
-    useMediaQuery,
-} from "@mui/material";
-import { HomeMap, NearbyStores, AlertBox } from "../Components";
-import { router } from "@inertiajs/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { alertStore } from "../Stores";
-import BannerImage from "../../images/banner3.png";
+import { Container, Box, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
+import { nearbyShopStore } from "../Stores/nearbyShopStore.js";
+import NearbyStores from "../Components/HomePage/NearbyStores.jsx";
+import MapModal from "../Components/HomePage/MapModal.jsx";
+import MapIcon from "@mui/icons-material/Map";
 
 const Home = observer(() => {
-    // Get theme
     const theme = useTheme();
+    const [openMapModal, setOpenMapModal] = useState(false);
+    const handleOpenMap = () => setOpenMapModal(true);
+    const handleCloseMap = () => setOpenMapModal(false);
 
-    // Get media queries
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
-    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     useEffect(() => {
-        // Reset alert store on navigation
-        const handleNavigate = () => {
-            alertStore.reset();
-        };
-
-        // Add navigation event listener
-        if (typeof router?.on === "function") {
-            router.on("navigate", handleNavigate);
-
-            return () => {
-                // Remove navigation event listener on cleanup
-                if (typeof router?.off === "function") {
-                    router.off("navigate", handleNavigate);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                ({ coords }) => {
+                    const { latitude, longitude } = coords;
+                    nearbyShopStore.fetchNearbyStores(latitude, longitude, 50000);
+                },
+                (error) => {
+                    console.error("Não foi possível obter a localização:", error);
                 }
-            };
+            );
+        } else {
+            console.error("Geolocalização não suportada.");
         }
-    }, []);
+    }, []); // ✅ Apenas no primeiro render
 
     return (
         <Container
@@ -49,46 +40,44 @@ const Home = observer(() => {
                 marginTop: "15px !important",
             }}
         >
-            {/* Alert */}
-            <AlertBox />
-            {/* Banner */}
-            <Box
+            {/* Título */}
+            <Box sx={{ width: "100%", mb: 2 }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 2, color: "primary.title" }}>
+                    As lojas mais próximas de si
+                </Typography>
+            </Box>
+
+            {/* Nearby Stores */}
+            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", mb: 30 }}>
+                <NearbyStores />
+            </Box>
+
+            {/* Botão para abrir o mapa */}
+            <Button
+                variant="contained"
+                color="primary"
                 sx={{
+                    position: "fixed",
+                    bottom: 60,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    borderRadius: "30px",
+                    fontWeight: "bold",
+                    padding: "12px 24px",
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
                     display: "flex",
                     justifyContent: "center",
-                    maxWidth: "100%",
-                    cursor: "pointer",
+                    alignItems: "center",
+                    gap: "8px",
                 }}
-                onClick={() => router.get("/vendedores/registo")}
+                onClick={handleOpenMap}
             >
-                <img
-                    src={BannerImage}
-                    alt="Banner"
-                    style={{
-                        width: "100%",
-                        padding: "1px",
-                    }}
-                />
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", mb: 8 }}>
-                {/* Nearby Stores */}
-                <NearbyStores radius={50000} />
-                {/* Map */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: smallerThanMedium? "100%" : "40%",
-                        minWidth: smallerThanMedium? "100%" : "40%",
-                        minHeight: "100%",
-                        mt: 1.95,
-                    }}
-                >
-                    <HomeMap radius={50000} />
-                </Box>
-            </Box>
+                Ver Mapa
+                <MapIcon />
+            </Button>
+
+            {/* Modal do Mapa */}
+            <MapModal open={openMapModal} onClose={handleCloseMap} radius={50000} />
         </Container>
     );
 });
