@@ -20,21 +20,21 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
-            // Criar um vendor associado ao User com id 1
-            Vendor::create([
-                'user_id' => 1, // ID do utilizador associado
-                'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
-                'last_name' => 'Bonaparte',
-                'email' => 'vladimiro@example.com',
-                'nif'=> '239502051',
-                'phone' => '912345678',
-                'date_of_birth' => '1990-01-01',
-                'iban' => 'PT50000201231234567890154',
-                'gender_id' => 1, // ID do género
-                'is_company' => true, // Pode ser alterado para `false` se quiseres simular individual
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        // Criar um vendor associado ao User com id 1
+        Vendor::create([
+            'user_id' => 1, // ID do utilizador associado
+            'first_name' => 'Vladimiro', // Nome personalizado ou podes usar fake data
+            'last_name' => 'Bonaparte',
+            'email' => 'vladimiro@example.com',
+            'nif'=> '239502051',
+            'phone' => '912345678',
+            'date_of_birth' => '1990-01-01',
+            'iban' => 'PT50000201231234567890154',
+            'gender_id' => 1, // ID do género
+            'is_company' => true, // Pode ser alterado para `false` se quiseres simular individual
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         Company::create([
             'vendor_id' => 1, // Relacionado ao ID do vendedor

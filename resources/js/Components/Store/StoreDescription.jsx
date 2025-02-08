@@ -8,16 +8,19 @@ const StoreDescription = ({ store }) => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "top",
-                alignItems: "center",
                 width: "100%",
                 // ml: 1,
-                mt: 2,
+                mt: 4,
                 mr: 1,
-                // padding: 3,
-                pt: 2,
                 borderRadius: "10px",
             }}
         >
+            <Typography
+                variant="h4"
+                sx={{ marginBottom: 2, fontWeight: "bold", textAlign: "left", mt: 4, }}
+            >
+                Quem somos
+            </Typography>
             <Box
                 variant="body2"
                 color="text.secondary"

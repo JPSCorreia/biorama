@@ -63,7 +63,7 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
                 }}
             >
                 <Avatar
-                    src={user.image_profile}
+                    src={user?.image_profile}
                     sx={{ width: 76, height: 76 }}
                 />
             </Box>

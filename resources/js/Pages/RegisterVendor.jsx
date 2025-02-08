@@ -18,7 +18,7 @@ import { useEffect } from "react";
 const RegisterVendor = observer(({ genders }) => {
     // Tracks the current step in the registration process
     const [currentStep, setCurrentStep] = useState(0);
-    const [isEnableNext, setIsEnableNext] = useState(vendorRegistrationStore.products.length > 0);
+    const [isEnableNext, setIsEnableNext] = useState(true);
     // Calculates progress percentage
     const progress = (currentStep / 6) * 100;
 
@@ -147,8 +147,8 @@ const RegisterVendor = observer(({ genders }) => {
                 try {
                     const response = await vendorRegistrationStore.submitStep1();
                     setFormErrors(null);
-
-                    if (response && response.status === 201) {
+                    console.log("Resposta da submissão:", response);
+                    if (response && (response.status === 201 || response.status === 200)) {
                         setCurrentStep((prev) => prev + 1);
                     } else {
                         console.warn("esposta inesperada. Código de status:", response?.status);
@@ -226,9 +226,13 @@ const RegisterVendor = observer(({ genders }) => {
                     <Step2StoreDetails ref={storeFormRef} formErrors={formErrors} setImages={setImages} images={images} showAlert={showAlert} handleImageUpload={handleImageUpload} />
                 );
             case 4:
-                return <IntroStep3VendorRegister />;
+                return (
+                    <IntroStep3VendorRegister />
+                );
             case 5:
-                return <Step3CreateProduct />;
+                return (
+                    <Step3CreateProduct />
+                );
         }
     };
 

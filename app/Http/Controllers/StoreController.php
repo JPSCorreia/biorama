@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Store;
 use App\Models\StoreAddress;
@@ -378,47 +379,102 @@ class StoreController extends Controller
         $latitude = $request->input('latitude');
         $radius = $request->input('radius', 10000);
 
-        // Realiza o join entre "stores" e "store_addresses"
-        $stores = Store::join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
-            ->selectRaw("
-            stores.id,
-            stores.name,
-            stores.description,
-            ST_X(store_addresses.coordinates) AS longitude,
-            ST_Y(store_addresses.coordinates) AS latitude,
-            ST_Distance_Sphere(
-                store_addresses.coordinates,
-                POINT(?, ?)
-            ) AS distance
-        ", [$longitude, $latitude])
-            ->with('galleries')
-            ->whereRaw("
-            ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) <= ?
-        ", [$longitude, $latitude, $radius])
-            ->orderBy('distance')
+        // Buscar todas as lojas
+        $allStores = Store::select(
+            'stores.id',
+            'stores.name',
+            'stores.description',
+            'stores.phone_number',
+            'stores.email',
+            'stores.rating'
+        )
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'reviews',
+                'galleries'
+            ])
+            ->join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
             ->get();
 
-        // Transforma os dados para um formato JSON-friendly
-        $stores = $stores->map(function ($store) {
-            $firstImage = $store->galleries->first();
+        // Buscar lojas próximas
+        // Buscar lojas próximas (LIMITADO A 6 LOJAS)
+        $nearbyStores = Store::select(
+            'stores.id',
+            'stores.name',
+            'stores.description',
+            'stores.phone_number',
+            'stores.email',
+            'stores.rating'
+        )
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id',
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'reviews',
+                'galleries'
+            ])
+            ->join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
+            ->selectRaw("
+        ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) AS distance
+    ", [$longitude, $latitude])
+            ->whereRaw("
+        ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) <= ?
+    ", [$longitude, $latitude, $radius])
+            ->orderBy('distance')
+            ->limit(6) // LIMITANDO PARA 6 LOJAS APENAS
+            ->get();
 
-            return [
-                'id' => $store->id,
-                'name' => $store->name,
-                'description' => mb_convert_encoding($store->description, 'UTF-8', 'auto'),
-                'longitude' => $store->longitude,
-                'latitude' => $store->latitude,
-                'distance' => $store->distance,
-                'image_link' => $firstImage ? $firstImage->image_link : '',
-            ];
+        // Associar produtos filtrados a cada loja
+        // Associar produtos filtrados a cada loja
+        $nearbyStores->each(function ($store) {
+            // Buscar 5 produtos aleatórios com desconto por loja
+            $randomDiscountProducts = Product::select(
+                'products.id',
+                'products.name',
+                'products.description',
+                'products.price',
+                'products.discount',
+                'products.stock',
+                DB::raw('(products.price - (products.price * (products.discount / 100))) AS final_price')
+            )
+                ->with(['gallery'])
+                ->join('store_products', 'store_products.product_id', '=', 'products.id')
+                ->where('store_products.store_id', $store->id)
+                ->where('products.discount', '>', 0) // Apenas produtos com desconto
+                ->inRandomOrder()
+                ->limit(4) // Limita a 5 produtos aleatórios
+                ->get();
+
+            $store->bestProducts = $randomDiscountProducts;
         });
 
-        return response()->json($stores);
+        return response()->json([
+            'allStores' => $allStores,
+            'nearbyStores' => $nearbyStores
+        ]);
     }
 
-    public function showStore($id)
+    public function showStore($id, Request $request)
     {
-        // Recupera a loja sem o campo de coordenadas
+        // Recupera a loja
         $store = Store::select(
             'id',
             'vendor_id',
@@ -440,14 +496,17 @@ class StoreController extends Controller
         // Recupera a imagem da loja
         $storeImage = StoreGallery::where('store_id', $id)->first();
 
-        // Recupera o vendor
-        $vendor = Vendor::where('id', $store->vendor_id)->first();
+        // Recupera o vendor e o usuário associado
+        $vendor = Vendor::find($store->vendor_id);
+        $user = User::find($vendor->user_id);
 
-        // Recupera o usuário associado ao vendor
-        $user = User::where('id', $vendor->user_id)->first();
+        // Carrega **todos** os produtos da loja com suas galerias
+        $products = $store->products()
+            ->with('gallery')
+            ->get();
 
-        // Carrega todos os produtos e suas respectivas galerias
-        $products = $store->load('products.gallery')->products->map(function ($product) {
+        // Transforma os dados de cada produto (mantendo a estrutura desejada)
+        $products->transform(function ($product) {
             return [
                 'id'           => $product->id,
                 'name'         => $product->name,
@@ -457,7 +516,11 @@ class StoreController extends Controller
                 'stock'        => $product->stock,
                 'created_at'   => $product->created_at,
                 'updated_at'   => $product->updated_at,
-                'image_link'   => $product->gallery->first()?->image_link,
+                'gallery'      => $product->gallery->map(function ($image) {
+                    return [
+                        'image_link' => $image->image_link,
+                    ];
+                }),
             ];
         });
 
@@ -465,27 +528,22 @@ class StoreController extends Controller
         $storeGallery = StoreGallery::where('store_id', $id)->get();
 
         $storeAddress = StoreAddress::selectRaw("
-            id,
-            store_id,
-            street_address,
-            city,
-            postal_code,
-            CAST(ST_X(coordinates) AS CHAR) as longitude,
-            CAST(ST_Y(coordinates) AS CHAR) as latitude
-        ")
+        id,
+        store_id,
+        street_address,
+        city,
+        postal_code,
+        CAST(ST_X(coordinates) AS CHAR) as longitude,
+        CAST(ST_Y(coordinates) AS CHAR) as latitude
+    ")
             ->where('store_id', $id)
             ->first();
 
-        // Calcula a nota média do vendor (média de rating de todas as lojas do vendor)
+        // Outras informações
         $vendorRating = Store::where('vendor_id', $store->vendor_id)->avg('rating');
-
-        // Recupera a quantidade de reviews
         $reviewCount = StoreReview::whereIn('store_id', Store::where('vendor_id', $store->vendor_id)->pluck('id'))->count();
-
-        // Recupera a quantidade de pedidos vendidos
         $orderCount = OrderStoreProduct::where('store_id', $id)->count();
 
-        // Formata os dados para compatibilidade com JSON (sem as coordenadas na store)
         $formattedStore = [
             'id'           => $store->id,
             'vendor_id'    => $store->vendor_id,
@@ -501,7 +559,6 @@ class StoreController extends Controller
             'latitude'     => $storeAddress->latitude,
         ];
 
-        // Outras informações adicionais
         $other = [
             'vendor_rating' => $vendorRating,
             'review_count'  => $reviewCount,
@@ -509,15 +566,17 @@ class StoreController extends Controller
         ];
 
         return Inertia::render('Store', [
-            'store'   => $formattedStore,
-            'vendor'  => $vendor,
-            'products'=> $products,
-            'user'    => $user,
-            'gallery' => $storeGallery,
-            'address' => $storeAddress, // O endereço agora possui "longitude" e "latitude" separadamente
-            'other'   => $other,
+            'store'    => $formattedStore,
+            'vendor'   => $vendor,
+            'products' => $products, // Agora é uma coleção completa (array) de produtos
+            'user'     => $user,
+            'gallery'  => $storeGallery,
+            'address'  => $storeAddress,
+            'other'    => $other,
         ]);
     }
+
+
 
 
 

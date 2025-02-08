@@ -13,12 +13,14 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             // Primary color configuration
             primary: {
                 main: green[700],
+                title: green[400],
             },
 
             // Secondary color configuration
             secondary: {
                 main: green[400], // Lighter green as secondary color
                 dark: green[700], // Dark green for contrast
+                button: "#ff9900"
             },
 
             terciary: {
@@ -42,10 +44,6 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                     arrow: appStore.themeType === "dark" ? "#ffffff" : "#242424",
                     arrowActive: appStore.themeType === "dark" ? "#242424" : "#ffffff",
                 }
-            },
-
-            store: {
-
             },
 
             // Background colors for different elements based on theme mode

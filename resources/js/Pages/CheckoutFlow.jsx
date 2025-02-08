@@ -20,14 +20,17 @@ const CheckoutFlow = observer(() => {
     useEffect(() => {
         if (currentStep === 3) {
             // Simula a finalização da compra
-            console.log("Pedido finalizado com sucesso!");
             // router.get("/dashboard");
             cartStore.clearCart();
         }
     }, [currentStep]);
 
     const handleNext = () => {
-        setCurrentStep((prev) => prev + 1);
+        if (currentStep === 2) {
+            console.log("teste");
+        } else {
+            setCurrentStep((prev) => prev + 1);
+        }
     };
 
     const handleBack = () => {
@@ -71,7 +74,6 @@ const CheckoutFlow = observer(() => {
                 width: "100%",
                 marginTop: "15px !important",
                 marginBottom: "5%",
-                border: "1px solid red",
             }}
         >
             <AlertBox />
@@ -101,7 +103,7 @@ const CheckoutFlow = observer(() => {
                         alignItems: "center",
                         minHeight: "100%",
                         mt: 2,
-                        border: "1px solid green"
+                        border: "1px solid green",
                     }}
                 >
                     {renderStep()}
@@ -113,7 +115,6 @@ const CheckoutFlow = observer(() => {
                         justifyContent: "center",
                         alignItems: "center",
                         width: "100%",
-                        border: "1px solid blue",
                     }}
                 >
                     <LinearProgress
@@ -135,7 +136,6 @@ const CheckoutFlow = observer(() => {
                             width: "100%",
                             maxWidth: 1200,
                             mt: 2,
-                            border: "1px solid red",
                         }}
                     >
                         {currentStep > 0 ? (
@@ -143,15 +143,17 @@ const CheckoutFlow = observer(() => {
                                 Voltar
                             </Button>
                         ) : (
-                            <Box></Box>
+                            <Button
+                                variant="outlined"
+                                onClick={() => router.get("/carrinho")}
+                            >
+                                Voltar
+                            </Button>
                         )}
                         <Button
                             variant="contained"
                             onClick={handleNext}
-                            disabled={
-                                currentStep === 2 &&
-                                (!selectedAddress || !selectedPayment)
-                            }
+                            disabled={false}
                         >
                             {currentStep === 2 ? "Finalizar Compra" : "Avançar"}
                         </Button>
