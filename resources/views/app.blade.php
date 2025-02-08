@@ -16,5 +16,6 @@
     </head>
     <body>
         @inertia <!-- Inject Inertia.js -->
+        <script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=EUR"></script>
     </body>
 </html>

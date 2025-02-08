@@ -84,13 +84,13 @@ class VendorSeeder extends Seeder
             $user->update([
                 'image_profile' => url($images[array_rand($images)]), // Atribui uma imagem aleatória
             ]);
-        
+
             // Criar o Vendor associado a este User
             $vendor = Vendor::factory()->create(['user_id' => $user->id]);
-        
+
             // Criar a empresa associada ao Vendor
             Company::factory()->create(['vendor_id' => $vendor->id]);
-        
+
             // Criar 5 reviews associadas ao Vendor
             VendorReview::factory()->count(5)->create(['vendor_id' => $vendor->id]);
         });

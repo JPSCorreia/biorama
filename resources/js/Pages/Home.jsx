@@ -74,7 +74,7 @@ const Home = observer(() => {
                         transform: "scale(1.02)",
                         boxShadow: `0px 8px 20px ${alpha(theme.palette.primary.main, 0.2)}`,
                     }),
-                    mb: 10,
+                    mb: 8,
                 }}
                 onClick={() => {
                     const targetRoute = auth?.isVendor
@@ -113,7 +113,7 @@ const Home = observer(() => {
             </Box>
 
             {/* Nearby Stores */}
-            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", mb: 10 }}>
+            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", mb: 8 }}>
                 <HomeNearbyStores />
             </Box>
 

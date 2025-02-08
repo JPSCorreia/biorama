@@ -27,6 +27,8 @@ class NearbyShopStore {
             this.allStores = response.data.allStores || [];
             this.nearbyStores = response.data.nearbyStores || [];
             if (response.data.nearbyStores) {
+
+                console.log(response.data.nearbyStores)
                 // Mapeia as lojas e junta os produtos num único array
                 const allBestProducts = response.data.nearbyStores.flatMap(store => store.bestProducts || []);
 

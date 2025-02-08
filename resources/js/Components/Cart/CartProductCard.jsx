@@ -20,11 +20,13 @@ import ReactMarkdown from "react-markdown";
 
 const CartProductCard = observer(({ product }) => {
     const theme = useTheme();
+
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
     const storeId = product.store.id;
     const cartItems = cartStore.cart[storeId] || [];
     const cartItem = cartItems.find((item) => item.id === product.id);
     const quantity = cartItem ? cartItem.quantity : 0;
+
     const totalPrice = cartItem
         ? (
               cartItem.price *
@@ -70,7 +72,7 @@ const CartProductCard = observer(({ product }) => {
                     objectFit: "cover",
                     backgroundColor: theme.palette.primary.main,
                 }}
-                image={product.image_link}
+                image={product.gallery[0]?.image_link}
             />
 
             {/* Descrição e Preço Total */}
