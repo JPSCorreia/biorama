@@ -163,6 +163,9 @@ Route::middleware(['auth'])->group(function () {
     //Route to delete an address
     Route::delete('/apagar-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
 
+    // Route to create a new order
+    Route::post('/encomendar', [OrderController::class, 'store'])->name('make_order');
+
     // Vendor dashboard
     Route::prefix('/dashboard')->group(function () {
 

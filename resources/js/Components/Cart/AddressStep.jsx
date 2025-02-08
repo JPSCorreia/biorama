@@ -6,20 +6,82 @@ import {
     useMediaQuery,
     CircularProgress,
 } from "@mui/material";
-import { homeAddressStore } from "../../Stores";
+import { homeAddressStore, cartStore } from "../../Stores";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "@mui/material/styles";
-import AddressCard from "../../Components/AddressCard.jsx";
+import { AddressCard } from "../../Components/";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddressModal from "../../Components/AddressModal.jsx";
+import { AddressModal } from "../../Components/";
 
 const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
     const theme = useTheme();
 
-    // useEffect(() => {
-    //     homeAddressStore.fetchAddresses();
-    // }, []);
+    // Calcula o custo de envio baseado na distância
+    function calculateShippingCost(distanceKm) {
+        const baseCost = 4.0; // Custo fixo até 5 km
+        const costPerKm = 0.15; // Custo extra por km após 5 km
+        const baseDistance = 5; // Distância incluída no custo base
+
+        let finalCost;
+
+        if (distanceKm <= baseDistance) {
+            finalCost = baseCost;
+        } else {
+            finalCost = baseCost + (distanceKm - baseDistance) * costPerKm;
+        }
+
+        return finalCost;
+    }
+
+    // Obtém a distância correta entre a loja e o endereço do utilizador
+    async function getDistanceFromOSRM(lat1, lon1, lat2, lon2) {
+        const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.routes && data.routes.length > 0) {
+                const distanceMeters = data.routes[0].distance; // Distância em METROS
+                const distanceKm = distanceMeters / 1000; // 🔹 Converter para KM
+                return distanceKm;
+            } else {
+                console.error("⚠️ Erro ao obter rota do OSRM");
+                return null;
+            }
+        } catch (error) {
+            console.error("⚠️ Erro na API OSRM:", error);
+            return null;
+        }
+    }
+
+    // Calcula os portes para cada loja no carrinho
+    useEffect(() => {
+        async function calculateShipping() {
+            for (const [storeId] of Object.entries(cartStore.cart)) {
+                if (
+                    cartStore.cart[storeId][0].store.latitude &&
+                    cartStore.cart[storeId][0].store.longitude &&
+                    homeAddressStore?.primaryAddress?.latitude &&
+                    homeAddressStore?.primaryAddress?.longitude
+                ) {
+                    const distance = await getDistanceFromOSRM(
+                        cartStore.cart[storeId][0].store.latitude,
+                        cartStore.cart[storeId][0].store.longitude,
+                        homeAddressStore?.primaryAddress?.latitude,
+                        homeAddressStore?.primaryAddress?.longitude,
+                    );
+
+                    if (distance !== null) {
+                        const cost = calculateShippingCost(distance);
+                        cartStore.setShippingCost(storeId, cost); // 🔹 Guarda os custos de envio na `cartStore`
+                    }
+                }
+            }
+        }
+        calculateShipping();
+    }, [cartStore.cart, homeAddressStore?.primaryAddress]);
 
     if (
         !homeAddressStore.addresses ||
@@ -65,11 +127,11 @@ const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
                         display: "flex",
                         flexDirection: isSmallScreen ? "column" : "row",
                         alignItems: "center",
-                        height: "58vh",
                         width: "100%",
-                        justifyContent: "center" ,
+                        justifyContent: "center",
                         flexWrap: "wrap",
                         gap: 3,
+                        height: "50vh",
                     }}
                 >
                     {addresses.map((address) => {

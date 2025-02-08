@@ -11,10 +11,9 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import { CartProductCard } from "..";
-import { useState, useEffect, Fragment } from "react";
+import { useEffect, Fragment } from "react";
 
 const CartList = observer(() => {
-    const [shippingCosts, setShippingCosts] = useState({});
 
     const theme = useTheme();
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));

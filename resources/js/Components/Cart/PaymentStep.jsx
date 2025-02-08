@@ -4,7 +4,7 @@ const PaymentStep = ({ selectedPayment, setSelectedPayment }) => {
     const paymentMethods = ["Cartão de Crédito", "MB WAY", "PayPal"];
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "50vh" }}>
             {paymentMethods.map((method, index) => (
                 <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
                     <Radio checked={selectedPayment === method} onChange={() => setSelectedPayment(method)} />

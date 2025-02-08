@@ -31,13 +31,13 @@ class Order extends Model
         return $this->belongsTo(Status::class, 'statuses_id');
     }
 
-
     public function products()
     {
         return $this->belongsToMany(Product::class, 'order_store_products', 'order_id', 'product_id')
             ->withPivot(['product_id','price', 'quantity', 'discount', 'final_price'])
             ->withTimestamps();
     }
+
     public function stores()
     {
         return $this->belongsToMany(Store::class, 'order_store_products', 'order_id', 'store_id')

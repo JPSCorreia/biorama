@@ -1,23 +1,52 @@
 import { Box, Typography, Divider } from "@mui/material";
-import { cartStore } from "../../Stores";
+import { cartStore, homeAddressStore } from "../../Stores";
+import { observer } from "mobx-react";
+import { AddressCard, ReviewConfirmationList } from "../../Components/";
+import { useTheme } from "@mui/material/styles";
+import { useEffect } from "react";
 
-const ReviewStep = ({ selectedAddress, selectedPayment }) => {
+const ReviewStep = observer(({ selectedPayment }) => {
+
+    const theme = useTheme();
+        // useEffect(() => {
+        //     homeAddressStore.fetchAddresses();
+        // }, []);
+
+    const address = homeAddressStore.primaryAddress;
+
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography variant="h6">Morada de Envio</Typography>
-            <Typography>{selectedAddress || "Nenhuma morada selecionada"}</Typography>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "row",
+                // gap: 1,
+                justifyContent: "center",
+                minWidth: 1200,
+                height: "50vh",
+            }}
+        >
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%", }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>Morada de Envio</Typography>
+                <AddressCard
+                    // key={address.id}
+                    address={address}
+                    theme={theme}
+                    checkout={true}
+                    review={true}
+                />
+            </Box>
             <Divider />
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%", }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>Pagamento</Typography>
+                {/* <ReviewConfirmationList /> */}
+            </Box>
 
-            <Typography variant="h6">Método de Pagamento</Typography>
-            <Typography>{selectedPayment || "Nenhum método selecionado"}</Typography>
-            <Divider />
-
-            <Typography variant="h6">Resumo da Compra</Typography>
-            <Typography>Subtotal: €{cartStore.totalPrice}</Typography>
-            <Typography>Custo de Envio: €{Object.values(cartStore.shippingCosts).reduce((a, b) => a + b, 0).toFixed(2)}</Typography>
-            <Typography fontWeight="bold">Total: €{cartStore.grandTotal}</Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%", }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>Encomenda</Typography>
+                <ReviewConfirmationList />
+            </Box>
         </Box>
     );
-};
+});
 
 export default ReviewStep;

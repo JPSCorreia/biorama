@@ -30,17 +30,18 @@ export { default as Step1PersonalInfo } from "./Step1PersonalInfo";
 export { default as Step2StoreDetails } from "./Step2StoreDetails";
 export { default as Step3CreateProduct } from "./Step3CreateProduct";
 export { default as ThemeSwitcher } from "./ThemeSwitcher";
-export {default as VendorNameEditingForm} from "./VendorNameEdtitingForm.jsx";
-export {default as VendorInfoEditingForm} from "./VendorInfoEditingForm.jsx";
-export {default as VendorCompanyEditingForm} from "./VendorCompanyEditingForm.jsx";
-export {default as AddProductCreate} from "./AddProductCreate.jsx";
-export {default as CreateProductModal} from "./CreateProductModal.jsx";
-export {default as ImageUpload} from "./ImageCropModal.jsx";
-export {default as DashboardStoresCard} from "./DashboardStoresCard";
-export {default as DashboardShowStoreInfo} from "./DashboarShowStoreInfo";
-export {default as VendorRegistrationProductCard} from "./VendorRegistrationProductCard";
-export {default as DashboardStoreProductsCard} from "./DashboardStoreShortCutCard.jsx"
-export {default as StoreCardPesquisa} from "./StoreCardPesquisa.jsx"
-export {default as AddressStep} from "./Cart/AddressStep.jsx"
-export {default as ReviewStep} from "./Cart/ReviewStep.jsx"
-export {default as PaymentStep} from "./Cart/PaymentStep.jsx"
+export { default as VendorNameEditingForm } from "./VendorNameEdtitingForm.jsx";
+export { default as VendorInfoEditingForm } from "./VendorInfoEditingForm.jsx";
+export { default as VendorCompanyEditingForm } from "./VendorCompanyEditingForm.jsx";
+export { default as AddProductCreate } from "./AddProductCreate.jsx";
+export { default as CreateProductModal } from "./CreateProductModal.jsx";
+export { default as ImageUpload } from "./ImageCropModal.jsx";
+export { default as DashboardStoresCard } from "./DashboardStoresCard";
+export { default as DashboardShowStoreInfo } from "./DashboarShowStoreInfo";
+export { default as VendorRegistrationProductCard } from "./VendorRegistrationProductCard";
+export { default as DashboardStoreProductsCard } from "./DashboardStoreShortCutCard.jsx";
+export { default as StoreCardPesquisa } from "./StoreCardPesquisa.jsx";
+export { default as AddressStep } from "./Cart/AddressStep.jsx";
+export { default as ReviewStep } from "./Cart/ReviewStep.jsx";
+export { default as PaymentStep } from "./Cart/PaymentStep.jsx";
+export { default as ReviewConfirmationList } from "./Cart/ReviewConfirmationList.jsx";

@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import { Box, Button, LinearProgress, Typography } from "@mui/material";
 import { observer } from "mobx-react";
-import { cartStore } from "../Stores";
+import { cartStore, homeAddressStore } from "../Stores";
 import { router } from "@inertiajs/react";
-import { AddressStep, AlertBox, PaymentStep, ReviewStep } from "../Components";
+import {
+    AddressStep,
+    AlertBox,
+    ReviewConfirmationList,
+    PaymentStep,
+    ReviewStep,
+} from "../Components";
 
 const CheckoutFlow = observer(() => {
     const [currentStep, setCurrentStep] = useState(0);
-    const [selectedAddress, setSelectedAddress] = useState(null);
     const [selectedPayment, setSelectedPayment] = useState(null);
 
     const steps = [
@@ -19,15 +24,14 @@ const CheckoutFlow = observer(() => {
 
     useEffect(() => {
         if (currentStep === 3) {
-            // Simula a finalização da compra
-            // router.get("/dashboard");
+            // talvez nao seja preciso
             cartStore.clearCart();
         }
     }, [currentStep]);
 
     const handleNext = () => {
         if (currentStep === 2) {
-            console.log("teste");
+            console.log("finalizar compra");
         } else {
             setCurrentStep((prev) => prev + 1);
         }
@@ -42,8 +46,6 @@ const CheckoutFlow = observer(() => {
             case 0:
                 return (
                     <AddressStep
-                        selectedAddress={selectedAddress}
-                        setSelectedAddress={setSelectedAddress}
                     />
                 );
             case 1:
@@ -56,7 +58,6 @@ const CheckoutFlow = observer(() => {
             case 2:
                 return (
                     <ReviewStep
-                        selectedAddress={selectedAddress}
                         selectedPayment={selectedPayment}
                     />
                 );
@@ -64,6 +65,66 @@ const CheckoutFlow = observer(() => {
                 return null;
         }
     };
+
+    const handleCheckout = () => {
+
+        if (!selectedPayment) {
+            alert("Por favor, selecione um método de pagamento.");
+            return;
+        }
+
+        // Obter a morada principal (is_primary)
+        const primaryAddress = homeAddressStore.addresses.find(address => address.is_primary);
+
+        if (!primaryAddress) {
+            alert("Erro: Nenhuma morada principal encontrada. Selecione uma morada antes de finalizar.");
+            return;
+        }
+
+        // Criar encomendas por cada loja no carrinho
+        const orders = Object.keys(cartStore.cart).map((storeId) => {
+            const products = cartStore.cart[storeId].map((item) => ({
+                product_id: item.id,
+                store_id: storeId,
+                price: item.price,
+                discount: item.discount ?? 0,
+                quantity: item.quantity ?? 1,
+                final_price: (
+                    item.price *
+                    (1 - (item.discount ?? 0) / 100) *
+                    item.quantity
+                ).toFixed(2),
+            }));
+
+            return {
+                user_id: 32, // Aqui deves usar o ID do utilizador autenticado dinamicamente
+                statuses_id: 1, // Pendente
+                street_name: primaryAddress.street_address,
+                city: primaryAddress.city,
+                postal_code: primaryAddress.postal_code,
+                phone_number: primaryAddress.phone_number,
+                comment: "", // Podes adicionar um campo de observação
+                total:
+                    cartStore.storeTotals[storeId] +
+                    (cartStore.shippingCosts[storeId] || 0),
+                products: products,
+            };
+        });
+
+        console.log("Encomendas:", orders);
+
+        // Enviar as encomendas para o backend
+        router.post("/encomendar", { orders }, {
+            onSuccess: () => {
+                cartStore.clearCart();
+            },
+            onError: (errors) => {
+                console.error("Erro ao processar encomenda:", errors);
+            },
+        });
+    };
+
+
 
     return (
         <Box
@@ -89,8 +150,7 @@ const CheckoutFlow = observer(() => {
                     justifySelf: "center",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    minHeight: "70vh",
-                    border: "1px solid yellow",
+                    minHeight: "50vh",
                     mt: 2,
                 }}
             >
@@ -103,7 +163,6 @@ const CheckoutFlow = observer(() => {
                         alignItems: "center",
                         minHeight: "100%",
                         mt: 2,
-                        border: "1px solid green",
                     }}
                 >
                     {renderStep()}
@@ -150,13 +209,23 @@ const CheckoutFlow = observer(() => {
                                 Voltar
                             </Button>
                         )}
-                        <Button
-                            variant="contained"
-                            onClick={handleNext}
-                            disabled={false}
-                        >
-                            {currentStep === 2 ? "Finalizar Compra" : "Avançar"}
-                        </Button>
+                        {currentStep === 2 ? (
+                            <Button
+                                variant="contained"
+                                onClick={handleCheckout}
+                                disabled={false}
+                            >
+                                Finalizar Compra
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="contained"
+                                onClick={handleNext}
+                                disabled={false}
+                            >
+                                Avançar
+                            </Button>
+                        )}
                     </Box>
                 </Box>
             </Box>
