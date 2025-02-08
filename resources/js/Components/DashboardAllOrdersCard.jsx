@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StoreIcon from "@mui/icons-material/Store";
 
 const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
     return (
@@ -10,7 +10,7 @@ const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '150px',
+                height: '120px',
                 flex: '1 1 25%',
                 backgroundColor: '#fff',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -19,7 +19,7 @@ const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
                 position: 'relative',
                 cursor: 'pointer',
                 transition: 'transform 0.3s',
-                width: '100%',
+                width: '60%',
                 '&:hover': {
                     transform: 'scale(1.05)',
                 },
@@ -32,7 +32,7 @@ const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
                     top: 0,
                     bottom: 0,
                     width: '5px',
-                    backgroundColor: '#2196f3',
+                    backgroundColor: '#27AE60',
                 }}
             ></Box>
 
@@ -40,10 +40,7 @@ const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
                 <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: '8px' }}>
                     Todas as Encomendas
                 </Typography>
-                <ShoppingCartIcon fontSize="large" sx={{ color: '#2196f3' }} />
-                <Typography variant="h4" sx={{ marginTop: '8px', fontWeight: 'bold' }}>
-                    {totalOrders}
-                </Typography>
+                <StoreIcon fontSize="large" sx={{ color: '#27AE60' }} />
             </Box>
         </Box>
     );

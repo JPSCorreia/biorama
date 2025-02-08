@@ -86,6 +86,7 @@ class OrderStore {
 
     fetchOrdersByStore = async (storeId, searchTerm = "", page = 1, limit = 10, sortField = "id", sortOrder = "asc") => {
         console.log("search", searchTerm);
+        console.log("store id", storeId);
         try {
             const response = await axios.get(`/dashboard/stores/${storeId}/orders`, {
                 params: { search: searchTerm, page, limit, sortField, sortOrder },

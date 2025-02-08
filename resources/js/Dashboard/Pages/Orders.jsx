@@ -11,13 +11,13 @@ import { observer } from "mobx-react";
 
 const Orders = observer(() => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10); // Inicializar o limite corretamente
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [viewingAllOrders, setViewingAllOrders] = useState(true);
     const [selectedStore, setSelectedStore] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isViewModalOpen, setViewModalOpen] = useState(false);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState(""); // Armazenar o termo de pesquisa
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         orderStore.fetchOrders(searchTerm, currentPage, itemsPerPage);
@@ -27,24 +27,15 @@ const Orders = observer(() => {
     const handleViewAllOrders = () => {
         setViewingAllOrders(true);
         setSelectedStore(null);
-        setSearchTerm("");  // Reiniciar a pesquisa ao alternar para todas as encomendas
+        setSearchTerm("");
         orderStore.fetchOrders("", currentPage, itemsPerPage);
     };
 
-    const handleViewStoreOrders = (storeId) => {
+    const handleViewStoreOrders = (store) => {
         setViewingAllOrders(false);
-        setSelectedStore(storeId);
-        setSearchTerm(""); // Reiniciar a pesquisa ao alternar para encomendas de uma loja específica
-        orderStore.fetchOrdersByStore(storeId, currentPage, itemsPerPage);
-    };
-
-    const handleSearchOrders = (term) => {
-        setSearchTerm(term);
-        if (viewingAllOrders) {
-            orderStore.fetchOrders(term, currentPage, itemsPerPage);
-        } else if (selectedStore) {
-            orderStore.fetchOrdersByStore(selectedStore, currentPage, itemsPerPage);
-        }
+        setSelectedStore(store);
+        setSearchTerm("");
+        orderStore.fetchOrdersByStore(store.id, "", currentPage, itemsPerPage);
     };
 
     const handleViewOrder = (order) => {
@@ -63,7 +54,19 @@ const Orders = observer(() => {
     };
 
     return (
-        <Paper sx={{ padding: 2 }}>
+        <Paper elevation={4}
+               sx={{
+                   p: 2,
+                   width: "80%",
+                   m: "auto",
+                   display: "flex",
+                   flexDirection: "column",
+                   gap: 2,
+                   borderRadius: "10px",
+                   overflow: "hidden",
+                   backgroundColor: "rgba(255, 255, 255, 0.9)",
+                   position: "relative", // Adiciona posição relativa ao Paper
+               }}>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <DashboardAllOrdersCard
@@ -76,7 +79,7 @@ const Orders = observer(() => {
                     <Box key={store.id} sx={{ flex: '1 1 300px', minWidth: 300 }}>
                         <DashboardStoreOrderCard
                             store={store}
-                            onViewStoreOrders={() => handleViewStoreOrders(store.id)}
+                            onViewStoreOrders={() => handleViewStoreOrders(store)}
                         />
                     </Box>
                 ))}
@@ -89,15 +92,13 @@ const Orders = observer(() => {
                         onPageChange={setCurrentPage}
                         onViewOrder={handleViewOrder}
                         onEditOrder={handleEditOrder}
-                        onSearch={handleSearchOrders}  // Corrigir a pesquisa
                     />
                 ) : (
                     <DashboardStoreOrdersTable
                         storeName={selectedStore?.name}
-                        orders={orderStore.orders}
+                        storeId={selectedStore?.id}
                         onViewOrder={handleViewOrder}
                         onEditOrder={handleEditOrder}
-                        onSearch={handleSearchOrders}
                         totalPages={orderStore.totalPages}
                         onPageChange={(page) => setCurrentPage(page)}
                     />

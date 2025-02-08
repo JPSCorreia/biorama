@@ -16,7 +16,7 @@ import {
 import { observer } from 'mobx-react-lite';
 import { orderStore } from '@/Stores/orderStore.js';
 
-const DashboardStoreOrdersTable = observer(({ storeName }) => {
+const DashboardStoreOrdersTable = observer(({ storeName, storeId, onViewOrder, onEditOrder }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [sortField, setSortField] = useState("id");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -24,8 +24,8 @@ const DashboardStoreOrdersTable = observer(({ storeName }) => {
     const itemsPerPage = 10;
 
     useEffect(() => {
-        orderStore.fetchOrdersByStore(orderStore.selectedStoreId, searchTerm, currentPage, itemsPerPage);
-    }, [searchTerm, sortField, sortOrder, currentPage]);
+        orderStore.fetchOrdersByStore(storeId, searchTerm, currentPage, itemsPerPage);
+    }, [storeId, searchTerm, currentPage, itemsPerPage]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -38,8 +38,9 @@ const DashboardStoreOrdersTable = observer(({ storeName }) => {
     };
 
     const handleCancelOrder = (orderId) => {
-        orderStore.cancelOrder(orderId);
-        orderStore.fetchOrdersByStore(orderStore.selectedStoreId, searchTerm, currentPage, itemsPerPage);
+        orderStore.cancelOrder(orderId).then(() => {
+            orderStore.fetchOrdersByStore(storeId, searchTerm, currentPage, itemsPerPage);
+        });
     };
 
     const isOrderCancelled = (order) => order.statuses_id === 5;
@@ -109,10 +110,10 @@ const DashboardStoreOrdersTable = observer(({ storeName }) => {
                                     <TableCell>{parseFloat(order.total || 0).toFixed(2)} €</TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', gap: 1 }}>
-                                            <Button variant="outlined" onClick={() => orderStore.viewOrder(order)}>
+                                            <Button variant="outlined" onClick={() => onViewOrder(order)}>
                                                 Ver
                                             </Button>
-                                            <Button variant="outlined" color="primary" onClick={() => orderStore.editOrder(order)}>
+                                            <Button variant="outlined" color="primary" onClick={() => onEditOrder(order)}>
                                                 Editar
                                             </Button>
                                             <Button

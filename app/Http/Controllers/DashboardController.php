@@ -417,9 +417,7 @@ class DashboardController extends Controller
                 'user:id,email,first_name,last_name',
                 'status:id,name',
                 'products:id,name',
-                'stores' => function ($query) {
-                    $query->withTrashed();  // Soft deletes nas lojas relacionadas
-                }
+                'stores:id,name',
             ])->select([
                 'id',
                 'user_id',
@@ -432,14 +430,11 @@ class DashboardController extends Controller
             ]);
 
             // Aplicar filtro de pesquisa
-            if (!empty($searchTerm)) {
-                $query->where(function ($q) use ($searchTerm) {
-                    $q->where('id', 'like', "%$searchTerm%")
-                        ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
-                            $userQuery->where('first_name', 'like', "%$searchTerm%")
-                                ->orWhere('last_name', 'like', "%$searchTerm%")
-                                ->orWhere('email', 'like', "%$searchTerm%");
-                        });
+            if (is_numeric($searchTerm)) {
+                $query->where('id', $searchTerm);
+            } else {
+                $query->whereHas('user', function ($q) use ($searchTerm) {
+                    $q->where('email', 'like', "%$searchTerm%");
                 });
             }
 

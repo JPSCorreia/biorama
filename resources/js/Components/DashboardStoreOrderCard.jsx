@@ -10,7 +10,7 @@ const DashboardStoreOrderCard = ({ store, onViewStoreOrders }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '150px',
+                height: '120px',
                 flex: '1 1 25%',
                 backgroundColor: '#fff',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -19,7 +19,7 @@ const DashboardStoreOrderCard = ({ store, onViewStoreOrders }) => {
                 position: 'relative',
                 cursor: 'pointer',
                 transition: 'transform 0.3s',
-                width: '100%',
+                width: '60%',
                 '&:hover': {
                     transform: 'scale(1.05)',
                 },
