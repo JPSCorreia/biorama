@@ -72,10 +72,26 @@ class VendorSeeder extends Seeder
             ]);
         }
 
+        $images = [
+            'storage/mock_images/users/user_1.png',
+            'storage/mock_images/users/user_2.png',
+            'storage/mock_images/users/user_3.png'
+        ];
+
         // Criar 10 novos Users e associar Vendors a cada um
-        User::factory(10)->create()->each(function ($user) {
+        User::factory(10)->create()->each(function ($user) use ($images) {
+            // Atualizar a image_profile para garantir que tem um valor
+            $user->update([
+                'image_profile' => url($images[array_rand($images)]), // Atribui uma imagem aleatória
+            ]);
+        
+            // Criar o Vendor associado a este User
             $vendor = Vendor::factory()->create(['user_id' => $user->id]);
+        
+            // Criar a empresa associada ao Vendor
             Company::factory()->create(['vendor_id' => $vendor->id]);
+        
+            // Criar 5 reviews associadas ao Vendor
             VendorReview::factory()->count(5)->create(['vendor_id' => $vendor->id]);
         });
     }

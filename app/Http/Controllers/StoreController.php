@@ -498,6 +498,9 @@ class StoreController extends Controller
 
         // Recupera o vendor e o usuário associado
         $vendor = Vendor::find($store->vendor_id);
+
+        dd($vendor);
+
         $user = User::find($vendor->user_id);
 
         // Carrega **todos** os produtos da loja com suas galerias
