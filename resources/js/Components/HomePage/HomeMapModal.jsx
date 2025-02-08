@@ -43,13 +43,12 @@ const HomeMapModal = ({ open, onClose }) => {
                         bottom: 20,
                         left: "50%",
                         transform: "translateX(-50%)",
-                        width: "80%",
+                        width: "8%",
                         zIndex: 1000, // Garante que está acima do mapa
                     }}
                 >
                     <Button
                         variant="contained"
-                        color="primary"
                         fullWidth
                         sx={{
                             borderRadius: "30px",
@@ -60,6 +59,7 @@ const HomeMapModal = ({ open, onClose }) => {
                             alignItems: "center",
                             justifyContent: "center",
                             gap: "8px", // Espaçamento entre o texto e o ícone
+                            backgroundColor: "secondary.button",
                         }}
                         onClick={onClose} // Fecha o modal ao clicar
                     >
