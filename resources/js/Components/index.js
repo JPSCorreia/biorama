@@ -21,7 +21,7 @@ export { default as IntroStep1VendorRegister } from "./IntroStep1VendorRegister"
 export { default as IntroStep2VendorRegister } from "./IntroStep2VendorRegister";
 export { default as IntroStep3VendorRegister } from "./IntroStep3VendorRegister";
 export { default as Navbar } from "./Navbar";
-export { default as NearbyStores } from "./HomePage/NearbyStores.jsx";
+export { default as NearbyStores } from "./HomePage/HomeNearbyStores.jsx";
 export { default as StoreProductCard } from "./Store/StoreProductCard";
 export { default as ProductList } from "./ProductList";
 export { default as ProfileEditModal } from "./ProfileEditModal";

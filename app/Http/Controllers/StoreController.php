@@ -407,6 +407,7 @@ class StoreController extends Controller
             ->get();
 
         // Buscar lojas próximas
+        // Buscar lojas próximas (LIMITADO A 6 LOJAS)
         $nearbyStores = Store::select(
             'stores.id',
             'stores.name',
@@ -432,18 +433,20 @@ class StoreController extends Controller
             ])
             ->join('store_addresses', 'stores.id', '=', 'store_addresses.store_id')
             ->selectRaw("
-            ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) AS distance
-        ", [$longitude, $latitude])
+        ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) AS distance
+    ", [$longitude, $latitude])
             ->whereRaw("
-            ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) <= ?
-        ", [$longitude, $latitude, $radius])
+        ST_Distance_Sphere(store_addresses.coordinates, POINT(?, ?)) <= ?
+    ", [$longitude, $latitude, $radius])
             ->orderBy('distance')
+            ->limit(6) // LIMITANDO PARA 6 LOJAS APENAS
             ->get();
 
         // Associar produtos filtrados a cada loja
+        // Associar produtos filtrados a cada loja
         $nearbyStores->each(function ($store) {
-            // Produtos com maior desconto (usando a relação correta com store_product)
-            $highestDiscountProducts = Product::select(
+            // Buscar 5 produtos aleatórios com desconto por loja
+            $randomDiscountProducts = Product::select(
                 'products.id',
                 'products.name',
                 'products.description',
@@ -452,32 +455,15 @@ class StoreController extends Controller
                 'products.stock',
                 DB::raw('(products.price - (products.price * (products.discount / 100))) AS final_price')
             )
+                ->with(['gallery'])
                 ->join('store_products', 'store_products.product_id', '=', 'products.id')
                 ->where('store_products.store_id', $store->id)
                 ->where('products.discount', '>', 0) // Apenas produtos com desconto
-                ->orderByDesc('products.discount')
-                ->limit(2) // Apenas os 2 produtos com maior desconto
+                ->inRandomOrder()
+                ->limit(4) // Limita a 5 produtos aleatórios
                 ->get();
 
-            // Produtos mais comprados (baseados na tabela order_store_product)
-            $mostOrderedProducts = Product::select(
-                'products.id',
-                'products.name',
-                'products.description',
-                'products.price',
-                'products.discount',
-                'products.stock',
-                DB::raw('(SELECT COUNT(*) FROM order_store_products WHERE order_store_products.product_id = products.id) AS order_count')
-            )
-                ->join('store_products', 'store_products.product_id', '=', 'products.id')
-                ->where('store_products.store_id', $store->id)
-                ->orderByDesc('order_count')
-                ->limit(2) // Apenas os 2 produtos mais comprados
-                ->get();
-
-            // Adicionar os produtos à loja
-            $store->highestDiscountProducts = $highestDiscountProducts;
-            $store->mostOrderedProducts = $mostOrderedProducts;
+            $store->bestProducts = $randomDiscountProducts;
         });
 
         return response()->json([
@@ -485,7 +471,6 @@ class StoreController extends Controller
             'nearbyStores' => $nearbyStores
         ]);
     }
-
 
     public function showStore($id)
     {

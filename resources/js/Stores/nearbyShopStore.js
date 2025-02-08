@@ -4,8 +4,7 @@ import axios from "axios";
 class NearbyShopStore {
     nearbyStores = [];
     allStores = [];
-    mostNearOrderProducts = [];
-    highestNearDiscountProduct = [];
+    bestProducts = [];
     loading = false;
     error = null;
 
@@ -27,8 +26,15 @@ class NearbyShopStore {
 
             this.allStores = response.data.allStores || [];
             this.nearbyStores = response.data.nearbyStores || [];
-            this.mostNearOrderProducts = response.data.mostNearOrderProducts || [];
-            this.highestNearDiscountProduct = response.data.highestNearDiscountProduct || [];
+            if (response.data.nearbyStores) {
+                // Mapeia as lojas e junta os produtos num único array
+                const allBestProducts = response.data.nearbyStores.flatMap(store => store.bestProducts || []);
+
+                // Atualiza o estado do MobX corretamente
+                this.setBestProducts(allBestProducts);
+            }
+
+            console.log("Products:", toJS(this.bestProducts));
 
             console.log("Fetched stores:", toJS(this.nearbyStores));
 
@@ -38,6 +44,9 @@ class NearbyShopStore {
         } finally {
             this.loading = false;
         }
+    }
+    setBestProducts(products) {
+        this.bestProducts = [...products]; // Atualiza garantindo a reatividade
     }
 }
 

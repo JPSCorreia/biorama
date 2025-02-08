@@ -4,9 +4,10 @@ import { HomeStoreCard } from "../index.js";
 import { nearbyShopStore } from "../../Stores/nearbyShopStore.js";
 import { toJS } from "mobx";
 
-export const NearbyStores = observer(() => {
+export const HomeNearbyStores = observer(() => {
     const theme = useTheme();
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+    const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
     const nearbyStores = toJS(nearbyShopStore.nearbyStores); // ✅ Garante que é um array normal
 
@@ -51,18 +52,21 @@ export const NearbyStores = observer(() => {
             sx={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "center",
-                width: smallerThanMedium ? "100%" : "100%",
+                justifyContent: "space-between",
+                width: "100%",
                 alignItems: "center",
-                mr: 2,
-                mt: 2,
             }}
         >
             <Box
                 sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "16px",
+                    display: "grid",
+                    gap: 4,
+                    gridTemplateColumns: smallerThanMedium
+                        ? "1fr" // 1 coluna em telas pequenas
+                        : smallerThanLarge
+                            ? "1fr 1fr" // 2 colunas em tablets
+                            : "1fr 1fr 1fr", // 3 colunas em telas grandes
+                    width: "100%",
                     justifyContent: "space-between",
                 }}
             >
@@ -74,4 +78,4 @@ export const NearbyStores = observer(() => {
     );
 });
 
-export default NearbyStores;
+export default HomeNearbyStores;

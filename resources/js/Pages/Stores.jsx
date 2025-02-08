@@ -262,7 +262,7 @@ const Stores = observer(() => {
                     <Button
                         variant="contained"
                         sx={{
-                            backgroundColor: "#ff9900c4",
+                            backgroundColor: "secondary.button",
                             borderRadius:
                                 smallerThanMedium || smallerThanLarge
                                     ? "50px"
@@ -282,7 +282,7 @@ const Stores = observer(() => {
                     </Button>
                     <Button
                         sx={{
-                            backgroundColor: "#A5C686",
+                            backgroundColor: "primary.title",
                             borderRadius:
                                 smallerThanMedium || smallerThanLarge
                                     ? "50px"
@@ -408,7 +408,7 @@ const Stores = observer(() => {
                         sx={{
                             fontWeight: "bold",
                             fontSize: "2rem",
-                            color: "#A5C686",
+                            color: "primary.title",
                         }}
                     >
                         Resultado da Pesquisa

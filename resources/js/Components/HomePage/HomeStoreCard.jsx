@@ -31,23 +31,25 @@ const HomeStoreCard = observer(({ store }) => {
         <Card
             sx={{
                 width: 380,
-                height: 460,
+                height: 480,
                 boxShadow: isHovered ? 8 : 3,
-                borderRadius: 4,
+                borderRadius: "10px",
                 overflow: "hidden",
                 transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                transform: isHovered ? "scale(1.04)" : "scale(1)",
+                transform: isHovered ? "scale(1.015)" : "scale(1)",
                 backgroundColor: theme.palette.background.paper,
                 cursor: "pointer",
                 position: "relative",
+                display: "flex",
+                flexDirection: "column",
             }}
             key={store.id}
             onClick={() => router.visit(`/loja/${store.id}`)}
             onMouseEnter={() => hoverStore.setHoveredStore(store.id)}
             onMouseLeave={() => hoverStore.setHoveredStore(null)}
         >
-            {/* Carrossel de Imagens */}
-            <Box sx={{ borderRadius: "10px", overflow: "hidden", height: "200px" }}>
+            {/* Carrossel de Imagens - 50% do Card */}
+            <Box sx={{ height: "40%", overflow: "hidden", position: "relative" }}>
                 <Carousel
                     autoPlay={false}
                     indicators={false}
@@ -80,10 +82,11 @@ const HomeStoreCard = observer(({ store }) => {
                                 key={index}
                                 sx={{
                                     width: "100%",
-                                    height: "200px",
+                                    height: "180px",
                                     backgroundImage: `url(${img.image_link})`,
                                     backgroundSize: "cover",
                                     backgroundPosition: "center",
+                                    backgroundRepeat: "no-repeat",
                                 }}
                             />
                         ))
@@ -91,7 +94,7 @@ const HomeStoreCard = observer(({ store }) => {
                         <Box
                             sx={{
                                 width: "100%",
-                                height: "200px",
+                                height: "100%",
                                 backgroundImage: "url('/images/default-store.jpg')",
                                 backgroundSize: "cover",
                                 backgroundPosition: "center",
@@ -101,107 +104,122 @@ const HomeStoreCard = observer(({ store }) => {
                 </Carousel>
             </Box>
 
-            {/* Informações da Loja */}
+            {/* Informações da Loja - 50% do Card */}
             <CardContent
                 sx={{
                     textAlign: "left",
                     p: 2,
+                    pt:0,
                     display: "flex",
                     flexDirection: "column",
-                    gap: 1.5,
+                    justifyContent: "space-between",
+                    overflow: "hidden",
+                    height: "60%",
+
                 }}
             >
-                {/* Nome da Loja */}
-                <Typography
-                    fontWeight="bold"
-                    variant="h5"
-                    sx={{
-                        color: theme.palette.primary.main,
-                        textTransform: "capitalize",
-                    }}
-                >
-                    {store.name}
-                </Typography>
-
-                {/* Descrição */}
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 3,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                    }}
-                >
-                    <ReactMarkdown>
-                        {truncateDescription(store.description, 120, 160)}
-                    </ReactMarkdown>
-                </Typography>
-
-                {/* Endereço */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <LocationOnIcon sx={{ color: theme.palette.primary.main, fontSize: "1.2rem" }} />
-                    <Typography variant="body2" color="text.secondary">
-                        {store.addresses[0]?.street_address}, {store.addresses[0]?.city}
+                <Box>
+                    {/* Nome da Loja */}
+                    <Typography
+                        fontWeight="bold"
+                        variant="h5"
+                        sx={{
+                            color: theme.palette.primary.main,
+                            textTransform: "capitalize",
+                        }}
+                    >
+                        {store.name}
                     </Typography>
                 </Box>
-
-                {/* Contactos */}
-                <Box sx={{ display: "flex", gap: 2 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <CallIcon sx={{ fontSize: "1.1rem", color: "primary.main" }} />
-                        <Typography variant="body2" color="text.secondary">
-                            {store.phone_number}
-                        </Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <EmailIcon sx={{ fontSize: "1.1rem", color: "primary.main" }} />
-                        <Typography variant="body2" color="text.secondary">
-                            {store.email}
-                        </Typography>
-                    </Box>
+                <Box>
+                    {/* Descrição */}
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: 2,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            height: "110px",
+                        }}
+                    >
+                        <ReactMarkdown>
+                            {truncateDescription(store.description, 90, 150)}
+                        </ReactMarkdown>
+                    </Typography>
                 </Box>
-
-                {/* Distância */}
-                <Typography
-                    variant="caption"
+                <Box
                     sx={{
-                        fontWeight: "bold",
-                        color: theme.palette.primary.dark,
-                        mt: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        mb: 2,
+                        mt: 2,
                     }}
                 >
-                    Distância: {(store.distance / 1000).toFixed(1)} km
-                </Typography>
-            </CardContent>
+                    {/* Endereço */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                        <LocationOnIcon sx={{ color: theme.palette.primary.main, fontSize: "1.2rem" }} />
+                        <Typography variant="body2" color="text.secondary">
+                            {store.addresses[0]?.street_address}, {store.addresses[0]?.city}
+                        </Typography>
+                    </Box>
 
-            {/* Botão Mais Informações */}
-            <Box
-                sx={{
-                    position: "absolute",
-                    bottom: 10,
-                    right: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    transition: "color 0.3s ease-in-out",
-                    color: theme.palette.primary.main,
-                    "&:hover": {
-                        color: theme.palette.primary.dark,
-                    },
-                }}
-            >
-                <Typography variant="button">MAIS INFORMAÇÕES</Typography>
-                <IconButton size="small">
-                    <ArrowForwardIosIcon fontSize="small" />
-                </IconButton>
-            </Box>
+                    {/* Contactos */}
+                    <Box>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                            <CallIcon sx={{ fontSize: "1.1rem", color: "primary.main" }} />
+                            <Typography variant="body2" color="text.secondary">
+                                {store.phone_number}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <EmailIcon sx={{ fontSize: "1.1rem", color: "primary.main" }} />
+                            <Typography variant="body2" color="text.secondary">
+                                {store.email}
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Box>
+                <Box>
+
+                    <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
+                        {/* Distância */}
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                fontWeight: "bold",
+                                color: theme.palette.primary.dark,
+                            }}
+                        >
+                            Distância: {(store.distance / 1000).toFixed(1)} km
+                        </Typography>
+                        {/* Botão Mais Informações */}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                fontSize: "16px",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                                transition: "color 0.3s ease-in-out",
+                                color: theme.palette.primary.main,
+                                "&:hover": {
+                                    color: theme.palette.primary.dark,
+                                },
+                            }}
+                        >
+                            <Typography variant="button">MAIS INFORMAÇÕES</Typography>
+                            <IconButton size="small">
+                                <ArrowForwardIosIcon fontSize="small" />
+                            </IconButton>
+                        </Box>
+                    </Box>
+                </Box>
+            </CardContent>
         </Card>
+
     );
 });
 

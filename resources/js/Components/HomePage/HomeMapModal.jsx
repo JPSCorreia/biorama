@@ -3,7 +3,7 @@ import HomeMap from "./HomeMap";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 
 
-const MapModal = ({ open, onClose }) => {
+const HomeMapModal = ({ open, onClose }) => {
     return (
         <Modal
             open={open}
@@ -73,4 +73,4 @@ const MapModal = ({ open, onClose }) => {
     );
 };
 
-export default MapModal;
+export default HomeMapModal;
