@@ -6,6 +6,7 @@ use App\Models\Gender;
 use App\Models\Vendor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 
 class VendorFactory extends Factory
 {
@@ -13,10 +14,17 @@ class VendorFactory extends Factory
 
     public function definition()
     {
-        $user_id = User::where('id', '!=', 2)->get()->random()->id;
-        $is_company = $this->faker->boolean;
+        // Buscar um User que ainda não tenha Vendor
+        $user = DB::transaction(function () {
+            return User::whereDoesntHave('vendor') // Só Users sem Vendor
+                ->lockForUpdate()
+                ->inRandomOrder()
+                ->first()
+                ?? User::factory()->create(); // Se não houver, cria um novo
+        });
+
         return [
-            'user_id' => $user_id,
+            'user_id' => $user->id, // Garante que cada Vendor tem um User único
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
@@ -25,7 +33,7 @@ class VendorFactory extends Factory
             'phone' => $this->faker->phoneNumber(),
             'date_of_birth' => $this->faker->date(),
             'iban' => $this->faker->iban(),
-            'is_company' => $is_company,
+            'is_company' => $this->faker->boolean(),
             'created_at' => now(),
             'updated_at' => now(),
         ];

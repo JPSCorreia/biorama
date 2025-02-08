@@ -42,6 +42,7 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
                     backgroundColor: theme.palette.primary.main,
                 }}
             />
+            {console.log(user)}
 
             {/* Avatar Circular no Centro */}
             <Box

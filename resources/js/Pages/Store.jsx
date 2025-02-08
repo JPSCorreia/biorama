@@ -8,6 +8,8 @@ const Store = observer(() => {
 
     const { store, vendor, products, user, gallery, address, other } = usePage().props;
 
+    console.log("User", user);
+
     const theme = useTheme();
 
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));

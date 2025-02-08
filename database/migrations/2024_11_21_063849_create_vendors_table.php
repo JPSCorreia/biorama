@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users'); // Chave estrangeira para a tabela users
+            $table->foreignId('user_id')->unique()->constrained('users'); // Chave estrangeira para a tabela users
             $table->string('first_name', 100);
             $table->string('last_name', 100);
             $table->string('email')->unique();

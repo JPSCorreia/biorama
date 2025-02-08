@@ -58,6 +58,7 @@ const Home = observer(() => {
                 minWidth: "100%",
                 height: "100%",
                 marginTop: "15px !important",
+                mb: 7,
             }}
         >
             <AlertBox />
