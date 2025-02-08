@@ -29,9 +29,10 @@ class Store extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_store_products')
-            ->withPivot(['product_id', 'price', 'quantity', 'discount'])
-            ->withTimestamps();
+            ->withPivot(['store_id', 'price', 'quantity', 'discount'])
+            ->using(OrderStoreProduct::class);
     }
+
 
     public function products()
     {
@@ -53,6 +54,7 @@ class Store extends Model
     {
         return $this->hasMany(StoreGallery::class, 'store_id');
     }
+
 
 
 }

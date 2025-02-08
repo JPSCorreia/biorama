@@ -1,0 +1,52 @@
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
+const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
+    return (
+        <Box
+            onClick={onViewAllOrders}
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '150px',
+                flex: '1 1 25%',
+                backgroundColor: '#fff',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                position: 'relative',
+                cursor: 'pointer',
+                transition: 'transform 0.3s',
+                width: '100%',
+                '&:hover': {
+                    transform: 'scale(1.05)',
+                },
+            }}
+        >
+            <Box
+                sx={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: '5px',
+                    backgroundColor: '#2196f3',
+                }}
+            ></Box>
+
+            <Box sx={{ textAlign: 'center', padding: '16px' }}>
+                <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: '8px' }}>
+                    Todas as Encomendas
+                </Typography>
+                <ShoppingCartIcon fontSize="large" sx={{ color: '#2196f3' }} />
+                <Typography variant="h4" sx={{ marginTop: '8px', fontWeight: 'bold' }}>
+                    {totalOrders}
+                </Typography>
+            </Box>
+        </Box>
+    );
+};
+
+export default DashboardAllOrdersCard;

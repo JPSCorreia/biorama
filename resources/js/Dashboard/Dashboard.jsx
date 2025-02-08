@@ -129,13 +129,6 @@ const Dashboard = ({ children }) => {
         );
     }
 
-    ExitButton.propTypes = {
-        mini: PropTypes.bool,
-    };
-
-    ExitButton.defaultProps = {
-        mini: false,
-    };
 
     // Authentication settings for AppProvider
     const authentication = useMemo(() => {

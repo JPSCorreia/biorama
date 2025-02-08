@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Order;
 use App\Models\Gender;
+use App\Models\OrderStoreProduct;
+use App\Models\Status;
 use App\Models\Store;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
@@ -286,81 +288,213 @@ class DashboardController extends Controller
         // Buscar todas as lojas associadas ao vendor
         $storeIds = Store::where('vendor_id', $vendorId)->pluck('id');
 
+        // Construir a query
         $query = Order::whereHas('stores', function ($q) use ($storeIds) {
             $q->whereIn('stores.id', $storeIds);
-        })->with(['user', 'status','product', 'stores']);
-
+        })->with([
+            'user:id,email,first_name,last_name',
+            'status:id,name',
+            'products:id,name',
+            'stores:id,name'
+        ])->select([
+            'id',
+            'user_id',
+            'statuses_id',
+            'street_name',
+            'city',
+            'postal_code',
+            'phone_number',
+            'total'
+        ]);
 
         // Aplicar filtro de pesquisa se o searchTerm for fornecido
-        if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('id', 'like', "%$searchTerm%")
-                    ->orWhereHas('user', function ($q) use ($searchTerm) {
-                        $q->where('name', 'like', "%$searchTerm%");
-                    });
+        if (is_numeric($searchTerm)) {
+            $query->where('id', $searchTerm);
+        } else {
+            $query->whereHas('user', function ($q) use ($searchTerm) {
+                $q->where('email', 'like', "%$searchTerm%");
             });
         }
 
         // Retornar resultados paginados
         $orders = $query->paginate($itemsPerPage);
 
-        dd($orders->toArray());
         return response()->json($orders);
     }
 
-
-
-
-    // 2. Mostrar encomendas por loja
-    public function showOrdersByStore($storeId)
+    public function updateOrder(Request $request, $orderId)
     {
-        $orders = Order::where('store_id', $storeId)->with(['user', 'status'])->get();
-        return response()->json($orders);
+        $validatedData = $request->validate([
+            'statuses_id' => 'required|exists:statuses,id',
+            'products' => 'required|array|min:1',
+            'products.*.id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'removedProducts' => 'nullable|array',
+            'removedProducts.*' => 'exists:products,id',
+        ]);
+
+        try {
+            $order = Order::findOrFail($orderId);
+
+            // Atualizar o status da encomenda
+            $order->statuses_id = $validatedData['statuses_id'];
+            $order->save();
+
+            // Soft delete dos produtos removidos (se houver)
+            if (!empty($validatedData['removedProducts'])) {
+                $order->products()->whereIn('product_id', $validatedData['removedProducts'])->delete();
+            }
+
+            // Verificar se todos os produtos válidos foram removidos ou têm quantidade 0
+            $validProducts = [];
+            $newTotal = 0;
+
+            foreach ($validatedData['products'] as $productData) {
+                if ($productData['quantity'] > 0) {
+                    $validProducts[] = $productData;
+
+                    // Atualizar os preços e calcular os valores de preço final e desconto
+                    $product = $order->products()->where('product_id', $productData['id'])->first();
+                    if ($product) {
+                        $originalPrice = $product->pivot->price;
+                        $discount = $product->pivot->discount ?? 0;
+                        $discountValue = $originalPrice * ($discount / 100);
+                        $finalPrice = ($originalPrice - $discountValue) * $productData['quantity'];
+
+                        // Atualizar a linha na tabela intermediária
+                        $order->products()->updateExistingPivot($productData['id'], [
+                            'quantity' => $productData['quantity'],
+                            'original_price' => $originalPrice,
+                            'discount_value' => $discountValue * $productData['quantity'],
+                            'final_price' => $finalPrice,
+                        ]);
+
+                        // Incrementar o total da encomenda
+                        $newTotal += $finalPrice;
+                    }
+                }
+            }
+
+            // Se não houver produtos válidos, cancelar a encomenda
+            if (empty($validProducts)) {
+                $order->statuses_id = Status::where('name', 'Cancelado')->first()->id;
+                $order->save();
+                return response()->json(['message' => 'Todos os produtos foram removidos. A encomenda foi cancelada.'], 200);
+            }
+
+            // Atualizar o total na tabela de encomendas
+            $order->total = $newTotal;
+            $order->save();
+
+            // Retornar os dados atualizados da encomenda
+            $updatedOrder = $order->load(['products', 'user', 'status']);
+
+            return response()->json([
+                'message' => 'Encomenda atualizada com sucesso.',
+                'order' => $updatedOrder,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao atualizar a encomenda: ' . $e->getMessage()], 500);
+        }
     }
 
-    // 3. Pesquisar encomendas por nome de utilizador ou ID
-    public function searchOrders(Request $request)
+    public function getOrdersByStore($storeId, Request $request)
     {
-        // Determinar o número de itens por página (padrão: 10)
-        $itemsPerPage = $request->query('limit', 10);
-        $searchTerm = $request->query('search', '');
+        $validatedData = $request->validate([
+            'search' => 'nullable|string',
+            'page' => 'nullable|integer|min:1',
+            'limit' => 'nullable|integer|min:1',
+        ]);
 
-        // Obter o vendorId do utilizador autenticado
-        $vendorId = Auth::user()->vendor_id;
+        try {
+            $itemsPerPage = $validatedData['limit'] ?? 10;
+            $searchTerm = $validatedData['search'] ?? '';
 
-        // Buscar todas as lojas do vendor
-        $storeIds = Store::where('vendor_id', $vendorId)->pluck('id');
+            // Corrigir a query principal
+            $query = Order::whereHas('stores', function ($q) use ($storeId) {
+                $q->where('store_id', $storeId);
+            })->with([
+                'user:id,email,first_name,last_name',
+                'status:id,name',
+                'products:id,name',
+                'stores' => function ($query) {
+                    $query->withTrashed();  // Soft deletes nas lojas relacionadas
+                }
+            ])->select([
+                'id',
+                'user_id',
+                'statuses_id',
+                'street_name',
+                'city',
+                'postal_code',
+                'phone_number',
+                'total'
+            ]);
 
-        // Buscar encomendas das lojas do vendor aplicando o filtro de pesquisa
-        $orders = Order::whereIn('store_id', $storeIds)
-            ->where(function ($query) use ($searchTerm) {
-                $query->where('id', 'like', "%$searchTerm%")
-                    ->orWhereHas('user', function ($q) use ($searchTerm) {
-                        $q->where('name', 'like', "%$searchTerm%");
-                    });
-            })
-            ->with(['user', 'status'])
-            ->paginate($itemsPerPage);
+            // Aplicar filtro de pesquisa
+            if (!empty($searchTerm)) {
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('id', 'like', "%$searchTerm%")
+                        ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
+                            $userQuery->where('first_name', 'like', "%$searchTerm%")
+                                ->orWhere('last_name', 'like', "%$searchTerm%")
+                                ->orWhere('email', 'like', "%$searchTerm%");
+                        });
+                });
+            }
 
-        // Retornar a resposta paginada
-        return response()->json($orders);
+            $orders = $query->paginate($itemsPerPage);
+
+            return response()->json($orders);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro ao buscar encomendas: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // 4. Ver detalhes da encomenda
-    public function viewOrder($orderId)
+
+    public function getVendorStores(Request $request)
     {
-        $order = Order::with(['user', 'status', 'products'])->findOrFail($orderId);
-        return response()->json($order);
+        try {
+            // Obter o usuário autenticado
+            $user = auth()->user();
+
+            // Verificar se o usuário é um vendor
+            $vendor = $user->vendor;  // Supondo que o relacionamento user -> vendor existe
+
+            if (!$vendor) {
+                return response()->json(['error' => 'Usuário não é um vendor.'], 403);
+            }
+
+            // Buscar todas as lojas associadas ao vendor
+            $stores = $vendor->stores()->select('id', 'name')->get();
+
+            return response()->json($stores, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao buscar lojas: ' . $e->getMessage()], 500);
+        }
     }
 
-    // 5. Atualizar status da encomenda para "cancelado"
-    public function updateStatusToCancelled($orderId)
+    public function cancelOrder($orderId)
     {
-        $order = Order::findOrFail($orderId);
-        $order->statuses_id = 3; // Exemplo: 3 representa "cancelado"
-        $order->save();
+        try {
+            $order = Order::findOrFail($orderId);
 
-        return response()->json(['message' => 'Status updated to cancelled successfully']);
+            // Verificar se já está cancelada
+            if ($order->statuses_id === 5) {
+                return response()->json(['message' => 'A encomenda já está cancelada.'], 200);
+            }
+
+            // Atualizar o estado para "Cancelado" (ID fixo = 5)
+            $order->statuses_id = 5;
+            $order->save();
+
+            return response()->json(['message' => 'Encomenda cancelada com sucesso.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao cancelar a encomenda: ' . $e->getMessage()], 500);
+        }
     }
+
 
 }

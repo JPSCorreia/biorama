@@ -35,14 +35,14 @@ class Order extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class, 'order_store_products', 'order_id', 'product_id')
-            ->withPivot(['price', 'quantity', 'discount', 'final_price'])
+            ->withPivot(['product_id','price', 'quantity', 'discount', 'final_price'])
             ->withTimestamps();
     }
     public function stores()
     {
-        return $this->belongsToMany(Store::class, 'order_store_products')
-            ->withTrashed()
-            ->withPivot(['store_id','price', 'quantity', 'discount'])
-            ->using(OrderStoreProduct::class);
+        return $this->belongsToMany(Store::class, 'order_store_products', 'order_id', 'store_id')
+            ->withPivot(['price', 'quantity', 'discount', 'final_price'])
+            ->withTrashed();  // Aqui também ajuda no caso de soft deletes
     }
+
 }

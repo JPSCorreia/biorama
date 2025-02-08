@@ -42,4 +42,10 @@ class StatusController extends Controller
         $status->delete();
         return response()->json(null, 204);
     }
+
+    public function getStatuses()
+    {
+        $statuses = Status::all(['id', 'name']);
+        return response()->json($statuses);
+    }
 }

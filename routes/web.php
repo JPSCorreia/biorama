@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeAddressController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
@@ -178,7 +179,7 @@ Route::middleware(['auth'])->group(function () {
         // Store routes
         Route::get('/stores', [DashboardController::class,'showVendorStores'])
             ->name('dashboard.stores');
-
+        Route::middleware(['auth'])->get('/vendor/stores', [DashboardController::class, 'getVendorStores']);
         //Route to show a store
         Route::get('/store/{id}', [dashboardController::class, 'dashboardShowStore'])
             ->name('dashboard.store.show');
@@ -192,6 +193,13 @@ Route::middleware(['auth'])->group(function () {
         })->name('dashboard.orders');
         Route::get('/orders', [DashboardController::class, 'getOrders'])->name('dashboard.get.orders');
 
+        Route::get('/statuses', [StatusController::class, 'getStatuses']);
+
+        Route::put('/orders/{orderId}', [DashboardController::class, 'updateOrder'])->name('dashboard.updateOrder');
+
+        Route::put('/orders/{orderId}/cancel', [DashboardController::class, 'cancelOrder']);
+
+        Route::get('/stores/{storeId}/orders', [DashboardController::class, 'getOrdersByStore']);
     });
 });
 
