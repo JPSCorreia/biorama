@@ -17,7 +17,6 @@ const StoreBanner = ({ title, gallery }) => {
                     backgroundImage: `url(${props.item.image_link})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    boxShadow: `0px 2px 10px ${theme.palette.primary.main}`,
                 }}
             >
                 {/* Dark background overlay */}

@@ -108,7 +108,6 @@ const StoreMap = ({ store, address }) => {
                         justifyContent: "center",
                         borderRadius: "8px",
                         padding: "2px",
-                        border: `1px solid ${theme.palette.primary.main}`,
                     }}
                 >
                     <MapContainer

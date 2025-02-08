@@ -316,7 +316,6 @@ const Stores = observer(() => {
                     justifyContent: "center",
                     borderRadius: "6px",
                     padding: "2px",
-                    border: `1px solid ${theme.palette.primary.main}`,
                 }}
             >
                 <MapContainer
