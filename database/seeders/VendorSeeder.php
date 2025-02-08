@@ -17,12 +17,13 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
-        // Criar um vendor associado ao User com id 1
-        $user = User::find(1);
+        // Criar ou buscar o User com ID 1
+        $user = User::where('id', 1)->first();
 
-        if ($user && !$user->vendor) {
-            $vendor = Vendor::create([
-                'user_id' => $user->id,
+        // Criar um Vendor para esse User apenas se ainda não existir
+        $vendor = Vendor::firstOrCreate(
+            ['user_id' => $user->id], // Condição para evitar duplicação
+            [
                 'first_name' => 'Vladimiro',
                 'last_name' => 'Bonaparte',
                 'email' => 'vladimiro@example.com',
@@ -34,9 +35,12 @@ class VendorSeeder extends Seeder
                 'is_company' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ]
+        );
 
-            Company::create([
+        // Criar uma empresa associada ao Vendor apenas se não existir
+        if (!$vendor->company) {
+            $company = Company::create([
                 'vendor_id' => $vendor->id,
                 'name' => 'Gaspar Ramos',
                 'nif' => '530475035',
@@ -46,16 +50,18 @@ class VendorSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
             CompanyContact::create([
-                'company_id' => $vendor->company->id,
+                'company_id' => $company->id,
                 'phone' => '931883380',
                 'email' => 'campos.matheus@example.org',
                 'website' => 'http://martins.eu/eius-reprehenderit-voluptate',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
             CompanyAddress::create([
-                'company_id' => $vendor->company->id,
+                'company_id' => $company->id,
                 'street' => 'Rua Principal',
                 'number' => '123',
                 'postal_code' => '2845-210',
@@ -66,10 +72,9 @@ class VendorSeeder extends Seeder
             ]);
         }
 
-        // Criar 10 Users e associar Vendors a cada um
+        // Criar 10 novos Users e associar Vendors a cada um
         User::factory(10)->create()->each(function ($user) {
             $vendor = Vendor::factory()->create(['user_id' => $user->id]);
-
             Company::factory()->create(['vendor_id' => $vendor->id]);
             VendorReview::factory()->count(5)->create(['vendor_id' => $vendor->id]);
         });
