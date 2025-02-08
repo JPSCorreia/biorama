@@ -8,15 +8,24 @@ const AlertBox = observer(() => {
 
     const { flash } = usePage().props;
 
+    useEffect(() => {
+        return router.on('navigate', () => {
+            alertStore.reset();
+        });
+    }, []);
+
 
     useEffect(() => {
         if (flash?.message && flash.message !== alertStore.lastMessage) {
+
             alertStore.clearTimers();
 
             setTimeout(() => {
+
                 alertStore.setAlert(flash.message, flash.type || "success");
 
                 const hideTimer = setTimeout(() => {
+                    console.log('hide')
                     alertStore.hideAlert();
                 }, 3000);
                 alertStore.addTimer(hideTimer);
