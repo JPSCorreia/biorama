@@ -27,8 +27,8 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'gender_id' => Gender::all()->random()->id,
             'remember_token' => Str::random(10),
-            'created_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
-            'updated_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
+            'created_at' => $this->faker->dateTimeBetween('-6 years', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-6 years', 'now'),
         ];
     }
 }

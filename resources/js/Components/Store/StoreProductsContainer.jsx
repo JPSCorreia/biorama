@@ -1,11 +1,15 @@
 import React, { useState, useMemo } from "react";
-import { Typography, Box, Pagination } from "@mui/material";
+import {Typography, Box, Pagination, useMediaQuery, useTheme} from "@mui/material";
 import { StoreProductCard } from "../";
 
 const StoreProductsContainer = ({ products, vendor, store }) => {
+
+    const theme = useTheme();
     // 'products' agora é um array simples com todos os produtos
     const [page, setPage] = useState(1);
     const itemsPerPage = 10; // Quantos produtos por página
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     // Calcula o total de páginas com base no tamanho do array
     const totalPages = useMemo(() => {
@@ -39,8 +43,14 @@ const StoreProductsContainer = ({ products, vendor, store }) => {
                 {/* Renderiza os produtos da página atual */}
                 <Box
                     sx={{
-                        display: "flex",
-                        flexWrap: "wrap",
+                        display: "grid",
+                        gridTemplateColumns: isSmallScreen
+                            ? "repeat(1, 1fr)"
+                            : isMediumScreen
+                                ? "repeat(2, 1fr)"
+                                : "repeat(5, 1fr)",
+
+                        gridAutoRows: "minmax(150px, auto)",
                         gap: 2,
                         justifyContent: "center",
                         width: "100%",
@@ -56,9 +66,12 @@ const StoreProductsContainer = ({ products, vendor, store }) => {
                             />
                         ))
                     ) : (
-                        <p>Nenhum produto disponível.</p>
+                        <p style={{ gridColumn: "span 6", textAlign: "center" }}>
+                            Nenhum produto disponível.
+                        </p>
                     )}
                 </Box>
+
                 {/* Componente de paginação do Material UI */}
                 <Box sx={{ mt: 3 }}>
                     <Pagination

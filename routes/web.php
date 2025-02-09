@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\StoreReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\OrderController;
@@ -162,6 +163,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/morada/{id}/set-morada-fav', [HomeAddressController::class, 'setPrimary']);
     //Route to delete an address
     Route::delete('/apagar-morada/{morada_id}', [HomeAddressController::class, 'destroy'])->name('delete_address');
+
+    Route::post('/adicionar-comentario', [StoreReviewController::class, 'store'])->name('add_store_review');
 
     // Route to create a new order
     Route::post('/encomendar', [OrderController::class, 'store'])->name('make_order');

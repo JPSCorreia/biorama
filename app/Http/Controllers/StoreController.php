@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Store;
 use App\Models\StoreAddress;
@@ -443,7 +444,6 @@ class StoreController extends Controller
             ->get();
 
         // Associar produtos filtrados a cada loja
-        // Associar produtos filtrados a cada loja
         $nearbyStores->each(function ($store) {
             // Buscar 5 produtos aleatórios com desconto por loja
             $randomDiscountProducts = Product::select(
@@ -549,6 +549,26 @@ class StoreController extends Controller
         $reviewCount = StoreReview::whereIn('store_id', Store::where('vendor_id', $store->vendor_id)->pluck('id'))->count();
         $orderCount = OrderStoreProduct::where('store_id', $id)->count();
 
+        $storeReviews = StoreReview::where('store_id', $id)
+            ->with('user') // Obtém o usuário que fez a review
+            ->get();
+
+        // Formata as reviews
+        $reviewsFormatted = $storeReviews->map(function ($review) {
+            return [
+                'id'        => $review->id,
+                'user'      => [
+                    'first_name'          => $review->user->first_name,
+                    'last_name'          => $review->user->last_name,
+                    'profile_photo' => $review->user->profile_photo,
+                ],
+                'rating'    => $review->rating,
+                'comment'   => $review->comment,
+                'timestamp' => Carbon::parse($review->created_at)->translatedFormat('d \d\e F \d\e Y'),
+            ];
+        });
+
+        // Formata os dados finais da loja
         $formattedStore = [
             'id'           => $store->id,
             'vendor_id'    => $store->vendor_id,
@@ -562,6 +582,7 @@ class StoreController extends Controller
             'image_link'   => $storeImage ? $storeImage->image_link : null,
             'longitude'    => $storeAddress->longitude,
             'latitude'     => $storeAddress->latitude,
+            'reviews'      => $reviewsFormatted,
         ];
 
         $other = [
@@ -573,7 +594,7 @@ class StoreController extends Controller
         return Inertia::render('Store', [
             'store'    => $formattedStore,
             'vendor'   => $vendor,
-            'products' => $products, // Agora é uma coleção completa (array) de produtos
+            'products' => $products,
             'user'     => $user,
             'gallery'  => $storeGallery,
             'address'  => $storeAddress,
