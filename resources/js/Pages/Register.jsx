@@ -172,6 +172,7 @@ const Register = () => {
                                 type="password"
                                 variant="outlined"
                                 required
+                                autoComplete="new-password"
                                 value={formData.password}
                                 onChange={(e) =>
                                     setFormData({
@@ -187,6 +188,7 @@ const Register = () => {
                                 type="password"
                                 variant="outlined"
                                 required
+                                autoComplete="new-password"
                                 value={formData.password_confirmation}
                                 onChange={(e) =>
                                     setFormData({

@@ -10,10 +10,14 @@ import {
     PaymentStep,
     ReviewStep,
 } from "../Components";
+import axios from "axios";
+import { usePage } from "@inertiajs/react";
 
 const CheckoutFlow = observer(() => {
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedPayment, setSelectedPayment] = useState(null);
+    const [isNextDisabled, setIsNextDisabled] = useState(false); // Estado para controlar o botão "Avançar"
+    const auth = usePage().props.auth;
 
     const steps = [
         "Escolher Morada de Envio",
@@ -24,14 +28,13 @@ const CheckoutFlow = observer(() => {
 
     useEffect(() => {
         if (currentStep === 3) {
-            // talvez nao seja preciso
             cartStore.clearCart();
         }
     }, [currentStep]);
 
     const handleNext = () => {
         if (currentStep === 2) {
-            console.log("finalizar compra");
+            // console.log("finalizar compra");
         } else {
             setCurrentStep((prev) => prev + 1);
         }
@@ -44,10 +47,7 @@ const CheckoutFlow = observer(() => {
     const renderStep = () => {
         switch (currentStep) {
             case 0:
-                return (
-                    <AddressStep
-                    />
-                );
+                return <AddressStep setButtonDisabled={setIsNextDisabled} />; // Passa a função para controlar o botão
             case 1:
                 return (
                     <PaymentStep
@@ -66,14 +66,32 @@ const CheckoutFlow = observer(() => {
         }
     };
 
-    const handleCheckout = () => {
+    const sendInvoice = async (order) => {
+        try {
+            const response = await axios.post("/send-invoice", {
+                order,
+                user: { email: auth.user.email },
+            });
+        } catch (error) {
+            console.error("Erro ao enviar a fatura:", error);
+            if (error.response) {
+                alert(
+                    `Erro: ${error.response.data.message || "Ocorreu um erro inesperado."}`,
+                );
+            } else {
+                alert(
+                    "Erro ao enviar a fatura. Verifica a tua conexão ou tenta novamente.",
+                );
+            }
+        }
+    };
 
+    const handleCheckout = () => {
         if (!selectedPayment) {
             alert("Por favor, selecione um método de pagamento.");
             return;
         }
 
-        // Obter a morada principal (is_primary)
         const primaryAddress = homeAddressStore.addresses.find(address => address.is_primary);
 
         if (!primaryAddress) {
@@ -81,7 +99,6 @@ const CheckoutFlow = observer(() => {
             return;
         }
 
-        // Criar encomendas por cada loja no carrinho
         const orders = Object.keys(cartStore.cart).map((storeId) => {
             const products = cartStore.cart[storeId].map((item) => ({
                 product_id: item.id,
@@ -96,34 +113,46 @@ const CheckoutFlow = observer(() => {
                 ).toFixed(2),
             }));
 
-            return {
-                user_id: 32, // Aqui deves usar o ID do utilizador autenticado dinamicamente
+            const subtotal = cartStore.storeTotals[storeId] || 0;
+            const shippingCosts = cartStore.shippingCosts[storeId] || 0;
+            const total = subtotal + shippingCosts;
+
+            let order = {
+                user_id: auth.user.id,
+                name: auth.user.first_name + " " + auth.user.last_name,
                 statuses_id: 1, // Pendente
                 street_name: primaryAddress.street_address,
+                phone_number: primaryAddress.phone_number,
                 city: primaryAddress.city,
                 postal_code: primaryAddress.postal_code,
-                phone_number: primaryAddress.phone_number,
-                comment: "", // Podes adicionar um campo de observação
-                total:
-                    cartStore.storeTotals[storeId] +
-                    (cartStore.shippingCosts[storeId] || 0),
+                comment: "",
+                subtotal: subtotal.toFixed(2),
+                shipping_costs: shippingCosts.toFixed(2),
+                total: total.toFixed(2),
                 products: products,
             };
+
+            return order;
         });
 
-        console.log("Encomendas:", orders);
-
-        // Enviar as encomendas para o backend
         router.post("/encomendar", { orders }, {
-            onSuccess: () => {
+            onSuccess: (response) => {
+                console.log("Encomenda criada com sucesso!", response);
                 cartStore.clearCart();
+
+                const orderIds = response.props.flash.orders;
+
+                // Chamar sendInvoice para enviar a fatura
+                orders.forEach((order, index) => {
+                    order.id = orderIds[index]; // Adicionar o ID correto
+                    sendInvoice(order);
+                });
             },
             onError: (errors) => {
                 console.error("Erro ao processar encomenda:", errors);
             },
         });
     };
-
 
 
     return (
@@ -221,7 +250,7 @@ const CheckoutFlow = observer(() => {
                             <Button
                                 variant="contained"
                                 onClick={handleNext}
-                                disabled={false}
+                                disabled={isNextDisabled} // Agora fica desativado se não houver morada principal
                             >
                                 Avançar
                             </Button>
