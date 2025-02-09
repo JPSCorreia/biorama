@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
@@ -87,11 +88,44 @@ class OrderController extends Controller
         ->with('message', 'Encomenda realizada com sucesso!')
         ->with('type', 'success')
         ->with('orders', collect($createdOrders)->pluck('id')->toArray());
-
     }
 
 
+    public function createPayPalOrder(Request $request)
+    {
+        $orders = $request->input('orders');
+    
+        $totalAmount = collect($orders)->sum('total');
+    
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic ' . base64_encode(env('PAYPAL_CLIENT_ID') . ':' . env('PAYPAL_SECRET'))
+        ])->post("https://api-m.sandbox.paypal.com/v2/checkout/orders", [
+            "intent" => "CAPTURE",
+            "purchase_units" => [
+                [
+                    "amount" => [
+                        "currency_code" => "EUR",
+                        "value" => number_format($totalAmount, 2, '.', ''),
+                    ]
+                ]
+            ]
+        ]);
+    
+        return response()->json($response->json());
+    }
 
+    public function capturePayPalOrder(Request $request)
+    {
+        $orderID = $request->input('orderID');
+    
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic ' . base64_encode(env('PAYPAL_CLIENT_ID') . ':' . env('PAYPAL_SECRET'))
+        ])->post("https://api-m.sandbox.paypal.com/v2/checkout/orders/{$orderID}/capture");
+    
+        return response()->json($response->json());
+    }
 
 
     public function show(Order $order)

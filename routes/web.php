@@ -165,6 +165,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Route to create a new order
     Route::post('/encomendar', [OrderController::class, 'store'])->name('make_order');
+    // Route to create paypal order
+    Route::post('/paypal/create-order', [OrderController::class, 'createPayPalOrder']);
+    // Route to capture paypal order
+    Route::post('/paypal/capture-order', [OrderController::class, 'capturePayPalOrder']);
+
 
     // Vendor dashboard
     Route::prefix('/dashboard')->group(function () {
