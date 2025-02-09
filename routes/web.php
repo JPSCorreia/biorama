@@ -202,6 +202,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/orders/{orderId}/cancel', [DashboardController::class, 'cancelOrder']);
 
         Route::get('/stores/{storeId}/orders', [DashboardController::class, 'getOrdersByStore']);
+
+        Route::get('/data', [DashboardController::class, 'getDashboardData']);
     });
 });
 

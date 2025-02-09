@@ -9,6 +9,7 @@ use App\Models\OrderStoreProduct;
 use App\Models\Status;
 use App\Models\Store;
 use App\Models\Vendor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -448,7 +449,6 @@ class DashboardController extends Controller
         }
     }
 
-
     public function getVendorStores(Request $request)
     {
         try {
@@ -491,5 +491,197 @@ class DashboardController extends Controller
         }
     }
 
+    public function getDashboardData(Request $request)
+    {
+        // Obter o utilizador autenticado e o seu vendor
+        $userId = Auth::id();
+        $vendor = Vendor::where('user_id', $userId)->first();
+
+        if (!$vendor) {
+            return response()->json(['error' => 'Vendor não encontrado para o utilizador autenticado'], 404);
+        }
+
+        // Obter as lojas do vendor
+        $storeIds = Store::where('vendor_id', $vendor->id)->pluck('id');
+
+        $today = Carbon::now();
+        $yesterday = $today->copy()->subDay();
+        $currentMonth = $today->month;
+        $lastMonth = $today->copy()->subMonth()->month;
+        $currentYear = $today->year;
+        $lastYear = $currentYear - 1;
+
+        // Buscar os IDs dos estados dinamicamente
+        $completedStatusId = Status::where('name', 'Concluído')->first()->id;
+        $canceledStatusId = Status::where('name', 'Cancelada')->first()->id;
+
+        // **1. Receita de hoje e comparação com ontem**
+        $revenueToday = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereDate('created_at', $today->toDateString())
+            ->sum('final_price');
+
+        $revenueYesterday = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereDate('created_at', $yesterday->toDateString())
+            ->sum('final_price');
+
+        $todayDiffPercentage = $revenueYesterday > 0
+            ? round((($revenueToday - $revenueYesterday) / $revenueYesterday) * 100, 2)
+            : 0;
+
+        // **2. Receita deste mês e comparação com o mês anterior**
+        $revenueCurrentMonth = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->sum('final_price');
+
+        $revenueLastMonth = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $lastMonth)
+            ->sum('final_price');
+
+        $monthDiffPercentage = $revenueLastMonth > 0
+            ? round((($revenueCurrentMonth - $revenueLastMonth) / $revenueLastMonth) * 100, 2)
+            : 0;
+
+        // **3. Receita deste ano e comparação com o ano anterior**
+        $revenueCurrentYear = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $currentYear)
+            ->sum('final_price');
+
+        $revenueLastYear = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $lastYear)
+            ->sum('final_price');
+
+        $yearDiffPercentage = $revenueLastYear > 0
+            ? round((($revenueCurrentYear - $revenueLastYear) / $revenueLastYear) * 100, 2)
+            : 0;
+
+        // **4. Número de encomendas este ano e percentagem de canceladas**
+        $totalOrdersCurrentYear = Order::whereHas('orderStoreProducts', function ($query) use ($storeIds, $currentYear) {
+            $query->whereIn('store_id', $storeIds)
+                ->whereYear('order_store_products.created_at', $currentYear);
+        })->count();
+
+        $cancelledOrdersCurrentYear = Order::whereHas('orderStoreProducts', function ($query) use ($storeIds, $currentYear, $canceledStatusId) {
+            $query->whereIn('store_id', $storeIds)
+                ->whereYear('order_store_products.created_at', $currentYear);
+        })->where('statuses_id', $canceledStatusId)->count();
+
+        $cancelledPercentage = $totalOrdersCurrentYear > 0
+            ? round(($cancelledOrdersCurrentYear / $totalOrdersCurrentYear) * 100, 2)
+            : 0;
+
+        // **5. Receita semanal com comparação à semana anterior**
+        $revenueThisWeek = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereBetween('created_at', [
+                $today->startOfWeek()->toDateTimeString(),
+                $today->endOfWeek()->toDateTimeString()
+            ])->sum('final_price');
+
+        $revenueLastWeek = OrderStoreProduct::whereIn('store_id', $storeIds)
+            ->whereBetween('created_at', [
+                $today->subWeek()->startOfWeek()->toDateTimeString(),
+                $today->subWeek()->endOfWeek()->toDateTimeString()
+            ])->sum('final_price');
+
+        $weeklyDiffPercentage = $revenueLastWeek > 0
+            ? round((($revenueThisWeek - $revenueLastWeek) / $revenueLastWeek) * 100, 2)
+            : 0;
+
+        // **6. Receita mensal comparativa por ano (para gráfico de linhas)**
+        $monthlyRevenueCurrentYear = OrderStoreProduct::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(final_price) as total_revenue')
+        )
+            ->whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $currentYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $monthlyRevenueLastYear = OrderStoreProduct::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(final_price) as total_revenue')
+        )
+            ->whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $lastYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // **7. Encomendas mensais no ano corrente**
+        $monthlyOrdersCurrentYear = Order::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as total_orders')
+        )
+            ->whereHas('orderStoreProducts', function ($query) use ($storeIds, $currentYear) {
+                $query->whereIn('store_id', $storeIds)
+                    ->whereYear('order_store_products.created_at', $currentYear);
+            })
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // **8. Encomendas mensais no ano anterior**
+        $monthlyOrdersLastYear = Order::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as total_orders')
+        )
+            ->whereHas('orderStoreProducts', function ($query) use ($storeIds, $lastYear) {
+                $query->whereIn('store_id', $storeIds)
+                    ->whereYear('order_store_products.created_at', $lastYear);
+            })
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // **9. Informações detalhadas por loja**
+        $storeData = Store::whereIn('id', $storeIds)
+            ->with(['orders' => function ($query) {
+                $query->with('orderStoreProducts');
+            }])
+            ->get()
+            ->map(function ($store) use ($completedStatusId, $canceledStatusId) {
+                $totalOrders = $store->orders->count();
+                $completedOrders = $store->orders->where('statuses_id', $completedStatusId)->count();
+                $canceledOrders = $store->orders->where('statuses_id', $canceledStatusId)->count();
+
+                $treatedOrders = $completedOrders + $canceledOrders;
+                $treatedPercentage = $totalOrders > 0 ? ($treatedOrders / $totalOrders) * 100 : 100;
+                $pendingPercentage = 100 - $treatedPercentage;
+
+                $totalRevenue = $store->orders->sum(function ($order) {
+                    return $order->orderStoreProducts->sum('final_price');
+                });
+
+                return [
+                    'name' => $store->name,
+                    'total_revenue' => $totalRevenue,
+                    'completed_percentage' => $completedOrders > 0 ? ($completedOrders / $totalOrders) * 100 : 0,
+                    'canceled_percentage' => $canceledOrders > 0 ? ($canceledOrders / $totalOrders) * 100 : 0,
+                    'treated_percentage' => $treatedPercentage,
+                    'pending_percentage' => $pendingPercentage,
+                    'total_orders' => $totalOrders,
+                ];
+            });
+
+        return response()->json([
+            'revenue_today' => $revenueToday,
+            'today_diff_percentage' => $todayDiffPercentage,
+            'revenue_current_month' => $revenueCurrentMonth,
+            'month_diff_percentage' => $monthDiffPercentage,
+            'revenue_current_year' => $revenueCurrentYear,
+            'year_diff_percentage' => $yearDiffPercentage,
+            'total_orders_current_year' => $totalOrdersCurrentYear,
+            'cancelled_percentage' => $cancelledPercentage,
+            'revenue_this_week' => $revenueThisWeek,
+            'weekly_diff_percentage' => $weeklyDiffPercentage,
+            'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
+            'monthly_revenue_last_year' => $monthlyRevenueLastYear,
+            'annual_orders_current_year' => $monthlyOrdersCurrentYear,
+            'annual_orders_last_year' => $monthlyOrdersLastYear,
+            'stores' => $storeData
+        ]);
+    }
 
 }

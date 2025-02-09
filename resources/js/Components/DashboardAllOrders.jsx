@@ -1,43 +1,66 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Pagination, TextField, Typography } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { orderStore } from "@/Stores/orderStore.js";
 
+/**
+ * DashboardAllOrders Component
+ * Displays a list of orders with sorting, searching, and pagination functionalities.
+ *
+ * @param {Array} orders - List of orders to display.
+ * @param {Function} onViewOrder - Function to handle viewing an order.
+ * @param {Function} onEditOrder - Function to handle editing an order.
+ */
 const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
+    // Fetch orders on component mount
     useEffect(() => {
-        orderStore.fetchOrders();  // Buscar as encomendas ao carregar
+        orderStore.fetchOrders();
     }, []);
 
+    /**
+     * Handles sorting orders by a specific field.
+     * @param {string} field - The field to sort by.
+     */
     const handleSort = (field) => {
         orderStore.sortOrders(field);
     };
 
+    /**
+     * Cancels an order and refreshes the order list.
+     * @param {number} orderId - The ID of the order to cancel.
+     */
     const handleCancelOrder = (orderId) => {
-            orderStore.cancelOrder(orderId);
-            orderStore.fetchOrders();
+        orderStore.cancelOrder(orderId);
+        orderStore.fetchOrders();
     };
 
+    /**
+     * Checks if an order is cancelled.
+     * @param {Object} order - The order to check.
+     * @returns {boolean} - True if the order is cancelled, false otherwise.
+     */
     const isOrderCancelled = (order) => order.statuses_id === 5;
-
 
     return (
         <Box sx={{ padding: 2 }}>
-            {/* Barra Superior */}
-            <Box sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 2,
-                backgroundColor: "green",
-                padding: 2,
-                borderRadius: "12px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-            }}>
-                <Typography variant="h5" sx={{ color: "white" }}>Encomendas</Typography>
+            {/* Top bar with title and search field */}
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 2,
+                    backgroundColor: "green",
+                    padding: 2,
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                }}
+            >
+                <Typography variant="h5" sx={{ color: "white" }}>Orders</Typography>
 
-                {/* Campo de pesquisa */}
+                {/* Search field */}
                 <TextField
-                    label="Pesquisar por email ou ID da encomenda"
+                    label="Search by email or order ID"
                     variant="outlined"
                     sx={{
                         width: "300px",
@@ -48,27 +71,27 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                 />
             </Box>
 
-            {/* Tabela de encomendas */}
+            {/* Orders table */}
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell onClick={() => handleSort("id")} style={{ cursor: "pointer" }}>
-                                Nº Da Encomenda {orderStore.sortField === "id" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                Order Number {orderStore.sortField === "id" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("user.first_name")} style={{ cursor: "pointer" }}>
-                                Nome {orderStore.sortField === "user.first_name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                Name {orderStore.sortField === "user.first_name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("user.email")} style={{ cursor: "pointer" }}>
                                 Email {orderStore.sortField === "user.email" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("status.name")} style={{ cursor: "pointer" }}>
-                                Estado {orderStore.sortField === "status.name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                Status {orderStore.sortField === "status.name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("total")} style={{ cursor: "pointer" }}>
                                 Total (€) {orderStore.sortField === "total" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
-                            <TableCell>Ações</TableCell>
+                            <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -82,10 +105,10 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                 <TableCell>
                                     <Box sx={{ display: "flex", gap: 1 }}>
                                         <Button variant="outlined" onClick={() => onViewOrder(order)} sx={{ mr: 1 }}>
-                                            Ver
+                                            View
                                         </Button>
                                         <Button variant="outlined" color="primary" onClick={() => onEditOrder(order)}>
-                                            Editar
+                                            Edit
                                         </Button>
                                         <Button
                                             variant="outlined"
@@ -97,11 +120,11 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                                 color: isOrderCancelled(order) ? "grey.600" : "red",
                                                 cursor: isOrderCancelled(order) ? "not-allowed" : "pointer",
                                                 '&:hover': {
-                                                    backgroundColor: isOrderCancelled(order) ? "transparent" : "rgba(255, 0, 0, 0.1)",  // Leve fundo vermelho ao hover se não estiver desativado
+                                                    backgroundColor: isOrderCancelled(order) ? "transparent" : "rgba(255, 0, 0, 0.1)"  // Light red background on hover if not disabled
                                                 }
                                             }}
                                         >
-                                            {isOrderCancelled(order) ? "Cancelada" : "Cancelar"}
+                                            {isOrderCancelled(order) ? "Cancelled" : "Cancel"}
                                         </Button>
                                     </Box>
                                 </TableCell>
@@ -111,7 +134,7 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                 </Table>
             </TableContainer>
 
-            {/* Paginação */}
+            {/* Pagination */}
             {orderStore.totalPages > 1 && (
                 <Pagination
                     count={orderStore.totalPages}
