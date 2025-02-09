@@ -642,28 +642,34 @@ class DashboardController extends Controller
             }])
             ->get()
             ->map(function ($store) use ($completedStatusId, $canceledStatusId) {
-                $totalOrders = $store->orders->count();
-                $completedOrders = $store->orders->where('statuses_id', $completedStatusId)->count();
-                $canceledOrders = $store->orders->where('statuses_id', $canceledStatusId)->count();
+                // Total de encomendas únicas sem duplicações
+                $totalOrders = $store->orders->unique('id')->count();
 
+                // Encomendas concluídas e canceladas sem duplicações
+                $completedOrders = $store->orders->where('statuses_id', $completedStatusId)->unique('id')->count();
+                $canceledOrders = $store->orders->where('statuses_id', $canceledStatusId)->unique('id')->count();
+
+                // Encomendas tratadas (concluídas + canceladas)
                 $treatedOrders = $completedOrders + $canceledOrders;
-                $treatedPercentage = $totalOrders > 0 ? ($treatedOrders / $totalOrders) * 100 : 100;
+                $treatedPercentage = $totalOrders > 0 ? round(($treatedOrders / $totalOrders) * 100) : 100;  // Arredondar para inteiro
                 $pendingPercentage = 100 - $treatedPercentage;
 
-                $totalRevenue = $store->orders->sum(function ($order) {
+                // Receita total sem duplicações
+                $totalRevenue = $store->orders->unique('id')->sum(function ($order) {
                     return $order->orderStoreProducts->sum('final_price');
                 });
 
                 return [
                     'name' => $store->name,
-                    'total_revenue' => $totalRevenue,
-                    'completed_percentage' => $completedOrders > 0 ? ($completedOrders / $totalOrders) * 100 : 0,
-                    'canceled_percentage' => $canceledOrders > 0 ? ($canceledOrders / $totalOrders) * 100 : 0,
+                    'total_revenue' => round($totalRevenue, 2),  // Arredondar a receita para 2 casas decimais
+                    'completed_percentage' => $completedOrders > 0 ? round(($completedOrders / $totalOrders) * 100) : 0,
+                    'canceled_percentage' => $canceledOrders > 0 ? round(($canceledOrders / $totalOrders) * 100) : 0,
                     'treated_percentage' => $treatedPercentage,
                     'pending_percentage' => $pendingPercentage,
                     'total_orders' => $totalOrders,
                 ];
             });
+
 
         return response()->json([
             'revenue_today' => $revenueToday,

@@ -371,7 +371,7 @@ const DashboardGraphsPage = () => {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Loja</TableCell>
-                                            <TableCell align="right">Receita (€)</TableCell>
+                                            <TableCell align="right">Faturamento (€)</TableCell>
                                             <TableCell align="right">Encomendas</TableCell>
                                             <TableCell align="right">% Tratadas</TableCell>
                                         </TableRow>
@@ -380,7 +380,7 @@ const DashboardGraphsPage = () => {
                                         {dashboardData.stores.map((store, index) => (
                                             <TableRow key={index}>
                                                 <TableCell>{store.name}</TableCell>
-                                                <TableCell align="right">€{store.total_revenue}</TableCell>
+                                                <TableCell align="right">€{store.total_revenue.toFixed(2)}</TableCell>
                                                 <TableCell align="right">{store.total_orders}</TableCell>
                                                 <TableCell align="right">
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -390,18 +390,18 @@ const DashboardGraphsPage = () => {
                                                             sx={{
                                                                 width: '100%',
                                                                 height: 10,
+                                                                borderRadius: 5,
+                                                                backgroundColor: '#e0e0e0',  // Fundo da barra
                                                                 '& .MuiLinearProgress-bar': {
                                                                     backgroundColor:
-                                                                        store.treated_percentage >= 90
-                                                                            ? '#4caf50'
-                                                                            : store.treated_percentage >= 55
-                                                                                ? '#FFBB28'
-                                                                                : '#FF8042'
+                                                                        store.treated_percentage >= 90 ? '#4caf50' :
+                                                                            store.treated_percentage >= 55 ? '#FFBB28' :
+                                                                                '#FF8042'
                                                                 }
                                                             }}
                                                         />
-                                                        <Typography sx={{ fontSize: 12 }}>
-                                                            {store.treated_percentage}%
+                                                        <Typography sx={{ fontSize: 12, minWidth: 35 }}>
+                                                            {Math.round(store.treated_percentage)}%
                                                         </Typography>
                                                     </Box>
                                                 </TableCell>
@@ -422,7 +422,7 @@ const DashboardGraphsPage = () => {
                                         dataKey="treated"
                                         nameKey="name"
                                         outerRadius={100}
-                                        label={({ name, treated }) => `${name}: ${treated}%`}
+                                        label={({ name, treated }) => `${name}: ${Math.round(treated)}%`}
                                         labelStyle={{
                                             fill: theme.palette.mode === 'dark' ? 'white' : 'black',
                                             fontWeight: 'bold',

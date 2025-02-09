@@ -60,8 +60,8 @@ class StoreFactory extends Factory
                 "📦 Encomende já e faça parte do movimento sustentável. Juntos, construímos um futuro mais verde! 🍃"
             ]), 'UTF-8', 'auto'),
             'rating' => $this->faker->randomFloat(2, 0, 5),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
+            'updated_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
         ];
     }
 }
