@@ -79,7 +79,7 @@ const navigation = [
     },
     {
         segment: "dashboard/analises",
-        title: "Análises",
+        title: "Dashboard",
         icon: <AssessmentIcon />,
     },
 ];
@@ -138,7 +138,6 @@ const Dashboard = ({ children }) => {
                     user: {
                         name: "Bharat Kashyap",
                         email: "bharatkashyap@outlook.com",
-                        // image: "https://avatars.githubusercontent.com/u/19550456",
                     },
                 });
             },
@@ -176,7 +175,6 @@ const Dashboard = ({ children }) => {
                     sidebarFooter: ExitButton,
                     toolbarActions: ThemeSwitcher,
                 }}
-                //sx={{}}
             >
                 <Box sx={{ flexGrow: 1, margin: 0, paddingTop: "10%", "&::before": {
                         content: '""',
