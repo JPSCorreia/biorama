@@ -92,7 +92,7 @@ class ProductSeeder extends Seeder
         // Associar produtos às lojas
         $stores = Store::all();
         foreach ($stores as $store) {
-            $products = Product::all(); // Todos os 20 produtos fixos
+            $products = Product::all();
 
             foreach ($products as $product) {
                 StoreProduct::create([

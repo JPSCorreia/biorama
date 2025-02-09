@@ -34,8 +34,8 @@ class VendorFactory extends Factory
             'date_of_birth' => $this->faker->date(),
             'iban' => $this->faker->iban(),
             'is_company' => $this->faker->boolean(),
-            'created_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
-            'updated_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
+            'created_at' => $this->faker->dateTimeBetween('-6 years', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-6 years', 'now'),
         ];
     }
 }

@@ -11,6 +11,8 @@ use App\Models\Vendor;
 use Illuminate\Database\Seeder;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
+
 
 class StoreSeeder extends Seeder
 {
@@ -19,6 +21,9 @@ class StoreSeeder extends Seeder
      */
     public function run()
     {
+
+        $faker = Faker::create();
+
         $mockImages = [
             'store-1.png',
             'store-2.jpg',
@@ -32,8 +37,17 @@ class StoreSeeder extends Seeder
             'Planeta Verde', 'Natureza Pura', 'Raízes Sustentáveis', 'GreenChoice', 'EcoSabores',
             'Sementes do Futuro', 'Terra Viva', 'BioHarmonia', 'Verde & Puro', 'EcoAlternativa',
             'Sustentável.pt', 'Natureza Essencial', 'Vida Verde', 'Orgânico & Local', 'EcoConsciente',
+            'Bio & Fresh', 'Green Planet', 'Nature Roots', 'Organic Choice', 'Eco Trend',
+            'SustentArt', 'Natural Market', 'EcoLogica', 'Green Harmony', 'Verde Vital',
+            'Vida Bio', 'Terra Verde', 'Semente Ecológica', 'Planeta Bio', 'Raízes Bio',
+            'Naturalmente Sustentável', 'EcoFuturo', 'Verde Biológico', 'Vida Sustentável',
+            'Organic Way', 'Bio Terra', 'Eco Vibes', 'Verde Saudável', 'Nature Pure',
+            'Green Organic', 'Sustenta Vida', 'Planeta Saudável', 'EcoLuz', 'Verde Vivo'
         ];
 
+        // Embaralha os nomes das lojas para garantir que não se repetem
+        shuffle($storeNames);
+        $storeNamesIndex = 0;
 
         $locations = [
             ['street' => 'Rua Paiva Coelho', 'postal_code' => '2840-499', 'city' => 'Seixal', 'lat' => 38.6401, 'lng' => -9.1014],
@@ -110,64 +124,122 @@ class StoreSeeder extends Seeder
             ['street' => 'Rua de Alvalade', 'postal_code' => '2825-450', 'city' => 'Costa da Caparica', 'lat' => 38.6457, 'lng' => -9.2354]
         ];
 
+        $storeTypes = [
+            'Mercearia Biológica',
+            'Moda Sustentável',
+            'Cosméticos Naturais',
+            'Casa e Decoração Ecológica'
+        ];
+
+        $descriptions = [
+            'Mercearia Biológica' => [
+                "A nossa mercearia biológica é mais do que um simples mercado. Aqui, cada produto é cuidadosamente selecionado para garantir que vem diretamente de agricultores e produtores locais que seguem práticas sustentáveis.",
+                "Oferecemos uma vasta gama de produtos biológicos, desde frutas e vegetais frescos a leguminosas, frutos secos e snacks saudáveis. Além disso, disponibilizamos produtos a granel para reduzir o desperdício de embalagens.",
+                "A nossa missão é tornar os produtos biológicos acessíveis a todos. Visite-nos e descubra como uma alimentação mais saudável pode ser deliciosa e responsável ao mesmo tempo! 🌿"
+            ],
+            'Moda Sustentável' => [
+                "Na nossa loja de moda sustentável, acreditamos que a beleza e o respeito pelo planeta podem andar de mãos dadas. Cada peça da nossa coleção é produzida de forma ética, utilizando materiais ecológicos.",
+                "Trabalhamos apenas com marcas que seguem práticas responsáveis, garantindo que todas as etapas do processo de fabrico respeitam as pessoas e o meio ambiente.",
+                "Além da moda, disponibilizamos acessórios ecológicos, como carteiras feitas de materiais reciclados, calçado sustentável e roupa desportiva eco-friendly. Vista-se com propósito! 🌎"
+            ],
+            'Cosméticos Naturais' => [
+                "A nossa loja de cosméticos naturais nasceu da paixão por cuidar da pele de forma saudável e responsável. Todos os nossos produtos são formulados com ingredientes 100% naturais, livres de químicos agressivos.",
+                "Desde cremes hidratantes a champôs sólidos e maquilhagem ecológica, oferecemos uma vasta gama de produtos cruelty-free, vegan e livres de plástico desnecessário.",
+                "Para além dos produtos de cuidado diário, temos uma linha de aromaterapia e bem-estar. Cuide da sua pele e do planeta com a nossa seleção exclusiva de produtos naturais. 🍃"
+            ],
+            'Casa e Decoração Ecológica' => [
+                "Transforme a sua casa num espaço mais sustentável com a nossa coleção de produtos ecológicos para o lar. Desde utensílios biodegradáveis a móveis reciclados, promovemos um estilo de vida mais verde.",
+                "Trabalhamos com artesãos e designers locais para trazer soluções inovadoras, práticas e esteticamente apelativas.",
+                "Disponibilizamos produtos de organização sustentável e soluções de armazenamento sem plástico. Descubra como pequenos detalhes fazem uma grande diferença! 🏡"
+            ]
+        ];
+
         $vendors = Vendor::all();
         $storesCreatedPerVendor = [];
 
-// Limitar o número total de lojas a 3 por vendor existente
+        // Limitar o número total de lojas a 3 por vendor existente
         $totalStoresToCreate = min(62, $vendors->count() * 3); // Máximo possível de lojas sem ultrapassar o limite de 3 por vendor
 
-// Cria as lojas respeitando o limite de 3 por vendor
-        $stores = Store::factory()->count($totalStoresToCreate)->create()->each(function ($store, $index) use ($storeNames, $locations, &$storesCreatedPerVendor, $vendors) {
-            // Seleciona um vendor com menos de 3 lojas associadas
-            $vendor = $vendors->filter(function ($vendor) use (&$storesCreatedPerVendor) {
-                return ($storesCreatedPerVendor[$vendor->id] ?? 0) < 3;
-            })->random();
+        // Cria as lojas respeitando o limite de 3 por vendor
+        foreach ($vendors as $vendor) {
+            $maxStores = rand(1, 3); // Define um número aleatório entre 1 e 3 lojas por Vendor
 
-            // Incrementa a contagem de lojas para o vendor selecionado
-            $storesCreatedPerVendor[$vendor->id] = ($storesCreatedPerVendor[$vendor->id] ?? 0) + 1;
+            for ($i = 0; $i < $maxStores; $i++) {
+                // Garante que a data da loja é após a data do Vendor
+                $createdAt = $faker->dateTimeBetween($vendor->created_at, 'now');
 
-            // Atribui o vendor_id à loja
-            $store->update(['vendor_id' => $vendor->id]);
+                $storeType = $faker->randomElement($storeTypes);
 
-            if (isset($storeNames[$index])) {
-                $store->update(['name' => $storeNames[$index]]);
+                // Gerar a descrição baseada no tipo da loja
+                $description = mb_convert_encoding(implode("\n\n", [
+                    "🌱 **{$storeType}**",
+                    $faker->randomElement($descriptions[$storeType]),
+                    "📦 Encomende já e faça parte do movimento sustentável. Juntos, construímos um futuro mais verde! 🍃"
+                ]), 'UTF-8', 'auto');
+
+                $store = Store::create([
+                    'vendor_id' => $vendor->id,
+                    'name'         => $storeNames[$storeNamesIndex++],
+                    'email' => $faker->unique()->safeEmail(),
+                    'phone_number' => $faker->numerify('#########'),
+                    'description' => $description,
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+
+                $location = $locations[array_rand($locations)];
+
+                StoreAddress::create([
+                    'store_id' => $store->id,
+                    'street_address' => $location['street'],
+                    'postal_code' => $location['postal_code'],
+                    'city' => $location['city'],
+                    'coordinates' => DB::raw("POINT({$location['lng']}, {$location['lat']})"),
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+
+                // Criar galeria para a loja
+                foreach (array_slice($mockImages, 0, 3) as $image) {
+                    StoreGallery::create([
+                        'store_id' => $store->id,
+                        'image_link' => asset('storage/mock_images/stores/' . $image),
+                    ]);
+                }
+
+                // Criar reviews para a loja
+                StoreReview::factory()->count(rand(5, 15))->create([
+                    'store_id' => $store->id,
+                    'created_at' => $faker->dateTimeBetween($store->created_at, 'now'),
+                    'updated_at' => $faker->dateTimeBetween($store->created_at, 'now'),
+                ]);
+
+                // Criar relação entre produtos e lojas
+                $this->createStoreProducts($store);
             }
-
-            $location = $locations[$index % count($locations)];
-
-            // Criar morada diretamente sem factory
-            StoreAddress::create([
-                'store_id' => $store->id,
-                'street_address' => $location['street'],
-                'postal_code' => $location['postal_code'],
-                'city' => $location['city'],
-                'coordinates' => DB::raw("POINT({$location['lng']}, {$location['lat']})"),
-            ]);
-        });
-
+        }
+    }
+    /**
+     * Criar StoreProduct garantindo que a data fica entre a Store e o Produto.
+     */
+    private function createStoreProducts(Store $store)
+    {
+        $faker = Faker::create();
         $products = Product::all();
 
-        foreach ($stores as $store) {
-            $shuffledImages = $mockImages;
-            shuffle($shuffledImages);
+        foreach ($products as $product) {
+            // Garantir que a data da StoreProduct está entre a criação da Store e do Produto
+            $createdAt = $faker->dateTimeBetween(
+                max($store->created_at, $product->created_at), 'now'
+            );
 
-            foreach (array_slice($shuffledImages, 0, 5) as $image) {
-                StoreGallery::factory()->create([
-                    'store_id' => $store->id,
-                    'image_link' => asset('storage/mock_images/stores/' . $image),
-                ]);
-            }
-
-            StoreReview::factory()->count(20)->create([
-                'store_id' => $store->id,
+            StoreProduct::firstOrCreate([
+                'store_id'   => $store->id,
+                'product_id' => $product->id,
+            ], [
+                'created_at' => $createdAt,
+                'updated_at' => $createdAt,
             ]);
-
-            foreach ($products as $product) {
-                StoreProduct::firstOrCreate([
-                    'store_id' => $store->id,
-                    'product_id' => $product->id,
-                ]);
-            }
         }
     }
 }

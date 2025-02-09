@@ -47,8 +47,8 @@ class OrderFactory extends Factory
 
             'total' => $this->faker->randomFloat(2, 1, 1000),
 
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => $this->faker->dateTimeBetween('-2years', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-2 years', 'now'),
         ];
     }
 }
