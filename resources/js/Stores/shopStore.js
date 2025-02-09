@@ -107,6 +107,21 @@ class ShopStore {
         }
     }
 
+    async addreview(reviewData) {
+        try {
+            const response = await axios.post("/addreview", reviewData);
+            if (response.status === 200) {
+                runInAction(() => {
+                    this.storeReviews.push(reviewData);
+                });
+                return { success: true };
+            }
+        } catch (error) {
+            console.error("Erro ao adicionar avaliação:", error);
+            return { success: false, error };
+        }
+    }
+
 
 
 

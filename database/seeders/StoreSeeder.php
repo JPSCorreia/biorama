@@ -141,7 +141,7 @@ class StoreSeeder extends Seeder
                 ]);
             }
 
-            StoreReview::factory()->count(5)->create([
+            StoreReview::factory()->count(20)->create([
                 'store_id' => $store->id,
             ]);
 
