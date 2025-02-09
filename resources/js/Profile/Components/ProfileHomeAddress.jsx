@@ -9,7 +9,6 @@ import { useState, useEffect } from "react";
 const ProfileHomeAddress = observer(() => {
 
     useEffect(() => {
-        console.log("fetching addresses")
         homeAddressStore.fetchAddresses();
     }, []);
 
@@ -18,7 +17,6 @@ const ProfileHomeAddress = observer(() => {
     const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
     const smallerThanMd = useMediaQuery(theme.breakpoints.down("md"));
     const addresses = homeAddressStore.addresses;
-
     const [addressModalOpen, setAddressModalOpen] = useState(false);
     const handleAddressModalOpen = () => setAddressModalOpen(true);
     const handleAddressModalClose = () => setAddressModalOpen(false);

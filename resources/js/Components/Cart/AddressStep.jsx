@@ -1,12 +1,10 @@
 import {
     Box,
-    Button,
-    Radio,
     Typography,
     useMediaQuery,
     CircularProgress,
 } from "@mui/material";
-import { homeAddressStore, cartStore } from "../../Stores";
+import { homeAddressStore } from "../../Stores";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "@mui/material/styles";
@@ -14,79 +12,23 @@ import { AddressCard } from "../../Components/";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { AddressModal } from "../../Components/";
 
-const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
+const AddressStep = observer(({ setButtonDisabled }) => {
     const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const addresses = homeAddressStore.addresses;
+    const primaryAddress = addresses?.find(address => address.is_primary);
+    const [addressModalOpen, setAddressModalOpen] = useState(false);
 
-    // Calcula o custo de envio baseado na distância
-    function calculateShippingCost(distanceKm) {
-        const baseCost = 4.0; // Custo fixo até 5 km
-        const costPerKm = 0.15; // Custo extra por km após 5 km
-        const baseDistance = 5; // Distância incluída no custo base
+    const handleAddressModalOpen = () => setAddressModalOpen(true);
+    const handleAddressModalClose = () => setAddressModalOpen(false);
 
-        let finalCost;
-
-        if (distanceKm <= baseDistance) {
-            finalCost = baseCost;
-        } else {
-            finalCost = baseCost + (distanceKm - baseDistance) * costPerKm;
-        }
-
-        return finalCost;
-    }
-
-    // Obtém a distância correta entre a loja e o endereço do utilizador
-    async function getDistanceFromOSRM(lat1, lon1, lat2, lon2) {
-        const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.routes && data.routes.length > 0) {
-                const distanceMeters = data.routes[0].distance; // Distância em METROS
-                const distanceKm = distanceMeters / 1000; // 🔹 Converter para KM
-                return distanceKm;
-            } else {
-                console.error("⚠️ Erro ao obter rota do OSRM");
-                return null;
-            }
-        } catch (error) {
-            console.error("⚠️ Erro na API OSRM:", error);
-            return null;
-        }
-    }
-
-    // Calcula os portes para cada loja no carrinho
+    // Atualiza o estado do botão "Avançar" dependendo da existência de uma morada principal
     useEffect(() => {
-        async function calculateShipping() {
-            for (const [storeId] of Object.entries(cartStore.cart)) {
-                if (
-                    cartStore.cart[storeId][0].store.latitude &&
-                    cartStore.cart[storeId][0].store.longitude &&
-                    homeAddressStore?.primaryAddress?.latitude &&
-                    homeAddressStore?.primaryAddress?.longitude
-                ) {
-                    const distance = await getDistanceFromOSRM(
-                        cartStore.cart[storeId][0].store.latitude,
-                        cartStore.cart[storeId][0].store.longitude,
-                        homeAddressStore?.primaryAddress?.latitude,
-                        homeAddressStore?.primaryAddress?.longitude,
-                    );
+        setButtonDisabled(!primaryAddress);
+    }, [primaryAddress, setButtonDisabled]);
 
-                    if (distance !== null) {
-                        const cost = calculateShippingCost(distance);
-                        cartStore.setShippingCost(storeId, cost); // 🔹 Guarda os custos de envio na `cartStore`
-                    }
-                }
-            }
-        }
-        calculateShipping();
-    }, [cartStore.cart, homeAddressStore?.primaryAddress]);
-
-    if (
-        !homeAddressStore.addresses ||
-        homeAddressStore.addresses.length === 0
-    ) {
+    // Exibe um loader enquanto os dados ainda não estão carregados
+    if (addresses === undefined) {
         return (
             <Box
                 sx={{
@@ -103,13 +45,6 @@ const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
             </Box>
         );
     }
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
-    const smallerThanMd = useMediaQuery(theme.breakpoints.down("md"));
-    const addresses = homeAddressStore.addresses;
-    const [addressModalOpen, setAddressModalOpen] = useState(false);
-    const handleAddressModalOpen = () => setAddressModalOpen(true);
-    const handleAddressModalClose = () => setAddressModalOpen(false);
 
     return (
         <Box
@@ -134,16 +69,14 @@ const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
                         height: "50vh",
                     }}
                 >
-                    {addresses.map((address) => {
-                        return (
-                            <AddressCard
-                                key={address.id}
-                                address={address}
-                                theme={theme}
-                                checkout={true}
-                            />
-                        );
-                    })}
+                    {addresses.map((address) => (
+                        <AddressCard
+                            key={address.id}
+                            address={address}
+                            theme={theme}
+                            checkout={true}
+                        />
+                    ))}
 
                     {addresses.length < 3 && (
                         <Box
@@ -169,17 +102,10 @@ const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
                             }}
                         >
                             <AddCircleIcon
-                                sx={{
-                                    fontSize: 40,
-                                    color: theme.palette.primary.main,
-                                }}
+                                sx={{ fontSize: 40, color: theme.palette.primary.main }}
                             />
                             <Typography
-                                sx={{
-                                    mt: 1,
-                                    fontWeight: "bold",
-                                    color: theme.palette.primary.main,
-                                }}
+                                sx={{ mt: 1, fontWeight: "bold", color: theme.palette.primary.main }}
                             >
                                 Adicionar Morada
                             </Typography>
@@ -188,39 +114,32 @@ const AddressStep = observer(({ selectedAddress, setSelectedAddress }) => {
                 </Box>
             ) : (
                 <Box
-                    onClick={handleAddressModalOpen} // Abre o modal para adicionar uma nova morada
+                    onClick={handleAddressModalOpen}
                     sx={{
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        justifySelf: "flex-start",
-                        border: "2px dashed #9e9e9e", // Borda estilizada
-                        borderRadius: "10px", // Cantos arredondados
+                        border: "2px dashed #9e9e9e",
+                        borderRadius: "10px",
                         minWidth: "250px",
-                        minHeight: "352px", // Altura do card
+                        minHeight: "352px",
                         width: isSmallScreen ? "100%" : "250px",
-                        cursor: "pointer", // Indica que é clicável
-                        transition: "all 0.3s ease", // Animação suave no hover
+                        cursor: "pointer",
+                        transition: "all 0.3s ease",
                         "&:hover": {
-                            backgroundColor: "#e0e0e0", // Cor de fundo no hover
-                            transform: "scale(1.05)", // Leve aumento no hover
+                            backgroundColor: "#e0e0e0",
+                            transform: "scale(1.05)",
                         },
                     }}
                 >
-                    <AddCircleIcon sx={{ fontSize: 40, color: "#757575" }} />{" "}
-                    {/* Ícone central */}
-                    <Typography
-                        sx={{ mt: 1, fontWeight: "bold", color: "#757575" }}
-                    >
+                    <AddCircleIcon sx={{ fontSize: 40, color: "#757575" }} />
+                    <Typography sx={{ mt: 1, fontWeight: "bold", color: "#757575" }}>
                         Adicionar Morada
                     </Typography>
                 </Box>
             )}
-            <AddressModal
-                open={addressModalOpen}
-                handleClose={handleAddressModalClose}
-            />
+            <AddressModal open={addressModalOpen} handleClose={handleAddressModalClose} />
         </Box>
     );
 });

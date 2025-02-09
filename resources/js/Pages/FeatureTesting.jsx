@@ -70,7 +70,7 @@ const FeatureTesting = observer(() => {
             </Typography>
 
             {/* Button to trigger the sendInvoice function with test data */}
-            {/* <Button
+            <Button
                 variant="contained"
                 color="primary"
                 sx={{ width: "250px" }}
@@ -79,7 +79,7 @@ const FeatureTesting = observer(() => {
                 }
             >
                 Send Invoice
-            </Button> */}
+            </Button>
 
             {/* Container with a background image and bordered styling */}
             {/* <Box
