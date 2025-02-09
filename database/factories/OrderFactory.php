@@ -39,7 +39,7 @@ class OrderFactory extends Factory
 
             'phone_number' => isset($address) && !empty($address->number)
                 ? $address->number
-                : $this->faker->buildingNumber,
+                : $this->faker->phoneNumber,
 
             'comment' => isset($address) && !empty($address->comment)
                 ? $address->comment
