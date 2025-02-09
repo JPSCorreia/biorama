@@ -7,6 +7,7 @@ use App\Models\StoreAddress;
 use App\Models\StoreGallery;
 use App\Models\StoreProduct;
 use App\Models\StoreReview;
+use App\Models\Vendor;
 use Illuminate\Database\Seeder;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
@@ -109,8 +110,25 @@ class StoreSeeder extends Seeder
             ['street' => 'Rua de Alvalade', 'postal_code' => '2825-450', 'city' => 'Costa da Caparica', 'lat' => 38.6457, 'lng' => -9.2354]
         ];
 
-        // Cria 20 lojas com nomes e endereços
-        $stores = Store::factory()->count(62)->create()->each(function ($store, $index) use ($storeNames, $locations) {
+        $vendors = Vendor::all();
+        $storesCreatedPerVendor = [];
+
+// Limitar o número total de lojas a 3 por vendor existente
+        $totalStoresToCreate = min(62, $vendors->count() * 3); // Máximo possível de lojas sem ultrapassar o limite de 3 por vendor
+
+// Cria as lojas respeitando o limite de 3 por vendor
+        $stores = Store::factory()->count($totalStoresToCreate)->create()->each(function ($store, $index) use ($storeNames, $locations, &$storesCreatedPerVendor, $vendors) {
+            // Seleciona um vendor com menos de 3 lojas associadas
+            $vendor = $vendors->filter(function ($vendor) use (&$storesCreatedPerVendor) {
+                return ($storesCreatedPerVendor[$vendor->id] ?? 0) < 3;
+            })->random();
+
+            // Incrementa a contagem de lojas para o vendor selecionado
+            $storesCreatedPerVendor[$vendor->id] = ($storesCreatedPerVendor[$vendor->id] ?? 0) + 1;
+
+            // Atribui o vendor_id à loja
+            $store->update(['vendor_id' => $vendor->id]);
+
             if (isset($storeNames[$index])) {
                 $store->update(['name' => $storeNames[$index]]);
             }
@@ -130,7 +148,6 @@ class StoreSeeder extends Seeder
         $products = Product::all();
 
         foreach ($stores as $store) {
-
             $shuffledImages = $mockImages;
             shuffle($shuffledImages);
 

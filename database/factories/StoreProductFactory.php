@@ -18,8 +18,8 @@ class StoreProductFactory extends Factory
         return [
             'store_id' => $store_id,
             'product_id' => $product_id,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
+            'updated_at' => $this->faker->dateTimeBetween('2023-01-01', '2025-02-09'),
         ];
     }
 }
