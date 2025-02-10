@@ -326,15 +326,15 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                         {/* Localização no Mapa */}
 
                         <Box sx={{ flex: "1 1 50%" }}>
-                            <Typography variant="h5" sx={{ mb: 2 }}>
-                                Localização no Mapa
-                            </Typography>
+
                             <Box
                                 sx={{
                                     height: "400px",
                                     width: "100%",
                                     borderRadius: "8px",
                                     overflow: "hidden",
+                                    mt: 6,
+                                    pr: 2,
                                 }}
                             >
                                 {loading ? (
