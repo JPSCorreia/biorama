@@ -26,8 +26,8 @@ const DashboarShowStoreInfo = observer(({store}) => {
 
     // Get media queries
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
-    const latitude = store.addresses[0]?.latitude || 38.7071;
-    const longitude = store.addresses[0]?.longitude || -9.1355;
+    const latitude = store?.addresses[0]?.latitude || 38.7071;
+    const longitude = store?.addresses[0]?.longitude || -9.1355;
 
     const [showProductList, setShowProductList] = useState(false)
     // Função para lidar com o clique no card "Produtos"
