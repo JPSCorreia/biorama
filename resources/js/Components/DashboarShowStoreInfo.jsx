@@ -6,7 +6,7 @@ import {
     Box,
     Divider,
     useMediaQuery,
-    CircularProgress,
+    CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
 } from "@mui/material";
 import { observer } from "mobx-react";
 import Carousel from "react-material-ui-carousel";
@@ -71,6 +71,23 @@ const DashboarShowStoreInfo = observer(({ store }) => {
             newImages: newImages.filter(Boolean), // Filtra as novas imagens válidas
             deleteImages, // IDs das imagens a serem excluídas
         };
+    };
+    // State to control the confirmation modal
+    const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+    // Handle open and close of the modal
+    const handleOpenConfirmModal = () => {
+        setOpenConfirmModal(true);
+    };
+
+    const handleCloseConfirmModal = () => {
+        setOpenConfirmModal(false);
+    };
+
+    // Handle deletion after confirmation
+    const handleConfirmDelete = async () => {
+        await shopStore.DeleteStore(store.id);
+        handleCloseConfirmModal();
     };
 
     const handleSubmitEdit = async (
@@ -373,14 +390,25 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ mt: 1, textAlign: "right" }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleEditClick}
-                        >
-                            Editar
-                        </Button>
+                    <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+                        <Box sx={{ mt: 1, textAlign: "right" }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleEditClick}
+                            >
+                                Editar
+                            </Button>
+                        </Box>
+                        <Box sx={{ mt: 1, textAlign: "right" }}>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={handleOpenConfirmModal}
+                            >
+                                Apagar Loja
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
             ) : (
@@ -414,6 +442,30 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                     <DashboardStoreReviewList storeId={store.id} />
                 </Box>
             )}
+
+            {/* Delete confirmation  */}
+            <Dialog open={openConfirmModal} onClose={handleCloseConfirmModal}>
+                <DialogTitle>Confirmar Ação</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Tem a certeza que pretende apagar a loja{" "}
+                        <strong>{store?.name}</strong>? Esta ação não pode ser
+                        desfeita.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmModal} color="secondary">
+                        Cancelar
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDelete}
+                        color="error"
+                        variant="contained"
+                    >
+                        Apagar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Paper>
     );
 });

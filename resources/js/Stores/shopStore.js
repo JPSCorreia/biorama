@@ -93,11 +93,9 @@ class ShopStore {
         }
     }
 
-
     navigateToStore(storeId) {
         router.get(`/dashboard/store/${storeId}`); // Rota dinâmica para exibir informações da loja
     }
-
 
     async updateStore(storeId, updatedData) {
         console.log("shop store no updated store", updatedData);
@@ -136,7 +134,6 @@ class ShopStore {
         }
     }
 
-
     DeleteStore = async (storeId) => {
         try {
             const response = await axios.delete(`/dashboard/store/${storeId}`);
@@ -158,7 +155,6 @@ class ShopStore {
             console.error('Erro ao apagar a loja:', error);
         }
     };
-
 
     // Limpa os dados da loja atual
     clearStoreData() {
