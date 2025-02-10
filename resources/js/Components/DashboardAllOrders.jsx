@@ -11,7 +11,7 @@ import { orderStore } from "@/Stores/orderStore.js";
  * @param {Function} onViewOrder - Function to handle viewing an order.
  * @param {Function} onEditOrder - Function to handle editing an order.
  */
-const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
+const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder,  }) => {
     // Fetch orders on component mount
     useEffect(() => {
         orderStore.fetchOrders();

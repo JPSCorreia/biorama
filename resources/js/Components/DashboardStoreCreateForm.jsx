@@ -27,7 +27,9 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
     const theme = useTheme();
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
+    // Adicionando media queries para small e medium screens
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
     const [shouldUpdateMap, setShouldUpdateMap] = useState(false);
 
     const handleFormSubmit = async (values) => {
@@ -143,12 +145,15 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
             onSubmit={formik.handleSubmit}
             sx={{
                 mt: 3,
+                display: "flex",
+                flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
+                gap: 3,
             }}
         >
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "row",
+                    flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
                     justifyContent: "space-between",
                     width: "100%",
                     gap: 5,

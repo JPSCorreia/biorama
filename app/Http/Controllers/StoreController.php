@@ -238,7 +238,6 @@ class StoreController extends Controller
         }
     }
 
-
     public function show(Store $store)
     {
         return response()->json($store->load('vendor', 'products'));
@@ -364,8 +363,6 @@ class StoreController extends Controller
             ], 500);
         }
     }
-
-
 
     public function destroy(Store $store)
     {

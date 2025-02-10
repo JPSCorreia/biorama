@@ -28,7 +28,7 @@ class ProductStore{
 
     fetchProductsPaginated = async (storeId, page = 1, searchTerm = "") => {
         console.log("Pesquisa", searchTerm);
-        console
+        console.log("")
         try {
             const response = await axios.get(`/search-products/${storeId}`, {
                 params: { page, search: searchTerm },

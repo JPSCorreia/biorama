@@ -54,8 +54,17 @@ const DashboardStorePage = observer(() => {
         setErrorMessage("");
 
         try {
-            if (!storeFormik || !storeFormik.values) {
-                throw new Error("A informação do formulário está incompleta.");
+            if (!storeFormik) {
+                throw new Error("O formulário não está inicializado.");
+            }
+
+            // Validação do formulário com Yup antes de enviar
+            const errors = await storeFormik.validateForm();
+            if (Object.keys(errors).length > 0) {
+                storeFormik.setTouched(errors); // Mostra os erros no formulário
+                setErrorMessage("Por favor, preencha corretamente todos os campos obrigatórios.");
+                setIsLoading(false);
+                return; // Interrompe o envio se houver erros
             }
 
             const storeData = {
@@ -186,7 +195,7 @@ const DashboardStorePage = observer(() => {
                             top: "50%",
                             left: "50%",
                             transform: "translate(-50%, -50%)",
-                            width: isSmallScreen ? "90%" : isMediumScreen ? "70%" : "50%",
+                            width: isSmallScreen ? "100%" : isMediumScreen ? "100%" : "50%",
                             bgcolor: "background.paper",
                             borderRadius: "10px",
                             boxShadow: 24,
@@ -199,7 +208,7 @@ const DashboardStorePage = observer(() => {
                             images={images}
                         />
 
-                        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                        <Box sx={{ display: "flex", justifyContent: "center"}}>
                             <Button
                                 variant="contained"
                                 color="primary"

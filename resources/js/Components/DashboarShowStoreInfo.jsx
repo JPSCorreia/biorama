@@ -17,6 +17,8 @@ import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
 import {shopStore} from "@/Stores/index.js";
 import DashboardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
 
+
+
 /**
  * Component: DashboarShowStoreInfo
  * Description: Displays detailed information about a store, including its address, description, and map location.
@@ -72,6 +74,12 @@ const DashboarShowStoreInfo = observer(({store}) => {
     const handleCancelEdit = () => {
         setIsEditing(false); // Switch back to view mode
     };
+
+    // Redirect to orders Page
+    const handleNavigateToOrders = () => {
+        window.location.href = '/dashboard/encomendas';
+    };
+
 
     /**
      * Prepare the images for submission by filtering valid new images and collecting images to delete.
@@ -305,6 +313,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
             {/* Shortcut cards for products,reviews and orders */}
             <Box sx={{pb:3}}>
                 <DashboardStoreShortCutCard
+                    handleNavigateToOrders={handleNavigateToOrders}
                     store={store}
                     onProductClick={handleProductCardClick}
                     onReviewClick={handleReviewCardClick}

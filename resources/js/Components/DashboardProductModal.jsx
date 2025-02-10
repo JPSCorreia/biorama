@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, IconButton, Modal, Button, Snackbar, Alert } from "@mui/material";
+import {Box, Typography, IconButton, Modal, Button, Snackbar, Alert, useMediaQuery} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { observer } from "mobx-react";
 import DashboardEditProduct from "@/Components/DashboardEditProduct.jsx";
 import DashboardShowProduct from "@/Components/DashboardShowProduct.jsx";
 import { productStore } from "@/Stores/index.js";
+import {useTheme} from "@mui/material/styles";
 
 const DashboardProductModal = observer(({ open, onClose, product, storeid, initialEditMode }) => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
     const [isEditing, setIsEditing] = useState(initialEditMode || false);
     const [loading, setLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
@@ -52,13 +57,20 @@ const DashboardProductModal = observer(({ open, onClose, product, storeid, initi
         <Modal open={open} onClose={onClose}>
             <Box
                 sx={{
-                    width: "60%",
-                    padding: "20px",
-                    borderRadius: "10px",
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: isSmallScreen || isMediumScreen ? "100vw" : "60%",
+                    height: isSmallScreen || isMediumScreen ? "100vh" : "auto",
+                    padding: isSmallScreen || isMediumScreen ? 0 : "20px",
+                    borderRadius: isSmallScreen || isMediumScreen ? 0 : "10px",
                     backgroundColor: "background.paper",
                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                    margin: "100px auto",
+                    overflowY: "auto",
                     outline: "none",
+                    display: "flex",
+                    flexDirection: "column",
                 }}
             >
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>

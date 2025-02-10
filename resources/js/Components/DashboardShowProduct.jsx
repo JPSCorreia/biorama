@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import {Box, Typography, useMediaQuery} from "@mui/material";
 import { fixImagePath } from "../utils/utils.js";
+import {useTheme} from "@mui/material/styles";
 
 const DashboardShowProduct = ({ product }) => {
+    const theme = useTheme();
+    const isSmallOrMediumScreen = useMediaQuery(theme.breakpoints.down("md")); // Para ecrãs pequenos e médios
+
+
     // Verifica se há imagens na galeria e define a primeira corretamente
     const [selectedImage, setSelectedImage] = useState(
         product?.gallery && product?.gallery.length > 0
@@ -13,9 +18,13 @@ const DashboardShowProduct = ({ product }) => {
     return (
         <Box>
 
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: isSmallOrMediumScreen ? "column" : "row", gap: 2 }}>
                 {/* **Coluna das Miniaturas (Esquerda)** */}
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: isSmallOrMediumScreen ? "column" : "row",
+                    overflowX: isSmallOrMediumScreen ? "auto" : "visible",
+                    gap: 1 }}>
                     {product?.gallery && product?.gallery.map((image, index) => (
                         <Box
                             key={index}
@@ -41,7 +50,7 @@ const DashboardShowProduct = ({ product }) => {
                 {/* **Imagem Principal (Centro)** */}
                 <Box
                     sx={{
-                        width: "40%",
+                        width: isSmallOrMediumScreen ? "100%" : "40%",
                         height: 320,
                         display: "flex",
                         justifyContent: "center",
@@ -53,12 +62,21 @@ const DashboardShowProduct = ({ product }) => {
                     <img
                         src={selectedImage}
                         alt="Selected"
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover"
+                    }}
                     />
                 </Box>
 
                 {/* **Campos do Produto (Direita)** */}
-                <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    width: isSmallOrMediumScreen ? "100%" : "auto", }}>
                     <Typography>
                         <strong>Nome:</strong> {product.name}
                     </Typography>

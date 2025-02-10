@@ -184,7 +184,12 @@ const DashboardStoreEditForm = observer(({store, onCancel, onSubmit}) => {
             component="form"
             onSubmit={formik.handleSubmit}
             sx={{
-                mt: 3, pt: 3, flexDirection: isSmallScreen ? "column" : "row"
+                mt: 3,
+                pt: 3,
+                flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
+                width: "100%", // Ocupa 100% da largura
+                minHeight: "100vh", // Ocupa 100% da altura do ecrã
+                boxSizing: "border-box", // Inclui padding no cálculo de largura/altura
             }}
         >
             <Box
