@@ -37,6 +37,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
     // Default latitude and longitude for the map
     const latitude = store?.latitude || 38.7071;
     const longitude = store?.longitude || -9.1355;
+    console.log("store", store);
 
     // State to toggle product list visibility
     const [showProductList, setShowProductList] = useState(false);
