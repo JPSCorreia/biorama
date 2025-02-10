@@ -123,7 +123,7 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
                     flexDirection: "column",
                     p: 3,
                     pb: 0,
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    // backgroundColor: "rgba(255, 255, 255, 0.9)",
                     boxShadow: 3,
                     width: "80%",
                     position: "relative",
