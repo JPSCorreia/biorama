@@ -16,6 +16,7 @@ import ImageCropModal from "./ImageCropModal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { productStore } from "../Stores/";
+import {fixImagePath} from "@/utils/utils.js";
 
 const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewProduct }) => {
     const [previewImages, setPreviewImages] = useState([]);
@@ -200,7 +201,7 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                                 {previewImages.map((image, index) => (
                                     <Box key={index} sx={{ position: "relative", width: 100, height: 100 }}>
                                         <img
-                                            src={image}
+                                            src={fixImagePath(image)}
                                             alt={`Imagem ${index}`}
                                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                         />

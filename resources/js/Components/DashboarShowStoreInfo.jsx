@@ -1,126 +1,72 @@
 import {
+    Avatar,
     Button,
     Paper,
     Typography,
     Box,
-    Divider,
-    useMediaQuery,
-    DialogTitle,
-    Dialog,
-    DialogActions,
-    DialogContentText,
-    DialogContent,
+    Divider, useMediaQuery,
 } from "@mui/material";
-import { observer } from "mobx-react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
-import { useTheme } from "@mui/material/styles";
-import React, { useState } from "react";
+import {observer} from "mobx-react";
+import Carousel from "react-material-ui-carousel";
+import {MapContainer, TileLayer, Marker} from "react-leaflet";
+import {fixImagePath} from "../utils/utils.js";
+import {useTheme} from "@mui/material/styles";
+import React, {useState} from "react";
 import DashboardStoreShortCutCard from "@/Components/DashboardStoreShortCutCard.jsx";
 import ReactMarkdown from "react-markdown";
 import DashboardProductList from "@/Components/DashboardProductList.jsx";
 import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
 import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
-import { shopStore } from "@/Stores/index.js";
-import DashboardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
-import { router } from "@inertiajs/react";
+import {shopStore} from "@/Stores/index.js";
+import DashBoardImageCarousel from "@/Components/DashBoardImageCarousel.jsx";
 
-/**
- * Component: DashboarShowStoreInfo
- * Description: Displays detailed information about a store, including its address, description, and map location.
- * Allows switching between view and edit modes and shows product/review lists.
- */
-const DashboarShowStoreInfo = observer(({ store }) => {
+const DashboarShowStoreInfo = observer(({store}) => {
+
     const theme = useTheme();
-    // Media query to detect small screens (mobile view)
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    // Default latitude and longitude for the map
-    const latitude = store?.latitude || 38.7071;
-    const longitude = store?.longitude || -9.1355;
-    console.log("store", store);
+    // Get media queries
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
+    const latitude = store.addresses[0]?.latitude || 38.7071;
+    const longitude = store.addresses[0]?.longitude || -9.1355;
 
-    // State to toggle product list visibility
-    const [showProductList, setShowProductList] = useState(false);
+    const [showProductList, setShowProductList] = useState(false)
+    // Função para lidar com o clique no card "Produtos"
     const handleProductCardClick = () => {
-        setShowProductList(!showProductList);
+        setShowProductList(!showProductList); // Alterna entre mostrar/esconder
         setShowReviewList(false);
     };
 
-    // State to toggle review list visibility
     const [showReviewList, setShowReviewList] = useState(false);
+
     const handleReviewCardClick = () => {
         setShowReviewList(!showReviewList);
-        setShowProductList(false);
+        setShowProductList(false); // Fecha o componente de produtos se estiver aberto
     };
 
-    // State to control the confirmation modal
-    const [openConfirmModal, setOpenConfirmModal] = useState(false);
-
-    // Handle open and close of the modal
-    const handleOpenConfirmModal = () => {
-        setOpenConfirmModal(true);
-    };
-
-    const handleCloseConfirmModal = () => {
-        setOpenConfirmModal(false);
-    };
-
-    // Handle deletion after confirmation
-    const handleConfirmDelete = async () => {
-        await shopStore.DeleteStore(store.id);
-        handleCloseConfirmModal();
-    };
-
-    // State to manage edit mode
     const [isEditing, setIsEditing] = useState(false);
     const handleEditClick = () => {
-        setIsEditing(true); // Switch to edit mode
+        setIsEditing(true); // Alterna para o modo de edição
     };
+
     const handleCancelEdit = () => {
-        setIsEditing(false); // Switch back to view mode
+        setIsEditing(false); // Volta para o modo de visualização
     };
 
-    const navigate = (path) => {
-        router.visit(path, {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    };
-
-    // Redirect to orders Page
-    const handleNavigateToOrders = () => {
-        // window.location.href = "/dashboard/encomendas";
-        navigate("/dashboard/encomendas");
-    };
-
-    /**
-     * Prepare the images for submission by filtering valid new images and collecting images to delete.
-     */
     const prepareImages = (existingImages, newImages, deleteImages) => {
         console.log("Prepar imagens para apagar", deleteImages);
         return {
-            newImages: newImages.filter(Boolean),
-            deleteImages,
+            newImages: newImages.filter(Boolean), // Filtra as novas imagens válidas
+            deleteImages, // IDs das imagens a serem excluídas
         };
     };
 
-    /**
-     * Handle the submission of the store edit form.
-     * Collects all updated store data and sends it to the backend.
-     */
-    const handleSubmitEdit = async (
-        updatedValues,
-        existingImages,
-        newImages,
-        deleteImages,
-    ) => {
+    const handleSubmitEdit = async (updatedValues, existingImages, newImages, deleteImages) => {
         try {
-            const {
-                newImages: preparedNewImages,
-                deleteImages: preparedDeleteImages,
-            } = prepareImages(existingImages, newImages, deleteImages);
 
-            // Add the images to updatedvalues before sending them
+            // Prepara as imagens corretamente
+            const { newImages: preparedNewImages, deleteImages: preparedDeleteImages } = prepareImages(existingImages, newImages, deleteImages);
+
+            // Adiciona as imagens ao updatedValues antes de enviar
             const formDataValues = {
                 ...updatedValues,
                 newImages: preparedNewImages,
@@ -129,28 +75,27 @@ const DashboarShowStoreInfo = observer(({ store }) => {
 
             const formData = new FormData();
 
-            // Add basic data
+            // Adicionar dados básicos
             for (const key in formDataValues) {
-                if (
-                    key !== "existingImages" &&
-                    key !== "newImages" &&
-                    key !== "deleteImages"
-                ) {
+                if (key !== 'existingImages' && key !== 'newImages' && key !== 'deleteImages') {
                     formData.append(key, formDataValues[key]);
                 }
             }
 
-            // Add new images (base64)
+            // Adicionar novas imagens (base64)
             formDataValues.newImages.forEach((img, index) => {
                 formData.append(`new_images[${index}]`, img);
             });
 
-            // Add images to delete (IDs)
+            // Adicionar imagens para exclusão (IDs)
             formDataValues.deleteImages.forEach((id, index) => {
                 formData.append(`delete_images[${index}]`, id);
             });
+            console.log("Apos adicionar imagem para apagar", formData)
 
-            // Send the form data to the backend
+            console.log("FormData preparado para envio: ", Array.from(formData.entries()));
+
+            // Enviar para o backend
             const result = await shopStore.updateStore(store.id, formData);
             if (result.success) {
                 console.log("Loja atualizada com sucesso!");
@@ -163,12 +108,13 @@ const DashboarShowStoreInfo = observer(({ store }) => {
         }
     };
 
+
     return (
         <Paper
             elevation={4}
             sx={{
                 p: 2,
-                width: "95%",
+                width: "80%",
                 m: "auto",
                 display: "flex",
                 flexDirection: "column",
@@ -179,17 +125,17 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                 position: "relative", // Adiciona posição relativa ao Paper
             }}
         >
-            {/* Image carousel displaying the store gallery */}
-            <Box sx={{ position: "relative", height: 200, overflow: "hidden" }}>
-                <DashboardImageCarousel galleries={store?.galleries} />
+            {/* Carrossel */}
+            <Box sx={{position: "relative", height: 200, overflow: "hidden"}}>
+                <DashBoardImageCarousel galleries={store?.galleries}/>
             </Box>
 
-            {/* Store name section */}
+            {/* Nome da loja */}
             <Box
                 sx={{
                     position: "absolute",
                     width: "100%",
-                    top: "215px",
+                    top: "215px", // Ajustado para não ficar oculto
                     left: "50%",
                     transform: "translateX(-50%)",
                     backgroundColor: theme.palette.primary.main,
@@ -208,139 +154,80 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                 </Typography>
             </Box>
 
-            <Divider />
-
-            {/* Conditionally render view or edit mode */}
+            <Divider/>
+            {/* Conteúdo alternado: visualização ou formulário */}
             {!isEditing ? (
                 <Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            gap: 2,
-                            mb: 1,
-                            pt: 3,
-                            flexDirection: isSmallScreen ? "column" : "row",
-                        }}
-                    >
-                        {/* Store information section */}
-                        <Box sx={{ flex: "1 1 50%", marginBottom: "3%", p: 2 }}>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen
-                                        ? "column"
-                                        : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3,
-                                }}
-                            >
-                                <Box sx={{ flex: "1 1 45%" }}>
+                    <Box sx={{display: "flex", gap: 2, mb: 1, pt:3, flexDirection: isSmallScreen ? "column" : "row",}}>
+                        {/* Informações da loja */}
+                        <Box sx={{flex: "1 1 50%", marginBottom: "3%", p: 2}}>
+                            {/* Linha 1 - Email & Telemóvel */}
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: isSmallScreen ? "column" : "row",
+                                flexWrap: "wrap",
+                                gap: 2,
+                                mb: 3
+                            }}>
+                                <Box sx={{flex: "1 1 45%"}}>
+                                    <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Email:</Typography>
+                                    <Typography sx={{fontSize: "1rem"}}>{store?.email || "Sem email"}</Typography>
+                                </Box>
+                                <Box sx={{flex: "1 1 45%"}}>
+                                    <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Telemóvel:</Typography>
                                     <Typography
-                                        fontWeight="bold"
-                                        sx={{ fontSize: "1.2rem" }}
-                                    >
-                                        Email:
-                                    </Typography>
-                                    <Typography sx={{ fontSize: "1rem" }}>
-                                        {store?.email || "Sem email"}
+                                        sx={{fontSize: "1rem"}}>{store?.phone_number || "Sem número de telemóvel"}</Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Linha 2 - Localidade & Código Postal */}
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: isSmallScreen ? "column" : "row",
+                                flexWrap: "wrap",
+                                gap: 2,
+                                mb: 3
+                            }}>
+                                <Box sx={{flex: "1 1 45%"}}>
+                                    <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Localidade:</Typography>
+                                    <Typography sx={{fontSize: "1rem"}}>
+                                        {store?.addresses?.[0]?.city || "Código postal não disponível"}
                                     </Typography>
                                 </Box>
-                                <Box sx={{ flex: "1 1 45%" }}>
-                                    <Typography
-                                        fontWeight="bold"
-                                        sx={{ fontSize: "1.2rem" }}
-                                    >
-                                        Telemóvel:
-                                    </Typography>
-                                    <Typography sx={{ fontSize: "1rem" }}>
-                                        {store?.phone_number ||
-                                            "Sem número de telemóvel"}
+                                <Box sx={{flex: "1 1 45%"}}>
+                                    <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Código Postal:</Typography>
+                                    <Typography sx={{fontSize: "1rem"}}>
+                                        {store?.addresses?.[0]?.postal_code || "Não disponível"}
                                     </Typography>
                                 </Box>
                             </Box>
 
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen
-                                        ? "column"
-                                        : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3,
-                                }}
-                            >
-                                <Box sx={{ flex: "1 1 45%" }}>
-                                    <Typography
-                                        fontWeight="bold"
-                                        sx={{ fontSize: "1.2rem" }}
-                                    >
-                                        Localidade:
-                                    </Typography>
-                                    <Typography sx={{ fontSize: "1rem" }}>
-                                        {store?.addresses?.[0]?.city ||
-                                            "Código postal não disponível"}
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ flex: "1 1 45%" }}>
-                                    <Typography
-                                        fontWeight="bold"
-                                        sx={{ fontSize: "1.2rem" }}
-                                    >
-                                        Código Postal:
-                                    </Typography>
-                                    <Typography sx={{ fontSize: "1rem" }}>
-                                        {store?.addresses?.[0]?.postal_code ||
-                                            "Não disponível"}
+                            {/* Linha 3 - Morada */}
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: isSmallScreen ? "column" : "row",
+                                flexWrap: "wrap",
+                                gap: 2,
+                                mb: 3
+                            }}>
+                                <Box sx={{flex: "1 1 45%"}}>
+                                    <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Morada:</Typography>
+                                    <Typography sx={{fontSize: "1rem"}}>
+                                        {store?.addresses?.[0]?.street_address || "Código postal não disponível"}
                                     </Typography>
                                 </Box>
                             </Box>
 
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen
-                                        ? "column"
-                                        : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3,
-                                }}
-                            >
-                                <Box sx={{ flex: "1 1 45%" }}>
-                                    <Typography
-                                        fontWeight="bold"
-                                        sx={{ fontSize: "1.2rem" }}
-                                    >
-                                        Morada:
-                                    </Typography>
-                                    <Typography sx={{ fontSize: "1rem" }}>
-                                        {store?.addresses?.[0]
-                                            ?.street_address ||
-                                            "Código postal não disponível"}
-                                    </Typography>
-                                </Box>
-                            </Box>
-
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: isSmallScreen
-                                        ? "column"
-                                        : "row",
-                                    flexWrap: "wrap",
-                                    gap: 2,
-                                    mb: 3,
-                                }}
-                            >
-                                <Box sx={{ flex: "1 1 45%" }}>
-                                    <Typography
-                                        fontWeight="bold"
-                                        sx={{ fontSize: "1.2rem" }}
-                                    >
-                                        Descrição:
-                                    </Typography>
+                            {/* Linha 4 - Descrição */}
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: isSmallScreen ? "column" : "row",
+                                flexWrap: "wrap",
+                                gap: 2,
+                                mb: 3
+                            }}>
+                                <Box sx={{flex: "1 1 45%"}}>
+                                    <Typography fontWeight="bold" sx={{fontSize: "1.2rem"}}>Descrição:</Typography>
                                     <ReactMarkdown>
                                         {store?.description || "Sem descrição"}
                                     </ReactMarkdown>
@@ -348,75 +235,48 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                             </Box>
                         </Box>
 
-                        {/* Map location */}
-                        <Box sx={{ flex: "1 1 50%" }}>
-                            <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                        {/* Localização no Mapa */}
+                        <Box sx={{flex: "1 1 50%"}}>
+                            <Typography variant="h5" sx={{mb: 2}}>
                                 Localização no Mapa
                             </Typography>
-                            <Box
-                                sx={{
-                                    height: "400px",
-                                    width: "100%",
-                                    borderRadius: "8px",
-                                    overflow: "hidden",
-                                }}
-                            >
-                                <MapContainer
-                                    center={[latitude, longitude]}
-                                    zoom={13}
-                                    style={{ height: "100%", width: "100%" }}
-                                >
-                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                    <Marker position={[latitude, longitude]} />
+                            <Box sx={{height: "400px", width: "100%", borderRadius: "8px", overflow: "hidden"}}>
+                                <MapContainer center={[latitude, longitude]} zoom={13} style={{height: "100%", width: "100%"}}>
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                    <Marker position={[latitude, longitude]}/>
                                 </MapContainer>
                             </Box>
                         </Box>
+
                     </Box>
-                    <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-                        <Box sx={{ mt: 1, textAlign: "right" }}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleEditClick}
-                            >
-                                Editar
-                            </Button>
-                        </Box>
-                        <Box sx={{ mt: 1, textAlign: "right" }}>
-                            <Button
-                                variant="contained"
-                                color="error"
-                                onClick={handleOpenConfirmModal}
-                            >
-                                Apagar Loja
-                            </Button>
-                        </Box>
+                    <Box sx={{mt: 1, textAlign: "right"}}>
+                        <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
                     </Box>
                 </Box>
-            ) : (
+            ):(
                 <DashboardStoreEditForm
                     store={store}
                     onCancel={handleCancelEdit}
-                    onSubmit={handleSubmitEdit}
+                    onSubmit={handleSubmitEdit} // Recebe as informações do formulário
                 />
             )}
 
-            <Divider />
+            <Divider/>
 
-            {/* Shortcut cards for products,reviews and orders */}
-            <Box sx={{ pb: 3 }}>
+            {/* container dos cards*/}
+            <Box sx={{pb:3}}>
                 <DashboardStoreShortCutCard
-                    handleNavigateToOrders={handleNavigateToOrders}
                     store={store}
                     onProductClick={handleProductCardClick}
                     onReviewClick={handleReviewCardClick}
                 />
             </Box>
 
-            {/* Conditionally render product list or review list */}
+            {/* Renderiza condicionalmente o DashboardProductList */}
             {showProductList && (
                 <Box sx={{ mt: 2 }}>
-                    <DashboardProductList storeId={store.id} />
+                    <DashboardProductList
+                        storeId={store.id}/>
                 </Box>
             )}
 
@@ -425,30 +285,6 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                     <DashboardStoreReviewList storeId={store.id} />
                 </Box>
             )}
-
-            {/* Delete confirmation  */}
-            <Dialog open={openConfirmModal} onClose={handleCloseConfirmModal}>
-                <DialogTitle>Confirmar Ação</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Tem a certeza que pretende apagar a loja{" "}
-                        <strong>{store?.name}</strong>? Esta ação não pode ser
-                        desfeita.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseConfirmModal} color="secondary">
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={handleConfirmDelete}
-                        color="error"
-                        variant="contained"
-                    >
-                        Apagar
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Paper>
     );
 });
