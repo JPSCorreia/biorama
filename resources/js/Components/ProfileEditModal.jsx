@@ -31,49 +31,28 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const { genders } = usePage().props;
 
-    // Estado para o modal de recorte
-    const [cropModalOpen, setCropModalOpen] = useState(false);
-    const [imageToCrop, setImageToCrop] = useState(null);
-    const [croppedImageURL, setCroppedImageURL] = useState(null);
+    // Estado para armazenar a URL da imagem carregada
+    const [previewImageURL, setPreviewImageURL] = useState(authStore.user?.image_profile || "");
 
-    // Função para abrir o modal de crop ao fazer upload
+    // Função para processar o upload da imagem diretamente
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setImageToCrop(reader.result); // Define a imagem carregada para recorte
-                setCropModalOpen(true); // Abre o modal de crop
-            };
-            reader.readAsDataURL(file);
+            const objectURL = URL.createObjectURL(file);
+            setPreviewImageURL(objectURL); // Define a pré-visualização no Avatar
+            formik.setFieldValue("image_profile", file); // Armazena o arquivo no formik
         }
-    };
-
-    // Callback para salvar a imagem recortada
-    const handleCropComplete = (croppedImageFile) => {
-        // Gera um Blob URL para pré-visualizar
-        const previewURL = URL.createObjectURL(croppedImageFile);
-        setCroppedImageURL(previewURL); // Define o preview no estado
-        setCropModalOpen(false); // Fecha o modal de crop
     };
 
     const validationSchema = yup.object().shape({
         first_name: yup.string().required("O nome é obrigatório"),
         last_name: yup.string().required("O apelido é obrigatório"),
-        email: yup
-            .string()
-            .email("Email inválido")
-            .required("O email é obrigatório"),
+        email: yup.string().email("Email inválido").required("O email é obrigatório"),
         phone: yup.string().required("O nrº de telemóvel é obrigatório"),
         nif: yup.string().required("O NIF é obrigatório"),
-        gender_id: yup
-            .number()
-            .required("O género é obrigatório.")
-            .integer("O ID deve ser um número inteiro."),
-        date_of_birth: yup
-            .date()
-            .nullable()
-            .required("A data de nascimento é obrigatória"),
+        gender_id: yup.number().required("O género é obrigatório").integer("O ID deve ser um número inteiro."),
+        date_of_birth: yup.date().nullable().required("A data de nascimento é obrigatória"),
+        image_profile: yup.mixed().required("A imagem de perfil é obrigatória"),
     });
 
     const submitForm = async () => {
@@ -84,39 +63,30 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                 return;
             }
 
-            // Cria o FormData
+            // Criar FormData para envio ao backend
             const formData = new FormData();
             const values = formik.values;
 
-            // Adiciona os campos do formulário
             formData.append("first_name", values.first_name);
             formData.append("last_name", values.last_name);
             formData.append("email", values.email);
             formData.append("phone", values.phone);
             formData.append("nif", values.nif);
             formData.append("gender_id", values.gender_id);
-            formData.append(
-                "date_of_birth",
-                values.date_of_birth
-                    ? dayjs(values.date_of_birth).format("YYYY-MM-DD")
-                    : null,
-            );
+            formData.append("date_of_birth", values.date_of_birth ? dayjs(values.date_of_birth).format("YYYY-MM-DD") : null);
 
-            // Verifica se um ficheiro foi carregado
+            // Se houver imagem carregada, adicionar ao FormData
             if (values.image_profile instanceof File) {
-                formData.append("image_profile", values.image_profile); // Envia o ficheiro
-            } else {
-                formData.append("image_profile", authStore.user.image_profile); // Envia o link existente
+                formData.append("image_profile", values.image_profile);
             }
 
-            console.log("ImageStore", formik.values.image_profile);
+            console.log("Enviando imagem:", formik.values.image_profile);
 
-            // Atualizar no backend
             await authStore.submitDataUser(formData);
 
-            formik.resetForm(); // Reseta o formulário
-
-            handleClose(); // Fecha o modal
+            formik.resetForm();
+            setPreviewImageURL("");
+            handleClose();
         } catch (error) {
             console.error("Erro ao submeter o formulário:", error);
         }
@@ -129,16 +99,12 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             email: authStore.user?.email || "",
             phone: authStore.user?.phone || "",
             nif: authStore.user?.nif || "",
-            gender_id: authStore.user?.gender
-                ? authStore.user?.gender.id
-                : null,
-            date_of_birth: authStore.user?.date_of_birth
-                ? dayjs(authStore.user?.date_of_birth)
-                : null,
-            image_profile: authStore.user?.image_profile || "", // Link para a imagem na storage
+            gender_id: authStore.user?.gender ? authStore.user?.gender.id : "",
+            date_of_birth: authStore.user?.date_of_birth ? dayjs(authStore.user?.date_of_birth) : null,
+            image_profile: authStore.user?.image_profile || "",
         },
         validationSchema: validationSchema,
-        onSubmit: () => {},
+        onSubmit: submitForm,
     });
 
     return (
@@ -196,7 +162,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                     >
                         <Avatar
                             alt="Profile Image"
-                            src={croppedImageURL || formik.values.image_profile} // Mostra o preview ou o valor existente
+                            src={formik.values.image_profile || previewImageURL} // Mostra o preview ou o valor existente
                             sx={{
                                 width: isSmallScreen ? 90 : 120,
                                 height: isSmallScreen ? 90 : 120,
@@ -258,6 +224,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                 : "250px",
                                         }}
                                         type="text"
+                                        required
                                         margin="normal"
                                         value={formik.values.first_name}
                                         onChange={formik.handleChange}
@@ -277,6 +244,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                         label="Apelido"
                                         name="last_name"
                                         type="text"
+                                        required
                                         sx={{
                                             width: isSmallScreen
                                                 ? "100%"
@@ -326,6 +294,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                     formik.errors.last_name}
                                             </Box>
                                         }
+                                        required
                                         sx={{
                                             width: isSmallScreen
                                                 ? "100%"
@@ -340,6 +309,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                         value={formik.values.phone}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
+                                        required
                                         error={
                                             formik.touched.phone &&
                                             Boolean(formik.errors.phone)
@@ -372,6 +342,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                         label="Género"
                                         margin="normal"
                                         name="gender_id"
+                                        required
                                         value={formik.values.gender_id || ""} // Garante que nunca é undefined
                                         onChange={formik.handleChange}
                                         error={
@@ -426,6 +397,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                         : "250px",
                                                 }}
                                                 label="Data de Nascimento"
+                                                required
                                                 value={
                                                     formik.values.date_of_birth
                                                 }
@@ -473,6 +445,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                     textAlign: "left",
                                                 }}
                                                 label="Data de Nascimento"
+                                                required
                                                 value={
                                                     formik.values.date_of_birth
                                                 }
@@ -520,6 +493,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                     label="Email"
                                     name="email"
                                     type="email"
+                                    required
                                     fullWidth
                                     margin="normal"
                                     value={formik.values.email}
@@ -551,12 +525,6 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                     </Box>
                 </Box>
             </Modal>
-            <ImageCropModal
-                open={cropModalOpen}
-                image={imageToCrop}
-                onClose={() => setCropModalOpen(false)}
-                onCropComplete={handleCropComplete}
-            />
         </>
     );
 });
