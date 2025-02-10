@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
@@ -28,7 +29,7 @@ class OrderController extends Controller
             'orders.*.street_name' => 'required|string|max:255',
             'orders.*.city' => 'required|string|max:255',
             'orders.*.postal_code' => 'required|string|max:10',
-            'orders.*.phone_number' => 'required|string|max:20',
+            'orders.*.phone_number' => 'nullable|string|max:20',
             'orders.*.total' => 'required|numeric|min:0',
             'orders.*.products' => 'required|array|min:1',
             'orders.*.products.*.product_id' => 'required|exists:products,id',
@@ -85,11 +86,46 @@ class OrderController extends Controller
         return redirect()
         ->intended(route('home'))
         ->with('message', 'Encomenda realizada com sucesso!')
-        ->with('type', 'success');
+        ->with('type', 'success')
+        ->with('orders', collect($createdOrders)->pluck('id')->toArray());
     }
 
 
+    public function createPayPalOrder(Request $request)
+    {
+        $orders = $request->input('orders');
+    
+        $totalAmount = collect($orders)->sum('total');
+    
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic ' . base64_encode(env('PAYPAL_CLIENT_ID') . ':' . env('PAYPAL_SECRET'))
+        ])->post("https://api-m.sandbox.paypal.com/v2/checkout/orders", [
+            "intent" => "CAPTURE",
+            "purchase_units" => [
+                [
+                    "amount" => [
+                        "currency_code" => "EUR",
+                        "value" => number_format($totalAmount, 2, '.', ''),
+                    ]
+                ]
+            ]
+        ]);
+    
+        return response()->json($response->json());
+    }
 
+    public function capturePayPalOrder(Request $request)
+    {
+        $orderID = $request->input('orderID');
+    
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic ' . base64_encode(env('PAYPAL_CLIENT_ID') . ':' . env('PAYPAL_SECRET'))
+        ])->post("https://api-m.sandbox.paypal.com/v2/checkout/orders/{$orderID}/capture");
+    
+        return response()->json($response->json());
+    }
 
 
     public function show(Order $order)
@@ -116,21 +152,36 @@ class OrderController extends Controller
     public function sendInvoice(SendInvoiceRequest $request)
     {
         try {
-            $invoiceData = [
-                'name' => 'Cliente Teste',
-                'total' => 123.45,
-            ];
+            $invoiceData = $request->input('order'); // Dados reais da encomenda
 
-            // Testa o conteúdo antes de gerar o PDF
-            // dd(['order' => $invoiceData]);
+            Log::info($invoiceData); // Verifica os dados antes de enviar
 
-            $pdf = Pdf::loadView('pdf.invoice', ['order' => $invoiceData]);
+            // Buscar nome da loja da primeira encomenda (assumindo que todas vêm da mesma loja)
+            $store = \App\Models\Store::find($invoiceData['products'][0]['store_id'] ?? null);
+            $invoiceData['store_name'] = $store ? $store->name : 'Loja Desconhecida';
 
+            // Buscar nomes dos produtos
+            foreach ($invoiceData['products'] as &$product) {
+                $productModel = \App\Models\Product::find($product['product_id']);
+                $product['product_name'] = $productModel ? $productModel->name : 'Produto Desconhecido';
+            }
+
+            // Garantir que Subtotal e Portes de Envio estão incluídos
+            $invoiceData['subtotal'] = $invoiceData['subtotal'] ?? 0;
+            $invoiceData['shipping_costs'] = $invoiceData['shipping_costs'] ?? 0;
+            $invoiceData['total'] = $invoiceData['total'] ?? ($invoiceData['subtotal'] + $invoiceData['shipping_costs']);
+
+            // Gerar o PDF com os dados atualizados
+            $pdf = Pdf::loadView('pdf.invoice', ['orders' => [$invoiceData]]);
+
+            // Preparar os dados do email
             $emailData = [
+                'orders' => [$invoiceData], // Passa como um array
                 'pdf' => $pdf->output(),
             ];
 
-            Mail::to($request->input('user.email', 'jpscorreia.dev@gmail.com'))->send(new InvoiceEmail($emailData));
+            // Enviar o email
+            Mail::to($request->input('user.email'))->send(new InvoiceEmail($emailData));
 
             return response()->json(['message' => 'Email enviado com sucesso!']);
         } catch (\Exception $e) {
@@ -138,6 +189,10 @@ class OrderController extends Controller
             return response()->json(['message' => 'Erro ao enviar a fatura. Verifica os logs do servidor.'], 500);
         }
     }
+
+
+
+
 
 
 }

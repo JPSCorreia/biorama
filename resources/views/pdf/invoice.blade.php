@@ -38,13 +38,6 @@
         .invoice-details {
             margin-bottom: 20px;
         }
-        .invoice-details h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .invoice-details p {
-            margin: 5px 0;
-        }
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -86,40 +79,50 @@
             </div>
         </div>
 
-        <div class="invoice-details">
-            <h1>Fatura</h1>
-            <p><strong>Número:</strong> #{{ rand(1000, 9999) }}</p>
-            <p><strong>Data:</strong> {{ now()->format('d/m/Y') }}</p>
-        </div>
+        @foreach ($orders as $order)
+            <div class="invoice-details">
+                <h1>Fatura #{{ $order['id'] ?? rand(1000, 9999) }}</h1>
+                <p><strong>Data:</strong> {{ now()->format('d/m/Y') }}</p>
+                <p><strong>Cliente:</strong> {{ $order['name'] ?? 'Nome Indisponível' }}</p>
+                <p><strong>Loja:</strong> {{ $order['store_name'] ?? 'Loja Desconhecida' }}</p>
+                <p><strong>Morada:</strong> {{ $order['street_name'] ?? 'N/A' }}, {{ $order['city'] ?? 'N/A' }}</p>
+                <p><strong>Código Postal:</strong> {{ $order['postal_code'] ?? 'N/A' }}</p>
+                <p><strong>Telefone:</strong> {{ $order['phone_number'] ?? 'N/A' }}</p>
+            </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Descrição</th>
-                    <th>Quantidade</th>
-                    <th>Preço Unitário</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Produto Exemplo 1</td>
-                    <td>2</td>
-                    <td>€50.00</td>
-                    <td>€100.00</td>
-                </tr>
-                <tr>
-                    <td>Produto Exemplo 2</td>
-                    <td>1</td>
-                    <td>€75.00</td>
-                    <td>€75.00</td>
-                </tr>
-            </tbody>
-        </table>
+            @if (!empty($order['products']))
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unitário</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($order['products'] as $product)
+                        <tr>
+                            <td>{{ $product['product_name'] ?? 'Produto Desconhecido' }}</td>
+                            <td>{{ $product['quantity'] ?? 1 }}</td>
+                            <td>€{{ number_format(floatval($product['price'] ?? 0), 2, ',', '.') }}</td>
+                            <td>€{{ number_format(floatval($product['final_price'] ?? 0), 2, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <p><strong>Erro:</strong> Nenhum produto encontrado na fatura.</p>
+            @endif
 
-        <div class="total">
-            <p><strong>Total Geral:</strong> €175.00</p>
-        </div>
+            <div class="total">
+                <p><strong>Subtotal:</strong> €{{ number_format(floatval($order['subtotal'] ?? 0), 2, ',', '.') }}</p>
+                <p><strong>Portes de Envio:</strong> €{{ number_format(floatval($order['shipping_costs'] ?? 0), 2, ',', '.') }}</p>
+                <p><strong>Total:</strong> €{{ number_format(floatval($order['total'] ?? 0), 2, ',', '.') }}</p>
+            </div>
+
+            <hr>
+        @endforeach
 
         <div class="footer">
             <p>Obrigado pela sua compra!</p>

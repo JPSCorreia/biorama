@@ -18,11 +18,15 @@ class StoreReviewController extends Controller
             'store_id' => 'required|exists:stores,id',
             'user_id' => 'required|exists:users,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
+            'comment' => 'nullable|string',
         ]);
 
         $storeReview = StoreReview::create($validated);
-        return response()->json($storeReview, 201);
+        return redirect()->back()->with([
+            'message' => 'Review enviada com sucesso!',
+            'type'    => 'success'
+        ]);
+
     }
 
     public function show(StoreReview $storeReview)

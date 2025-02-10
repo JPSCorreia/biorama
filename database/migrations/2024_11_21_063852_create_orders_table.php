@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('street_name');
             $table->string('city');
             $table->string('postal_code');
-            $table->string('phone_number');
+            $table->string('phone_number')->nullable();
             $table->string('comment')->nullable();
             $table->decimal('total', 10, 2);
             $table->timestamps();

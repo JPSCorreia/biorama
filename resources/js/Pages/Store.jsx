@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
-import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription } from "../Components";
+import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription, StoreCommentContainer} from "../Components";
 import { Container, Box, useTheme, useMediaQuery  } from "@mui/material";
 import { AlertBox } from "../Components";
 
@@ -8,7 +8,10 @@ const Store = observer(() => {
 
     const { store, vendor, products, user, gallery, address, other } = usePage().props;
 
-    console.log("User", user);
+    console.log("other", other);
+    console.log("auth", usePage().props.auth);
+    console.log("store",store);
+
 
     const theme = useTheme();
 
@@ -49,6 +52,19 @@ const Store = observer(() => {
                 <StoreVendorCard store={store} vendor={vendor} user={user} other={other} />
                 <StoreMap store={store} address={address} />
             </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "left",
+                    mt: 4,
+                    mb: 4,
+                }}
+            >
+                <StoreCommentContainer />
+            </Box>
+
         </Container>
     );
 });

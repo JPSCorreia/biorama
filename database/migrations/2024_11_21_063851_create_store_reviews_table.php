@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('user_id')->constrained('users');
             $table->integer('rating');
-            $table->mediumText('comment')->nullable();
+            $table->mediumText('comment');
             $table->timestamps();
         });
     }

@@ -27,7 +27,7 @@ class ProductSeeder extends Seeder
             ['name' => 'Caju natural', 'price' => 16.99, 'description' => "**500g por unidade**\n\nTextura crocante e sabor amanteigado, ideal para petiscos e culinária asiática."],
             ['name' => 'Grão-de-bico', 'price' => 2.99, 'description' => "**1kg por unidade**\n\nVersátil e nutritivo, perfeito para hummus, saladas e guisados."],
             ['name' => 'Arroz basmati', 'price' => 4.99, 'description' => "**1kg por unidade**\n\nAromático e de grãos soltos, ideal para pratos indianos e asiáticos."],
-            ['name' => 'Azeite de oliva', 'price' => 6.99, 'description' => "**500ml por unidade**\n\nAzeite virgem extra prensado a frio, ideal para temperos e cozinhar."],
+            ['name' => 'Azeite biológico', 'price' => 6.99, 'description' => "**500ml por unidade**\n\nAzeite virgem extra prensado a frio, ideal para temperos e cozinhar."],
             ['name' => 'Óleo de coco', 'price' => 5.99, 'description' => "**250ml por unidade**\n\nPuro e versátil, ótimo para culinária saudável e cuidados de pele."],
             ['name' => 'Mel biológico', 'price' => 7.99, 'description' => "**500g por unidade**\n\nPuro e sem aditivos, perfeito para adoçar infusões e receitas."],
             ['name' => 'Leite de amêndoa', 'price' => 2.49, 'description' => "**1L por unidade**\n\nSem açúcares adicionados, uma alternativa vegetal ao leite tradicional."],
@@ -92,7 +92,7 @@ class ProductSeeder extends Seeder
         // Associar produtos às lojas
         $stores = Store::all();
         foreach ($stores as $store) {
-            $products = Product::all(); // Todos os 20 produtos fixos
+            $products = Product::all();
 
             foreach ($products as $product) {
                 StoreProduct::create([

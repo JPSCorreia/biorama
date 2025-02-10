@@ -131,6 +131,7 @@ const Login = observer(() => {
                                 type="password"
                                 variant="outlined"
                                 required
+                                autoComplete="new-password"
                                 value={formData.password}
                                 onChange={(e) =>
                                     setFormData({
