@@ -1,16 +1,20 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Box, CircularProgress, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { HomeStoreCard } from "../index.js";
 import { nearbyShopStore } from "../../Stores/nearbyShopStore.js";
 import { toJS } from "mobx";
+import PropTypes from 'prop-types';
+
 
 export const HomeNearbyStores = observer(() => {
     const theme = useTheme();
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
-    const nearbyStores = toJS(nearbyShopStore.nearbyStores); // ✅ Garante que é um array normal
-
+    const nearbyStores = toJS(nearbyShopStore.nearbyStores) || [];
+    if (!nearbyStores || !Array.isArray(nearbyStores)) {
+        return <Typography>Nenhuma loja encontrada.</Typography>;
+    }
     if (nearbyShopStore.loading) {
         return (
             <Box
@@ -31,9 +35,9 @@ export const HomeNearbyStores = observer(() => {
 
     if (nearbyShopStore.error) {
         return (
-            <Box sx={{ textAlign: "center", color: theme.palette.error.main, padding: 2 }}>
-                <Typography variant="body1">{nearbyShopStore.error}</Typography>
-            </Box>
+            <Typography variant="body1" component="div">
+                {nearbyShopStore.error}
+            </Typography>
         );
     }
 

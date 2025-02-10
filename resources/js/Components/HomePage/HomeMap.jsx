@@ -4,12 +4,13 @@ import PropTypes from "prop-types";
 import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { Box, useTheme } from "@mui/material";
+import {Box, Typography, useTheme} from "@mui/material";
 import ReactDOMServer from "react-dom/server";
 import StoreSharpIcon from "@mui/icons-material/StoreSharp";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { router } from "@inertiajs/react"; // Importa o router do Inertia
-import { nearbyShopStore } from "../../Stores/nearbyShopStore";
+import { nearbyShopStore } from "../../Stores/NearbyShopStore";
+import {toJS} from "mobx";
 
 // Ícone para a localização do utilizador
 const userLocationIcon = L.divIcon({
@@ -133,6 +134,24 @@ const HomeMap = observer(() => {
     const mapRef = useRef(null);
     const theme = useTheme();
 
+    // ✅ Garantir que `nearbyStores` nunca seja undefined
+    const nearbyStores = toJS(nearbyShopStore.nearbyStores) || [];
+
+    // ✅ Verificar se é um array válido antes de renderizar
+    if (!Array.isArray(nearbyStores)) {
+        return <Typography>Nenhuma loja encontrada.</Typography>;
+    }
+
+    // ✅ Se os dados ainda estão a carregar, mostrar um indicador
+    if (nearbyShopStore.loading) {
+        return <Typography>A carregar lojas...</Typography>;
+    }
+
+    // ✅ Se não houver lojas após o carregamento, mostrar um aviso
+    if (!nearbyStores.length) {
+        return <Typography>Nenhuma loja encontrada.</Typography>;
+    }
+
     // Define o centro do mapa com base nas lojas próximas
     useEffect(() => {
         if (nearbyShopStore.nearbyStores.length > 0) {
@@ -233,10 +252,5 @@ const HomeMap = observer(() => {
         </Box>
     );
 });
-
-HomeMap.propTypes = {
-    allStores: PropTypes.array.isRequired, // Todas as lojas
-    nearbyStores: PropTypes.array.isRequired, // Lojas mais próximas
-};
 
 export default HomeMap;

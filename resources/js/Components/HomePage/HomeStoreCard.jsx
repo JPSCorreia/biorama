@@ -131,10 +131,10 @@ const HomeStoreCard = observer(({ store }) => {
                         {store.name}
                     </Typography>
                 </Box>
-                <Box>
-                    {/* Descrição */}
+                <Box sx={{ textAlign: 'left' }}>
                     <Typography
                         variant="body2"
+                        component="div" // <-- Isto evita que Typography gere um <p>
                         color="text.secondary"
                         sx={{
                             display: "-webkit-box",
@@ -145,9 +145,7 @@ const HomeStoreCard = observer(({ store }) => {
                             height: "110px",
                         }}
                     >
-                        <ReactMarkdown>
-                            {truncateDescription(store.description, 90, 150)}
-                        </ReactMarkdown>
+                        <ReactMarkdown>{truncateDescription(store.description, 90, 150)}</ReactMarkdown>
                     </Typography>
                 </Box>
                 <Box
