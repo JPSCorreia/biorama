@@ -178,6 +178,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 
+    // Route to get user orders
+    Route::get('/encomendas-user', [OrderController::class, 'index'])->name('orders');
+    Route::get('/encomenda-user/{id}', [OrderController::class, 'show'])->name('order.show');
 
     // Vendor dashboard
     Route::prefix('/dashboard')->group(function () {

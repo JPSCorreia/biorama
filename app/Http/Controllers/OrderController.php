@@ -12,13 +12,39 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Notifications\OrderCreated;
+use Inertia\Inertia;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        return response()->json(Order::with('user', 'store', 'homeAddress')->get());
+        $orders = Order::with([
+            'user',
+            'status',
+            'products.categories',   // Carrega categorias relacionadas aos produtos
+            'products.gallery',      // Carrega a galeria dos produtos
+            'stores.vendor',         // Carrega o vendor da loja
+            'stores.addresses',      // Carrega os endereços da loja
+            'stores.reviews',        // Carrega as reviews da loja
+            'stores.galleries',      // Carrega as galerias da loja
+            'orderStoreProducts'     // Carrega a relação com os pivôs (order_store_products)
+        ])
+            ->where('user_id', auth()->user()->id)
+            ->get();
+
+        // Converte a coleção para array
+        $ordersArray = $orders->toArray();
+
+        // Percorre recursivamente o array convertendo cada string para UTF-8
+        array_walk_recursive($ordersArray, function (&$item, $key) {
+            if (is_string($item)) {
+                $item = mb_convert_encoding($item, 'UTF-8', 'auto');
+            }
+        });
+        return response()->json($ordersArray);
+
     }
+
 
 
 
@@ -134,9 +160,32 @@ class OrderController extends Controller
     }
 
 
-    public function show(Order $order)
+    public function show($id)
     {
-        return response()->json($order->load('user', 'store', 'homeAddress'));
+        $order = Order::findOrFail($id);
+        // Carregar todas as relações necessárias
+        $order->load([
+            'user',
+            'status',
+            'products.categories', // Categorias dos produtos
+            'products.gallery',     // Galeria dos produtos
+            'stores.vendor',        // Vendedor da loja
+            'stores.addresses',     // Endereços da loja
+            'stores.reviews',       // Avaliações da loja
+            'stores.galleries',     // Galerias das lojas
+            'orderStoreProducts'    // Tabela pivot com preços e quantidades
+        ]);
+
+        // Converte a coleção para array
+        $ordersArray = $order->toArray();
+
+        // Percorre recursivamente o array convertendo cada string para UTF-8
+        array_walk_recursive($ordersArray, function (&$item, $key) {
+            if (is_string($item)) {
+                $item = mb_convert_encoding($item, 'UTF-8', 'auto');
+            }
+        });
+        return Inertia::render('Profile/ProfileOrderDetails', ['order' => $ordersArray]);
     }
 
     public function update(Request $request, Order $order)
