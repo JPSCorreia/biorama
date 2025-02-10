@@ -24,10 +24,6 @@ const ProfileOrders = () => {
             });
     }, []);
 
-    useEffect(() => {
-        console.log(orders);
-    }, [orders]);
-
     const toggleExpand = (orderId) => {
         setExpandedOrders((prev) => ({
             ...prev,

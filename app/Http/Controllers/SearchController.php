@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
@@ -14,23 +15,29 @@ class SearchController extends Controller
     {
         $query = $request->input('query');
 
-        $products = Product::select('name')
-        ->where('name', 'like', '%' . $query . '%')->get();
-
-        $stores = Store::select('name')
-            ->where('name', 'like', '%' . $query . '%')
-            ->orWhere('description', 'like', '%' . $query . '%')
+        $stores = Store::where('name', 'like', '%' . $query . '%')
+            ->with([
+                'addresses' => function ($query) {
+                    $query->select(
+                        'id',
+                        'store_id', // Importante para manter a relação correta
+                        'street_address',
+                        'city',
+                        'postal_code',
+                        DB::raw('ST_X(coordinates) as longitude'),
+                        DB::raw('ST_Y(coordinates) as latitude')
+                    );
+                },
+                'galleries' // Carregar imagens da loja
+            ])
+            ->select('id', 'name', 'description', 'rating', 'phone_number', 'email') // Apenas os campos necessários
             ->get();
 
-        /*$vendors = Vendor::select('city')
-        ->where('city', 'like', '%' . $query . '%')->take(5)->get();*/
 
         // Retornar uma resposta Inertia para renderizar o componente React com os resultados
         return Inertia::render('SearchPage', [
             'searchResults' => [
-                'products' => $products,
-                'stores' => $stores,
-                /*'vendors' => $vendors,*/
+                'stores' => $stores
             ],
             'query' => $query,
         ]);

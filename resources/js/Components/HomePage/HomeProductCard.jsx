@@ -228,8 +228,7 @@ const HomeProductCard = observer(({ product }) => {
                                 onClick={() =>
                                     cartStore.addItem({
                                         ...product,
-                                        vendor: vendor,
-                                        store: store,
+                                        quantity: 1,
                                     })
                                 }
                             >
