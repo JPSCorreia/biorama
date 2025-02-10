@@ -91,17 +91,6 @@ const Navbar = observer(() => {
             ),
         },
         {
-            name: "Produtos",
-            link: "/produtos",
-            icon: (
-                <ShopSharpIcon
-                    sx={{
-                        mb: 0.25,
-                    }}
-                />
-            ),
-        },
-        {
             name: "Lojas",
             link: "/lojas",
             icon: (

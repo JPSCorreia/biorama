@@ -14,7 +14,7 @@ import {
     InputLabel,
     useMediaQuery,
 } from "@mui/material";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, Tooltip } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -52,28 +52,32 @@ const createCustomIcon = (color) => {
         html: ReactDOMServer.renderToString(
             <div
                 style={{
-                    fontSize: "24px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                     border: `1px solid ${color}`,
                     borderRadius: "50%",
-                    padding: "4px",
-                    boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`,
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#ffffffa9",
+                    boxShadow: `0 0 2px ${color}, 0 0 4px ${color}`,
+                    textAlign: "center",
                 }}
             >
                 <StoreSharpIcon
                     fontSize="inherit"
-                    style={{ fill: color, width: "1em", height: "1em" }}
+                    style={{ fill: color, fontSize: "24px" }}
                 />
             </div>,
         ),
         className: "custom-marker-icon",
         iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconAnchor: [25, 25],
     });
 };
-
 // Função para personalizar os clusters com contagem e cor dinâmica
 const createClusterCustomIcon = (cluster) => {
     const count = cluster.getChildCount(); // Número de lojas agrupadas
@@ -215,7 +219,6 @@ const Stores = observer(() => {
                                 },
                             }}
                         />
-
                     </Box>
                     {/* CheckBox e seletor de raio */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -336,9 +339,6 @@ const Stores = observer(() => {
                                     showCoverageOnHover={false} // Oculta os círculos ao passar o rato
                                 >
                                     {stores.map((store) => {
-                                        const isHovered =
-                                            hoverStore.hoveredStoreId ===
-                                            store.id;
                                         return (
                                             <Marker
                                                 key={store.id}
@@ -347,15 +347,18 @@ const Stores = observer(() => {
                                                     store.addresses[0]
                                                         .longitude,
                                                 ]}
-                                                icon={createCustomIcon(
-                                                    isHovered
-                                                        ? theme.palette
-                                                              .secondary.main
-                                                        : theme.palette.primary
-                                                              .main,
-                                                )}
-                                            >
-                                                <Popup>{store.name}</Popup>
+                                                icon={createCustomIcon("green")}                                            >
+                                                <Tooltip
+                                                    direction="top"
+                                                    offset={[0, -10]}
+                                                    opacity={1}
+                                                >
+                                                    <div>
+                                                        <strong>
+                                                            {store.name}
+                                                        </strong>
+                                                    </div>
+                                                </Tooltip>
                                             </Marker>
                                         );
                                     })}
@@ -378,13 +381,23 @@ const Stores = observer(() => {
                                         store.addresses[0].latitude,
                                         store.addresses[0].longitude,
                                     ]}
-                                    icon={createCustomIcon(
-                                        isHovered
-                                            ? theme.palette.secondary.main
-                                            : theme.palette.primary.main,
-                                    )}
+                                    icon={createCustomIcon("green")}
+                                    eventHandlers={{
+                                        click: () => {
+                                            // Navega para a página da loja usando router.visit
+                                            router.visit(`/loja/${store.id}`);
+                                        },
+                                    }}
                                 >
-                                    <Popup>{store.name}</Popup>
+                                    <Tooltip
+                                        direction="top"
+                                        offset={[0, -10]}
+                                        opacity={1}
+                                    >
+                                        <div>
+                                            <strong>{store.name}</strong>
+                                        </div>
+                                    </Tooltip>
                                 </Marker>
                             );
                         })}

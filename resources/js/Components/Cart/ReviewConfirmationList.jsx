@@ -25,6 +25,7 @@ const ReviewConfirmationList = observer(() => {
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
 
+
     return (
 < Box
     sx={{
@@ -34,7 +35,7 @@ const ReviewConfirmationList = observer(() => {
         justifyContent: "space-between",
         minWidth: smallerThanSmall ? "100%" : "100%",
         maxHeight: "425px",
-        minHeight: "425px",
+        minHeight: smallerThanLarge? "100%" : "425px",
         height: "100%",
         pt: 2,
         bgcolor: "background.paper",
@@ -87,7 +88,7 @@ const ReviewConfirmationList = observer(() => {
                 );
             }
         )}
-    <Divider sx={{ width: "100%", mt: 1, mb: 2 }} />
+    <Divider sx={{ width: "100%", mt: 1, mb: smallerThanLarge? 6 : 2 }} />
 
     </ Box>
 
