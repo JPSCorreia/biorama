@@ -13,7 +13,9 @@ class OrderStore {
     sortOrder = "asc";
     successMessage = "";
     errorMessage = "";
-    statusesLoading = false;  // Controla o carregamento de status
+    statusesLoading = false;
+    currentPage = 1;
+    totalPages = 1;
 
     constructor() {
         makeObservable(this, {
@@ -39,6 +41,7 @@ class OrderStore {
             searchOrders: action,
             cancelOrder:action,
             fetchVendorStores:action,
+
         });
 
         makePersistable(this, {
@@ -85,15 +88,13 @@ class OrderStore {
     };
 
     fetchOrdersByStore = async (storeId, searchTerm = "", page = 1, limit = 10, sortField = "id", sortOrder = "asc") => {
-        console.log("search", searchTerm);
-        console.log("store id", storeId);
         try {
             const response = await axios.get(`/dashboard/stores/${storeId}/orders`, {
                 params: { search: searchTerm, page, limit, sortField, sortOrder },
             });
-            console.log("response",response);
             runInAction(() => {
                 this.orders = response.data.data;
+                console.log("response",response);
                 this.totalPages = response.data.last_page;
                 this.currentPage = response.data.current_page;
             });
@@ -258,6 +259,11 @@ class OrderStore {
                 this.errorMessage = "Erro ao cancelar a encomenda.";
             });
         }
+    };
+
+    changePage = (newPage) => {
+        this.currentPage = newPage;
+        this.fetchOrders(this.searchTerm, newPage);
     };
 }
 

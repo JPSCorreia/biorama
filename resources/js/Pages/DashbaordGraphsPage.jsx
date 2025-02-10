@@ -277,7 +277,7 @@ const DashboardGraphsPage = () => {
                     position: 'relative'
                 }}>
                     <CardContent sx={{ padding: '0px' }}>
-                        <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>Total de Encomendas</Typography>
+                        <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>Encomendas Ano Currente</Typography>
                         <Typography sx={{ fontWeight: 'bold', fontSize: 24 }}>
                             {dashboardData.total_orders_current_year}
                         </Typography>

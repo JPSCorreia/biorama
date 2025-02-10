@@ -18,22 +18,23 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    //Mostrar informação do vendor
+    // Show vendor information
     public function showVendorInfo()
     {
         $user = Auth::user();
-        // Verifica se o utilizador tem o papel 'vendor'
+        // Check if the user has the 'vendor' role
         if ($user && $user->hasRole('vendor')) {
-            // Carrega os relacionamentos necessários
+
             $user->load([
-                'vendor', // Relacionamento direto com a tabela 'vendors'
-                'vendor.company', // Relacionamento entre 'vendors' e 'company'
-                'vendor.Gender', //Carrega o relacionamento entre 'vendor' e'gender'
-                'vendor.company.addresses', // Relacionamento entre 'company' e 'companyAddress'
-                'vendor.company.contacts', // Relacionamento entre 'company' e 'companyContacts'
+                'vendor',
+                'vendor.company',
+                'vendor.Gender',
+                'vendor.company.addresses',
+                'vendor.company.contacts',
             ]);
             $genders = Gender::all();
 
+            // Fetch vendor stores (maximum of 3 stores)
             $stores = Store::where('vendor_id', $user->vendor->id)
                 ->select(
                     'id',
@@ -62,35 +63,39 @@ class DashboardController extends Controller
                 ->take(3)
                 ->get();
 
-
-            // Renderiza a página com as informações do vendor
+            // Render the page with vendor information
             return Inertia::render('Dashboard/Home', [
                 'user' => $user,
                 'genders' => $genders,
                 'stores' => $stores
             ]);
         }
-        // Se não for vendor, redireciona para o login com uma mensagem de erro
-        return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
+        // Redirect to login if the user is not a vendor with an error message
+        return redirect()->route('login')->withErrors(['message' => 'Unauthorized access.']);
     }
-    //Actualizar o nome do vendedor
-    public function updateVendorName(Request $request, vendor $vendor)
+
+    // Update the vendor's name
+    public function updateVendorName(Request $request, Vendor $vendor)
     {
+        // Validate the incoming data
         $validated = $request->validate([
             'first_name' => 'sometimes|required|string|min:1|max:100',
             'last_name' => 'sometimes|required|string|min:1|max:100',
         ]);
 
+        // Update the vendor's name
         $vendor->update($validated);
 
         return response()->json([
-            'message' => 'Nome do Vendor atualizado com sucesso!',
-            'vendor' => $vendor, // Inclua os dados atualizados
+            'message' => 'Vendor name successfully updated!',
+            'vendor' => $vendor, // Include updated data
         ], 200);
     }
-    //Actualizar o restantes dado  do vendedor
+
+    // Update the rest of the vendor's information
     public function updateVendorInfo(Request $request, Vendor $vendor)
     {
+        // Validate the incoming data
         $validated = $request->validate([
             'email' => 'sometimes|required|email|max:255',
             'nif' => 'sometimes|required|string|max:20',
@@ -100,20 +105,20 @@ class DashboardController extends Controller
             'gender_id' => 'required|integer|exists:genders,id',
         ]);
 
+        // Update vendor information
         $vendor->update($validated);
         $vendor->load(["gender"]);
 
         return response()->json([
-            'message' => 'Informação do Vendor atualizado com sucesso!',
-            'vendor' => $vendor, // Inclua os dados atualizados
+            'message' => 'Vendor information successfully updated!',
+            'vendor' => $vendor, // Include updated data
         ], 200);
-
-
     }
-    //Actualizar os dado da empresa do vendedor do vendedor
+
+    // Update the vendor's company information
     public function updateCompanyInfo(Request $request, Company $company)
     {
-        // 1. Validar os dados recebidos
+        //Validate the incoming data
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email',
@@ -130,7 +135,7 @@ class DashboardController extends Controller
             'description' => 'required|string|max:1000',
         ]);
 
-        // 2. Atualizar a tabela `companies`
+        // Update the `companies` table
         $company->update([
             'name' => $validated['name'],
             'nif' => $validated['nif'],
@@ -139,7 +144,7 @@ class DashboardController extends Controller
             'description' => $validated['description'],
         ]);
 
-        // 3. Atualizar os contatos associados (tabela `company_contacts`)
+        //Update associated contacts (table `company_contacts`)
         if ($company->contacts) {
             $company->contacts->update([
                 'email' => $validated['email'],
@@ -148,7 +153,7 @@ class DashboardController extends Controller
             ]);
         }
 
-        // 4. Atualizar os endereços associados (tabela `company_addresses`)
+        //Update associated addresses (table `company_addresses`)
         if ($company->addresses) {
             $company->addresses->update([
                 'street' => $validated['street'],
@@ -159,15 +164,63 @@ class DashboardController extends Controller
             ]);
         }
 
-        // 5. Recarregar as relações e retornar a resposta
+        //Reload relationships and return the response
         $company->load(['contacts', 'addresses']);
         return response()->json([
-            'message' => 'Informações da empresa atualizadas com sucesso!',
+            'message' => 'Company information successfully updated!',
             'company' => $company,
         ], 200);
     }
-    //Mostrar todas as lojas do vendor
+
+    // Show all stores of the vendor
     public function showVendorStores(Request $request)
+    {
+        $user = Auth::user();
+
+        // Check if the authenticated user has the 'vendor' role
+        if ($user && $user->hasRole('vendor')) {
+            // Fetch stores associated with the logged-in vendor, limited to a maximum of 3
+            $stores = Store::where('vendor_id', $user->vendor->id)
+                ->select(
+                    'id',
+                    'name',
+                    'description',
+                    'phone_number',
+                    'email',
+                    'rating'
+                )
+                ->with([
+                    'addresses' => function ($query) {
+                        $query->select(
+                            'id',
+                            'store_id',
+                            'street_address',
+                            'city',
+                            'postal_code',
+                            DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
+                            DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
+                        );
+                    },
+                    'products',
+                    'reviews',
+                    'galleries'
+                ])
+                ->take(3)
+                ->get();
+
+            // Return the stores and user data to the front-end
+            return inertia::render('Dashboard/Stores', [
+                'user' => $user,
+                'stores' => $stores,
+            ]);
+        }
+
+        // Redirect to the login page if the user is not authorized
+        return redirect()->route('login')->withErrors(['message' => 'Unauthorized access.']);
+    }
+
+    //Material UI dashboard component show all stores return in jason
+    public function DashboardVendorStores(Request $request)
     {
         $user = Auth::user();
 
@@ -201,10 +254,9 @@ class DashboardController extends Controller
                 ->take(3)
                 ->get();
 
-            // Retorna as lojas para o front-end
-            return inertia::render('Dashboard/Stores', [
-                'user' => $user, // Dados do usuário logado
-                'stores' => $stores, // Dados das lojas
+
+            return response()->json([
+                'stores' => $stores, // Dados das lojas associadas ao vendor
             ]);
         }
 
@@ -212,8 +264,93 @@ class DashboardController extends Controller
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
 
+    //Delete Store
+    public function deleteStore($id)
+    {
+        try {
+            // Find the store by ID or fail if it doesn't exist
+            $store = Store::findOrFail($id);
+
+            // Check if the authenticated user's vendor ID matches the store's vendor ID
+            if (auth()->user()->vendor->id !== $store->vendor_id) {
+                // If they don't match, return a 403 Unauthorized response
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. This store does not belong to the current user.',
+                ], 403);
+            }
+
+            // If the vendor ID matches, proceed to delete the store (soft delete)
+            $store->delete();  // Soft delete (or forceDelete() for permanent deletion)
+
+            // Fetch all stores associated with the authenticated vendor
+            $stores = Store::where('vendor_id', auth()->user()->vendor->id)
+                ->select(
+                    'id',
+                    'name',
+                    'description',
+                    'phone_number',
+                    'email',
+                    'rating'
+                )
+                ->with([
+                    'addresses' => function ($query) {
+                        $query->select(
+                            'id',
+                            'store_id',
+                            'street_address',
+                            'city',
+                            'postal_code',
+                            DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
+                            DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
+                        );
+                    },
+                    'products',
+                    'reviews',
+                    'galleries'
+                ])
+                ->take(3)
+                ->get();
+
+
+            // Return the updated list of stores along with the success message
+            return response()->json([
+                'success' => true,
+                'message' => 'Store deleted successfully.',
+                'stores' => $stores,
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Handle any unexpected errors during the process and return a 500 response
+            return response()->json([
+                'success' => false,
+                'message' => 'Error while deleting the store.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     public function dashboardShowStore($id)
     {
+        // Obter o utilizador autenticado e o seu vendor
+        $userId = Auth::id();
+        $vendor = Vendor::where('user_id', $userId)->first();
+
+        // Verificar se o vendor foi encontrado
+        if (!$vendor) {
+            abort(403, 'Vendedor não encontrado.');
+        }
+
+        // Buscar todas as lojas associadas ao vendedor
+        $storeIds = Store::where('vendor_id', $vendor->id)->pluck('id')->toArray();
+
+        // Verificar se a loja solicitada pertence ao vendedor
+        if (!in_array($id, $storeIds)) {
+            abort(403, 'Acesso negado. Esta loja não pertence ao vendedor autenticado.');
+        }
+
+        // Buscar os detalhes da loja (já validado)
         $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating')
             ->with([
                 'addresses' => function ($query) {
@@ -231,10 +368,10 @@ class DashboardController extends Controller
                 'reviews',
                 'galleries'
             ])
-            ->findOrFail($id);
+            ->findOrFail($id);  // Agora é seguro usar findOrFail
 
         // Paginar produtos da loja
-        $products = $store->products()->paginate(10);  // 10 produtos por página
+        $products = $store->products()->paginate(10);
 
         // Anexa os produtos ao objeto store
         $store->setRelation('products', $products);
@@ -243,6 +380,7 @@ class DashboardController extends Controller
             'store' => $store,
         ]);
     }
+
 
     public function productStorelist($storeId)
     {

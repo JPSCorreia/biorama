@@ -42,7 +42,7 @@ class VendorStore {
             if (!this.currentVendor  ) {
                 this.currentVendor = vendorData;
             }
-            if (this.currentVendor.isCompany){
+            if (this.currentVendor.is_company === 1){
                 this.companyDetails = vendorData.company;
                 this.companyContacts = vendorData.company.contacts;
                 this.companyAddresses = vendorData.company.addresses;
@@ -65,13 +65,12 @@ class VendorStore {
         }
         try {
             const response = await axios.patch(`/dashboard/vendor/name/${vendorId}`, updatedData);
-
             runInAction(() => {
                 if (updatedData.first_name) {
-                    this.currentVendor.first_name = updatedData.first_name;
+                    this.currentVendor.first_name = response.data.vendor.first_name;
                 }
                 if (updatedData.last_name) {
-                    this.currentVendor.last_name = updatedData.last_name;
+                    this.currentVendor.last_name = response.data.vendor.last_name;
                 }
             });
         } catch (error) {
@@ -97,8 +96,7 @@ class VendorStore {
                 });
             });
 
-            console.log("Vendor atualizado com sucesso:", response.data);
-            console.log("Vendor atualizado localmente:", this.currentVendor);
+            console.log("Vendor atualizado com sucesso.");
         } catch (error) {
             console.error("Erro ao atualizar os dados do Vendor!", error);
         }
@@ -106,6 +104,7 @@ class VendorStore {
 
     // Function to update Company data and its relations (contacts and addresses)
     updateCompanyAndRelations = async (updatedData) => {
+        console.log("company no update", this.companyDetails?.id)
         if (!this.companyDetails?.id) {
             console.error("Erro: ID da empresa não encontrado!");
             return;
@@ -137,8 +136,6 @@ class VendorStore {
                 const companyDetails = response.data.company;
                 const companyContacts = response.data.company.contacts;
                 const companyAddresses = response.data.company.addresses;
-                console.log("Responsedata:",  response.data);
-                console.log("Companycontacts:",companyAddresses );
 
                 // Atualiza companyDetails
                 if (companyDetails) {
@@ -165,8 +162,6 @@ class VendorStore {
                     if (companyAddresses.country) this.currentVendor.company.addresses.country = companyAddresses.country;
                 }
             });
-
-            console.log("Informações da empresa e suas relações atualizadas com sucesso!");
         } catch (error) {
             console.error("Erro ao atualizar informações da empresa e suas relações:", error);
         }

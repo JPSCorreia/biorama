@@ -6,7 +6,7 @@ import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
 import {router, usePage} from "@inertiajs/react";
 import { Box, Typography, Button } from "@mui/material";
-import { useState, useMemo } from "react";
+import {useState, useMemo, useEffect} from "react";
 import {
     Person as PersonIcon,
     Spa as SpaIcon,
@@ -17,19 +17,37 @@ import {
 } from "@mui/icons-material";
 import background from "../../images/background.jpg";
 import {shopStore} from "@/Stores/index.js";
+import axios from "axios";
 
-const updateNavigationWithStores = (navigation, stores) => {
-    if (!stores) {
+const updateNavigationWithStores = (navigation) => {
+    const [stores, setStores] = useState([]);
+
+    // Function to fetch the stores of the authenticated vendor
+    useEffect(() => {
+        const fetchStores = async () => {
+            try {
+                const response = await axios.get('/dashboard/stores/list');
+                setStores(response.data.stores)
+                console.log("response", response.data.stores)
+            } catch (error) {
+                console.error('Erro ao carregar as lojas do vendedor:', error);
+            }
+        };
+
+        fetchStores();
+    }, []);
+
+    // Atualiza a navegação somente após obter as lojas
+    if (!stores || stores.length === 0) {
         return navigation;
     }
 
-    return navigation.map(item => {
+    return navigation.map((item) => {
         if (item.segment === "dashboard" && item.children) {
-            // Atualiza os children mantendo o existente ("Todas Lojas") e adiciona as novas lojas
             return {
                 ...item,
                 children: [
-                    ...item.children, // Mantém o "Todas Lojas"
+                    ...item.children,
                     ...stores.map(store => ({
                         segment: `store/${store.id}`,
                         title: store.name,
@@ -47,6 +65,14 @@ const navigation = [
     {
         kind: "header",
         title: "DASHBOARD",
+    },
+    {
+        segment: "dashboard/analises",
+        title: "Dashboard",
+        icon: <AssessmentIcon />,
+    },
+    {
+        kind: "divider",
     },
     {
         segment: "dashboard",
@@ -77,11 +103,7 @@ const navigation = [
     {
         kind: "divider",
     },
-    {
-        segment: "dashboard/analises",
-        title: "Dashboard",
-        icon: <AssessmentIcon />,
-    },
+
 ];
 
 const Dashboard = ({ children }) => {
@@ -100,7 +122,7 @@ const Dashboard = ({ children }) => {
         },
     });
 
-    // Exit Dashboard Button
+    // Updates the navigation only after fetching the stores
     function ExitButton({ mini }) {
         return (
             <Box
@@ -176,7 +198,7 @@ const Dashboard = ({ children }) => {
                     toolbarActions: ThemeSwitcher,
                 }}
             >
-                <Box sx={{ flexGrow: 1, margin: 0, paddingTop: "10%", "&::before": {
+                <Box sx={{ flexGrow: 1, margin: 0,  "&::before": {
                         content: '""',
                         position: "absolute",
                         top: 0,
