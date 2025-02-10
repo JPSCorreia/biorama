@@ -17,13 +17,14 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                m: "auto",
+                height: "100%",
             }}
         >
             {/* Seção de imagens */}
             <Box
                 sx={{
                     width: "82%",
+                    // height: "150px",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
@@ -33,7 +34,7 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
                 <Box
                     sx={{
                         width: "100%",
-                        height: 300,
+                        height: 150,
                         backgroundColor: "rgba(0, 0, 0, 0.1)",
                         display: "flex",
                         justifyContent: "center",
@@ -120,13 +121,14 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    p: 5,
+                    p: 3,
+                    pb: 0,
                     backgroundColor: "rgba(255, 255, 255, 0.9)",
                     boxShadow: 3,
                     width: "80%",
                     position: "relative",
                     mt: -5,
-                    mb: 7,
+                    mb: 3,
                 }}
             >
                 <Box>

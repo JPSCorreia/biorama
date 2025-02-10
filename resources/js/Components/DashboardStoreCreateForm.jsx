@@ -144,10 +144,11 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
             component="form"
             onSubmit={formik.handleSubmit}
             sx={{
-                mt: 3,
+                mt: 1,
                 display: "flex",
                 flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
                 gap: 3,
+                minHeight: "45.4vh",
             }}
         >
             <Box
@@ -169,7 +170,6 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
                             gap: 5,
-                            mb: 2,
                         }}
                     >
                         <TextField
@@ -204,7 +204,6 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
                             gap: 5,
-                            mb: 2,
                         }}
                     >
                         <TextField
@@ -235,7 +234,7 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
                             }
                             fullWidth
                             multiline
-                            rows={4}
+                            rows={2}
                         />
                     </Box>
                     <Box
@@ -243,7 +242,6 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
                             gap: 5,
-                            mb: 2,
                         }}
                     >
                         <TextField
@@ -265,7 +263,6 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
                             display: 'flex',
                             flexDirection: isSmallScreen ? 'column' : 'row',
                             gap: 5,
-                            mb: 2,
                         }}
                     >
                         <TextField

@@ -1,18 +1,17 @@
 import {
+    Avatar,
     Button,
     Paper,
     Typography,
     Box,
     Divider,
     useMediaQuery,
-    DialogTitle,
-    Dialog,
-    DialogActions,
-    DialogContentText,
-    DialogContent,
+    CircularProgress,
 } from "@mui/material";
 import { observer } from "mobx-react";
+import Carousel from "react-material-ui-carousel";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { fixImagePath } from "../utils/utils.js";
 import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
 import DashboardStoreShortCutCard from "@/Components/DashboardStoreShortCutCard.jsx";
@@ -21,93 +20,59 @@ import DashboardProductList from "@/Components/DashboardProductList.jsx";
 import DashboardStoreReviewList from "@/Components/DashboardStoreReviewList.jsx";
 import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
 import { shopStore } from "@/Stores/index.js";
-import DashboardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
-import { router } from "@inertiajs/react";
+import DashBoardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
+import { useEffect } from "react";
 
-/**
- * Component: DashboarShowStoreInfo
- * Description: Displays detailed information about a store, including its address, description, and map location.
- * Allows switching between view and edit modes and shows product/review lists.
- */
+
+
 const DashboarShowStoreInfo = observer(({ store }) => {
     const theme = useTheme();
-    // Media query to detect small screens (mobile view)
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    // Default latitude and longitude for the map
-    const latitude = store?.latitude || 38.7071;
-    const longitude = store?.longitude || -9.1355;
-    console.log("store", store);
+    // Get media queries
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
+    const latitude = store?.addresses[0]?.latitude || 38.7071;
+    console.log("latitude", latitude);
+    const longitude = store?.addresses[0]?.longitude || -9.1355;
+    const [loading, setLoading] = useState(true);
 
-    // State to toggle product list visibility
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
     const [showProductList, setShowProductList] = useState(false);
+    // Função para lidar com o clique no card "Produtos"
     const handleProductCardClick = () => {
-        setShowProductList(!showProductList);
+        setShowProductList(!showProductList); // Alterna entre mostrar/esconder
         setShowReviewList(false);
     };
 
-    // State to toggle review list visibility
     const [showReviewList, setShowReviewList] = useState(false);
+
     const handleReviewCardClick = () => {
         setShowReviewList(!showReviewList);
-        setShowProductList(false);
+        setShowProductList(false); // Fecha o componente de produtos se estiver aberto
     };
 
-    // State to control the confirmation modal
-    const [openConfirmModal, setOpenConfirmModal] = useState(false);
-
-    // Handle open and close of the modal
-    const handleOpenConfirmModal = () => {
-        setOpenConfirmModal(true);
-    };
-
-    const handleCloseConfirmModal = () => {
-        setOpenConfirmModal(false);
-    };
-
-    // Handle deletion after confirmation
-    const handleConfirmDelete = async () => {
-        await shopStore.DeleteStore(store.id);
-        handleCloseConfirmModal();
-    };
-
-    // State to manage edit mode
     const [isEditing, setIsEditing] = useState(false);
     const handleEditClick = () => {
-        setIsEditing(true); // Switch to edit mode
+        setIsEditing(true); // Alterna para o modo de edição
     };
+
     const handleCancelEdit = () => {
-        setIsEditing(false); // Switch back to view mode
+        setIsEditing(false); // Volta para o modo de visualização
     };
 
-    const navigate = (path) => {
-        router.visit(path, {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    };
-
-    // Redirect to orders Page
-    const handleNavigateToOrders = () => {
-        // window.location.href = "/dashboard/encomendas";
-        navigate("/dashboard/encomendas");
-    };
-
-    /**
-     * Prepare the images for submission by filtering valid new images and collecting images to delete.
-     */
     const prepareImages = (existingImages, newImages, deleteImages) => {
         console.log("Prepar imagens para apagar", deleteImages);
         return {
-            newImages: newImages.filter(Boolean),
-            deleteImages,
+            newImages: newImages.filter(Boolean), // Filtra as novas imagens válidas
+            deleteImages, // IDs das imagens a serem excluídas
         };
     };
 
-    /**
-     * Handle the submission of the store edit form.
-     * Collects all updated store data and sends it to the backend.
-     */
     const handleSubmitEdit = async (
         updatedValues,
         existingImages,
@@ -115,12 +80,13 @@ const DashboarShowStoreInfo = observer(({ store }) => {
         deleteImages,
     ) => {
         try {
+            // Prepara as imagens corretamente
             const {
                 newImages: preparedNewImages,
                 deleteImages: preparedDeleteImages,
             } = prepareImages(existingImages, newImages, deleteImages);
 
-            // Add the images to updatedvalues before sending them
+            // Adiciona as imagens ao updatedValues antes de enviar
             const formDataValues = {
                 ...updatedValues,
                 newImages: preparedNewImages,
@@ -129,7 +95,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
 
             const formData = new FormData();
 
-            // Add basic data
+            // Adicionar dados básicos
             for (const key in formDataValues) {
                 if (
                     key !== "existingImages" &&
@@ -140,17 +106,23 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                 }
             }
 
-            // Add new images (base64)
+            // Adicionar novas imagens (base64)
             formDataValues.newImages.forEach((img, index) => {
                 formData.append(`new_images[${index}]`, img);
             });
 
-            // Add images to delete (IDs)
+            // Adicionar imagens para exclusão (IDs)
             formDataValues.deleteImages.forEach((id, index) => {
                 formData.append(`delete_images[${index}]`, id);
             });
+            console.log("Apos adicionar imagem para apagar", formData);
 
-            // Send the form data to the backend
+            console.log(
+                "FormData preparado para envio: ",
+                Array.from(formData.entries()),
+            );
+
+            // Enviar para o backend
             const result = await shopStore.updateStore(store.id, formData);
             if (result.success) {
                 console.log("Loja atualizada com sucesso!");
@@ -168,7 +140,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
             elevation={4}
             sx={{
                 p: 2,
-                width: "95%",
+                width: "80%",
                 m: "auto",
                 display: "flex",
                 flexDirection: "column",
@@ -179,17 +151,17 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                 position: "relative", // Adiciona posição relativa ao Paper
             }}
         >
-            {/* Image carousel displaying the store gallery */}
+            {/* Carrossel */}
             <Box sx={{ position: "relative", height: 200, overflow: "hidden" }}>
-                <DashboardImageCarousel galleries={store?.galleries} />
+                <DashBoardImageCarousel galleries={store?.galleries} />
             </Box>
 
-            {/* Store name section */}
+            {/* Nome da loja */}
             <Box
                 sx={{
                     position: "absolute",
                     width: "100%",
-                    top: "215px",
+                    top: "215px", // Ajustado para não ficar oculto
                     left: "50%",
                     transform: "translateX(-50%)",
                     backgroundColor: theme.palette.primary.main,
@@ -209,8 +181,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
             </Box>
 
             <Divider />
-
-            {/* Conditionally render view or edit mode */}
+            {/* Conteúdo alternado: visualização ou formulário */}
             {!isEditing ? (
                 <Box>
                     <Box
@@ -222,8 +193,9 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                             flexDirection: isSmallScreen ? "column" : "row",
                         }}
                     >
-                        {/* Store information section */}
+                        {/* Informações da loja */}
                         <Box sx={{ flex: "1 1 50%", marginBottom: "3%", p: 2 }}>
+                            {/* Linha 1 - Email & Telemóvel */}
                             <Box
                                 sx={{
                                     display: "flex",
@@ -260,6 +232,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                                 </Box>
                             </Box>
 
+                            {/* Linha 2 - Localidade & Código Postal */}
                             <Box
                                 sx={{
                                     display: "flex",
@@ -297,6 +270,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                                 </Box>
                             </Box>
 
+                            {/* Linha 3 - Morada */}
                             <Box
                                 sx={{
                                     display: "flex",
@@ -323,6 +297,7 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                                 </Box>
                             </Box>
 
+                            {/* Linha 4 - Descrição */}
                             <Box
                                 sx={{
                                     display: "flex",
@@ -348,72 +323,86 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                             </Box>
                         </Box>
 
-                        {/* Map location */}
+                        {/* Localização no Mapa */}
+
                         <Box sx={{ flex: "1 1 50%" }}>
-                            <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-                                Localização no Mapa
-                            </Typography>
+
                             <Box
                                 sx={{
                                     height: "400px",
                                     width: "100%",
                                     borderRadius: "8px",
                                     overflow: "hidden",
+                                    mt: 6,
+                                    pr: 2,
                                 }}
                             >
-                                <MapContainer
-                                    center={[latitude, longitude]}
-                                    zoom={13}
-                                    style={{ height: "100%", width: "100%" }}
-                                >
-                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                    <Marker position={[latitude, longitude]} />
-                                </MapContainer>
+                                {loading ? (
+                                    <Box
+                                        display="flex"
+                                        flexDirection="column"
+                                        alignItems="center"
+                                        sx={{ minHeight: "300px", mt: 16 }}
+                                    >
+                                        <CircularProgress />
+                                        <Typography
+                                            variant="body1"
+                                            sx={{ mt: 2 }}
+                                        >
+                                            A carregar mapa...
+                                        </Typography>
+                                    </Box>
+                                ) : (
+                                    <MapContainer
+                                        center={[
+                                            store?.addresses[0]?.latitude,
+                                            store?.addresses[0]?.longitude,
+                                        ]}
+                                        zoom={13}
+                                        style={{
+                                            height: "100%",
+                                            width: "100%",
+                                        }}
+                                    >
+                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                        <Marker
+                                            position={[latitude, longitude]}
+                                        />
+                                    </MapContainer>
+                                )}
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-                        <Box sx={{ mt: 1, textAlign: "right" }}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleEditClick}
-                            >
-                                Editar
-                            </Button>
-                        </Box>
-                        <Box sx={{ mt: 1, textAlign: "right" }}>
-                            <Button
-                                variant="contained"
-                                color="error"
-                                onClick={handleOpenConfirmModal}
-                            >
-                                Apagar Loja
-                            </Button>
-                        </Box>
+                    <Box sx={{ mt: 1, textAlign: "right" }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleEditClick}
+                        >
+                            Editar
+                        </Button>
                     </Box>
                 </Box>
             ) : (
                 <DashboardStoreEditForm
                     store={store}
                     onCancel={handleCancelEdit}
-                    onSubmit={handleSubmitEdit}
+                    onSubmit={handleSubmitEdit} // Recebe as informações do formulário
                 />
             )}
 
             <Divider />
 
-            {/* Shortcut cards for products,reviews and orders */}
+            {/* container dos cards*/}
             <Box sx={{ pb: 3 }}>
                 <DashboardStoreShortCutCard
-                    handleNavigateToOrders={handleNavigateToOrders}
                     store={store}
                     onProductClick={handleProductCardClick}
                     onReviewClick={handleReviewCardClick}
                 />
             </Box>
 
-            {/* Conditionally render product list or review list */}
+            {/* Renderiza condicionalmente o DashboardProductList */}
             {showProductList && (
                 <Box sx={{ mt: 2 }}>
                     <DashboardProductList storeId={store.id} />
@@ -425,30 +414,6 @@ const DashboarShowStoreInfo = observer(({ store }) => {
                     <DashboardStoreReviewList storeId={store.id} />
                 </Box>
             )}
-
-            {/* Delete confirmation  */}
-            <Dialog open={openConfirmModal} onClose={handleCloseConfirmModal}>
-                <DialogTitle>Confirmar Ação</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Tem a certeza que pretende apagar a loja{" "}
-                        <strong>{store?.name}</strong>? Esta ação não pode ser
-                        desfeita.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseConfirmModal} color="secondary">
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={handleConfirmDelete}
-                        color="error"
-                        variant="contained"
-                    >
-                        Apagar
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Paper>
     );
 });

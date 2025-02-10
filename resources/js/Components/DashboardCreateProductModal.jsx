@@ -16,6 +16,7 @@ import ImageCropModal from "./ImageCropModal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { productStore } from "../Stores/";
+import {fixImagePath} from "@/utils/utils.js";
 
 const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewProduct }) => {
     const [previewImages, setPreviewImages] = useState([]);

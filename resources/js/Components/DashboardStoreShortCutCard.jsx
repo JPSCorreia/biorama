@@ -3,11 +3,12 @@ import {Box, Container, Rating, Typography, useMediaQuery} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import log from "eslint-plugin-react/lib/util/log.js";
 
 const DashboardStoreShortCutCard = observer(({store, onProductClick, onReviewClick, handleNavigateToOrders  }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Lógica para dispositivos móveis
-
+console.log("store", store);
     return (
             <Box
                 sx={{
