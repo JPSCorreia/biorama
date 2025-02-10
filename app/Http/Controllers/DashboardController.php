@@ -9,6 +9,7 @@ use App\Models\OrderStoreProduct;
 use App\Models\Status;
 use App\Models\Store;
 use App\Models\Vendor;
+use App\Notifications\OrderCreated;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -476,6 +477,15 @@ class DashboardController extends Controller
 
             // Retornar a encomenda atualizada
             $updatedOrder = $order->load(['products', 'user', 'status']);
+
+            // Carregar as relações atualizadas
+            $updatedOrder = $order->load(['products', 'user', 'status', 'stores']);
+
+            // Buscar corretamente a loja associada à encomenda
+            $storeName = optional($order->stores->first())->name ?? 'Desconhecida';
+
+            // Notificar o utilizador que fez a encomenda
+            $order->user->notify(new OrderCreated($order, $order->status->name, $storeName));
 
             return response()->json([
                 'message' => 'Encomenda atualizada com sucesso.',
