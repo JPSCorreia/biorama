@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\DatabaseMessage;
+use Illuminate\Support\Facades\Log;
 
 class OrderCreated extends Notification implements ShouldQueue
 {
@@ -29,6 +30,8 @@ class OrderCreated extends Notification implements ShouldQueue
 
     public function toDatabase($notifiable)
     {
+        Log::info("Notificação para {$notifiable->id} foi chamada com loja {$this->storeName}.");
+
         return [
             'order_id' => $this->order->id,
             'total' => $this->total,

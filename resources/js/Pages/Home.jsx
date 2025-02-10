@@ -113,7 +113,7 @@ const Home = observer(() => {
             </Box>
 
             {/* Nearby Stores */}
-            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", mb: 8 }}>
+            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", m:"auto auto 3% auto", width:"90%" }}>
                 <HomeNearbyStores />
             </Box>
 
