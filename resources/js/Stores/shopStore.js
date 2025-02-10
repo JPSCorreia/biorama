@@ -1,4 +1,4 @@
-import { makeObservable, observable, runInAction } from "mobx";
+import {action, makeObservable, observable, runInAction} from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import { router } from "@inertiajs/react";
 import axios from "axios";
@@ -21,6 +21,7 @@ class ShopStore {
             storeProducts: observable,
             storeReviews: observable,
             storeGalleries: observable,
+            DeleteStore:action,
         });
 
         makePersistable(this, {
@@ -107,7 +108,21 @@ class ShopStore {
         }
     }
 
-
+    DeleteStore = async (storeId) => {
+        try {
+            const response = await axios.delete(`/dashboard/store/${storeId}`);
+            console.log("response.data", response.data)
+            if (response.data.success) {
+                this.stores = response.data.stores;
+                alert('Loja apagada com sucesso.');
+                // Redireciona para /dashboard/stores
+                window.location.href = '/dashboard/stores';
+            }
+        } catch (error) {
+            console.error('Erro ao apagar a loja:', error);
+            alert('Erro ao apagar a loja.');
+        }
+    };
 
 
     // Limpa os dados da loja atual

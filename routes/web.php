@@ -181,6 +181,9 @@ Route::middleware(['auth'])->group(function () {
         // Store routes
         Route::get('/stores', [DashboardController::class,'showVendorStores'])
             ->name('dashboard.stores');
+        Route::get('/stores/list', [DashboardController::class,'DashboardVendorStores'])
+            ->name('dashboard.stores.list');
+
         Route::middleware(['auth'])->get('/vendor/stores', [DashboardController::class, 'getVendorStores']);
         //Route to show a store
         Route::get('/store/{id}', [dashboardController::class, 'dashboardShowStore'])
@@ -204,9 +207,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/stores/{storeId}/orders', [DashboardController::class, 'getOrdersByStore']);
 
         Route::get('/data', [DashboardController::class, 'getDashboardData']);
+
+        Route::delete('/store/{id}', [DashboardController::class, 'deleteStore'])
+            ->name('dashboard.store.delete');
+
     });
 });
-
 
 
 // Local development routes only for testing

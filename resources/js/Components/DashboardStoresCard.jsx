@@ -1,4 +1,4 @@
-import { observer } from "mobx-react";
+import {observer} from "mobx-react";
 import {
     Box,
     Button,
@@ -8,27 +8,37 @@ import {
     Divider,
     Typography,
     Avatar,
-    Rating,
+    Rating, useMediaQuery,
 } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { fixImagePath } from "../utils/utils.js";
-import { shopStore } from "@/Stores/index.js";
+import {fixImagePath} from "../utils/utils.js";
+import {shopStore} from "@/Stores/index.js";
 import ReactMarkdown from "react-markdown";
+import {useTheme} from "@mui/material/styles";
 
-const DashboardStoresCard = observer(({ store, user }) => {
-    // Pega a primeira imagem da galeria como fundo e a segunda como perfil
+
+/**
+ * Component: DashboardStoresCard
+ * Description: Displays a card with store details such as name, description, location, and rating.
+ * Allows navigation to the store's detail page.
+ */
+const DashboardStoresCard = observer(({store, user}) => {
+
+    // Retrieves the first gallery image for background and user's profile image for avatar
     const backgroundImage =
-        fixImagePath(store?.galleries[0]?.image_link) ||
-        "https://www.france-voyage.com/visuals/photos/frutas-vermelhas-7713_w1400.webp";
+        fixImagePath(store?.galleries[0]?.image_link);
     const profileImage =
-        fixImagePath(user?.image_profile) ||
-        "https://img.freepik.com/free-photo/sideways-black-person-looking-away_23-2148749548.jpg?t=st=1738098181~exp=1738101781~hmac=37201112c86819d842272cc0f3c10da8c78de0e39ee9a77845680f10018abde5&w=1800";
+        fixImagePath(user?.image_profile);
 
-    // Limita a descrição a 150 caracteres
+    // Limits the store description to 150 characters and appends "..." if truncated
     const truncatedDescription =
         store?.description?.length > 150
             ? `${store.description.slice(0, 150)}...`
             : store?.description || "Sem Descrição";
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     return (
         <Card
@@ -40,17 +50,17 @@ const DashboardStoresCard = observer(({ store, user }) => {
                 boxShadow: 3,
                 margin: "auto",
                 mt: 5,
-                minHeight: 610,
+                minHeight: 640,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
             }}
         >
-            {/* Imagem de fundo */}
+            {/* Background image of the store */}
             <CardMedia
                 component="img"
                 sx={{
-                    height: 160,
+                    height: 150,
                     width: "100%",
                     objectFit: "cover",
                 }}
@@ -58,11 +68,11 @@ const DashboardStoresCard = observer(({ store, user }) => {
                 alt="Sem imagem"
             />
 
-            {/* Avatar Circular no Centro */}
+            {/* Circular avatar positioned at the center of the card */}
             <Box
                 sx={{
                     position: "absolute",
-                    top: 100, // Ajusta a posição do avatar
+                    top: 100,
                     left: "50%",
                     transform: "translate(-50%, 0%)",
                     zIndex: 2,
@@ -77,11 +87,11 @@ const DashboardStoresCard = observer(({ store, user }) => {
                     backgroundColor: "white",
                 }}
             >
-                <Avatar src={profileImage} sx={{ width: 76, height: 76 }} />
+                <Avatar src={profileImage} sx={{width: 76, height: 76}}/>
             </Box>
 
-            {/* Conteúdo do Card */}
-            <CardContent sx={{ textAlign: "center", pt: 6 }}>
+            {/* Store name and city */}
+            <CardContent sx={{textAlign: "center", pt: 6}}>
                 <Typography variant="h6" fontWeight="bold" noWrap>
                     {store?.name || "Loja sem Nome"}
                 </Typography>
@@ -90,6 +100,7 @@ const DashboardStoresCard = observer(({ store, user }) => {
                 </Typography>
             </CardContent>
 
+            {/* Divider between content sections */}
             <Divider
                 sx={{
                     height: "1px",
@@ -100,11 +111,11 @@ const DashboardStoresCard = observer(({ store, user }) => {
                 }}
             />
 
-            {/* Informações */}
+            {/* Store information section */}
             <CardContent>
-                <Box sx={{ marginBottom: 2 }}>
+                <Box sx={{marginBottom: 2}}>
                     {/* Descrição */}
-                    <Box sx={{ marginBottom: "2rem", minHeight: "100px" }}>
+                    <Box sx={{marginBottom: "2rem", minHeight: "200px"}}>
                         <Typography fontWeight="bold">Descrição:</Typography>
                         <ReactMarkdown>
                             {truncatedDescription}
@@ -115,6 +126,7 @@ const DashboardStoresCard = observer(({ store, user }) => {
                     <Box
                         sx={{
                             display: "flex",
+                            flexWrap: "wrap",
                             flexDirection: "row",
                             marginBottom: 2,
                             gap: 9,
@@ -124,16 +136,19 @@ const DashboardStoresCard = observer(({ store, user }) => {
                             <Typography fontWeight="bold">Rating:</Typography>
                             <Rating
                                 value={Number(store?.rating) || 0}
-                                precision={0.5} // Permite meio ponto (exemplo: 4.5 estrelas)
+                                precision={0.5}
                                 readOnly
                             />
                         </Box>
 
-                        <Box sx={{ textAlign: "right", mt: "auto" }}>
+                        {/* Button to navigate to store details */}
+                        <Box sx={{
+                            textAlign: "right",
+                            mt: "auto",
+                        }}>
                             <Button
                                 variant="contained"
                                 color="primary"
-                                // Navegação ao clicar no botão
                                 onClick={() =>
                                     shopStore.navigateToStore(store.id)
                                 }
@@ -145,13 +160,11 @@ const DashboardStoresCard = observer(({ store, user }) => {
                                     padding: 0,
                                 }}
                             >
-                                <RemoveRedEyeIcon />
+                                <RemoveRedEyeIcon/>
                             </Button>
                         </Box>
                     </Box>
                 </Box>
-
-                {/* Botão de Visualizar */}
             </CardContent>
         </Card>
     );
