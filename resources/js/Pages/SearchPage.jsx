@@ -5,71 +5,39 @@ import {
     Typography,
     Tab,
     Tabs,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
+    Grid,
 } from "@mui/material";
-import { usePage, router } from "@inertiajs/react";
+import {router, usePage} from "@inertiajs/react";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { alertStore } from "../Stores";
+import StoreCardPesquisa from "../Components/StoreCardPesquisa"; // Importa o componente correto
 
 const SearchPage = observer(() => {
-    // Get search results from Inertia page props
+    // Obtém os resultados da pesquisa do Inertia props
     const { searchResults = {} } = usePage().props;
 
-    // Split search results into different categories
-    const { products = [], stores = [], vendors = [] } = searchResults;
+    // Separa os resultados da pesquisa em diferentes categorias
+    const { products = [], stores = [] } = searchResults;
 
-    // State to control the active tab
-    const [activeTab, setActiveTab] = useState(0); // Estate para controlar a aba ativa
+    // Estado para controlar a aba ativa
+    const [activeTab, setActiveTab] = useState(0);
 
-    // Function to handle tab changes
+    // Função para alternar entre as abas
     const handleSearchTab = (event, newValue) => {
         setActiveTab(newValue);
     };
 
-    // Function to render a table with given data and column headers
-    const renderTable = (data, columns) => (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        {columns.map((column) => (
-                            <TableCell key={column}>{column}</TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data.map((item, index) => (
-                        <TableRow key={index}>
-                            {Object.values(item).map((value, i) => (
-                                <TableCell key={i}>{value}</TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-
-    // Effect to reset alert store on page navigation
+    // Efeito para resetar alertas ao navegar na página
     useEffect(() => {
-        // Reset alert store on navigation
         const handleNavigate = () => {
             alertStore.reset();
         };
 
-        // Add navigation event listener
         if (typeof router?.on === "function") {
             router.on("navigate", handleNavigate);
 
             return () => {
-                // Remove navigation event listener on cleanup
                 if (typeof router?.off === "function") {
                     router.off("navigate", handleNavigate);
                 }
@@ -80,12 +48,12 @@ const SearchPage = observer(() => {
     return (
         <Container maxWidth="lg">
             <Box sx={{ marginTop: 4 }}>
-                {/* Page Title */}
+                {/* Título da página */}
                 <Typography variant="h4" gutterBottom>
                     Resultados da Pesquisa
                 </Typography>
 
-                {/* Tabs to switch between products, stores, and vendors */}
+                {/* Abas para alternar entre produtos e lojas */}
                 <Tabs
                     value={activeTab}
                     onChange={handleSearchTab}
@@ -94,40 +62,23 @@ const SearchPage = observer(() => {
                     variant="fullWidth"
                     sx={{ marginBottom: 3 }}
                 >
-                    <Tab label="Produtos" />
                     <Tab label="Lojas" />
-                    <Tab label="Vendedores" />
                 </Tabs>
 
-                {/* Conditional rendering based on selected tab */}
+                {/* Exibir lojas encontradas */}
                 {activeTab === 0 && (
                     <Box>
-                        <Typography variant="h5" gutterBottom>
-                            Produtos Encontrados
-                        </Typography>
-                        {products.length > 0
-                            ? renderTable(products, ["Nome"]) // Render products table
-                            : "Nenhum produto encontrado."}
-                    </Box>
-                )}
-                {activeTab === 1 && (
-                    <Box>
-                        <Typography variant="h5" gutterBottom>
-                            Lojas Encontradas
-                        </Typography>
-                        {stores.length > 0
-                            ? renderTable(stores, ["Nome", "Localização"]) // Render stores table
-                            : "Nenhuma loja encontrada."}
-                    </Box>
-                )}
-                {activeTab === 2 && (
-                    <Box>
-                        <Typography variant="h5" gutterBottom>
-                            Vendedores Encontrados
-                        </Typography>
-                        {vendors.length > 0
-                            ? renderTable(vendors, ["Nome", "Email", "Contato"]) // Render vendors table
-                            : "Nenhum vendedor encontrado."}
+                        {stores.length > 0 ? (
+                            <Grid container spacing={3} sx={{mb:4}}>
+                                {stores.map((store) => (
+                                    <Grid item key={store.id} xs={12} sm={6} md={4}>
+                                        <StoreCardPesquisa store={store} />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        ) : (
+                            <Typography>Nenhuma loja encontrada.</Typography>
+                        )}
                     </Box>
                 )}
             </Box>

@@ -57,9 +57,6 @@ Route::get('/contactos', fn () => Inertia::render('Contacts'))->name('contacts')
 // Shopping cart page
 Route::get('/carrinho', [CartController::class, 'index'])->name('cart');
 
-// Search results page
-Route::get('/pesquisa', fn () => Inertia::render('SearchPage'))->name('pesquisa');
-
 // Checkout flow page
 Route::get('/checkout', fn () => Inertia::render('CheckoutFlow'))->name('checkout');
 
