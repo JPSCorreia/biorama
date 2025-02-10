@@ -201,7 +201,7 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                                 {previewImages.map((image, index) => (
                                     <Box key={index} sx={{ position: "relative", width: 100, height: 100 }}>
                                         <img
-                                            src={fixImagePath(image)}
+                                            src={image}
                                             alt={`Imagem ${index}`}
                                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                         />

@@ -133,7 +133,7 @@ const DashboardEditProduct = observer(({ product, onCancel, onSubmit, storeId })
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                 {existingImages.map((imageObj, index) => (
                     <Box key={imageObj.id} sx={{ position: "relative", width: 100, height: 100 }}>
-                        <img src={fixImagePath(imageObj.imageLink)} alt={`Imagem ${index}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <img src={imageObj.imageLink} alt={`Imagem ${index}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         <IconButton
                             size="small"
                             sx={{ position: "absolute", top: 0, right: 0 }}
