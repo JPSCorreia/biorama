@@ -81,6 +81,7 @@ class ShopStore {
         }
     }
 
+
     navigateToStore(storeId) {
         router.get(`/dashboard/store/${storeId}`); // Rota dinâmica para exibir informações da loja
     }

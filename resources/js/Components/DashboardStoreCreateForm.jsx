@@ -70,7 +70,7 @@ const DashboardStoreCreateForm = observer(({ passFormik, images }) => {
             postal_code: "",
         },
         validationSchema: validationSchema,
-        validateOnMount: true,
+        validateOnMount: false,
         onSubmit: handleFormSubmit,
     });
 

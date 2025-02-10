@@ -381,7 +381,6 @@ class DashboardController extends Controller
         ]);
     }
 
-
     public function productStorelist($storeId)
     {
         // Busca a loja pelo ID
