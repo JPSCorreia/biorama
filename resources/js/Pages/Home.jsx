@@ -78,10 +78,10 @@ const Home = observer(() => {
                 }}
                 onClick={() => {
                     const targetRoute = auth?.isVendor
-                        ? "/vendedores/dashboard"
+                        ? "/dashboard/stores"
                         : authStore.isAuthenticated
                             ? "/vendedores/registo"
-                            : "/auth/login";
+                            : "/entrar";
 
                     router.get(targetRoute);
                 }}

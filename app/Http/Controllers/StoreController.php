@@ -543,7 +543,10 @@ class StoreController extends Controller
             ->first();
 
         // Outras informações
-        $vendorRating = Store::where('vendor_id', $store->vendor_id)->avg('rating');
+        $vendorRating = StoreReview::whereIn('store_id', Store::where('vendor_id', $store->vendor_id)->pluck('id'))
+    ->avg('rating') ?? 0;
+
+
         $reviewCount = StoreReview::whereIn('store_id', Store::where('vendor_id', $store->vendor_id)->pluck('id'))->count();
         $orderCount = OrderStoreProduct::where('store_id', $id)->count();
 
