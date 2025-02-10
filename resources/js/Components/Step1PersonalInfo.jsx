@@ -30,6 +30,7 @@ const Step1PersonalInfo = forwardRef(({ genders, formErrors, isCompany, companyR
                 "& > :first-of-type": {
                     mb: 4,
                 },
+                minHeight: "67.6vh",
             }}
         >
             {/* Form Vendor personal Info */}
