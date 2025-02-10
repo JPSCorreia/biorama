@@ -9,12 +9,27 @@ const StoreBanner = ({ title, gallery }) => {
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     function Item(props) {
+
+        let image_link = props.item.image_link;
+
+
+        if (!image_link.includes("mock_images")) {
+          image_link = image_link.replace("/loja", "");
+        }
+
+        // Garante que a URL é absoluta
+        if (!image_link.startsWith("http")) {
+          image_link = `${window.location.origin}/${image_link}`;
+        }
+
+
+
         return (
             <Box
                 sx={{
                     width: "100%",
                     height: { xs: 150, sm: 200, md: 300 },
-                    backgroundImage: `url(${props.item.image_link})`,
+                    backgroundImage: `url(${image_link})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                 }}
@@ -93,7 +108,10 @@ const StoreBanner = ({ title, gallery }) => {
                 }}
             >
                 {gallery.map((item, i) => (
-                    <Item key={i} item={item} />
+                    <>
+                        {console.log(item)}
+                        <Item key={i} item={item} />
+                    </>
                 ))}
             </Carousel>
         </Box>

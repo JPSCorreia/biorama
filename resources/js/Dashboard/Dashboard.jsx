@@ -4,9 +4,9 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useTheme } from "@mui/material/styles";
 import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
-import {router, usePage} from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { Box, Typography, Button } from "@mui/material";
-import {useState, useMemo, useEffect} from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
     Person as PersonIcon,
     Spa as SpaIcon,
@@ -16,7 +16,7 @@ import {
     Logout as LogoutIcon,
 } from "@mui/icons-material";
 import background from "../../images/background.jpg";
-import {shopStore} from "@/Stores/index.js";
+import { shopStore } from "@/Stores/index.js";
 import axios from "axios";
 
 const updateNavigationWithStores = (navigation) => {
@@ -26,11 +26,11 @@ const updateNavigationWithStores = (navigation) => {
     useEffect(() => {
         const fetchStores = async () => {
             try {
-                const response = await axios.get('/dashboard/stores/list');
-                setStores(response.data.stores)
-                console.log("response", response.data.stores)
+                const response = await axios.get("/dashboard/stores/list");
+                setStores(response.data.stores);
+                console.log("response", response.data.stores);
             } catch (error) {
-                console.error('Erro ao carregar as lojas do vendedor:', error);
+                console.error("Erro ao carregar as lojas do vendedor:", error);
             }
         };
 
@@ -48,7 +48,7 @@ const updateNavigationWithStores = (navigation) => {
                 ...item,
                 children: [
                     ...item.children,
-                    ...stores.map(store => ({
+                    ...stores.map((store) => ({
                         segment: `store/${store.id}`,
                         title: store.name,
                         icon: <StoreIcon />,
@@ -86,11 +86,13 @@ const navigation = [
         segment: "dashboard",
         title: "Lojas",
         icon: <StoreIcon />,
-        children:[{
-            segment: "stores",
-            title: "Todas Lojas",
-            icon: <StoreIcon />,
-        }],
+        children: [
+            {
+                segment: "stores",
+                title: "Todas Lojas",
+                icon: <StoreIcon />,
+            },
+        ],
     },
     {
         kind: "divider",
@@ -103,11 +105,9 @@ const navigation = [
     {
         kind: "divider",
     },
-
 ];
 
 const Dashboard = ({ children }) => {
-
     const theme = useTheme();
     shopStore.setStoresData(usePage().props.stores);
     const stores = shopStore.stores;
@@ -151,7 +151,6 @@ const Dashboard = ({ children }) => {
         );
     }
 
-
     // Authentication settings for AppProvider
     const authentication = useMemo(() => {
         return {
@@ -163,7 +162,17 @@ const Dashboard = ({ children }) => {
                     },
                 });
             },
-            signOut: () => {},
+            signOut: () => {
+                router.post(
+                    "/sair",
+                    {},
+                    {
+                        onSuccess: () => {
+                            authStore.updateAuth({ user: null });
+                        },
+                    },
+                );
+            },
         };
     }, []);
 
@@ -180,7 +189,7 @@ const Dashboard = ({ children }) => {
             theme={theme}
             branding={{
                 title: "BIORAMA",
-                logo:
+                logo: (
                     <SpaIcon
                         sx={{
                             mt: 0.65,
@@ -189,7 +198,7 @@ const Dashboard = ({ children }) => {
                             color: theme.palette.primary.main,
                         }}
                     />
-                ,
+                ),
             }}
         >
             <DashboardLayout
@@ -198,20 +207,25 @@ const Dashboard = ({ children }) => {
                     toolbarActions: ThemeSwitcher,
                 }}
             >
-                <Box sx={{ flexGrow: 1, margin: 0,  "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        backgroundImage: `url(${background})`, // Caminho da imagem
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        opacity: 0.7, // Apenas a imagem fica transparente
-                        zIndex: -1, // Mantém o fundo atrás do conteúdo
-                    },
-                }}>
+                <Box
+                    sx={{
+                        flexGrow: 1,
+                        margin: 0,
+                        "&::before": {
+                            content: '""',
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            backgroundImage: `url(${background})`, // Caminho da imagem
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            opacity: 0.7, // Apenas a imagem fica transparente
+                            zIndex: -1, // Mantém o fundo atrás do conteúdo
+                        },
+                    }}
+                >
                     {children}
                 </Box>
             </DashboardLayout>
