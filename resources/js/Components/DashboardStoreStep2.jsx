@@ -131,12 +131,12 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
             </Box>
 
             {/* Formulário */}
-            <Paper
+            {/* <Paper
                 sx={{
                     display: "flex",
                     flexDirection: isSmallScreen || isMediumScreen ? "row" : "column",
                     p: 5,
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    backgroundColor: "rgba(0, 255, 255, 0.1)",
                     boxShadow: 3,
                     width: isSmallScreen || isMediumScreen ? "96%" : "80%",
                     position: "relative",
@@ -158,7 +158,7 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
                     </Typography>
                     <DashboardStoreCreateForm passFormik={setStoreFormik} images={images} />
                 </Box>
-            </Paper>
+            </Paper> */}
         </Box>
     );
 });

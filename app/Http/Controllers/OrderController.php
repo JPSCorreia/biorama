@@ -106,12 +106,10 @@ class OrderController extends Controller
                     'updated_at' => now(),
                 ]);
 
-
-                // Buscar a loja correta através da tabela `order_store_products`
-                $storeName = optional($order->store->first())->name ?? 'Desconhecida';
-                // Notificar o utilizador com a loja correta e o total correto
-                Auth::user()->notify(new OrderCreated($order, $order->total , $storeName));
             }
+            $storeName = optional($order->store->first())->name ?? 'Desconhecida';
+            Auth::user()->notify(new OrderCreated($order, $order->total , $storeName));
+
             $createdOrders[] = $order->load('products');
         }
 
