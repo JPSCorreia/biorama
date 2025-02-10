@@ -10,9 +10,10 @@ import DashboardStoreStep2 from "@/Components/DashboardStoreStep2.jsx";
 const DashboardStorePage = observer(() => {
     const {user, stores: initialStores} = usePage().props;
 
+
     useEffect(() => {
         if (!shopStore.stores.length) {
-            shopStore.setStoresData(initialStores);
+            shopStore.fetchStores();
         }
     }, [initialStores]);
 

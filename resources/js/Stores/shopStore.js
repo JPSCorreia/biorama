@@ -57,6 +57,17 @@ class ShopStore {
         });
     }
 
+    fetchStores = async () => {
+        try {
+            const response = await axios.get('/dashboard/stores/list');
+            this.setStoreData(response.data.stores)
+
+            console.log("response", response.data.stores)
+        } catch (error) {
+            console.error('Erro ao carregar as lojas do vendedor:', error);
+        }
+    };
+
     // Cria uma nova loja e o endereço associado
     async createStore(storeData) {
 
