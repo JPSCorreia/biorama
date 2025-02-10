@@ -282,12 +282,15 @@ const DashboarShowStoreInfo = observer(({store}) => {
                     </Box>
 
                 </Box>
-                <Box sx={{mt: 1, textAlign: "right"}}>
-                    <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
+                <Box sx={{display: "flex", flexDirection: "row", gap:2}}>
+                    <Box sx={{mt: 1, textAlign: "right"}}>
+                        <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
+                    </Box>
+                    <Box sx={{mt: 1, textAlign: "right"}}>
+                        <Button variant="contained" color="error"  onClick={handleOpenConfirmModal} >Apagar Loja</Button>
+                    </Box>
                 </Box>
-                <Box sx={{mt: 1, textAlign: "right"}}>
-                    <Button variant="contained" color="error"  onClick={handleOpenConfirmModal} >Apagar Loja</Button>
-                </Box>
+
             </Box>
             ):(
                 <DashboardStoreEditForm

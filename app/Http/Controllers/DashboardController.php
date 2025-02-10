@@ -331,7 +331,6 @@ class DashboardController extends Controller
     }
 
 
-
     public function dashboardShowStore($id)
     {
         // Obter o utilizador autenticado e o seu vendor
