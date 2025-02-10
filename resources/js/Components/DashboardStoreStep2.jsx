@@ -1,22 +1,10 @@
-import { Paper, Box, Typography, IconButton, useTheme, useMediaQuery } from "@mui/material";
-import { Delete, PhotoCamera } from "@mui/icons-material";
+import { Paper, Box, Typography, IconButton, ImageList, ImageListItem } from "@mui/material";
+import FormStoreRegistration from "./FormStoreRegistration";
+import { PhotoCamera } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import DashboardStoreCreateForm from "@/Components/DashboardStoreCreateForm.jsx";
-import { useState } from "react";
 
-const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, images, setImages }) => {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const handleRemoveImage = (index) => {
-        setImages((prev) => prev.filter((_, i) => i !== index));
-        if (currentIndex >= images.length - 1) {
-            setCurrentIndex(0);
-        }
-    };
-
+const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, images }) => {
     return (
         <Box
             sx={{
@@ -28,132 +16,112 @@ const DashboardStoreStep2 = observer(({ setStoreFormik, handleImageUpload, image
                 m: "auto",
             }}
         >
-            {/* Lista de miniaturas e botão de upload quando há imagens carregadas */}
-            {images.length > 0 && (
-                <Box
-                    sx={{
-                        width: isSmallScreen || isMediumScreen ? "100%" : "80%",
-                        display: "flex",
-                        gap: 1,
-                        mb: 2,
-                        overflowX: "auto",
-                        justifyContent: "center",
-                    }}
-                >
-                    {/* Botão de adicionar imagem */}
-                    <Box
-                        sx={{
-                            width: 70,
-                            height: 70,
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                            borderRadius: "5px",
-                            cursor: "pointer",
-                        }}
-                        onClick={() => document.getElementById("imageUpload")?.click()}
-                    >
-                        <PhotoCamera />
-                        <input hidden id="imageUpload" accept="image/*" type="file" multiple onChange={handleImageUpload} />
-                    </Box>
-
-                    {/* Miniaturas das imagens carregadas */}
-                    {images.map((image, index) => (
-                        <Box key={index} sx={{ position: "relative" }}>
-                            <img
-                                src={image}
-                                alt={`Miniatura ${index + 1}`}
-                                style={{ width: 70, height: 70, borderRadius: "5px", cursor: "pointer" }}
-                                onClick={() => setCurrentIndex(index)}
-                            />
-                            <IconButton
-                                onClick={() => handleRemoveImage(index)}
-                                sx={{
-                                    position: "absolute",
-                                    top: 0,
-                                    right: 0,
-                                    backgroundColor: "rgba(255, 0, 0, 0.7)",
-                                    color: "white",
-                                    p: 0.5,
-                                }}
-                            >
-                                <Delete fontSize="small" />
-                            </IconButton>
-                        </Box>
-                    ))}
-                </Box>
-            )}
-
-            {/* Imagem de destaque ou botão de upload inicial */}
+            {/* ImageList Section */}
             <Box
                 sx={{
-                    width: isSmallScreen || isMediumScreen ? "100%" : "80%",
-                    height: 300,
-                    position: "relative",
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                    width: "82%",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    borderRadius: 2,
-                    overflow: "hidden",
                 }}
             >
-                {images.length > 0 ? (
-                    <img
-                        src={images[currentIndex]}
-                        alt={`Imagem ${currentIndex + 1}`}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            borderRadius: "10px",
-                        }}
-                    />
-                ) : (
+                {images.length === 0 ? (
                     <Box
                         sx={{
+                            height: 300,
+                            backgroundColor: "rgba(0, 0, 0, 0.1)",
                             display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
                             justifyContent: "center",
-                            cursor: "pointer",
+                            alignItems: "center",
+                            borderRadius: 2,
                         }}
-                        onClick={() => document.getElementById("imageUpload")?.click()}
                     >
-                        <PhotoCamera sx={{ fontSize: "3rem" }} />
-                        <Typography sx={{ fontSize: "1.2rem", fontWeight: "bold", mt: 2 }}>
+                        <IconButton
+                            color="primary"
+                            aria-label="upload picture"
+                            component="label"
+                        >
+                            <input hidden accept="image/*" type="file" multiple onChange={handleImageUpload} />
+                            <PhotoCamera sx={{ fontSize: "3rem" }} />
+                        </IconButton>
+                        <Typography
+                            sx={{
+                                fontSize: "1.2rem",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                ml: 2,
+                            }}
+                        >
                             Adicionar Imagem de Fundo
                         </Typography>
                     </Box>
+                ) : (
+                    <ImageList
+                        sx={{
+                            width: "100%",
+                            height: 300,
+                            overflow: "hidden",
+                            borderRadius: 2,
+                            position: "relative",
+                        }}
+                        cols={1} // Exibir uma imagem por vez
+                    >
+                        {images.map((image, index) => (
+                            <ImageListItem key={index}>
+                                <img
+                                    src={image}
+                                    alt={`Imagem ${index + 1}`}
+                                    loading="lazy"
+                                    style={{ borderRadius: "10px" }}
+                                />
+                            </ImageListItem>
+                        ))}
+                        {/* Botão para adicionar mais imagens */}
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                bottom: 16,
+                                right: 16,
+                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                borderRadius: "50%",
+                            }}
+                        >
+                            <IconButton
+                                color="primary"
+                                aria-label="upload more pictures"
+                                component="label"
+                            >
+                                <input hidden accept="image/*" type="file" multiple onChange={handleImageUpload} />
+                                <PhotoCamera />
+                            </IconButton>
+                        </Box>
+                    </ImageList>
                 )}
-                <input hidden id="imageUpload" accept="image/*" type="file" multiple onChange={handleImageUpload} />
             </Box>
 
-            {/* Formulário */}
+            {/* Form Section */}
             <Paper
                 sx={{
                     display: "flex",
-                    flexDirection: isSmallScreen || isMediumScreen ? "row" : "column",
+                    flexDirection: "column",
                     p: 5,
                     backgroundColor: "rgba(255, 255, 255, 0.9)",
                     boxShadow: 3,
-                    width: isSmallScreen || isMediumScreen ? "96%" : "80%",
+                    width: "80%",
                     position: "relative",
                     mt: -5,
                     mb: 7,
                 }}
             >
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        m: "auto",
-                    }}
-                >
-                    <Typography sx={{ fontSize: "2rem", fontWeight: "bold", textAlign: "left" }}>
+                <Box>
+                    <Typography
+                        sx={{
+                            fontSize: "2rem",
+                            fontWeight: "bold",
+                            textAlign: "left",
+                        }}
+                    >
                         Dados da sua Loja
                     </Typography>
                     <DashboardStoreCreateForm passFormik={setStoreFormik} images={images} />

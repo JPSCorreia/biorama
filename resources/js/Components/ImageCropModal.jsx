@@ -108,10 +108,6 @@ const ImageCropModal = ({ open, image, onClose, onCropComplete }) => {
                     padding: 2,
                 }}
             >
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Ajuste a sua imagem para 800x600 (Ratio 4:3)
-                </Typography>
-
                 {/* Verificar se há uma imagem antes de renderizar o Cropper */}
                 {image ? (
                     <Box sx={{ position: "relative", width: "100%", height: "70%" }}>
