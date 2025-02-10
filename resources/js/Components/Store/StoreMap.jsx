@@ -21,31 +21,33 @@ import "leaflet/dist/leaflet.css";
 
 // Criação de um ícone customizado para a loja
 const createCustomIcon = (color) => {
-    const iconHtml = ReactDOMServer.renderToString(
-        <div
-            style={{
-                fontSize: "24px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                border: `1px solid ${color}`,
-                borderRadius: "50%",
-                padding: "4px",
-                boxShadow: `0 0 8px ${color}, 0 0 16px ${color}, 0 0 24px ${color}`,
-            }}
-        >
-            <StoreSharpIcon
-                fontSize="inherit"
-                style={{ fill: color, width: "1em", height: "1em" }}
-            />
-        </div>,
-    );
-
     return L.divIcon({
-        html: iconHtml,
+        html: ReactDOMServer.renderToString(
+            <div
+                style={{
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: `1px solid ${color}`,
+                    borderRadius: "50%",
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#ffffff",
+                    textAlign: "center",
+                }}
+            >
+                <StoreSharpIcon
+                    fontSize="inherit"
+                    style={{ fill: color, fontSize: "28px" }}
+                />
+            </div>
+        ),
         className: "custom-marker-icon",
         iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconAnchor: [25, 25],
     });
 };
 

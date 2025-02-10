@@ -1,15 +1,12 @@
 import {
-    Avatar,
     Button,
     Paper,
     Typography,
     Box,
-    Divider, useMediaQuery,
+    Divider, useMediaQuery, DialogTitle, Dialog, DialogActions, DialogContentText, DialogContent,
 } from "@mui/material";
 import {observer} from "mobx-react";
-import Carousel from "react-material-ui-carousel";
 import {MapContainer, TileLayer, Marker} from "react-leaflet";
-import {fixImagePath} from "../utils/utils.js";
 import {useTheme} from "@mui/material/styles";
 import React, {useState} from "react";
 import DashboardStoreShortCutCard from "@/Components/DashboardStoreShortCutCard.jsx";
@@ -20,53 +17,83 @@ import DashboardStoreEditForm from "@/Components/DashboardStoreEditForm.jsx";
 import {shopStore} from "@/Stores/index.js";
 import DashboardImageCarousel from "@/Components/DashboardImageCarousel.jsx";
 
+/**
+ * Component: DashboarShowStoreInfo
+ * Description: Displays detailed information about a store, including its address, description, and map location.
+ * Allows switching between view and edit modes and shows product/review lists.
+ */
 const DashboarShowStoreInfo = observer(({store}) => {
 
     const theme = useTheme();
+    // Media query to detect small screens (mobile view)
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    // Get media queries
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Faz a query para mobile
+    // Default latitude and longitude for the map
     const latitude = store?.latitude || 38.7071;
     const longitude = store?.longitude || -9.1355;
 
+    // State to toggle product list visibility
     const [showProductList, setShowProductList] = useState(false)
-    // Função para lidar com o clique no card "Produtos"
     const handleProductCardClick = () => {
-        setShowProductList(!showProductList); // Alterna entre mostrar/esconder
+        setShowProductList(!showProductList);
         setShowReviewList(false);
     };
 
+    // State to toggle review list visibility
     const [showReviewList, setShowReviewList] = useState(false);
-
     const handleReviewCardClick = () => {
         setShowReviewList(!showReviewList);
-        setShowProductList(false); // Fecha o componente de produtos se estiver aberto
+        setShowProductList(false);
     };
 
+    // State to control the confirmation modal
+    const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+    // Handle open and close of the modal
+    const handleOpenConfirmModal = () => {
+        setOpenConfirmModal(true);
+    };
+
+    const handleCloseConfirmModal = () => {
+        setOpenConfirmModal(false);
+    };
+
+    // Handle deletion after confirmation
+    const handleConfirmDelete = async () => {
+        await shopStore.DeleteStore(store.id);
+        handleCloseConfirmModal();
+    };
+
+    // State to manage edit mode
     const [isEditing, setIsEditing] = useState(false);
     const handleEditClick = () => {
-        setIsEditing(true); // Alterna para o modo de edição
+        setIsEditing(true);// Switch to edit mode
     };
-
     const handleCancelEdit = () => {
-        setIsEditing(false); // Volta para o modo de visualização
+        setIsEditing(false); // Switch back to view mode
     };
 
+    /**
+     * Prepare the images for submission by filtering valid new images and collecting images to delete.
+     */
     const prepareImages = (existingImages, newImages, deleteImages) => {
         console.log("Prepar imagens para apagar", deleteImages);
         return {
-            newImages: newImages.filter(Boolean), // Filtra as novas imagens válidas
-            deleteImages, // IDs das imagens a serem excluídas
+            newImages: newImages.filter(Boolean),
+            deleteImages,
         };
     };
 
+    /**
+     * Handle the submission of the store edit form.
+     * Collects all updated store data and sends it to the backend.
+     */
     const handleSubmitEdit = async (updatedValues, existingImages, newImages, deleteImages) => {
         try {
 
-            // Prepara as imagens corretamente
             const { newImages: preparedNewImages, deleteImages: preparedDeleteImages } = prepareImages(existingImages, newImages, deleteImages);
 
-            // Adiciona as imagens ao updatedValues antes de enviar
+            // Add the images to updatedvalues before sending them
             const formDataValues = {
                 ...updatedValues,
                 newImages: preparedNewImages,
@@ -75,27 +102,25 @@ const DashboarShowStoreInfo = observer(({store}) => {
 
             const formData = new FormData();
 
-            // Adicionar dados básicos
+            // Add basic data
             for (const key in formDataValues) {
                 if (key !== 'existingImages' && key !== 'newImages' && key !== 'deleteImages') {
                     formData.append(key, formDataValues[key]);
                 }
             }
 
-            // Adicionar novas imagens (base64)
+            // Add new images (base64)
             formDataValues.newImages.forEach((img, index) => {
                 formData.append(`new_images[${index}]`, img);
             });
 
-            // Adicionar imagens para exclusão (IDs)
+            // Add images to delete (IDs)
             formDataValues.deleteImages.forEach((id, index) => {
                 formData.append(`delete_images[${index}]`, id);
             });
-            console.log("Apos adicionar imagem para apagar", formData)
 
-            console.log("FormData preparado para envio: ", Array.from(formData.entries()));
 
-            // Enviar para o backend
+            // Send the form data to the backend
             const result = await shopStore.updateStore(store.id, formData);
             if (result.success) {
                 console.log("Loja atualizada com sucesso!");
@@ -114,7 +139,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
             elevation={4}
             sx={{
                 p: 2,
-                width: "80%",
+                width: "95%",
                 m: "auto",
                 display: "flex",
                 flexDirection: "column",
@@ -125,17 +150,17 @@ const DashboarShowStoreInfo = observer(({store}) => {
                 position: "relative", // Adiciona posição relativa ao Paper
             }}
         >
-            {/* Carrossel */}
+            {/* Image carousel displaying the store gallery */}
             <Box sx={{position: "relative", height: 200, overflow: "hidden"}}>
                 <DashboardImageCarousel galleries={store?.galleries}/>
             </Box>
 
-            {/* Nome da loja */}
+            {/* Store name section */}
             <Box
                 sx={{
                     position: "absolute",
                     width: "100%",
-                    top: "215px", // Ajustado para não ficar oculto
+                    top: "215px",
                     left: "50%",
                     transform: "translateX(-50%)",
                     backgroundColor: theme.palette.primary.main,
@@ -155,13 +180,21 @@ const DashboarShowStoreInfo = observer(({store}) => {
             </Box>
 
             <Divider/>
-            {/* Conteúdo alternado: visualização ou formulário */}
+
+            {/* Conditionally render view or edit mode */}
             {!isEditing ? (
             <Box>
-                <Box sx={{display: "flex", gap: 2, mb: 1, pt:3, flexDirection: isSmallScreen ? "column" : "row",}}>
-                    {/* Informações da loja */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        gap: 2,
+                        mb: 1,
+                        pt:3,
+                        flexDirection: isSmallScreen ? "column" : "row",
+                    }}>
+                    {/* Store information section */}
                     <Box sx={{flex: "1 1 50%", marginBottom: "3%", p: 2}}>
-                        {/* Linha 1 - Email & Telemóvel */}
+
                         <Box sx={{
                             display: "flex",
                             flexDirection: isSmallScreen ? "column" : "row",
@@ -180,7 +213,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
                             </Box>
                         </Box>
 
-                        {/* Linha 2 - Localidade & Código Postal */}
+
                         <Box sx={{
                             display: "flex",
                             flexDirection: isSmallScreen ? "column" : "row",
@@ -202,7 +235,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
                             </Box>
                         </Box>
 
-                        {/* Linha 3 - Morada */}
+
                         <Box sx={{
                             display: "flex",
                             flexDirection: isSmallScreen ? "column" : "row",
@@ -218,7 +251,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
                             </Box>
                         </Box>
 
-                        {/* Linha 4 - Descrição */}
+
                         <Box sx={{
                             display: "flex",
                             flexDirection: isSmallScreen ? "column" : "row",
@@ -235,7 +268,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
                         </Box>
                     </Box>
 
-                    {/* Localização no Mapa */}
+                    {/* Map location */}
                     <Box sx={{flex: "1 1 50%"}}>
                         <Typography variant="h5" sx={{mb: 2}}>
                             Localização no Mapa
@@ -249,21 +282,27 @@ const DashboarShowStoreInfo = observer(({store}) => {
                     </Box>
 
                 </Box>
-                <Box sx={{mt: 1, textAlign: "right"}}>
-                    <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
+                <Box sx={{display: "flex", flexDirection: "row", gap:2}}>
+                    <Box sx={{mt: 1, textAlign: "right"}}>
+                        <Button variant="contained" color="primary"  onClick={handleEditClick} >Editar</Button>
+                    </Box>
+                    <Box sx={{mt: 1, textAlign: "right"}}>
+                        <Button variant="contained" color="error"  onClick={handleOpenConfirmModal} >Apagar Loja</Button>
+                    </Box>
                 </Box>
+
             </Box>
             ):(
                 <DashboardStoreEditForm
                     store={store}
                     onCancel={handleCancelEdit}
-                    onSubmit={handleSubmitEdit} // Recebe as informações do formulário
+                    onSubmit={handleSubmitEdit}
                 />
             )}
 
             <Divider/>
 
-            {/* container dos cards*/}
+            {/* Shortcut cards for products,reviews and orders */}
             <Box sx={{pb:3}}>
                 <DashboardStoreShortCutCard
                     store={store}
@@ -272,7 +311,7 @@ const DashboarShowStoreInfo = observer(({store}) => {
                 />
             </Box>
 
-            {/* Renderiza condicionalmente o DashboardProductList */}
+            {/* Conditionally render product list or review list */}
             {showProductList && (
                 <Box sx={{ mt: 2 }}>
                     <DashboardProductList
@@ -285,6 +324,20 @@ const DashboarShowStoreInfo = observer(({store}) => {
                     <DashboardStoreReviewList storeId={store.id} />
                 </Box>
             )}
+
+            {/* Delete confirmation  */}
+            <Dialog open={openConfirmModal} onClose={handleCloseConfirmModal}>
+                <DialogTitle>Confirmar Ação</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Tem a certeza que pretende apagar a loja <strong>{store?.name}</strong>? Esta ação não pode ser desfeita.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmModal} color="secondary">Cancelar</Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained">Apagar</Button>
+                </DialogActions>
+            </Dialog>
         </Paper>
     );
 });

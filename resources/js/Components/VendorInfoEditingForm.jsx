@@ -4,7 +4,6 @@ import {
     Container, IconButton,
     TextField,
     Typography,
-    useMediaQuery,
     useTheme
 } from "@mui/material";
 import {
@@ -20,11 +19,18 @@ import { observer } from "mobx-react";
 import SaveIcon from "@mui/icons-material/Save";
 import * as React from "react";
 
+
+/**
+ * Component: VendorInfoEditingForm
+ * Description: Form for editing and submitting vendor's personal information.
+ */
 const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders, isSmallScreen }) => {
     const theme = useTheme();
 
-    console.log("VendorInfoEditingForm", vendor.gender.id);
-
+    /**
+     * Validation schema using Yup
+     * Defines required fields and validation rules for the form.
+     */
     const validationSchema = Yup.object().shape({
         email: Yup.string()
             .email("Insira um email válido")
@@ -38,10 +44,14 @@ const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders, isS
         date_of_birth: Yup.date().nullable().required("A data de nascimento é obrigatória"),
         iban: Yup.string().required("O IBAN é obrigatório."),
         gender_id: Yup.number()
-            .required("O gênero é obrigatório")
-            .integer("Selecione um gênero válido"),
+            .required("O sexo é obrigatório")
+            .integer("Selecione um sexo válido"),
     });
 
+    /**
+     * Formik configuration
+     * Initializes form values and handles form submission.
+     */
     const formik = useFormik({
         initialValues: {
             email: vendor.email || "",
@@ -59,7 +69,7 @@ const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders, isS
                     ? dayjs(values.date_of_birth).format("YYYY-MM-DD")
                     : null,
             };
-            handleInfoSubmit(formattedValues);
+            handleInfoSubmit(formattedValues);// Trigger submit function
         },
     });
 
@@ -158,7 +168,7 @@ const VendorInfoEditingForm = observer(({ handleInfoSubmit, vendor, genders, isS
                         }}
                     >
                         <option value="" disabled>
-                            Selecione um gênero
+                            Selecione sexo
                         </option>
                         {genders.map((gender) => (
                             <option key={gender.id} value={gender.id}>

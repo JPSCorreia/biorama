@@ -5,7 +5,7 @@ import {DashboardStorePage} from "@/Pages/index.js";
 const Stores = () => {
     return (
         <div>
-            <Box>
+            <Box sx={{paddingTop:"10%"}}>
                 <DashboardStorePage/>
             </Box>
         </div>

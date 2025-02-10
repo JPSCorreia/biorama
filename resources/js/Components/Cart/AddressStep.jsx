@@ -15,6 +15,8 @@ import { AddressModal } from "../../Components/";
 const AddressStep = observer(({ setButtonDisabled }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+
     const addresses = homeAddressStore.addresses;
     const primaryAddress = addresses?.find(address => address.is_primary);
     const [addressModalOpen, setAddressModalOpen] = useState(false);
@@ -60,13 +62,16 @@ const AddressStep = observer(({ setButtonDisabled }) => {
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: isSmallScreen ? "column" : "row",
+                        flexDirection: smallerThanMedium ? "column" : "row",
                         alignItems: "center",
                         width: "100%",
+                        minHeight: smallerThanMedium? "100%" : "500px",
                         justifyContent: "center",
-                        flexWrap: "wrap",
+                        // flexWrap: "wrap",
                         gap: 3,
-                        height: "50vh",
+                        // height: "50vh",
+                        mb: smallerThanMedium ? 4 : 0,
+                        mt: 2,
                     }}
                 >
                     {addresses.map((address) => (

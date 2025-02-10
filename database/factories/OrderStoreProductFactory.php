@@ -26,7 +26,7 @@ class OrderStoreProductFactory extends Factory
             'discount_value' => $this->faker->randomFloat(2, 0, 0.5),
             'quantity' => $this->faker->numberBetween(1, 10),
             'created_at' => $this->faker->dateTimeBetween('-6 years', 'now'),
-            'updated_at' => $this->faker->dateTimeBetween('-6 years', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-6 years', 'now'),null
         ];
     }
 }

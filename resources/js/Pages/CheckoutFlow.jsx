@@ -25,38 +25,6 @@ const CheckoutFlow = observer(() => {
     //     }
     // }, [currentStep]);
 
-    useEffect(() => {
-        if (currentStep === 1 && window.paypal) {
-            setTimeout(() => {
-                window.paypal.Buttons({
-                    createOrder: (data, actions) => {
-                        return actions.order.create({
-                            purchase_units: [
-                                {
-                                    amount: {
-                                        currency_code: "EUR",
-                                        value: Number(cartStore.grandTotal || 0).toFixed(2), // ✅ Corrigido
-                                    },
-                                },
-                            ],
-                        });
-                    },
-                    onApprove: async (data, actions) => {
-                        const order = await actions.order.capture();
-                        console.log("Pagamento aprovado!", order);
-                        processOrder();
-                    },
-                    onError: (err) => {
-                        console.error("Erro no pagamento do PayPal:", err);
-                        alert("Erro no pagamento do PayPal. Tenta novamente.");
-                        setIsProcessing(false);
-                    },
-                }).render("#paypal-button-container");
-            }, 500);
-        }
-    }, [currentStep]);
-
-
     const handleNext = () => {
         if (currentStep < steps.length - 1) {
             setCurrentStep((prev) => prev + 1);

@@ -5,9 +5,17 @@ import * as React from "react";
 import {Field, Form, Formik} from "formik";
 import SaveIcon from "@mui/icons-material/Save";
 
+
+/**
+ * Component: VendorCompanyEditingForm
+ * Description: Form for editing Company information.
+ */
 const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit, isSmallScreen}) => {
 
-
+    /**
+     * Validation schema using Yup
+     * Defines required fields and validation rules for the form.
+     */
     const companyvalidationSchema = Yup.object({
         name: Yup.string()
             .max(100, "O Primeiro nome não pode ter mais de 100 caracteres.")
@@ -17,7 +25,7 @@ const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit, isS
             .required("O email é obrigatorio"),
         website: Yup.string().required("O website é obrigatorio"),
         nif: Yup.string()
-            .max(20, "Nif Pode ser mais que 20 caracteres.")
+            .max(20, "Nif não pode ser mais que 20 caracteres.")
             .required("Nif é Obrigatorio"),
         phone: Yup.string()
             .min(9, "o numero não pode ser inferior a 9 caracteres.")
@@ -61,6 +69,10 @@ const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit, isS
                 Editar Dados da Empresa
             </Typography>
 
+            {/**
+            * Formik configuration
+            * Initializes form values and handles form submission.
+            */}
             <Formik
                 initialValues={{
                     name: vendor.company.name || "",
