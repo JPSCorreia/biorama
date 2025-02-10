@@ -237,7 +237,7 @@ const Navbar = observer(() => {
                             navigate("/");
                         }}
                     >
-                            <Typography sx={{ mr: 1 }}>{currentBreakpoint}</Typography>
+                            {/* <Typography sx={{ mr: 1 }}>{currentBreakpoint}</Typography> */}
 
                         {isSm ? (
                             ""

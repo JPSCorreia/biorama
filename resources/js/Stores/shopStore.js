@@ -33,6 +33,7 @@ class ShopStore {
 
 
 
+
     // Define os dados das lojas
     setStoresData(storesData) {
         runInAction(() => {
@@ -80,6 +81,7 @@ class ShopStore {
             return { success: false, message: error.message };
         }
     }
+
 
     navigateToStore(storeId) {
         router.get(`/dashboard/store/${storeId}`); // Rota dinâmica para exibir informações da loja
@@ -130,13 +132,19 @@ class ShopStore {
             console.log("response.data", response.data)
             if (response.data.success) {
                 this.stores = response.data.stores;
-                alert('Loja apagada com sucesso.');
+
                 // Redireciona para /dashboard/stores
-                window.location.href = '/dashboard/stores';
+                const navigate = (path) => {
+                    router.visit(path, {
+                        preserveState: true,
+                        preserveScroll: true,
+                    });
+                };
+
+                navigate('/dashboard/stores');
             }
         } catch (error) {
             console.error('Erro ao apagar a loja:', error);
-            alert('Erro ao apagar a loja.');
         }
     };
 

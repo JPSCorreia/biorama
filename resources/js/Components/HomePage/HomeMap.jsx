@@ -9,8 +9,8 @@ import ReactDOMServer from "react-dom/server";
 import StoreSharpIcon from "@mui/icons-material/StoreSharp";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { router } from "@inertiajs/react"; // Importa o router do Inertia
-import { nearbyShopStore } from "../../Stores/NearbyShopStore";
-import {toJS} from "mobx";
+import { nearbyShopStore } from "../../Stores/nearbyShopStore";
+import { toJS } from "mobx";
 
 // Ícone para a localização do utilizador
 const userLocationIcon = L.divIcon({
@@ -134,20 +134,16 @@ const HomeMap = observer(() => {
     const mapRef = useRef(null);
     const theme = useTheme();
 
-    // ✅ Garantir que `nearbyStores` nunca seja undefined
     const nearbyStores = toJS(nearbyShopStore.nearbyStores) || [];
 
-    // ✅ Verificar se é um array válido antes de renderizar
     if (!Array.isArray(nearbyStores)) {
         return <Typography>Nenhuma loja encontrada.</Typography>;
     }
 
-    // ✅ Se os dados ainda estão a carregar, mostrar um indicador
     if (nearbyShopStore.loading) {
         return <Typography>A carregar lojas...</Typography>;
     }
 
-    // ✅ Se não houver lojas após o carregamento, mostrar um aviso
     if (!nearbyStores.length) {
         return <Typography>Nenhuma loja encontrada.</Typography>;
     }

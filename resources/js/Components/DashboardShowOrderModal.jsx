@@ -15,11 +15,18 @@ const DashboardShowOrderModal = ({ order, isOpen, onClose }) => {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 700,
                 backgroundColor: 'white',
                 boxShadow: 24,
                 p: 4,
-                borderRadius: 2
+                borderRadius: 2,
+                width: '100vw', // Padrão para ocupar toda a largura
+                height: '100vh', // Padrão para ocupar toda a altura
+                overflowY: 'auto', // Adiciona rolagem se necessário
+
+                '@media (min-width: 900px)': {
+                    width: '700px', // Largura fixa em ecrãs grandes
+                    height: 'auto', // Ajusta altura ao conteúdo em ecrãs grandes
+                },
             }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>Detalhes da Encomenda #{order.id}</Typography>
                 <Box sx={{ mb: 2 }}>

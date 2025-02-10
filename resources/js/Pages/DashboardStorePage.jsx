@@ -206,6 +206,7 @@ const DashboardStorePage = observer(() => {
                             setStoreFormik={setStoreFormik}
                             handleImageUpload={handleImageUpload}
                             images={images}
+                            setImages={setImages}
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "center"}}>

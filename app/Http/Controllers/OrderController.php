@@ -106,12 +106,9 @@ class OrderController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                dd("A notificação está a ser chamada para o utilizador:", Auth::user());
-                Auth::user()->notify(new OrderCreated($order, $order->total, $storeName));
 
                 // Buscar a loja correta através da tabela `order_store_products`
                 $storeName = optional($order->store->first())->name ?? 'Desconhecida';
-
                 // Notificar o utilizador com a loja correta e o total correto
                 Auth::user()->notify(new OrderCreated($order, $order->total , $storeName));
             }
