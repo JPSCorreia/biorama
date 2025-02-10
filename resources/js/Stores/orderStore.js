@@ -116,7 +116,6 @@ class OrderStore {
         }
     }
 
-
     updateProductQuantity(orderId, productId, quantity) {
         if (quantity <= 0) {
             runInAction(() => {
@@ -160,34 +159,9 @@ class OrderStore {
         }, 0);
     }
 
-    async saveOrderChanges(orderId) {
-        const order = this.orders.find(order => order.id === orderId);
-
-        if (order.products.length === 0) {
-            runInAction(() => {
-                this.errorMessage = "Não é possível salvar uma encomenda sem produtos.";
-            });
-            return;
-        }
-
-        // Verificar e garantir que `removedProducts` esteja no payload
-        const payload = {
-            statuses_id: order.statuses_id,
-            total: this.getUpdatedTotal(orderId),
-            products: order.products.map(product => ({
-                id: product.id,
-                quantity: product.pivot.quantity,
-                price: product.pivot.price,
-                discount: product.pivot.discount || 0,
-                final_price: product.pivot.final_price || 0,
-            })),
-            removedProducts: order.removedProducts || [],  // Incluindo produtos removidos
-        };
-
-        console.log("Payload a enviar:", payload);  // Verificação
-
+    async saveOrderChanges(orderId, orderData) {
         try {
-            const response = await axios.put(`/dashboard/orders/${orderId}`, payload);
+            const response = await axios.put(`/dashboard/orders/${orderId}`, orderData);
 
             runInAction(() => {
                 const updatedOrder = response.data.order;
@@ -224,15 +198,37 @@ class OrderStore {
             this.sortOrder = "asc";
         }
 
+        // Função auxiliar para acessar campos aninhados (ex: user.first_name)
+        const getNestedValue = (obj, path) => {
+            return path.split('.').reduce((acc, part) => acc && acc[part], obj) || "";
+        };
+
         runInAction(() => {
             this.orders = [...this.orders].sort((a, b) => {
-                const valueA = field === "total" ? parseFloat(a[field] || 0) : (a[field] || "").toString().toLowerCase();
-                const valueB = field === "total" ? parseFloat(b[field] || 0) : (b[field] || "").toString().toLowerCase();
+                let valueA = getNestedValue(a, field);
+                let valueB = getNestedValue(b, field);
 
+                // Se for string, comparar com localeCompare
+                if (typeof valueA === "string" && typeof valueB === "string") {
+                    return this.sortOrder === "asc"
+                        ? valueA.localeCompare(valueB)
+                        : valueB.localeCompare(valueA);
+                }
+
+                // Se for número ou data
+                if (field === "created_at") {
+                    valueA = new Date(valueA);
+                    valueB = new Date(valueB);
+                } else if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
+                    valueA = parseFloat(valueA);
+                    valueB = parseFloat(valueB);
+                }
+
+                // Comparação padrão
                 if (this.sortOrder === "asc") {
-                    return valueA > valueB ? 1 : -1;
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
                 } else {
-                    return valueA < valueB ? 1 : -1;
+                    return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
                 }
             });
         });

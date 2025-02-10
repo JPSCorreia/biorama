@@ -19,7 +19,7 @@ const DashboardAllOrdersCard = ({ totalOrders, onViewAllOrders }) => {
                 position: 'relative',
                 cursor: 'pointer',
                 transition: 'transform 0.3s',
-                width: '60%',
+                width: '100%',
                 '&:hover': {
                     transform: 'scale(1.05)',
                 },
