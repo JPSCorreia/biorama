@@ -40,7 +40,7 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder,  }) => 
      * @returns {boolean} - True if the order is cancelled, false otherwise.
      */
     const isOrderCancelled = (order) => order.statuses_id === 5;
-
+            console.log("order", orders);
     return (
         <Box sx={{ padding: 2 }}>
             {/* Top bar with title and search field */}
@@ -77,16 +77,19 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder,  }) => 
                     <TableHead>
                         <TableRow>
                             <TableCell onClick={() => handleSort("id")} style={{ cursor: "pointer" }}>
-                                Order Number {orderStore.sortField === "id" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                Nº da Encomenda {orderStore.sortField === "id" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                            </TableCell>
+                            <TableCell onClick={() => handleSort("created_at")} style={{ cursor: "pointer" }}>
+                                Data {orderStore.sortField === "created_at" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("user.first_name")} style={{ cursor: "pointer" }}>
-                                Name {orderStore.sortField === "user.first_name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                Nome  {orderStore.sortField === "user.first_name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("user.email")} style={{ cursor: "pointer" }}>
                                 Email {orderStore.sortField === "user.email" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("status.name")} style={{ cursor: "pointer" }}>
-                                Status {orderStore.sortField === "status.name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                Estado {orderStore.sortField === "status.name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                             </TableCell>
                             <TableCell onClick={() => handleSort("total")} style={{ cursor: "pointer" }}>
                                 Total (€) {orderStore.sortField === "total" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
@@ -98,6 +101,13 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder,  }) => 
                         {orders.map((order) => (
                             <TableRow key={order.id}>
                                 <TableCell>{order.id}</TableCell>
+                                <TableCell>
+                                    {new Date(order?.created_at).toLocaleDateString("pt-PT", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric"
+                                    })}
+                                </TableCell>
                                 <TableCell>{order.user?.first_name + " " + order.user?.last_name || "N/A"}</TableCell>
                                 <TableCell>{order.user?.email || "N/A"}</TableCell>
                                 <TableCell>{order.status?.name || "N/A"}</TableCell>

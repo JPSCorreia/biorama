@@ -13,30 +13,11 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
 
     if (!order) return null;
 
-    const handleQuantityChange = (productId, quantity) => {
-        if (quantity > 0) {
-            orderStore.updateProductQuantity(order.id, productId, parseInt(quantity));
-        } else {
-            orderStore.errorMessage = "A quantidade deve ser maior que 0.";
-        }
-    };
-
-    const handleRemoveProduct = (productId) => {
-        orderStore.removeProduct(order.id, productId);
-    };
 
     const handleSubmit = async () => {
         const orderData = {
             statuses_id: order.statuses_id,
-            products: order.products.map(product => ({
-                id: product.id,
-                quantity: product.pivot.quantity,
-                price: product.pivot.price,
-                discount: product.pivot.discount || 0,
-                final_price: calculateFinalPrice(product.pivot.price, product.pivot.discount, product.pivot.quantity)
-            })),
         };
-
         await orderStore.saveOrderChanges(order.id, orderData);
     };
 
@@ -45,19 +26,18 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
         return (price * (discount / 100)).toFixed(2);
     };
 
-    // Calcular o preço final por produto considerando o desconto
     const calculateFinalPrice = (price, discount, quantity) => {
         const discountValue = price * (discount / 100);
         return ((price - discountValue) * quantity).toFixed(2);
     };
-
-    // Calcular o total atualizado da encomenda
+    // Calcular o preço final por produto considerando o desconto
     const calculateTotal = () => {
         return order.products.reduce((total, product) => {
             const finalPrice = calculateFinalPrice(product.pivot.price, product.pivot.discount, product.pivot.quantity);
             return total + parseFloat(finalPrice);
         }, 0).toFixed(2);
     };
+
 
 
     return (
@@ -67,11 +47,18 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 850,
                 backgroundColor: 'white',
                 boxShadow: 24,
                 p: 4,
-                borderRadius: 2
+                borderRadius: 2,
+                width: '100vw', // Padrão para ocupar toda a largura
+                height: '100vh', // Padrão para ocupar toda a altura
+                overflowY: 'auto', // Adiciona rolagem se necessário
+
+                '@media (min-width: 900px)': {
+                    width: '900px', // Largura fixa em ecrãs grandes
+                    height: 'auto', // Ajusta altura ao conteúdo em ecrãs grandes
+                },
             }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>Editar Encomenda #{order.id}</Typography>
 
@@ -104,7 +91,6 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
                                 <TableCell>Desconto (%)</TableCell>
                                 <TableCell>Valor Desconto (€)</TableCell>
                                 <TableCell>Preço Final (€)</TableCell>
-                                <TableCell>Ações</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -112,33 +98,24 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
                                 <TableRow key={product.id}>
                                     <TableCell>{product.name}</TableCell>
                                     <TableCell>
-                                        <TextField
-                                            type="number"
-                                            value={product.pivot.quantity}
-                                            onChange={(e) => handleQuantityChange(product.id, e.target.value)}
-                                            sx={{ width: 60 }}
-                                        />
+                                        {product.pivot.quantity}
                                     </TableCell>
                                     <TableCell>{parseFloat(product.pivot.price).toFixed(2)} €</TableCell>
                                     <TableCell>{product.pivot.discount || 0} %</TableCell>
                                     <TableCell>{calculateDiscountValue(product.pivot.price, product.pivot.discount)} €</TableCell>
                                     <TableCell>{calculateFinalPrice(product.pivot.price, product.pivot.discount, product.pivot.quantity)} €</TableCell>
-                                    <TableCell>
-                                        <Button variant="outlined" color="error" onClick={() => handleRemoveProduct(product.id)}>
-                                            Remover
-                                        </Button>
-                                    </TableCell>
+
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
 
-                <Typography variant="h6" sx={{ mt: 3 }}>Total Atualizado: {calculateTotal()} €</Typography>
+                <Typography variant="h6" sx={{ mt: 3 }}>Total  {calculateTotal()} €</Typography>
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
                     <Button variant="outlined" onClick={onClose}>Cancelar</Button>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>Salvar Alterações</Button>
+                    <Button variant="contained" color="primary" onClick={handleSubmit}>Guardar</Button>
                 </Box>
             </Box>
         </Modal>

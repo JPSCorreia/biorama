@@ -129,8 +129,7 @@ const DashboardGraphsPage = () => {
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 13, padding: 2, justifyContent: 'center' }}>
-
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, padding: 2, justifyContent: 'space-between' }}>
                 {/* Card 1 */}
                 <Card sx={{
                     width: cardWidth,
@@ -312,7 +311,7 @@ const DashboardGraphsPage = () => {
                 </Card>
             </Box>
 
-            <Box sx={{ padding: 2 }}>
+            <Box sx={{ padding: 2, justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3,  }}>
                     {/* Gráfico de barras: Receita Mensal */}
                     <Card sx={{ flex: 1, minWidth: '300px', backgroundColor:"white", borderRadius: '2%', p:1 }}>
@@ -361,10 +360,10 @@ const DashboardGraphsPage = () => {
                         </ResponsiveContainer>
                     </Card>
                 </Box>
-                <Box sx={{ padding: 2 }}>
-                    <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+                <Box sx={{ paddingTop: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'space-between' }}>
                         {/* Tabela: Faturamento e Encomendas */}
-                        <Card sx={{ flex: 1, padding: 3 }}>
+                        <Card sx={{ flex: 1, padding: 1 }}>
                             <Typography variant="h6" sx={{ paddingBottom: 2 }}>Faturamento e Encomendas por Loja</Typography>
                             <TableContainer component={Paper}>
                                 <Table>
@@ -413,7 +412,7 @@ const DashboardGraphsPage = () => {
                         </Card>
 
                         {/* Gráfico Circular */}
-                        <Card sx={{ flex: 1, padding: 3 }}>
+                        <Card sx={{ flex: 1, padding: 1 }}>
                             <Typography variant="h6" sx={{ paddingBottom: 2 }}>Percentagem de Encomendas Tratadas</Typography>
                             <ResponsiveContainer width="100%" height={300}>
                                 <PieChart>

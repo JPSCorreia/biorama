@@ -351,7 +351,7 @@ class DashboardController extends Controller
         }
 
         // Buscar os detalhes da loja (já validado)
-        $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating')
+        $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating',)
             ->with([
                 'addresses' => function ($query) {
                     $query->select(
@@ -443,7 +443,8 @@ class DashboardController extends Controller
             'city',
             'postal_code',
             'phone_number',
-            'total'
+            'total',
+            'created_at'
         ]);
 
         // Aplicar filtro de pesquisa se o searchTerm for fornecido
@@ -465,11 +466,6 @@ class DashboardController extends Controller
     {
         $validatedData = $request->validate([
             'statuses_id' => 'required|exists:statuses,id',
-            'products' => 'required|array|min:1',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'removedProducts' => 'nullable|array',
-            'removedProducts.*' => 'exists:products,id',
         ]);
 
         try {
@@ -479,53 +475,7 @@ class DashboardController extends Controller
             $order->statuses_id = $validatedData['statuses_id'];
             $order->save();
 
-            // Soft delete dos produtos removidos (se houver)
-            if (!empty($validatedData['removedProducts'])) {
-                $order->products()->whereIn('product_id', $validatedData['removedProducts'])->delete();
-            }
-
-            // Verificar se todos os produtos válidos foram removidos ou têm quantidade 0
-            $validProducts = [];
-            $newTotal = 0;
-
-            foreach ($validatedData['products'] as $productData) {
-                if ($productData['quantity'] > 0) {
-                    $validProducts[] = $productData;
-
-                    // Atualizar os preços e calcular os valores de preço final e desconto
-                    $product = $order->products()->where('product_id', $productData['id'])->first();
-                    if ($product) {
-                        $originalPrice = $product->pivot->price;
-                        $discount = $product->pivot->discount ?? 0;
-                        $discountValue = $originalPrice * ($discount / 100);
-                        $finalPrice = ($originalPrice - $discountValue) * $productData['quantity'];
-
-                        // Atualizar a linha na tabela intermediária
-                        $order->products()->updateExistingPivot($productData['id'], [
-                            'quantity' => $productData['quantity'],
-                            'original_price' => $originalPrice,
-                            'discount_value' => $discountValue * $productData['quantity'],
-                            'final_price' => $finalPrice,
-                        ]);
-
-                        // Incrementar o total da encomenda
-                        $newTotal += $finalPrice;
-                    }
-                }
-            }
-
-            // Se não houver produtos válidos, cancelar a encomenda
-            if (empty($validProducts)) {
-                $order->statuses_id = Status::where('name', 'Cancelado')->first()->id;
-                $order->save();
-                return response()->json(['message' => 'Todos os produtos foram removidos. A encomenda foi cancelada.'], 200);
-            }
-
-            // Atualizar o total na tabela de encomendas
-            $order->total = $newTotal;
-            $order->save();
-
-            // Retornar os dados atualizados da encomenda
+            // Retornar a encomenda atualizada
             $updatedOrder = $order->load(['products', 'user', 'status']);
 
             return response()->json([
@@ -565,7 +515,8 @@ class DashboardController extends Controller
                 'city',
                 'postal_code',
                 'phone_number',
-                'total'
+                'total',
+                'created_at'
             ]);
 
             // Aplicar filtro de pesquisa

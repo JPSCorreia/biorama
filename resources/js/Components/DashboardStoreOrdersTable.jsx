@@ -32,9 +32,7 @@ const DashboardStoreOrdersTable = observer(({ storeName, storeId, onViewOrder, o
     };
 
     const handleSort = (field) => {
-        const newOrder = sortField === field && sortOrder === "asc" ? "desc" : "asc";
-        setSortField(field);
-        setSortOrder(newOrder);
+        orderStore.sortOrders(field);
     };
 
     const handleCancelOrder = (orderId) => {
@@ -82,20 +80,23 @@ const DashboardStoreOrdersTable = observer(({ storeName, storeId, onViewOrder, o
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell onClick={() => handleSort("id")} sx={{ cursor: "pointer" }}>
-                                    Nº da Encomenda {sortField === "id" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                                <TableCell onClick={() => handleSort("id")} style={{ cursor: "pointer" }}>
+                                    Nº da Encomenda {orderStore.sortField === "id" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                                 </TableCell>
-                                <TableCell onClick={() => handleSort("user.first_name")} sx={{ cursor: "pointer" }}>
-                                    Nome do Cliente {sortField === "user.first_name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                                <TableCell onClick={() => handleSort("created_at")} style={{ cursor: "pointer" }}>
+                                    Data {orderStore.sortField === "created_at" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                                 </TableCell>
-                                <TableCell onClick={() => handleSort("user.email")} sx={{ cursor: "pointer" }}>
-                                    Email {sortField === "user.email" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                                <TableCell onClick={() => handleSort("user.first_name")} style={{ cursor: "pointer" }}>
+                                    Nome  {orderStore.sortField === "user.first_name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                                 </TableCell>
-                                <TableCell onClick={() => handleSort("status.name")} sx={{ cursor: "pointer" }}>
-                                    Estado {sortField === "status.name" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                                <TableCell onClick={() => handleSort("user.email")} style={{ cursor: "pointer" }}>
+                                    Email {orderStore.sortField === "user.email" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                                 </TableCell>
-                                <TableCell onClick={() => handleSort("total")} sx={{ cursor: "pointer" }}>
-                                    Total (€) {sortField === "total" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                                <TableCell onClick={() => handleSort("status.name")} style={{ cursor: "pointer" }}>
+                                    Estado {orderStore.sortField === "status.name" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
+                                </TableCell>
+                                <TableCell onClick={() => handleSort("total")} style={{ cursor: "pointer" }}>
+                                    Total (€) {orderStore.sortField === "total" ? (orderStore.sortOrder === "asc" ? "↑" : "↓") : ""}
                                 </TableCell>
                                 <TableCell>Ações</TableCell>
                             </TableRow>
@@ -104,6 +105,13 @@ const DashboardStoreOrdersTable = observer(({ storeName, storeId, onViewOrder, o
                             {orderStore.orders.map((order) => (
                                 <TableRow key={order.id}>
                                     <TableCell>{order.id}</TableCell>
+                                    <TableCell>
+                                        {new Date(order.created_at).toLocaleDateString("pt-PT", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric"
+                                        })}
+                                    </TableCell>
                                     <TableCell>{`${order.user?.first_name || ''} ${order.user?.last_name || ''}`}</TableCell>
                                     <TableCell>{order.user?.email || 'N/A'}</TableCell>
                                     <TableCell>{order.status?.name || 'N/A'}</TableCell>

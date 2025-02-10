@@ -193,35 +193,36 @@ class StoreController extends Controller
                 ])
                 ->first();
 
-            // Retornar as lojas atualizadas do vendor
-            $stores = Store::where('vendor_id', $vendor->id)
-                ->select(
-                'id',
-                'name',
-                'description',
-                'phone_number',
-                'email',
-                'rating'
-            )
-                ->where('id', $store->id)
-                ->with([
-                    'addresses' => function ($query) {
-                        $query->select(
-                            'id',
-                            'store_id',
-                            'street_address',
-                            'city',
-                            'postal_code',
-                            DB::raw('ST_X(coordinates) as longitude'),
-                            DB::raw('ST_Y(coordinates) as latitude')
-                        );
-                    },
-                    'products',
-                    'reviews',
-                    'galleries'
-                ])
-                ->take(3)
-                ->get();
+            $user = Auth::user();
+                // Busca as lojas associadas ao vendor logado, no máximo 3
+                $stores = Store::where('vendor_id', $user->vendor->id)
+                    ->select(
+                        'id',
+                        'name',
+                        'description',
+                        'phone_number',
+                        'email',
+                        'rating'
+                    )
+                    ->with([
+                        'addresses' => function ($query) {
+                            $query->select(
+                                'id',
+                                'store_id',
+                                'street_address',
+                                'city',
+                                'postal_code',
+                                DB::raw('CAST(ST_X(coordinates) AS CHAR) as longitude'),
+                                DB::raw('CAST(ST_Y(coordinates) AS CHAR) as latitude')
+                            );
+                        },
+                        'products',
+                        'reviews',
+                        'galleries'
+                    ])
+                    ->take(3)
+                    ->get();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Loja criada com sucesso!',
