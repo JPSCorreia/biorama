@@ -6,6 +6,8 @@ import { useTheme } from "@mui/material/styles";
 import { useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import { useMediaQuery } from "@mui/material";
+import { router } from "@inertiajs/react";
+import axios from "axios";
 
 const ReviewStep = observer(() => {
     const theme = useTheme();
@@ -49,6 +51,19 @@ const ReviewStep = observer(() => {
             }, 500);
         }
     }, []);
+
+
+    const sendInvoice = async (order) => {
+        try {
+            await axios.post("/send-invoice", {
+                order,
+                user: { email: auth.user.email },
+            });
+        } catch (error) {
+            console.error("Erro ao enviar a fatura:", error);
+            alert("Erro ao enviar a fatura. Verifica a tua conexão.");
+        }
+    };
 
     const processOrder = () => {
         const primaryAddress = homeAddressStore.addresses.find(
@@ -94,8 +109,24 @@ const ReviewStep = observer(() => {
             };
         });
 
-        console.log("Encomenda processada:", orders);
-        alert("Encomenda confirmada!");
+
+
+        router.post("/encomendar", { orders }, {
+            onSuccess: (response) => {
+                cartStore.clearCart();
+
+                const orderIds = response.props.flash.orders;
+
+                orders.forEach((order, index) => {
+                    order.id = orderIds[index];
+                    console.log("dentro do for each", order);
+                    sendInvoice(order);
+                });
+            },
+            onError: (errors) => {
+                console.error("Erro ao processar encomenda:", errors);
+            },
+        });
     };
 
     return (

@@ -50,7 +50,7 @@ const ProfileNotifications = () => {
                     flexDirection: "column",
                     width: "100%",
                     justifyContent: "start",
-                    p: 3,
+                    p: 2,
                     borderRadius: "8px",
                 }}
             >
