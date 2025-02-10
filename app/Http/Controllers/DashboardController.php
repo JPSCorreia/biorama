@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Store;
 use App\Models\Vendor;
 use App\Notifications\OrderCreated;
+use App\Notifications\OrderStatusUpdated;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -485,7 +486,7 @@ class DashboardController extends Controller
             $storeName = optional($order->stores->first())->name ?? 'Desconhecida';
 
             // Notificar o utilizador que fez a encomenda
-            $order->user->notify(new OrderCreated($order, $order->status->name, $storeName));
+            $order->user->notify(new OrderStatusUpdated($order, $order->status->name, $storeName));
 
             return response()->json([
                 'message' => 'Encomenda atualizada com sucesso.',
