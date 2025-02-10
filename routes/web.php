@@ -3,6 +3,7 @@
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeAddressController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StatusController;
@@ -172,6 +173,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/paypal/create-order', [OrderController::class, 'createPayPalOrder']);
     // Route to capture paypal order
     Route::post('/paypal/capture-order', [OrderController::class, 'capturePayPalOrder']);
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 
 
     // Vendor dashboard

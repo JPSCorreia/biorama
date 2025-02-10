@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Notifications\OrderCreated;
 
 class OrderController extends Controller
 {
@@ -78,8 +79,13 @@ class OrderController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-            }
 
+                // Buscar a loja correta através da tabela `order_store_products`
+                $storeName = optional($order->store->first())->name ?? 'Desconhecida';
+
+                // Notificar o utilizador com a loja correta e o total correto
+                Auth::user()->notify(new OrderCreated($order, $order->total , $storeName));
+            }
             $createdOrders[] = $order->load('products');
         }
 
@@ -94,9 +100,9 @@ class OrderController extends Controller
     public function createPayPalOrder(Request $request)
     {
         $orders = $request->input('orders');
-    
+
         $totalAmount = collect($orders)->sum('total');
-    
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => 'Basic ' . base64_encode(env('PAYPAL_CLIENT_ID') . ':' . env('PAYPAL_SECRET'))
@@ -111,19 +117,19 @@ class OrderController extends Controller
                 ]
             ]
         ]);
-    
+
         return response()->json($response->json());
     }
 
     public function capturePayPalOrder(Request $request)
     {
         $orderID = $request->input('orderID');
-    
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => 'Basic ' . base64_encode(env('PAYPAL_CLIENT_ID') . ':' . env('PAYPAL_SECRET'))
         ])->post("https://api-m.sandbox.paypal.com/v2/checkout/orders/{$orderID}/capture");
-    
+
         return response()->json($response->json());
     }
 

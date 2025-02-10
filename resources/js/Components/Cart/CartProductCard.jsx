@@ -17,6 +17,8 @@ import {
 } from "@mui/icons-material";
 import { cartStore } from "../../Stores";
 import ReactMarkdown from "react-markdown";
+import Carousel from "react-material-ui-carousel";
+import {useState} from "react";
 
 const CartProductCard = observer(({ product }) => {
     const theme = useTheme();
@@ -26,6 +28,8 @@ const CartProductCard = observer(({ product }) => {
     const cartItems = cartStore.cart[storeId] || [];
     const cartItem = cartItems.find((item) => item.id === product.id);
     const quantity = cartItem ? cartItem.quantity : 0;
+    const [previewIndex, setPreviewIndex] = useState(0);
+
 
     const totalPrice = cartItem
         ? (
@@ -38,70 +42,203 @@ const CartProductCard = observer(({ product }) => {
     return (
         <Card
             sx={{
-                minWidth: 220,
-                width: smallerThanMediumScreen ? "40%" : "20%",
-                maxWidth: "220px",
-                borderRadius: "16px",
-                overflow: "hidden",
+                width: 250,
+                height: 460,
                 boxShadow: 3,
-                minHeight: 360,
+                borderRadius: "10px",
+                overflow: "hidden",
+                transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                backgroundColor: theme.palette.background.paper,
+                cursor: "pointer",
+                position: "relative",
                 display: "flex",
                 flexDirection: "column",
-                position: "relative",
             }}
+            key={product.id}
         >
-            {/* Nome do Produto */}
+            {/* Desconto no canto superior direito */}
+            {product.discount > 0 && (
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "-13px",
+                        right: "-68px",
+                        width: "75px",
+                        height: "92px",
+                        backgroundColor: theme.palette.primary.main,
+                        color: "#fff",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        display: "flex",
+                        alignItems: "end",
+                        justifyContent: "center",
+
+                        transform: "rotate(45deg)", // Inclina a etiqueta para criar o efeito de triângulo
+                        transformOrigin: "top right",
+                        zIndex: 100,
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            fontSize: "14px",
+                        }}>
+
+                        -{Number(product.discount).toFixed(0)}%</Typography>
+
+                </Box>
+            )}
+
+            <Box sx={{ height: "40%", overflow: "hidden", position: "relative" }}>
+                <Carousel
+                    autoPlay={false}
+                    indicators={false}
+                    navButtonsAlwaysVisible={true}
+                    index={previewIndex}
+                    onChange={(index) => setPreviewIndex(index)}
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        "& .MuiButtonBase-root": {
+                            backgroundColor: "rgba(0, 0, 0, 0.3) !important",
+                            color: "#fff",
+                            borderRadius: "50%",
+                            width: "30px",
+                            height: "30px",
+                            opacity: 0.8,
+                            transition: "opacity 0.3s ease-in-out",
+                            "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 0.5) !important",
+                            },
+                        },
+                        "& .MuiSvgIcon-root": {
+                            fontSize: "1.8rem",
+                        },
+                    }}
+                >
+                    {product.gallery.length > 0 ? (
+                        product.gallery.map((img, index) => (
+                            <Box
+                                key={index}
+                                sx={{
+                                    width: "100%",
+                                    height: "180px",
+                                    backgroundImage: `url(${img.image_link})`,
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    backgroundRepeat: "no-repeat",
+                                }}
+                            />
+                        ))
+                    ) : (
+                        <Box
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                backgroundImage: "url('/images/default-store.jpg')",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                            }}
+                        />
+                    )}
+                </Carousel>
+            </Box>
+
             <CardContent
                 sx={{
-                    textAlign: "center",
-                    pt: 1,
-                    pb: 0.75,
-                    backgroundColor: theme.palette.primary.main,
+                    pb: "0 !important",
+                    pt: ".5rem !important",
+                    height: "60%",
                 }}
             >
-                <Typography fontWeight="bold" noWrap sx={{ color: "white" }}>
-                    {product.name || "Produto sem nome"}
-                </Typography>
-            </CardContent>
-
-            {/* Imagem */}
-            <CardMedia
-                sx={{
-                    height: 120,
-                    width: "100%",
-                    objectFit: "cover",
-                    backgroundColor: theme.palette.primary.main,
-                }}
-                image={product.gallery[0]?.image_link}
-            />
-
-            {/* Descrição e Preço Total */}
-            <CardContent sx={{ pb: "0 !important", pt: ".5rem !important" }}>
                 <Box sx={{ mb: 1, display: "flex", flexDirection: "column" }}>
+                    <Box>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                fontWeight: "bold",
+                                fontSize: 20,
+                                lineHeight: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                color: theme.palette.primary.main,
+                            }}
+                        >
+                            {product.name}
+                        </Typography>
+                    </Box>
                     <Box
                         sx={{
-                            minHeight: "140px",
+                            minHeight: "125px",
                             fontSize: 14,
                             fontWeight: "normal",
                         }}
                     >
                         <ReactMarkdown>{product.description}</ReactMarkdown>
                     </Box>
-                    {/* Preço Total */}
                     <Box
                         display="flex"
-                        alignItems="baseline"
-                        sx={{ flexDirection: "row", mb: 1 }}
+                        alignItems="center"
+                        sx={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            minHeight:"36px",
+                            mb:2
+                        }}
                     >
-                        <Typography sx={{ fontWeight: "bold", fontSize: 14 }}>
-                            Total:
-                        </Typography>
-                        <Typography
-                            color="terciary"
-                            sx={{ fontWeight: "bold", fontSize: 18, ml: 1 }}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column", // Agora os preços estão em coluna
+                                alignItems: "flex-start",
+                            }}
                         >
-                            €{totalPrice}
-                        </Typography>
+                            {product.discount > 0 ? (
+                                <>
+                                    <Typography
+                                        color="primary"
+                                        sx={{
+                                            fontWeight: "bold",
+                                            fontSize: 18,
+                                            lineHeight: 1,
+                                            display: "flex",
+                                            alignItems: "baseline",
+                                            verticalAlign: "middle",
+                                        }}
+                                    >
+                                        {(
+                                            Number(product.price) *
+                                            (1 - product.discount / 100)
+                                        ).toFixed(2)}
+                                        €
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            textDecoration: "line-through",
+                                            fontSize: 13,
+                                            color: "red",
+                                            lineHeight: 1,
+                                            display: "flex",
+                                            alignItems: "baseline",
+                                            mt: 0.5, // Pequeno espaçamento entre os preços
+                                        }}
+                                    >
+                                        {Number(product.price).toFixed(2)}€
+                                    </Typography>
+                                </>
+                            ) : (
+                                <Typography
+                                    sx={{
+                                        wordWrap: "break-word",
+                                        overflowWrap: "break-word",
+                                        whiteSpace: "pre-wrap",
+                                        fontWeight: "bold",
+                                        fontSize: 17,
+                                    }}
+                                >
+                                    {Number(product.price).toFixed(2)}€
+                                </Typography>
+                            )}
+                        </Box>
                     </Box>
                     {/* Contador de Quantidade */}
                     <Box

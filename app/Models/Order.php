@@ -45,6 +45,15 @@ class Order extends Model
             ->withTrashed();  // Aqui também ajuda no caso de soft deletes
     }
 
+    public function store()
+    {
+        return $this->belongsToMany(Store::class, 'order_store_products', 'order_id', 'store_id')
+            ->withPivot('product_id')
+            ->withTrashed()
+            ->distinct()
+            ->limit(1);
+    }
+
     public function orderStoreProducts()
     {
         return $this->hasMany(OrderStoreProduct::class, 'order_id', 'id');
