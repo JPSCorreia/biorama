@@ -5,7 +5,6 @@ import {
     IconButton,
     Typography,
     Menu,
-    Container,
     Avatar,
     Button,
     Tooltip,
@@ -19,12 +18,11 @@ import {
     HomeSharp as HomeSharpIcon,
     StoreSharp as StoreSharpIcon,
     ContactSupportSharp as ContactSupportSharpIcon,
-    ShopSharp as ShopSharpIcon,
     ShoppingCartSharp as ShoppingCartSharpIcon,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { ThemeSwitcher } from "./";
-import { appStore, cartStore, authStore, homeAddressStore } from "../Stores";
+import { appStore, cartStore, authStore } from "../Stores";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { router } from "@inertiajs/react";

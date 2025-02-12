@@ -5,7 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
 import { router, usePage } from "@inertiajs/react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, ListItem, List, Tooltip, Avatar } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import {
     Person as PersonIcon,
@@ -13,14 +13,13 @@ import {
     Store as StoreIcon,
     ShoppingBasket as ShoppingBasketIcon,
     Assessment as AssessmentIcon,
-    Logout as LogoutIcon,
-    ExitToApp as ExitToAppIcon
-
+    ExitToApp as ExitToAppIcon,
 } from "@mui/icons-material";
 import background from "../../images/background.jpg";
 import { shopStore } from "@/Stores/index.js";
 import axios from "axios";
 
+// Function to update navigation items with stores
 const updateNavigationWithStores = (navigation) => {
     const [stores, setStores] = useState([]);
 
@@ -38,7 +37,7 @@ const updateNavigationWithStores = (navigation) => {
         fetchStores();
     }, []);
 
-    // Atualiza a navegação somente após obter as lojas
+    // Update the navigation items with the stores
     if (!stores || stores.length === 0) {
         return navigation;
     }
@@ -84,7 +83,7 @@ const navigation = [
         kind: "divider",
     },
     {
-        segment: "dashboard",
+        segment: "dashboard/stores",
         title: "Lojas",
         icon: <StoreIcon />,
         children: [
@@ -109,67 +108,57 @@ const navigation = [
 ];
 
 const Dashboard = ({ children }) => {
+
+    // Get theme
     const theme = useTheme();
+
+    // Fetch stores and update navigation
     shopStore.setStoresData(usePage().props.stores);
-    const stores = shopStore.stores;
-    const updatedNavigation = updateNavigationWithStores(navigation, stores);
+    const updatedNavigation = updateNavigationWithStores(navigation, shopStore.stores);
 
     // User information
-    const [session, setSession] = useState({
+    const session = {
         user: {
             name: authStore.user.first_name,
             email: authStore.user.email,
-            image: authStore.user.photo,
+            image: authStore.user.image_profile,
         },
-    });
+    };
 
     // Updates the navigation only after fetching the stores
     function ExitButton({ mini }) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    mb: 2,
-                    "&:hover": {
-                        color: theme.palette.primary.main,
-                    }
-                }}
+
+            <>
+            <Tooltip title={mini? "Voltar á Aplicação" : ""} placement="right">
+            <li
+                className="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-xs41a9-MuiListItem-root"
+                style={{ marginBottom: "0.75rem" }}
             >
-                <Button
+                <div
+                    className={theme.palette.mode === "dark" ? "MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1yzzic3-MuiButtonBase-root-MuiListItemButton-root" : "MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1hg1ikb-MuiButtonBase-root-MuiListItemButton-root"}                  tabIndex="0"
                     onClick={() => router.get("/")}
-                    component="label"
-                    variant="text"
-                    sx={{
-                        minWidth: mini ? "48px" : "95%",
-                        maxWidth: mini ? "48px" : "95%",
-                        minHeight: "48px",
-                        justifyContent: "flex-start",
-                        pl: mini? 1.5 : 1,
-                        color: theme.palette.dashboard.sidebarIcon,
-                    }}
                 >
-                    <Typography sx={{ display: "flex", alignItems: "center", textTransform: "none", color: theme.palette.text.main, fontSize: 17 }}>
-                        <ExitToAppIcon sx={{ marginRight: 2, color: theme.palette.dashboard.sidebarIcon }} />
-                        {mini ? "" : "Sair"}
-                    </Typography>
-                </Button>
-            </Box>
+                    <div className={theme.palette.mode === "dark" ? "MuiListItemIcon-root css-1vq8r3o-MuiListItemIcon-root" : "MuiListItemIcon-root css-snvjoq-MuiListItemIcon-root"} >
+                        <ExitToAppIcon sx={{ color: `${theme.palette.dashboard.sidebarIcon} !important` }} />
+                    </div>
+                    <div className="MuiListItemText-root css-r8i4uo-MuiListItemText-root">
+                        <span className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root">
+                            Voltar á Aplicação
+                        </span>
+                    </div>
+                    <span className="MuiTouchRipple-root css-r3djoj-MuiTouchRipple-root"></span>
+                </div>
+            </li>
+            </Tooltip>
+            </>
+
         );
     }
 
     // Authentication settings for AppProvider
     const authentication = useMemo(() => {
         return {
-            signIn: () => {
-                setSession({
-                    user: {
-                        name: "Bharat Kashyap",
-                        email: "bharatkashyap@outlook.com",
-                    },
-                });
-            },
             signOut: () => {
                 router.post(
                     "/sair",
@@ -226,11 +215,11 @@ const Dashboard = ({ children }) => {
                             left: 0,
                             width: "100%",
                             height: "100%",
-                            backgroundImage: `url(${background})`, // Caminho da imagem
+                            backgroundImage: `url(${background})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
-                            opacity: theme.palette.mode === "dark" ? 0.5 : 0.8, // Apenas a imagem fica transparente
-                            zIndex: -1, // Mantém o fundo atrás do conteúdo
+                            opacity: theme.palette.mode === "dark" ? 0.5 : 0.8,
+                            zIndex: -1,
                         },
                     }}
                 >

@@ -13,5 +13,4 @@ export { default as ResetPassword } from "./ResetPassword";
 export { default as SearchPage } from "./SearchPage";
 export { default as Store } from "./Store";
 export { default as Stores } from "./Stores";
-export { default as VendorInformation } from "./VendorInformation";
 export { default as ProfileLayout } from "../Profile/ProfileLayout";
