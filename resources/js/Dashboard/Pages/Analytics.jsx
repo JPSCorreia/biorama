@@ -15,6 +15,7 @@ import {
     TableRow,
     Typography,
     useMediaQuery,
+    CircularProgress,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -37,6 +38,7 @@ import {
     Pie,
     Label,
 } from "recharts";
+import { useTimeout } from "@mui/x-data-grid/internals";
 
 const Analytics = () => {
     // State management
@@ -73,7 +75,7 @@ const Analytics = () => {
         fetchDashboardData();
     }, []);
 
-    if (loading) return <p>Loading Data...</p>;
+    if (loading) return <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}><CircularProgress /></Box>;
     if (error) return <p>{error}</p>;
 
     // Function to fill missing months of revenue
@@ -902,7 +904,7 @@ const Analytics = () => {
     <Typography variant="h6" sx={{ mb: 2 }}>
         Percentagem de Encomendas
     </Typography>
-    <ResponsiveContainer width="100%" height={250}>
+    <ResponsiveContainer width="100%" height={230}>
         <PieChart margin={{ left: -10, right: 20 }}> {/* Move o PieChart mais para a esquerda */}
             <Pie
                 data={pieChartData}

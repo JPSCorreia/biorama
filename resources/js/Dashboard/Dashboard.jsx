@@ -75,7 +75,7 @@ const navigation = [
     },
     {
         segment: "dashboard",
-        title: "Minha Informação",
+        title: "Informação Pessoal",
         icon: <PersonIcon />,
     },
     {
