@@ -141,7 +141,7 @@ const Dashboard = ({ children }) => {
     // User information
     const session = {
         user: {
-            name: authStore.user.first_name,
+            name: authStore.user.first_name + " " + authStore.user.last_name,
             email: authStore.user.email,
             image: image_link,
         },
