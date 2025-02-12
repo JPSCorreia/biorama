@@ -23,7 +23,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { ThemeSwitcher } from "./";
 import { appStore, cartStore, authStore } from "../Stores";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { router } from "@inertiajs/react";
 import { SearchBar } from "./";
@@ -32,6 +32,18 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 const Navbar = observer(() => {
     // Get user roles
     const userRoles = authStore.user?.roles || [];
+
+    let image_link = authStore.user?.image_profile;
+
+    if (!authStore.user.image_profile?.includes("mock_images")) {
+        image_link = image_link.replace("/loja", "");
+      }
+
+      // Garante que a URL é absoluta
+      if (!authStore.user.image_profile?.startsWith("http")) {
+        image_link = `${window.location.origin}/${image_link}`;
+      }
+
 
     // Check if the user has a specific role
     const hasRole = (roleName) => {
@@ -519,7 +531,7 @@ const Navbar = observer(() => {
                                     >
                                         <Avatar
                                             alt="User Avatar"
-                                            src={authStore.user?.image_profile}
+                                            src={image_link}
                                             sx={{
                                                 width: 45,
                                                 height: 45,

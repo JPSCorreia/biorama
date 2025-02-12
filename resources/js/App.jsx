@@ -35,22 +35,6 @@ const App = observer(({ children }) => {
                             overflow: "hidden",
                         }}
                     >
-                        {/*<Box*/}
-                        {/*    sx={{*/}
-                        {/*        position: "absolute",*/}
-                        {/*        top: 0,*/}
-                        {/*        left: 0,*/}
-                        {/*        zIndex: -1,*/}
-                        {/*        width: "100% !important",*/}
-                        {/*        height: "100% !important",*/}
-                        {/*        backgroundImage: `url(${background})`,*/}
-                        {/*        backgroundSize: "cover",*/}
-                        {/*        backgroundPosition: "center",*/}
-                        {/*        opacity: 0.7,*/}
-                        {/*    }}*/}
-                        {/*>*/}
-
-                        {/*</Box>*/}
                         <Box
                             sx={{
                                 position: "fixed",

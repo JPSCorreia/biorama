@@ -159,6 +159,8 @@ const Dashboard = ({ children }) => {
     // Authentication settings for AppProvider
     const authentication = useMemo(() => {
         return {
+            signIn: () => router.get("/entrar"),
+
             signOut: () => {
                 router.post(
                     "/sair",

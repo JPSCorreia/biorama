@@ -1,4 +1,4 @@
-import { makeAutoObservable, toJS } from "mobx";
+import { makeAutoObservable } from "mobx";
 import axios from "axios";
 
 class NearbyShopStore {
@@ -24,31 +24,42 @@ class NearbyShopStore {
                 params: { latitude, longitude, radius },
             });
 
-            this.allStores = response.data.allStores || [];
-            this.nearbyStores = response.data.nearbyStores || [];
-            if (response.data.nearbyStores) {
+            this.setAllStores(response.data.allStores);
+            this.setNearbyStores(response.data.nearbyStores);
 
-                console.log(response.data.nearbyStores)
+            if (response.data.nearbyStores) {
                 // Mapeia as lojas e junta os produtos num único array
-                const allBestProducts = response.data.nearbyStores.flatMap(store => store.bestProducts || []);
+                const allBestProducts = response.data.nearbyStores.flatMap(
+                    (store) => store.bestProducts || [],
+                );
 
                 // Atualiza o estado do MobX corretamente
                 this.setBestProducts(allBestProducts);
             }
-
-            console.log("Products:", toJS(this.bestProducts));
-
-            console.log("Fetched stores:", toJS(this.nearbyStores));
-
         } catch (err) {
             this.error = "Erro ao buscar lojas próximas.";
-            console.error("Erro ao buscar lojas próximas:", err.response?.data?.message || err.message);
+            console.error(
+                "Erro ao buscar lojas próximas:",
+                err.response?.data?.message || err.message,
+            );
         } finally {
-            this.loading = false;
+            this.setLoading(false);
         }
     }
     setBestProducts(products) {
         this.bestProducts = [...products]; // Atualiza garantindo a reatividade
+    }
+
+    setNearbyStores(stores) {
+        this.nearbyStores = stores;
+    }
+
+    setAllStores(stores) {
+        this.allStores = stores;
+    }
+
+    setLoading(status) {
+        this.loading = status;
     }
 }
 
