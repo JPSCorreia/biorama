@@ -1,247 +1,368 @@
-import {observer} from "mobx-react";
+import { observer } from "mobx-react";
 import * as Yup from "yup";
-import {Box, Button, Container, IconButton, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Container,
+    IconButton,
+    TextField,
+    Typography,
+    Tooltip,
+    useTheme,
+    useMediaQuery,
+} from "@mui/material";
 import * as React from "react";
-import {Field, Form, Formik} from "formik";
+import { Field, Form, Formik, useFormik } from "formik";
 import SaveIcon from "@mui/icons-material/Save";
-
 
 /**
  * Component: VendorCompanyEditingForm
  * Description: Form for editing Company information.
  */
-const VendorCompanyEditingForm = observer(({vendor, handleCompanyInfoSubmit, isSmallScreen}) => {
+const VendorCompanyEditingForm = observer(
+    ({ vendor, handleCompanyInfoSubmit, isSmallScreen }) => {
+        const theme = useTheme();
+        const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
-    /**
-     * Validation schema using Yup
-     * Defines required fields and validation rules for the form.
-     */
-    const companyvalidationSchema = Yup.object({
-        name: Yup.string()
-            .max(100, "O Primeiro nome não pode ter mais de 100 caracteres.")
-            .required("Primeiro nome é obrigatorio."),
-        email: Yup.string()
-            .email("Insira um email valido")
-            .required("O email é obrigatorio"),
-        website: Yup.string().required("O website é obrigatorio"),
-        nif: Yup.string()
-            .max(20, "Nif não pode ser mais que 20 caracteres.")
-            .required("Nif é Obrigatorio"),
-        phone: Yup.string()
-            .min(9, "o numero não pode ser inferior a 9 caracteres.")
-            .required("Numero é obrigatorio"),
-        founded_at: Yup.date()
-            .nullable()
-            .required("A data de criação da Empresa é obrigatoria"),
-        sector: Yup.string()
-            .max(100, "O setornão pode ter mais de 100 caracteres.")
-            .required("O sector nome é obrigatorio."),
-        street: Yup.string()
-            .max(100, "O nome da ruanão pode ter mais de 100 caracteres.")
-            .required("O nome da rua é obrigatorio."),
-        number: Yup.string()
-            .max(100, "O numero e o andar  não podem ter mais de 100 caracteres.")
-            .required("O numero e o andar obrigatorio."),
-        postal_code: Yup.string()
-            .max(100, "O codigo Postal não pode ter mais de 100 caracteres.")
-            .required("O codigo Postal é obrigatorio."),
-        district: Yup.string()
-            .max(100, "O distrito não pode ter mais de 100 caracteres.")
-            .required("O distrito Postal é obrigatorio."),
-        country: Yup.string()
-            .max(100, "O Pais não pode ter mais de 100 caracteres.")
-            .required("O Pais Postal é obrigatorio."),
-        description:Yup.string()
-            .min(25, "A discrição nao pode conter menos de 25 caracteres.")
-            .max(1000, "A discrição não pode ter mais de 1000 caracteres"),
-    });
+        /**
+         * Validation schema using Yup
+         * Defines required fields and validation rules for the form.
+         */
+        const companyValidationSchema = Yup.object({
+            name: Yup.string()
+                .max(
+                    100,
+                    "O Primeiro nome não pode ter mais de 100 caracteres.",
+                )
+                .required("Primeiro nome é obrigatorio."),
+            email: Yup.string()
+                .email("Insira um email valido")
+                .required("O email é obrigatorio"),
+            website: Yup.string().required("O website é obrigatorio"),
+            nif: Yup.string()
+                .max(20, "Nif não pode ser mais que 20 caracteres.")
+                .required("Nif é Obrigatorio"),
+            phone: Yup.string()
+                .min(9, "o numero não pode ser inferior a 9 caracteres.")
+                .required("Numero é obrigatorio"),
+            founded_at: Yup.date()
+                .nullable()
+                .required("A data de criação da Empresa é obrigatoria"),
+            sector: Yup.string()
+                .max(100, "O setornão pode ter mais de 100 caracteres.")
+                .required("O sector nome é obrigatorio."),
+            street: Yup.string()
+                .max(100, "O nome da ruanão pode ter mais de 100 caracteres.")
+                .required("O nome da rua é obrigatorio."),
+            number: Yup.string()
+                .max(
+                    100,
+                    "O numero e o andar  não podem ter mais de 100 caracteres.",
+                )
+                .required("O numero e o andar obrigatorio."),
+            postal_code: Yup.string()
+                .max(
+                    100,
+                    "O codigo Postal não pode ter mais de 100 caracteres.",
+                )
+                .required("O codigo Postal é obrigatorio."),
+            district: Yup.string()
+                .max(100, "O distrito não pode ter mais de 100 caracteres.")
+                .required("O distrito Postal é obrigatorio."),
+            country: Yup.string()
+                .max(100, "O Pais não pode ter mais de 100 caracteres.")
+                .required("O Pais Postal é obrigatorio."),
+            description: Yup.string()
+                .min(25, "A discrição nao pode conter menos de 25 caracteres.")
+                .max(1000, "A discrição não pode ter mais de 1000 caracteres"),
+        });
 
+        const formik = useFormik({
+            initialValues: {
+                name: vendor.company.name || "",
+                email: vendor.company.contacts.email || "",
+                website: vendor.company.contacts.website || "",
+                nif: vendor.company.nif || "",
+                phone: vendor.company.contacts.phone || "",
+                founded_at: vendor.company.founded_at || "",
+                sector: vendor.company.sector || "",
+                street: vendor.company.addresses?.street || "",
+                number: vendor.company.addresses?.number || "",
+                postal_code: vendor.company.addresses?.postal_code || "",
+                district: vendor.company.addresses?.district || "",
+                country: vendor.company.addresses?.country || "",
+                description: vendor.company.description || "",
+            },
+            validationSchema: companyValidationSchema,
+            onSubmit: (values) => {
+                handleCompanyInfoSubmit(values); // Trigger submit function
+            },
+        });
 
-    return (
-        <Container sx={{ marginTop: "2%" }}>
-            <Typography
-                sx={{
-                    marginBottom: 2,
-                    fontSize: "2rem",
-                    fontWeight: "bold",
-                }}
-            >
-                Editar Dados da Empresa
-            </Typography>
+        return (
+            <Box sx={{ mt: 2, pl: 6, pr: 0, width: "60%" }}>
+                <form onSubmit={formik.handleSubmit}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            alignItems: "center",
+                            gap: 2,
+                            mr: 2,
+                        }}
+                    >
+                        <Typography
+                            variant={smallerThanLarge ? "h6" : "h5"}
+                            sx={{
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Dados da Empresa
+                        </Typography>
+                        <Tooltip title="Guardar dados">
+                            <IconButton
+                                type="submit"
+                                sx={{
+                                    height: 40,
+                                    width: 40,
+                                }}
+                            >
+                                <SaveIcon
+                                    sx={{
+                                        color: theme.palette.primary.main,
+                                    }}
+                                />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            // mt: 2,
+                            pt: 2,
+                            gap: 2,
+                            pr: 4,
+                            maxHeight: "440px",
+                            overflowY: "auto",
+                        }}
+                    >
+                        <TextField
+                            label="Nome da Empresa"
+                            name="name"
+                            fullWidth
+                            value={formik.values.name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.name &&
+                                Boolean(formik.errors.name)
+                            }
+                            helperText={
+                                formik.touched.name && formik.errors.name
+                            }
+                        />
 
-            {/**
-            * Formik configuration
-            * Initializes form values and handles form submission.
-            */}
-            <Formik
-                initialValues={{
-                    name: vendor.company.name || "",
-                    email: vendor.company.contacts.email || "",
-                    website: vendor.company.contacts.website || "",
-                    nif: vendor.company.nif || "",
-                    phone: vendor.company.contacts.phone || "",
-                    founded_at: vendor.company.founded_at || "",
-                    sector: vendor.company.sector || "",
-                    street: vendor.company.addresses?.street || "",
-                    number: vendor.company.addresses?.number || "",
-                    postal_code: vendor.company.addresses?.postal_code || "",
-                    district: vendor.company.addresses?.district || "",
-                    country: vendor.company.addresses?.country || "",
-                    description:vendor.company.description || "",
-                }}
-                validationSchema={companyvalidationSchema}
-                onSubmit={handleCompanyInfoSubmit}
-            >
-                {({ errors, touched, isSubmitting }) => (
-                    <Form>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                            <Field
-                                as={TextField}
-                                label="Nome da Empresa"
-                                name="name"
-                                fullWidth
-                                error={touched.name && Boolean(errors.name)}
-                                helperText={touched.name && errors.name}
-                            />
+                        <TextField
+                            label="Email"
+                            name="email"
+                            fullWidth
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.email &&
+                                Boolean(formik.errors.email)
+                            }
+                            helperText={
+                                formik.touched.email && formik.errors.email
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Email"
-                                name="email"
-                                fullWidth
-                                error={touched.email && Boolean(errors.email)}
-                                helperText={touched.email && errors.email}
-                            />
+                        <TextField
+                            label="Website"
+                            name="website"
+                            fullWidth
+                            value={formik.values.website}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.website &&
+                                Boolean(formik.errors.website)
+                            }
+                            helperText={
+                                formik.touched.website && formik.errors.website
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Website"
-                                name="website"
-                                fullWidth
-                                error={touched.website && Boolean(errors.website)}
-                                helperText={touched.website && errors.website}
-                            />
+                        <TextField
+                            label="NIF"
+                            name="nif"
+                            fullWidth
+                            value={formik.values.nif}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.nif && Boolean(formik.errors.nif)
+                            }
+                            helperText={formik.touched.nif && formik.errors.nif}
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="NIF"
-                                name="nif"
-                                fullWidth
-                                error={touched.nif && Boolean(errors.nif)}
-                                helperText={touched.nif && errors.nif}
-                            />
+                        <TextField
+                            label="Telefone"
+                            name="phone"
+                            fullWidth
+                            value={formik.values.phone}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.phone &&
+                                Boolean(formik.errors.phone)
+                            }
+                            helperText={
+                                formik.touched.phone && formik.errors.phone
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Telefone"
-                                name="phone"
-                                fullWidth
-                                error={touched.phone && Boolean(errors.phone)}
-                                helperText={touched.phone && errors.phone}
-                            />
+                        <TextField
+                            label="Data de Fundação"
+                            name="founded_at"
+                            type="date"
+                            fullWidth
+                            value={formik.values.founded_at}
+                            // InputLabelProps={{ shrink: true }}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.founded_at &&
+                                Boolean(formik.errors.founded_at)
+                            }
+                            helperText={
+                                formik.touched.founded_at &&
+                                formik.errors.founded_at
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Data de Fundação"
-                                name="founded_at"
-                                type="date"
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                                error={touched.founded_at && Boolean(errors.founded_at)}
-                                helperText={touched.founded_at && errors.founded_at}
-                            />
+                        <TextField
+                            label="Setor"
+                            name="sector"
+                            fullWidth
+                            value={formik.values.sector}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.sector &&
+                                Boolean(formik.errors.sector)
+                            }
+                            helperText={
+                                formik.touched.sector && formik.errors.sector
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Setor"
-                                name="sector"
-                                fullWidth
-                                error={touched.sector && Boolean(errors.sector)}
-                                helperText={touched.sector && errors.sector}
-                            />
+                        <TextField
+                            label="Rua"
+                            name="street"
+                            fullWidth
+                            value={formik.values.street}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.street &&
+                                Boolean(formik.errors.street)
+                            }
+                            helperText={
+                                formik.touched.street && formik.errors.street
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Rua"
-                                name="street"
-                                fullWidth
-                                error={touched.street && Boolean(errors.street)}
-                                helperText={touched.street && errors.street}
-                            />
+                        <TextField
+                            label="Número/Andar"
+                            name="number"
+                            fullWidth
+                            value={formik.values.number}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.number &&
+                                Boolean(formik.errors.number)
+                            }
+                            helperText={
+                                formik.touched.number && formik.errors.number
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Número/Andar"
-                                name="number"
-                                fullWidth
-                                error={touched.number && Boolean(errors.number)}
-                                helperText={touched.number && errors.number}
-                            />
+                        <TextField
+                            label="Código Postal"
+                            name="postal_code"
+                            fullWidth
+                            value={formik.values.postal_code}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.postal_code &&
+                                Boolean(formik.errors.postal_code)
+                            }
+                            helperText={
+                                formik.touched.postal_code &&
+                                formik.errors.postal_code
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Código Postal"
-                                name="postal_code"
-                                fullWidth
-                                error={touched.postal_code && Boolean(errors.postal_code)}
-                                helperText={touched.postal_code && errors.postal_code}
-                            />
+                        <TextField
+                            label="Distrito"
+                            name="district"
+                            fullWidth
+                            value={formik.values.district}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.district &&
+                                Boolean(formik.errors.district)
+                            }
+                            helperText={
+                                formik.touched.district &&
+                                formik.errors.district
+                            }
+                        />
 
-                            <Field
-                                as={TextField}
-                                label="Distrito"
-                                name="district"
-                                fullWidth
-                                error={touched.district && Boolean(errors.district)}
-                                helperText={touched.district && errors.district}
-                            />
-
-                            <Field
-                                as={TextField}
-                                label="País"
-                                name="country"
-                                fullWidth
-                                error={touched.country && Boolean(errors.country)}
-                                helperText={touched.country && errors.country}
-                            />
-                            <Field
-                                as={TextField}
-                                label="Descrição"
-                                name="description"
-                                fullWidth
-                                multiline // Permite que o campo se torne uma textarea
-                                rows={4} // Define o número de linhas visíveis
-                                error={touched.description && Boolean(errors.description)}
-                                helperText={touched.description && errors.description}
-                            />
-                        </Box>
-
-                        <Box sx={{ textAlign: "right", mt: 3 }}>
-                            {isSmallScreen ?(
-                                <IconButton
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={isSubmitting}
-                                    >
-                                    <SaveIcon/>
-                                </IconButton>
-                            ) : (
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={isSubmitting}
-                                >
-                                    Guardar
-                                </Button>
-                            )}
-                        </Box>
-                    </Form>
-                )}
-            </Formik>
-        </Container>
-    )
-})
+                        <TextField
+                            label="País"
+                            name="country"
+                            fullWidth
+                            value={formik.values.country}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.country &&
+                                Boolean(formik.errors.country)
+                            }
+                            helperText={
+                                formik.touched.country && formik.errors.country
+                            }
+                        />
+                        <TextField
+                            label="Descrição"
+                            name="description"
+                            fullWidth
+                            multiline // Permite que o campo se torne uma textarea
+                            rows={4} // Define o número de linhas visíveis
+                            value={formik.values.description}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.description &&
+                                Boolean(formik.errors.description)
+                            }
+                            helperText={
+                                formik.touched.description &&
+                                formik.errors.description
+                            }
+                        />
+                    </Box>
+                </form>
+            </Box>
+        );
+    },
+);
 
 export default VendorCompanyEditingForm;

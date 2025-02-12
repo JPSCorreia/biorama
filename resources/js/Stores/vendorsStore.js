@@ -96,7 +96,6 @@ class VendorStore {
                 });
             });
 
-            console.log("Vendor atualizado com sucesso.");
         } catch (error) {
             console.error("Erro ao atualizar os dados do Vendor!", error);
         }
@@ -104,7 +103,6 @@ class VendorStore {
 
     // Function to update Company data and its relations (contacts and addresses)
     updateCompanyAndRelations = async (updatedData) => {
-        console.log("company no update", this.companyDetails?.id)
         if (!this.companyDetails?.id) {
             console.error("Erro: ID da empresa não encontrado!");
             return;
