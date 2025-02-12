@@ -5,7 +5,15 @@ import { useTheme } from "@mui/material/styles";
 import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
 import { router, usePage } from "@inertiajs/react";
-import { Box, Typography, Button, ListItem, List, Tooltip, Avatar } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Button,
+    ListItem,
+    List,
+    Tooltip,
+    Avatar,
+} from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import {
     Person as PersonIcon,
@@ -108,51 +116,81 @@ const navigation = [
 ];
 
 const Dashboard = ({ children }) => {
-
     // Get theme
     const theme = useTheme();
 
     // Fetch stores and update navigation
     shopStore.setStoresData(usePage().props.stores);
-    const updatedNavigation = updateNavigationWithStores(navigation, shopStore.stores);
+    const updatedNavigation = updateNavigationWithStores(
+        navigation,
+        shopStore.stores,
+    );
+
+    let image_link = authStore.user?.image_profile || "";
+
+    if (!authStore.user?.image_profile?.includes("mock_images")) {
+        image_link = image_link.replace("/dashboard", "");
+    }
+
+    // Garante que a URL é absoluta
+    if (!authStore.user?.image_profile?.startsWith("http")) {
+        image_link = `${window.location.origin}/${image_link}`;
+    }
+
 
     // User information
     const session = {
         user: {
             name: authStore.user.first_name,
             email: authStore.user.email,
-            image: authStore.user.image_profile,
+            image: image_link,
         },
     };
 
     // Updates the navigation only after fetching the stores
     function ExitButton({ mini }) {
         return (
-
             <>
-            <Tooltip title={mini? "Voltar á Aplicação" : ""} placement="right">
-            <li
-                className="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-xs41a9-MuiListItem-root"
-                style={{ marginBottom: "0.75rem" }}
-            >
-                <div
-                    className={theme.palette.mode === "dark" ? "MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1yzzic3-MuiButtonBase-root-MuiListItemButton-root" : "MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1hg1ikb-MuiButtonBase-root-MuiListItemButton-root"}                  tabIndex="0"
-                    onClick={() => router.get("/")}
+                <Tooltip
+                    title={mini ? "Voltar á Aplicação" : ""}
+                    placement="right"
                 >
-                    <div className={theme.palette.mode === "dark" ? "MuiListItemIcon-root css-1vq8r3o-MuiListItemIcon-root" : "MuiListItemIcon-root css-snvjoq-MuiListItemIcon-root"} >
-                        <ExitToAppIcon sx={{ color: `${theme.palette.dashboard.sidebarIcon} !important` }} />
-                    </div>
-                    <div className="MuiListItemText-root css-r8i4uo-MuiListItemText-root">
-                        <span className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root">
-                            Voltar á Aplicação
-                        </span>
-                    </div>
-                    <span className="MuiTouchRipple-root css-r3djoj-MuiTouchRipple-root"></span>
-                </div>
-            </li>
-            </Tooltip>
+                    <li
+                        className="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-xs41a9-MuiListItem-root"
+                        style={{ marginBottom: "0.75rem" }}
+                    >
+                        <div
+                            className={
+                                theme.palette.mode === "dark"
+                                    ? "MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1yzzic3-MuiButtonBase-root-MuiListItemButton-root"
+                                    : "MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1hg1ikb-MuiButtonBase-root-MuiListItemButton-root"
+                            }
+                            tabIndex="0"
+                            onClick={() => router.get("/")}
+                        >
+                            <div
+                                className={
+                                    theme.palette.mode === "dark"
+                                        ? "MuiListItemIcon-root css-1vq8r3o-MuiListItemIcon-root"
+                                        : "MuiListItemIcon-root css-snvjoq-MuiListItemIcon-root"
+                                }
+                            >
+                                <ExitToAppIcon
+                                    sx={{
+                                        color: `${theme.palette.dashboard.sidebarIcon} !important`,
+                                    }}
+                                />
+                            </div>
+                            <div className="MuiListItemText-root css-r8i4uo-MuiListItemText-root">
+                                <span className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root">
+                                    Voltar á Aplicação
+                                </span>
+                            </div>
+                            <span className="MuiTouchRipple-root css-r3djoj-MuiTouchRipple-root"></span>
+                        </div>
+                    </li>
+                </Tooltip>
             </>
-
         );
     }
 

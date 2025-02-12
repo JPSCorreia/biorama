@@ -1,7 +1,6 @@
 export { default as Cart } from "./Cart";
 export { default as CheckoutFlow } from "./CheckoutFlow";
 export { default as Contacts } from "./Contacts";
-export { default as DashboardShowStore } from "./DashboardShowStore";
 export { default as DashboardStorePage } from "./DashboardStorePage";
 export { default as FeatureTesting } from "./FeatureTesting";
 export { default as ForgotPassword } from "./ForgotPassword";
