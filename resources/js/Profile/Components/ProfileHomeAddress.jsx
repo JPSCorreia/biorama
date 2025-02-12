@@ -56,7 +56,6 @@ const ProfileHomeAddress = observer(() => {
                             <AddressCard
                                 key={address.id}
                                 address={address}
-                                theme={theme}
                             />
                         );
                     })}
@@ -73,7 +72,8 @@ const ProfileHomeAddress = observer(() => {
                                 border: "2px dashed",
                                 borderColor: theme.palette.primary.main,
                                 borderRadius: "10px",
-                                minHeight: "352px",
+                                mt: 0.2,
+                                minHeight: "366px",
                                 minWidth: "250px",
                                 width: isSmallScreen?  "100%" : "250px",
                                 cursor: "pointer",

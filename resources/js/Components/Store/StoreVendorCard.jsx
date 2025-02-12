@@ -1,10 +1,8 @@
 import { observer } from "mobx-react";
 import {
     Box,
-    Button,
     Card,
     CardContent,
-    CardMedia,
     Divider,
     Typography,
     Avatar,
@@ -14,11 +12,21 @@ import {
 } from "@mui/material";
 import { formatDateToPortuguese } from "../../utils/utils";
 
-const StoreVendorCard = observer(({ store, user, vendor, other }) => {
-
+const StoreVendorCard = observer(({ user, vendor, other }) => {
 
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+    let image_link = user?.image_profile;
+
+    if (!user.image_profile?.includes("mock_images")) {
+        image_link = image_link.replace("/loja", "");
+      }
+
+      // Garante que a URL é absoluta
+      if (!user.image_profile?.startsWith("http")) {
+        image_link = `${window.location.origin}/${image_link}`;
+      }
 
     return (
         <Card
@@ -42,7 +50,6 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
                     backgroundColor: theme.palette.primary.main,
                 }}
             />
-            {console.log(user)}
 
             {/* Avatar Circular no Centro */}
             <Box
@@ -64,7 +71,7 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
                 }}
             >
                 <Avatar
-                    src={user?.image_profile}
+                    src={image_link}
                     sx={{ width: 76, height: 76 }}
                 />
             </Box>

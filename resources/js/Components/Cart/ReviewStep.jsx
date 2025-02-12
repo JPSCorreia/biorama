@@ -152,7 +152,6 @@ const ReviewStep = observer(() => {
                 <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mt: 3}}>
                 <AddressCard
                     address={address}
-                    theme={theme}
                     checkout={true}
                     review={true}
                 />

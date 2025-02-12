@@ -78,7 +78,6 @@ const AddressStep = observer(({ setButtonDisabled }) => {
                         <AddressCard
                             key={address.id}
                             address={address}
-                            theme={theme}
                             checkout={true}
                         />
                     ))}

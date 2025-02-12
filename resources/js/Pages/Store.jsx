@@ -3,15 +3,21 @@ import { usePage } from "@inertiajs/react";
 import { StoreBanner, StoreProductsContainer, StoreVendorCard, StoreMap, StoreDescription, StoreCommentContainer} from "../Components";
 import { Container, Box, useTheme, useMediaQuery  } from "@mui/material";
 import { AlertBox } from "../Components";
+import { useEffect } from "react";
+import { authStore } from "../Stores";
+import { router } from "@inertiajs/react";
 
 const Store = observer(() => {
 
+    // useEffect(() => {
+    //     // authStore.updateAuth();
+    //     // const auth = event.detail.page.props.auth;
+    //     // authStore.updateAuth(auth);
+    //     const auth = usePage().props.auth;
+    //     authStore.updateAuth(auth);
+    // }, []);
+
     const { store, vendor, products, user, gallery, address, other } = usePage().props;
-
-    console.log("other", other);
-    console.log("auth", usePage().props.auth);
-    console.log("store",store);
-
 
     const theme = useTheme();
 

@@ -1,22 +1,15 @@
 import { observer } from "mobx-react";
 import { cartStore } from "../Stores";
 import { AlertBox, CartList, CartSidebar } from "../Components";
-import {
-    Box,
-    Button,
-    Typography,
-    useMediaQuery,
-} from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { usePage } from "@inertiajs/react";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect } from "react";
 import { homeAddressStore } from "../Stores";
 
 const Cart = observer(() => {
-
     const theme = useTheme();
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
+    // Fetch addresses from the store on first load
     useEffect(() => {
         homeAddressStore.fetchAddresses();
     }, []);
@@ -32,11 +25,13 @@ const Cart = observer(() => {
                 marginBottom: "5%",
             }}
         >
+            {/* Alerts */}
             <AlertBox />
+
             {/* Title for the cart page */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Typography
-                    variant={smallerThanLarge? "h7" : "h4"}
+                    variant={smallerThanLarge ? "h7" : "h4"}
                     gutterBottom
                     sx={{ fontWeight: "bold" }}
                 >
@@ -65,7 +60,7 @@ const Cart = observer(() => {
                     {/* List of items in the cart */}
                     <CartList />
 
-                    {/* Cart sidebar */}
+                    {/* Cart sidebar with summary of the cart*/}
                     <CartSidebar />
                 </Box>
             ) : (

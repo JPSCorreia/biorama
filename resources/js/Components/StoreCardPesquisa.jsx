@@ -122,7 +122,7 @@ const StoreCardPesquisa = observer(({store}) => {
                 </Box>
                 <Box>
                     {/* Descrição */}
-                    <Typography
+                    <Box
                         variant="body2"
                         color="text.secondary"
                         sx={{
@@ -132,12 +132,13 @@ const StoreCardPesquisa = observer(({store}) => {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             height: "110px",
+                            fontSize: 14,
                         }}
                     >
                         <ReactMarkdown>
                             {truncateDescription(store.description, 90, 150)}
                         </ReactMarkdown>
-                    </Typography>
+                    </Box>
                 </Box>
                 <Box
                     sx={{

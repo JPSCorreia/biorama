@@ -1,29 +1,57 @@
-import {List, ListItem, ListItemText, Button, Typography, Paper, Box, useMediaQuery, IconButton} from "@mui/material";
+import {
+    List,
+    ListItem,
+    ListItemText,
+    Tooltip,
+    Typography,
+    Paper,
+    Box,
+    useMediaQuery,
+    IconButton,
+    CircularProgress
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useNotifications from "../../hooks/useNotifications.jsx";
 import axios from "axios";
-import {CheckCircle, Delete} from "@mui/icons-material";
+import { CheckCircle, Delete } from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 const ProfileNotifications = () => {
+
     const theme = useTheme();
     const smallerThanLg = useMediaQuery(theme.breakpoints.down("lg"));
     const { notifications, setNotifications } = useNotifications();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+       setTimeout(() => {
+        setLoading(false);
+       }, 250)
+    }, []);
 
     const markAsRead = (id) => {
-        axios.post(`/notifications/${id}/read`)
+        axios
+            .post(`/notifications/${id}/read`)
             .then(() => {
-                setNotifications(notifications.map(n =>
-                    n.id === id ? { ...n, read_at: new Date().toISOString() } : n
-                ));
+                setNotifications(
+                    notifications.map((n) =>
+                        n.id === id
+                            ? { ...n, read_at: new Date().toISOString() }
+                            : n,
+                    ),
+                );
             })
-            .catch(error => console.error("Erro ao marcar como lida", error));
+            .catch((error) => console.error("Erro ao marcar como lida", error));
     };
     const deleteNotification = (id) => {
-        axios.delete(`/notifications/${id}`)
+        axios
+            .delete(`/notifications/${id}`)
             .then(() => {
-                setNotifications(notifications.filter(n => n.id !== id));
+                setNotifications(notifications.filter((n) => n.id !== id));
             })
-            .catch(error => console.error("Erro ao apagar a notificação", error));
+            .catch((error) =>
+                console.error("Erro ao apagar a notificação", error),
+            );
     };
     return (
         <Box
@@ -43,7 +71,16 @@ const ProfileNotifications = () => {
             >
                 Notificações
             </Typography>
-            <Paper
+            { loading?                 <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    minHeight: "500px",
+                                }}
+                            >
+                                <CircularProgress />
+                            </Box> :             <Paper
                 elevation={4}
                 sx={{
                     display: "flex",
@@ -54,33 +91,70 @@ const ProfileNotifications = () => {
                     borderRadius: "8px",
                 }}
             >
-                {notifications.length === 0 && (
+                {notifications.length === 0? (
                     <Typography variant="body1">
                         Não tem nenhuma notificação
                     </Typography>
-                )}
-                <List>
-                    {notifications.map(notification => (
-                        <ListItem key={notification.id} sx={{ background: notification.read_at ? 'white' : '#f0f0f0' }}>
+                ) :                <List>
+                {notifications.map((notification) => (
+                    <ListItem key={notification.id}>
+                        <Paper
+                            sx={{
+                                display: "flex",
+                                width: "100%",
+                                p: 2,
+                                background: notification.read_at
+                                    ? theme.palette.background.default
+                                    : "#f0f0f0",
+                                alignItems: "center",
+                            }}
+                            elevation={4}
+                        >
                             <ListItemText
                                 primary={notification.data.message}
-                                secondary={new Date(notification.created_at).toLocaleString()}
+                                secondary={new Date(
+                                    notification.created_at,
+                                ).toLocaleString()}
                             />
                             {/* Botão para marcar como lida */}
                             {!notification.read_at && (
-                                <IconButton onClick={() => markAsRead(notification.id)} sx={{ color: 'green' }}>
-                                    <CheckCircle />
-                                </IconButton>
+                                <Tooltip title="Apagar notificação">
+                                    <IconButton
+                                        onClick={() =>
+                                            markAsRead(notification.id)
+                                        }
+                                        sx={{
+                                            color: "green",
+                                            height: 48,
+                                            width: 48,
+                                        }}
+                                    >
+                                        <CheckCircle />
+                                    </IconButton>
+                                </Tooltip>
                             )}
                             {/* Botão para apagar a notificação */}
-                            <IconButton onClick={() => deleteNotification(notification.id)} sx={{ color: 'red' }}>
-                                <Delete />
-                            </IconButton>
-                        </ListItem>
-                    ))}
-                </List>
+                            <Tooltip title="Apagar notificação">
+                                <IconButton
+                                    onClick={() =>
+                                        deleteNotification(notification.id)
+                                    }
+                                    sx={{
+                                        color: "red",
+                                        height: 48,
+                                        width: 48,
+                                    }}
+                                >
+                                    <Delete />
+                                </IconButton>
+                            </Tooltip>
+                        </Paper>
+                    </ListItem>
+                ))}
+            </List>}
 
-            </Paper>
+            </Paper> }
+
         </Box>
     );
 };

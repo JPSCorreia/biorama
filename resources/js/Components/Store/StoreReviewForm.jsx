@@ -29,7 +29,7 @@ const StoreReviewForm = ({user, vendor}) => {
 
     return (
         <Box sx={{ maxWidth: "100%", p: 2 }}>
-            <Typography variant="h5" fontWeight="bold" sx={{mb:2}}>Dê a sua opinião</Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{mb:2}}>Dê a sua opinião sobre esta loja</Typography>
 
 
             <form onSubmit={formik.handleSubmit}>

@@ -131,7 +131,7 @@ const SideBar = observer(() => {
                         flexDirection: smallerThanLg ? "row" : "column",
                         alignItems: "center",
                         justifyContent: "flex-start",
-                        maxHeight: "320px",
+                        maxHeight: "332px",
                         gap: 0.5,
                     }}
                 >

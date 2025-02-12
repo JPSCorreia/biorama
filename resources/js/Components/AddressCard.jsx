@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
-import axios from "axios";
 import { homeAddressStore } from "../Stores/index.js";
 import {
     Box,
     Typography,
     useMediaQuery,
     IconButton,
+    useTheme,
     Paper,
     Tooltip,
 } from "@mui/material";
@@ -16,12 +16,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddressEditModal from "./AddressEditModal.jsx";
 import React from "react";
 
-const AddressCard = observer(
-    ({ address, theme, checkout = false, review = false }) => {
+const AddressCard = observer(({ address, checkout = false, review = false }) => {
+
+        const theme = useTheme();
         const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-        const isMediumScreen = useMediaQuery(
-            theme.breakpoints.between("sm", "md"),
-        );
 
         const [open, setOpen] = React.useState(false);
         const handleOpen = () => setOpen(true);
@@ -33,28 +31,29 @@ const AddressCard = observer(
 
         const handleDeleteAddress = async (id) => {
             await homeAddressStore.deleteAddress(id);
-            console.log("Morada Apagada com sucesso");
         };
+
         return (
             <Paper
                 elevation={4}
                 sx={{
                     py: 1,
                     px: 2,
+                    mt: 0.2,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "flex-start",
                     justifyContent: "space-between",
                     borderRadius: "10px",
                     width: isSmallScreen ? "100%" : "250px",
-                    minHeight: "354px",
+                    minHeight: "365px",
                     cursor: checkout && !review ? "pointer" : "default",
                     // border: address.is_primary ? "1px solid gold" : "1px solid white",
                     boxShadow: address.is_primary
                         ? `0px 0px 10px ${theme.palette.primary.main}`
                         : "",
                 }}
-                onClick={checkout ? () => handleSetPrimary(address) : ""}
+                onClick={checkout ? () => handleSetPrimary(address) : null}
             >
                 <Box
                     sx={{

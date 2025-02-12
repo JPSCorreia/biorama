@@ -50,7 +50,7 @@ class OrderStore {
             storage: window.sessionStorage,
         });
 
-        this.fetchStatuses();  // Carregar status ao inicializar
+        // this.fetchStatuses();  // Carregar status ao inicializar
     }
 
     async fetchStatuses() {

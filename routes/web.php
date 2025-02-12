@@ -254,9 +254,6 @@ Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
 Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);
 
 Route::get('/Vendor/info', fn () => Inertia::render('Vendors'))->name('vendor.info');
-Route::get('/vendorinfo', function () {
-    return Inertia::render('VendorInformation');
-})->name('vendor.information');
 
 Route::get('/teste', function () {
     return Inertia::render('FormStoreRegistration');
