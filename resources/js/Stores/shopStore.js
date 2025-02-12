@@ -149,7 +149,7 @@ class ShopStore {
                     });
                 };
 
-                navigate('/dashboard/stores');
+                navigate('/dashboard/store/allstore');
             }
         } catch (error) {
             console.error('Erro ao apagar a loja:', error);

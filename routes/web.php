@@ -192,7 +192,7 @@ Route::middleware(['auth'])->group(function () {
             ->name('vendor.update.company.info');
 
         // Store routes
-        Route::get('/stores', [DashboardController::class,'showVendorStores'])
+        Route::get('store/allstore', [DashboardController::class,'showVendorStores'])
             ->name('dashboard.stores');
         Route::get('/stores/list', [DashboardController::class,'DashboardVendorStores'])
             ->name('dashboard.stores.list');

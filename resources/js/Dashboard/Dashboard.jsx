@@ -51,13 +51,13 @@ const updateNavigationWithStores = (navigation) => {
     }
 
     return navigation.map((item) => {
-        if (item.segment === "dashboard" && item.children) {
+        if (item.segment === "dashboard/store" && item.children) {
             return {
                 ...item,
                 children: [
                     ...item.children,
                     ...stores.map((store) => ({
-                        segment: `store/${store.id}`,
+                        segment: `${store.id}`,
                         title: store.name,
                         icon: <StoreIcon />,
                     })),
@@ -91,12 +91,12 @@ const navigation = [
         kind: "divider",
     },
     {
-        segment: "dashboard/stores",
+        segment: "dashboard/store",
         title: "Lojas",
         icon: <StoreIcon />,
         children: [
             {
-                segment: "stores",
+                segment: "allstore",
                 title: "Todas Lojas",
                 icon: <StoreIcon />,
             },
