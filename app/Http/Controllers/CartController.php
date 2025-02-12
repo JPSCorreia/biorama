@@ -12,7 +12,7 @@ class CartController extends Controller
     public function index(Request $request)
     {
 
-        // Buscar endereços das lojas com base nos IDs
+        // fetch store addresses based on their IDs
         $storeAddresses = StoreAddress::select([
             'id',
             'store_id',
