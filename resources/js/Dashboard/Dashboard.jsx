@@ -14,6 +14,8 @@ import {
     ShoppingBasket as ShoppingBasketIcon,
     Assessment as AssessmentIcon,
     Logout as LogoutIcon,
+    ExitToApp as ExitToAppIcon
+
 } from "@mui/icons-material";
 import background from "../../images/background.jpg";
 import { shopStore } from "@/Stores/index.js";
@@ -129,21 +131,28 @@ const Dashboard = ({ children }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    mb: 5,
+                    mb: 2,
+                    "&:hover": {
+                        color: theme.palette.primary.main,
+                    }
                 }}
             >
                 <Button
                     onClick={() => router.get("/")}
                     component="label"
-                    variant="outlined"
+                    variant="text"
                     sx={{
-                        width: "50%",
-                        borderRadius: "5px",
+                        minWidth: mini ? "48px" : "95%",
+                        maxWidth: mini ? "48px" : "95%",
+                        minHeight: "48px",
+                        justifyContent: "flex-start",
+                        pl: mini? 1.5 : 1,
+                        color: theme.palette.dashboard.sidebarIcon,
                     }}
                 >
-                    <Typography sx={{ display: "flex", alignItems: "center" }}>
-                        <LogoutIcon sx={{ marginRight: 1 }} />
-                        {mini ? "Sair" : "Sair"}
+                    <Typography sx={{ display: "flex", alignItems: "center", textTransform: "none", color: theme.palette.text.main, fontSize: 17 }}>
+                        <ExitToAppIcon sx={{ marginRight: 2, color: theme.palette.dashboard.sidebarIcon }} />
+                        {mini ? "" : "Sair"}
                     </Typography>
                 </Button>
             </Box>

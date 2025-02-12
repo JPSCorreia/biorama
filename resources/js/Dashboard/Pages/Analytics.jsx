@@ -38,7 +38,6 @@ import {
     Pie,
     Label,
 } from "recharts";
-import { useTimeout } from "@mui/x-data-grid/internals";
 
 const Analytics = () => {
     // State management
@@ -53,8 +52,7 @@ const Analytics = () => {
         theme.palette.charts.secondary,
         theme.palette.charts.terciary,
     ];
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Mobile
-    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md")); // Tablet
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm")); // Mobile
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -217,7 +215,7 @@ const Analytics = () => {
                             display: "flex",
                             flexGrow: 1,
                             gap: 3,
-                            flexDirection: isSmallScreen ? "column" : "row",
+                            flexDirection: smallerThanSmall ? "column" : "row",
                         }}
                     >
                         {/* Card 1 - Revenue Today */}
@@ -405,7 +403,7 @@ const Analytics = () => {
                             display: "flex",
                             flexGrow: 1,
                             gap: 3,
-                            flexDirection: isSmallScreen ? "column" : "row",
+                            flexDirection: smallerThanSmall ? "column" : "row",
                         }}
                     >
                         {/* Card 3 - Revenue Current Year */}
@@ -586,7 +584,7 @@ const Analytics = () => {
                     <Card
                         sx={{
                             flex: 1,
-                            minWidth: isSmallScreen
+                            minWidth: smallerThanSmall
                                 ? "100%"
                                 : smallerThanLarge
                                   ? "350px"
@@ -655,7 +653,7 @@ const Analytics = () => {
                     <Card
                         sx={{
                             flex: 1,
-                            minWidth: isSmallScreen
+                            minWidth: smallerThanSmall
                                 ? "100%"
                                 : smallerThanLarge
                                   ? "350px"
@@ -729,7 +727,7 @@ const Analytics = () => {
                     <Card
                         sx={{
                             flex: 1,
-                            minWidth: isSmallScreen
+                            minWidth: smallerThanSmall
                                 ? "100%"
                                 : smallerThanLarge
                                   ? "350px"
@@ -738,7 +736,7 @@ const Analytics = () => {
                             p: 2,
                             display: "flex",
                             flexDirection: "column",
-                            alignItems: "flex-start", // Consistência com o gráfico de encomendas
+                            alignItems: "flex-start",
                         }}
                     >
                         <Typography variant="h6" sx={{ mb: 2 }}>
@@ -751,23 +749,12 @@ const Analytics = () => {
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
 
-                                {/* Eixo X com label */}
                                 <XAxis dataKey="month"></XAxis>
 
-                                {/* Eixo Y com formatação e label */}
-                                <YAxis tickFormatter={(value) => `€${value}`}>
-                                    {/* <Label
-                                        value="Receita (€)"
-                                        angle={-90}
-                                        position="insideLeft"
-                                        style={{ textAnchor: "middle" }}
-                                    /> */}
-                                </YAxis>
+                                <YAxis tickFormatter={(value) => `€${value}`}></YAxis>
 
-                                {/* Tooltip melhorada */}
                                 <Tooltip formatter={(value) => `€${value}`} />
 
-                                {/* Legenda alinhada à esquerda */}
                                 <Legend
                                     align="left"
                                     wrapperStyle={{
@@ -776,14 +763,13 @@ const Analytics = () => {
                                     }}
                                 />
 
-                                {/* Linhas com estilo consistente */}
                                 <Line
                                     type="monotone"
                                     dataKey="currentYear"
                                     stroke="#4caf50"
                                     name="Este Ano"
                                     strokeWidth={2}
-                                    dot={{ r: 4 }} // Adiciona pequenos pontos nas interseções para destaque
+                                    dot={{ r: 4 }}
                                 />
                                 <Line
                                     type="monotone"
@@ -819,7 +805,7 @@ const Analytics = () => {
                                         <TableCell align="right">
                                             Encomendas
                                         </TableCell>
-                                        {isSmallScreen ? null : (
+                                        {smallerThanSmall ? null : (
                                             <TableCell align="right">
                                                 % Tratadas
                                             </TableCell>
@@ -843,7 +829,7 @@ const Analytics = () => {
                                                     {store.total_orders} /{" "}
                                                     {dashboardData.total_orders}
                                                 </TableCell>
-                                                {isSmallScreen ? null : (
+                                                {smallerThanSmall ? null : (
                                                     <TableCell align="right">
                                                         <Box
                                                             sx={{
@@ -905,7 +891,7 @@ const Analytics = () => {
         Percentagem de Encomendas
     </Typography>
     <ResponsiveContainer width="100%" height={230}>
-        <PieChart margin={{ left: -10, right: 20 }}> {/* Move o PieChart mais para a esquerda */}
+        <PieChart margin={{ left: -10, right: 20 }}>
             <Pie
                 data={pieChartData}
                 dataKey="treated"
@@ -914,8 +900,8 @@ const Analytics = () => {
                 label={({ name, percent }) =>
                     `${name}: ${Math.round(percent * 100)}%`
                 }
-                labelLine={false} // Remove linhas desnecessárias
-                labelPosition="outside" // Mantém a legibilidade
+                labelLine={false}
+                labelPosition="outside"
                 style={{ fontSize: "16px" }}
             >
                 {pieChartData.map((entry, index) => (
@@ -931,7 +917,7 @@ const Analytics = () => {
                 verticalAlign="bottom"
                 iconType="circle"
                 wrapperStyle={{
-                    right: -10, // Puxa a legenda mais para a direita
+                    right: -10,
                     position: "absolute",
                 }}
                 formatter={(value) => (
@@ -941,7 +927,7 @@ const Analytics = () => {
                                 theme.palette.mode === "dark"
                                     ? "white"
                                     : "black",
-                            fontSize: 10, // Mantém um tamanho consistente
+                            fontSize: 10,
                         }}
                     >
                         {value}

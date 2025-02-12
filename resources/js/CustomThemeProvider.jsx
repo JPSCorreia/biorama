@@ -86,6 +86,11 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
             dashboard: {
                 iconBackground: appStore.themeType === "dark" ? "#ffffff" : "#242424",
                 icon: appStore.themeType === "dark" ? "#242424" : "#ffffff",
+                sidebarIcon: appStore.themeType === "dark" ? "#ffffff" : "#747474",
+            },
+
+            text: {
+                main: appStore.themeType === "dark" ? "#ffffff" : "#242424",
             },
 
             charts: {
