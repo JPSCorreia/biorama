@@ -39,13 +39,14 @@ const AddressCard = observer(({ address, checkout = false, review = false }) => 
                 sx={{
                     py: 1,
                     px: 2,
+                    mt: 0.2,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "flex-start",
                     justifyContent: "space-between",
                     borderRadius: "10px",
                     width: isSmallScreen ? "100%" : "250px",
-                    minHeight: "354px",
+                    minHeight: "365px",
                     cursor: checkout && !review ? "pointer" : "default",
                     // border: address.is_primary ? "1px solid gold" : "1px solid white",
                     boxShadow: address.is_primary

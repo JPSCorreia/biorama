@@ -39,6 +39,7 @@ const ProfileInformation = observer(() => {
                 flexDirection: "column",
                 alignItems: "center",
                 mb: 3,
+
                 ml: smallerThanLg ? 0 : 4,
                 maxWidth: smallerThanLg ? "100%" : "75%",
                 flexGrow: 1,
@@ -59,6 +60,8 @@ const ProfileInformation = observer(() => {
                     justifyContent: "start",
                     p: 2,
                     borderRadius: "8px",
+                    mt: 0.2,
+                    minHeight: "364px",
                 }}
             >
                 <Avatar
@@ -103,7 +106,13 @@ const ProfileInformation = observer(() => {
                             justifyContent: "space-between",
                         }}
                     >
-                        <List sx={{ display: "flex", flexDirection: smallerThanLg? "column" : "row", width: "100%" }}>
+                        <List
+                            sx={{
+                                display: "flex",
+                                flexDirection: smallerThanLg ? "column" : "row",
+                                width: "100%",
+                            }}
+                        >
                             <Box
                                 sx={{
                                     display: "flex",
@@ -191,7 +200,7 @@ const ProfileInformation = observer(() => {
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
-                                    width: smallerThanLg? "100%" : "50%",
+                                    width: smallerThanLg ? "100%" : "50%",
                                 }}
                             >
                                 <ListItem

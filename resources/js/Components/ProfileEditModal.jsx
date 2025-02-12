@@ -44,9 +44,9 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             const timestamp = dayjs().format("YYYYMMDD_HHmmss"); // Gera timestamp
             const fileExtension = file.name.split(".").pop(); // Obtém a extensão do ficheiro
             const newFileName = `profile_${timestamp}.${fileExtension}`; // Novo nome único
-    
+
             const renamedFile = new File([file], newFileName, { type: file.type }); // Cria um novo ficheiro com o nome alterado
-    
+
             const objectURL = URL.createObjectURL(renamedFile);
             setPreviewImageURL(objectURL); // Atualiza a pré-visualização
             formik.setFieldValue("image_profile", renamedFile); // Armazena o ficheiro no formik
