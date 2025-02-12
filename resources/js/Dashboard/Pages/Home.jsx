@@ -88,6 +88,8 @@ const Home = observer(() => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Box
@@ -148,19 +150,13 @@ const Home = observer(() => {
                         <Avatar
                             alt="Profile Image"
                             src={authStore.user?.image_profile}
-                            variant={
-                                isSmallScreen
-                                    ? ""
-                                    : isMediumScreen
-                                      ? "circular"
-                                      : "rounded"
-                            }
                             sx={{
-                                width: isSmallScreen ? 60 : 90,
-                                height: isSmallScreen ? 60 : 90,
+                                width: 90,
+                                height: 90,
                                 color: "background.secondary",
                                 bgcolor: "primary.main",
                                 borderRadius: "8px",
+                                display: isSmallScreen ? "none" : "block",
                                 border: `1px solid ${theme.palette.primary.main}`,
                             }}
                         >
@@ -174,6 +170,7 @@ const Home = observer(() => {
                                 display: "flex",
                                 alignItems: "center",
                                 width: "100%",
+                                minHeight: "56px",
                             }}
                         >
                             {isEditing.vendorName ? (
@@ -185,7 +182,7 @@ const Home = observer(() => {
                             ) : (
                                 <Box
                                     sx={{
-                                        ml: 2,
+                                        ml: smallerThanSmall? 0 : 2,
                                         display: "flex",
                                         flexDirection: "row",
                                         gap: 2,
@@ -195,7 +192,7 @@ const Home = observer(() => {
                                     }}
                                 >
                                     <Typography
-                                        variant="h4"
+                                        variant={smallerThanMedium ? "h5" : smallerThanLarge ? "h5" : "h4"}
                                         sx={{
                                             fontWeight: "bold",
                                         }}
@@ -203,7 +200,7 @@ const Home = observer(() => {
                                         {vendor.first_name}
                                     </Typography>
                                     <Typography
-                                        variant="h4"
+                                        variant={smallerThanMedium ? "h5" : smallerThanLarge ? "h5" : "h4"}
                                         sx={{
                                             fontWeight: "bold",
                                         }}
@@ -442,7 +439,7 @@ const Home = observer(() => {
                                     sx={{
                                         marginTop: 2,
                                         pr: 4,
-                                        pl: 6,
+                                        pl: smallerThanMedium ? 2 : 6,
                                         width: smallerThanLarge ? "100%" : "60%",
                                     }}
                                 >
@@ -455,7 +452,7 @@ const Home = observer(() => {
                                         }}
                                     >
                                         <Typography
-                                            variant={smallerThanLarge? "h6" : "h5"}
+                                            variant={smallerThanMedium ? "h7" : smallerThanLarge ? "h6" : "h5"}
                                             sx={{
                                                 fontWeight: "bold",
                                             }}
@@ -507,7 +504,7 @@ const Home = observer(() => {
                                                 }}
                                             >
                                                 <Typography fontWeight="bold">
-                                                    Nome da Empresa:
+                                                    Nome:
                                                 </Typography>
                                                 <Typography>
                                                     {vendor?.company.name}

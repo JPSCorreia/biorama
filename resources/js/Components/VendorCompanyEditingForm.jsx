@@ -23,6 +23,8 @@ const VendorCompanyEditingForm = observer(
     ({ vendor, handleCompanyInfoSubmit, isSmallScreen }) => {
         const theme = useTheme();
         const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
+        const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+        const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
         /**
          * Validation schema using Yup
@@ -52,7 +54,7 @@ const VendorCompanyEditingForm = observer(
                 .max(100, "O setornão pode ter mais de 100 caracteres.")
                 .required("O sector nome é obrigatorio."),
             street: Yup.string()
-                .max(100, "O nome da ruanão pode ter mais de 100 caracteres.")
+                .max(100, "O nome da rua não pode ter mais de 100 caracteres.")
                 .required("O nome da rua é obrigatorio."),
             number: Yup.string()
                 .max(
@@ -100,7 +102,7 @@ const VendorCompanyEditingForm = observer(
         });
 
         return (
-            <Box sx={{ mt: 2, pl: 6, pr: 0, width: "60%" }}>
+            <Box sx={{ mt: 2, pl: smallerThanMedium? 2 : 6, pr: 0, width: smallerThanLarge ? "100%" : "60%" }}>
                 <form onSubmit={formik.handleSubmit}>
                     <Box
                         sx={{
@@ -112,7 +114,7 @@ const VendorCompanyEditingForm = observer(
                         }}
                     >
                         <Typography
-                            variant={smallerThanLarge ? "h6" : "h5"}
+                            variant={smallerThanMedium ? "h7" : smallerThanLarge ? "h6" : "h5"}
                             sx={{
                                 fontWeight: "bold",
                             }}
@@ -143,12 +145,12 @@ const VendorCompanyEditingForm = observer(
                             pt: 2,
                             gap: 2,
                             pr: 4,
-                            maxHeight: "440px",
+                            maxHeight: smallerThanSmall? "696px" : smallerThanMedium? "620px" : smallerThanLarge? "400px" : "432px",
                             overflowY: "auto",
                         }}
                     >
                         <TextField
-                            label="Nome da Empresa"
+                            label="Nome"
                             name="name"
                             fullWidth
                             value={formik.values.name}
