@@ -58,7 +58,6 @@ class AuthStore {
                 },
             });
             this.setUser(response.data.user);
-            console.log("User updated successfully:", this.user);
         } catch (error) {
             console.error("Error updating user:", error);
         }

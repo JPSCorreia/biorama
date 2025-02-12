@@ -91,68 +91,68 @@ const ProfileNotifications = () => {
                     borderRadius: "8px",
                 }}
             >
-                {notifications.length === 0 && (
+                {notifications.length === 0? (
                     <Typography variant="body1">
                         Não tem nenhuma notificação
                     </Typography>
-                )}
-                <List>
-                    {notifications.map((notification) => (
-                        <ListItem key={notification.id}>
-                            <Paper
-                                sx={{
-                                    display: "flex",
-                                    width: "100%",
-                                    p: 2,
-                                    background: notification.read_at
-                                        ? theme.palette.background.default
-                                        : "#f0f0f0",
-                                    alignItems: "center",
-                                }}
-                                elevation={4}
-                            >
-                                <ListItemText
-                                    primary={notification.data.message}
-                                    secondary={new Date(
-                                        notification.created_at,
-                                    ).toLocaleString()}
-                                />
-                                {/* Botão para marcar como lida */}
-                                {!notification.read_at && (
-                                    <Tooltip title="Apagar notificação">
-                                        <IconButton
-                                            onClick={() =>
-                                                markAsRead(notification.id)
-                                            }
-                                            sx={{
-                                                color: "green",
-                                                height: 48,
-                                                width: 48,
-                                            }}
-                                        >
-                                            <CheckCircle />
-                                        </IconButton>
-                                    </Tooltip>
-                                )}
-                                {/* Botão para apagar a notificação */}
+                ) :                <List>
+                {notifications.map((notification) => (
+                    <ListItem key={notification.id}>
+                        <Paper
+                            sx={{
+                                display: "flex",
+                                width: "100%",
+                                p: 2,
+                                background: notification.read_at
+                                    ? theme.palette.background.default
+                                    : "#f0f0f0",
+                                alignItems: "center",
+                            }}
+                            elevation={4}
+                        >
+                            <ListItemText
+                                primary={notification.data.message}
+                                secondary={new Date(
+                                    notification.created_at,
+                                ).toLocaleString()}
+                            />
+                            {/* Botão para marcar como lida */}
+                            {!notification.read_at && (
                                 <Tooltip title="Apagar notificação">
                                     <IconButton
                                         onClick={() =>
-                                            deleteNotification(notification.id)
+                                            markAsRead(notification.id)
                                         }
                                         sx={{
-                                            color: "red",
+                                            color: "green",
                                             height: 48,
                                             width: 48,
                                         }}
                                     >
-                                        <Delete />
+                                        <CheckCircle />
                                     </IconButton>
                                 </Tooltip>
-                            </Paper>
-                        </ListItem>
-                    ))}
-                </List>
+                            )}
+                            {/* Botão para apagar a notificação */}
+                            <Tooltip title="Apagar notificação">
+                                <IconButton
+                                    onClick={() =>
+                                        deleteNotification(notification.id)
+                                    }
+                                    sx={{
+                                        color: "red",
+                                        height: 48,
+                                        width: 48,
+                                    }}
+                                >
+                                    <Delete />
+                                </IconButton>
+                            </Tooltip>
+                        </Paper>
+                    </ListItem>
+                ))}
+            </List>}
+
             </Paper> }
 
         </Box>

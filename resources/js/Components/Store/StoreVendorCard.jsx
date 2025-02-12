@@ -1,10 +1,8 @@
 import { observer } from "mobx-react";
 import {
     Box,
-    Button,
     Card,
     CardContent,
-    CardMedia,
     Divider,
     Typography,
     Avatar,
@@ -14,7 +12,7 @@ import {
 } from "@mui/material";
 import { formatDateToPortuguese } from "../../utils/utils";
 
-const StoreVendorCard = observer(({ store, user, vendor, other }) => {
+const StoreVendorCard = observer(({ user, vendor, other }) => {
 
     const theme = useTheme();
     const smallerThanMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -52,7 +50,6 @@ const StoreVendorCard = observer(({ store, user, vendor, other }) => {
                     backgroundColor: theme.palette.primary.main,
                 }}
             />
-            {console.log(user)}
 
             {/* Avatar Circular no Centro */}
             <Box

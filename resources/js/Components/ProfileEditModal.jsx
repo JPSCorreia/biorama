@@ -24,6 +24,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { authStore } from "../Stores/index.js";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 import ImageCropModal from "./ImageCropModal"; // Importa o modal de recorte
 
 const ProfileEditModal = observer(({ open, handleClose }) => {
@@ -32,26 +33,43 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
     const { genders } = usePage().props;
 
     // Estado para armazenar a URL da imagem carregada
-    const [previewImageURL, setPreviewImageURL] = useState(authStore.user?.image_profile || "");
+    const [previewImageURL, setPreviewImageURL] = useState(
+        authStore.user?.image_profile || "",
+    );
 
     // Função para processar o upload da imagem diretamente
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
         if (file) {
-            const objectURL = URL.createObjectURL(file);
-            setPreviewImageURL(objectURL); // Define a pré-visualização no Avatar
-            formik.setFieldValue("image_profile", file); // Armazena o arquivo no formik
+            const timestamp = dayjs().format("YYYYMMDD_HHmmss"); // Gera timestamp
+            const fileExtension = file.name.split(".").pop(); // Obtém a extensão do ficheiro
+            const newFileName = `profile_${timestamp}.${fileExtension}`; // Novo nome único
+    
+            const renamedFile = new File([file], newFileName, { type: file.type }); // Cria um novo ficheiro com o nome alterado
+    
+            const objectURL = URL.createObjectURL(renamedFile);
+            setPreviewImageURL(objectURL); // Atualiza a pré-visualização
+            formik.setFieldValue("image_profile", renamedFile); // Armazena o ficheiro no formik
         }
     };
 
     const validationSchema = yup.object().shape({
         first_name: yup.string().required("O nome é obrigatório"),
         last_name: yup.string().required("O apelido é obrigatório"),
-        email: yup.string().email("Email inválido").required("O email é obrigatório"),
+        email: yup
+            .string()
+            .email("Email inválido")
+            .required("O email é obrigatório"),
         phone: yup.string().required("O nrº de telemóvel é obrigatório"),
         nif: yup.string().required("O NIF é obrigatório"),
-        gender_id: yup.number().required("O género é obrigatório").integer("O ID deve ser um número inteiro."),
-        date_of_birth: yup.date().nullable().required("A data de nascimento é obrigatória"),
+        gender_id: yup
+            .number()
+            .required("O género é obrigatório")
+            .integer("O ID deve ser um número inteiro."),
+        date_of_birth: yup
+            .date()
+            .nullable()
+            .required("A data de nascimento é obrigatória"),
         image_profile: yup.mixed().required("A imagem de perfil é obrigatória"),
     });
 
@@ -73,14 +91,17 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             formData.append("phone", values.phone);
             formData.append("nif", values.nif);
             formData.append("gender_id", values.gender_id);
-            formData.append("date_of_birth", values.date_of_birth ? dayjs(values.date_of_birth).format("YYYY-MM-DD") : null);
+            formData.append(
+                "date_of_birth",
+                values.date_of_birth
+                    ? dayjs(values.date_of_birth).format("YYYY-MM-DD")
+                    : null,
+            );
 
             // Se houver imagem carregada, adicionar ao FormData
             if (values.image_profile instanceof File) {
                 formData.append("image_profile", values.image_profile);
             }
-
-            console.log("Enviando imagem:", formik.values.image_profile);
 
             await authStore.submitDataUser(formData);
 
@@ -100,12 +121,34 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             phone: authStore.user?.phone || "",
             nif: authStore.user?.nif || "",
             gender_id: authStore.user?.gender ? authStore.user?.gender.id : "",
-            date_of_birth: authStore.user?.date_of_birth ? dayjs(authStore.user?.date_of_birth) : null,
+            date_of_birth: authStore.user?.date_of_birth
+                ? dayjs(authStore.user?.date_of_birth)
+                : null,
             image_profile: authStore.user?.image_profile || "",
         },
         validationSchema: validationSchema,
         onSubmit: submitForm,
     });
+
+    useEffect(() => {
+        if (open) {
+            setPreviewImageURL(authStore.user?.image_profile || "");
+            formik.resetForm({
+                values: {
+                    first_name: authStore.user?.first_name || "",
+                    last_name: authStore.user?.last_name || "",
+                    email: authStore.user?.email || "",
+                    phone: authStore.user?.phone || "",
+                    nif: authStore.user?.nif || "",
+                    gender_id: authStore.user?.gender ? authStore.user?.gender.id : "",
+                    date_of_birth: authStore.user?.date_of_birth
+                        ? dayjs(authStore.user?.date_of_birth)
+                        : null,
+                    image_profile: authStore.user?.image_profile || "",
+                },
+            });
+        }
+    }, [open]);
 
     return (
         <>
@@ -162,7 +205,12 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                     >
                         <Avatar
                             alt="Profile Image"
-                            src={formik.values.image_profile || previewImageURL} // Mostra o preview ou o valor existente
+                            src={
+                                previewImageURL ||
+                                (typeof formik.values.image_profile === "string"
+                                    ? formik.values.image_profile
+                                    : "")
+                            }
                             sx={{
                                 width: isSmallScreen ? 90 : 120,
                                 height: isSmallScreen ? 90 : 120,
@@ -170,7 +218,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                 border: `1px solid ${theme.palette.primary.main}`,
                             }}
                         >
-                            {!formik.values.image_profile &&
+                            {!previewImageURL &&
+                                !formik.values.image_profile &&
                                 `${authStore.user?.first_name?.[0] || ""}${authStore.user?.last_name?.[0] || ""}`}
                         </Avatar>
 
@@ -234,10 +283,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                             Boolean(formik.errors.first_name)
                                         }
                                         helperText={
-                                            <Box>
-                                                {formik.touched.first_name &&
-                                                    formik.errors.first_name}
-                                            </Box>
+                                            formik.touched.first_name &&
+                                            formik.errors.first_name
                                         }
                                     />
                                     <TextField
@@ -259,10 +306,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                             Boolean(formik.errors.last_name)
                                         }
                                         helperText={
-                                            <Box>
-                                                {formik.touched.last_name &&
-                                                    formik.errors.last_name}
-                                            </Box>
+                                            formik.touched.last_name &&
+                                            formik.errors.last_name
                                         }
                                     />
                                 </Box>
@@ -289,10 +334,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                             Boolean(formik.errors.nif)
                                         }
                                         helperText={
-                                            <Box>
-                                                {formik.touched.last_name &&
-                                                    formik.errors.last_name}
-                                            </Box>
+                                            formik.touched.last_name &&
+                                            formik.errors.last_name
                                         }
                                         required
                                         sx={{
@@ -315,10 +358,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                             Boolean(formik.errors.phone)
                                         }
                                         helperText={
-                                            <Box>
-                                                {formik.touched.last_name &&
-                                                    formik.errors.last_name}
-                                            </Box>
+                                            formik.touched.last_name &&
+                                            formik.errors.last_name
                                         }
                                         sx={{
                                             width: isSmallScreen
@@ -413,9 +454,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                         true,
                                                     )
                                                 } // Marca o campo como tocado
-                                                renderInput={(params) => (
+                                                textField={
                                                     <TextField
-                                                        {...params}
                                                         error={
                                                             formik.touched
                                                                 .date_of_birth &&
@@ -425,16 +465,13 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                             )
                                                         }
                                                         helperText={
-                                                            <Box>
-                                                                {formik.touched
-                                                                    .last_name &&
-                                                                    formik
-                                                                        .errors
-                                                                        .last_name}
-                                                            </Box>
+                                                            formik.touched
+                                                                .last_name &&
+                                                            formik.errors
+                                                                .last_name
                                                         }
                                                     />
-                                                )}
+                                                }
                                             />
                                             <DatePicker
                                                 sx={{
@@ -461,9 +498,8 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                         true,
                                                     )
                                                 } // Marca o campo como tocado
-                                                renderInput={(params) => (
+                                                textField={
                                                     <TextField
-                                                        {...params}
                                                         error={
                                                             formik.touched
                                                                 .date_of_birth &&
@@ -473,16 +509,13 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                                             )
                                                         }
                                                         helperText={
-                                                            <Box>
-                                                                {formik.touched
-                                                                    .last_name &&
-                                                                    formik
-                                                                        .errors
-                                                                        .last_name}
-                                                            </Box>
+                                                            formik.touched
+                                                                .last_name &&
+                                                            formik.errors
+                                                                .last_name
                                                         }
                                                     />
-                                                )}
+                                                }
                                             />
                                         </LocalizationProvider>
                                     </Box>
@@ -504,14 +537,18 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                         Boolean(formik.errors.email)
                                     }
                                     helperText={
-                                        <Box>
-                                            {formik.touched.last_name &&
-                                                formik.errors.last_name}
-                                        </Box>
+                                        formik.touched.last_name &&
+                                        formik.errors.last_name
                                     }
                                 />
                             </Box>
-                            <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end" }}>
+                            <Box
+                                sx={{
+                                    mt: 1,
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                }}
+                            >
                                 <Button
                                     type="button"
                                     variant="contained"

@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
-import {StoreReviewForm, StoreReviewList} from '../';
-import {usePage} from "@inertiajs/react";
+import { useState } from "react";
+import { Box, Typography, useTheme } from "@mui/material";
+import { StoreReviewForm, StoreReviewList } from "../";
+import { usePage } from "@inertiajs/react";
+import { authStore } from "../../Stores";
 
 const StoreCommentContainer = () => {
     const theme = useTheme();
@@ -27,12 +28,11 @@ const StoreCommentContainer = () => {
                         width: "50%",
                     }}
                 >
-                    <StoreReviewForm />
+                    {authStore.isAuthenticated && <StoreReviewForm />}
                 </Box>
             </Box>
         </>
     );
-
-}
+};
 
 export default StoreCommentContainer;

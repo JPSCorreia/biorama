@@ -33,14 +33,14 @@ const Navbar = observer(() => {
     // Get user roles
     const userRoles = authStore.user?.roles || [];
 
-    let image_link = authStore.user?.image_profile;
+    let image_link = authStore.user?.image_profile || "";
 
-    if (!authStore.user.image_profile?.includes("mock_images")) {
+    if (!authStore.user?.image_profile?.includes("mock_images")) {
         image_link = image_link.replace("/loja", "");
       }
 
       // Garante que a URL é absoluta
-      if (!authStore.user.image_profile?.startsWith("http")) {
+      if (!authStore.user?.image_profile?.startsWith("http")) {
         image_link = `${window.location.origin}/${image_link}`;
       }
 
@@ -531,7 +531,7 @@ const Navbar = observer(() => {
                                     >
                                         <Avatar
                                             alt="User Avatar"
-                                            src={image_link}
+                                            src={image_link? image_link : ""}
                                             sx={{
                                                 width: 45,
                                                 height: 45,

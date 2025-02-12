@@ -56,7 +56,6 @@ const ProfileHomeAddress = observer(() => {
                             <AddressCard
                                 key={address.id}
                                 address={address}
-                                theme={theme}
                             />
                         );
                     })}

@@ -108,10 +108,7 @@ const StoreBanner = ({ title, gallery }) => {
                 }}
             >
                 {gallery.map((item, i) => (
-                    <>
-                        {console.log(item)}
                         <Item key={i} item={item} />
-                    </>
                 ))}
             </Carousel>
         </Box>
