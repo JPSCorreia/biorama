@@ -180,7 +180,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                             startIcon={<CloudUploadIcon />}
                             sx={{ ml: 2 }}
                         >
-                            Upload File
+                            Mudar Foto
                             <input
                                 type="file"
                                 hidden
@@ -511,7 +511,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
                                     }
                                 />
                             </Box>
-                            <Box sx={{ mt: 2, justifySelf: "flex-end" }}>
+                            <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end" }}>
                                 <Button
                                     type="button"
                                     variant="contained"

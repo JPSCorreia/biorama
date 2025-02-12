@@ -30,7 +30,6 @@ import { SearchBar } from "./";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const Navbar = observer(() => {
-
     // Get user roles
     const userRoles = authStore.user?.roles || [];
 
@@ -60,20 +59,23 @@ const Navbar = observer(() => {
     // Access theme properties using Material UI's theme hook
     const theme = useTheme();
 
-    const testIsXs = useMediaQuery(theme.breakpoints.only('xs'));
-    const testIsSm = useMediaQuery(theme.breakpoints.only('sm'));
-    const testIsMd = useMediaQuery(theme.breakpoints.only('md'));
-    const testIsLg = useMediaQuery(theme.breakpoints.only('lg'));
-    const testIsXl = useMediaQuery(theme.breakpoints.only('xl'));
+    const testIsXs = useMediaQuery(theme.breakpoints.only("xs"));
+    const testIsSm = useMediaQuery(theme.breakpoints.only("sm"));
+    const testIsMd = useMediaQuery(theme.breakpoints.only("md"));
+    const testIsLg = useMediaQuery(theme.breakpoints.only("lg"));
+    const testIsXl = useMediaQuery(theme.breakpoints.only("xl"));
 
-    const currentBreakpoint =
-      testIsXs ? 'xs' :
-      testIsSm ? 'sm' :
-      testIsMd ? 'md' :
-      testIsLg ? 'lg' :
-      testIsXl ? 'xl' :
-      'unknown';
-
+    const currentBreakpoint = testIsXs
+        ? "xs"
+        : testIsSm
+          ? "sm"
+          : testIsMd
+            ? "md"
+            : testIsLg
+              ? "lg"
+              : testIsXl
+                ? "xl"
+                : "unknown";
 
     // Navigation pages with links and icons
     const pages = [
@@ -133,7 +135,11 @@ const Navbar = observer(() => {
                 router.get("/perfil");
             },
         },
-        { id: 2, name: hasRole("vendor")? "Área de Gestão" : "Abrir Loja", link: hasRole("vendor")? "/dashboard" : "/vendedores/registo" },
+        {
+            id: 2,
+            name: hasRole("vendor") ? "Área de Gestão" : "Abrir Loja",
+            link: hasRole("vendor") ? "/dashboard" : "/vendedores/registo",
+        },
         {
             id: 3,
             name: "Terminar Sessão",
@@ -235,7 +241,7 @@ const Navbar = observer(() => {
                             navigate("/");
                         }}
                     >
-                            {/* <Typography sx={{ mr: 1 }}>{currentBreakpoint}</Typography> */}
+                        {/* <Typography sx={{ mr: 1 }}>{currentBreakpoint}</Typography> */}
 
                         {isSm ? (
                             ""
@@ -415,43 +421,37 @@ const Navbar = observer(() => {
                                             : "155px",
                                     }}
                                 >
-                                    <Tooltip title={smallerThanLg? dashboardPage.name : ""}>
-                                    <Button
-                                        key="dashboard"
-                                        onClick={() => {
-                                            navigate("/dashboard");
-                                        }}
-                                        variant="outline"
-                                        sx={{
-                                            // color: theme.palette.navbar.background,
-                                            // backgroundColor:
-                                            //     theme.palette.navbar.text,
-                                            display: "block",
-                                            marginTop: 1.7,
-                                            marginBottom: 1,
-                                            ml: !smallerThanLg? 4 : 1,
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: "40px",
-                                            fontSize: "18px",
-                                            textTransform: "none",
-                                            // minWidth: "120px !important",
-                                            transition: "all 0.3s ease-in-out",
-                                            "&:hover": {
-                                                backgroundColor:
-                                                    theme.palette.navbar
-                                                        .background,
-                                                color: theme.palette.navbar
-                                                    .text,
-                                            },
-                                        }}
+                                    <Tooltip
+                                        title={
+                                            smallerThanLg
+                                                ? dashboardPage.name
+                                                : ""
+                                        }
                                     >
-                                        {!smallerThanLg ? (
-                                            dashboardPage.name
-                                        ) : (
-                                            dashboardPage.icon
-                                        )}
-                                    </Button>
+                                        <Button
+                                            key="dashboard"
+                                            onClick={() => {
+                                                navigate("/dashboard");
+                                            }}
+                                            variant="outline"
+                                            sx={{
+                                                display: "block",
+                                                marginTop: 1.7,
+                                                marginBottom: 1,
+                                                ml: !smallerThanLg ? 4 : 1,
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                height: "40px",
+                                                fontSize: "18px",
+                                                textTransform: "none",
+                                                transition:
+                                                    "all 0.3s ease-in-out",
+                                            }}
+                                        >
+                                            {!smallerThanLg
+                                                ? dashboardPage.name
+                                                : dashboardPage.icon}
+                                        </Button>
                                     </Tooltip>
                                 </Box>
                             ) : !smallerThanLg ? (
@@ -485,7 +485,9 @@ const Navbar = observer(() => {
                                         minWidth: "55px",
                                         paddingRight: "10px",
                                         paddingLeft: "10px",
-                                        marginLeft: smallerThanLg ? "10px" : "20px",
+                                        marginLeft: smallerThanLg
+                                            ? "10px"
+                                            : "20px",
                                     }}
                                 >
                                     <Badge
@@ -497,7 +499,9 @@ const Navbar = observer(() => {
                                         color="success"
                                         overlap="circular"
                                     >
-                                        <ShoppingCartSharpIcon sx={{ mb: 0.25 }}/>
+                                        <ShoppingCartSharpIcon
+                                            sx={{ mb: 0.25 }}
+                                        />
                                     </Badge>
                                 </Button>
                             </Tooltip>
