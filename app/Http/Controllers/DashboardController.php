@@ -89,7 +89,7 @@ class DashboardController extends Controller
         $vendor->update($validated);
 
         return response()->json([
-            'message' => 'Vendor name successfully updated!',
+            'message' => 'Nome de Vendedor actualizado com sucesso!',
             'vendor' => $vendor, // Include updated data
         ], 200);
     }
@@ -112,7 +112,7 @@ class DashboardController extends Controller
         $vendor->load(["gender"]);
 
         return response()->json([
-            'message' => 'Vendor information successfully updated!',
+            'message' => 'Informação do vendidor actualizado com sucesso!',
             'vendor' => $vendor, // Include updated data
         ], 200);
     }
@@ -169,7 +169,7 @@ class DashboardController extends Controller
         //Reload relationships and return the response
         $company->load(['contacts', 'addresses']);
         return response()->json([
-            'message' => 'Company information successfully updated!',
+            'message' => 'Informação de empresa actulizado com sucesso!',
             'company' => $company,
         ], 200);
     }
@@ -218,7 +218,7 @@ class DashboardController extends Controller
         }
 
         // Redirect to the login page if the user is not authorized
-        return redirect()->route('login')->withErrors(['message' => 'Unauthorized access.']);
+        return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
 
     //Material UI dashboard component show all stores return in jason
@@ -283,7 +283,7 @@ class DashboardController extends Controller
             }
 
             // If the vendor ID matches, proceed to delete the store (soft delete)
-            $store->delete();  // Soft delete (or forceDelete() for permanent deletion)
+            $store->delete();
 
             // Fetch all stores associated with the authenticated vendor
             $stores = Store::where('vendor_id', auth()->user()->vendor->id)
@@ -318,7 +318,7 @@ class DashboardController extends Controller
             // Return the updated list of stores along with the success message
             return response()->json([
                 'success' => true,
-                'message' => 'Store deleted successfully.',
+                'message' => 'Loja apagada com sucesso.',
                 'stores' => $stores,
             ], 200);
 
@@ -326,33 +326,33 @@ class DashboardController extends Controller
             // Handle any unexpected errors during the process and return a 500 response
             return response()->json([
                 'success' => false,
-                'message' => 'Error while deleting the store.',
+                'message' => 'Erro a tentar apagar a loja.',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-
+    //show store by id of the store from that vendor
     public function dashboardShowStore($id)
     {
-        // Obter o utilizador autenticado e o seu vendor
+        // Get the authenticated user and their vendor
         $userId = Auth::id();
         $vendor = Vendor::where('user_id', $userId)->first();
 
-        // Verificar se o vendor foi encontrado
+        // Check if the vendor was found
         if (!$vendor) {
             abort(403, 'Vendedor não encontrado.');
         }
 
-        // Buscar todas as lojas associadas ao vendedor
+        // Fetch all stores associated with the vendor
         $storeIds = Store::where('vendor_id', $vendor->id)->pluck('id')->toArray();
 
-        // Verificar se a loja solicitada pertence ao vendedor
+        // Check if the requested store belongs to the vendor
         if (!in_array($id, $storeIds)) {
             abort(403, 'Acesso negado. Esta loja não pertence ao vendedor autenticado.');
         }
 
-        // Buscar os detalhes da loja (já validado)
+        // Fetch store details (already validated)
         $store = Store::select('id', 'name', 'description', 'phone_number', 'email', 'rating',)
             ->with([
                 'addresses' => function ($query) {
@@ -370,12 +370,12 @@ class DashboardController extends Controller
                 'reviews',
                 'galleries'
             ])
-            ->findOrFail($id);  // Agora é seguro usar findOrFail
+            ->findOrFail($id);
 
-        // Paginar produtos da loja
+        // Paginate store products
         $products = $store->products()->paginate(10);
 
-        // Anexa os produtos ao objeto store
+        // Attach products to the store object
         $store->setRelation('products', $products);
 
         return inertia('Dashboard/Store', [
@@ -383,12 +383,13 @@ class DashboardController extends Controller
         ]);
     }
 
+    //Get store product list
     public function productStorelist($storeId)
     {
-        // Busca a loja pelo ID
+        // Fetch the store by its ID
         $store = Store::findOrFail($storeId);
 
-        // Retorna os produtos paginados
+        // Return paginated products
         $products = $store->products()
             ->with('gallery')
             ->paginate(10);
@@ -396,39 +397,41 @@ class DashboardController extends Controller
         return response()->json($products);
     }
 
+    //Get store review
     public function DasboardstoreReviews($storeId)
     {
-        // Busca a loja pelo ID
+        // Fetch the store by its ID
         $store = Store::findOrFail($storeId);
 
-        // Retorna as reviews com o utilizador associado
+        // Return reviews along with the associated user
         $reviews = $store->reviews()->with('user')->paginate(10);
 
         return response()->json($reviews);
     }
 
+    //Get Store orders
     public function getOrders(Request $request)
     {
-        // Determinar o número de itens por página (padrão: 10)
+        // Determine the number of items per page (default: 10)
         $itemsPerPage = $request->query('limit', 10);
         $searchTerm = $request->query('search', '');
 
-        // Verificar se o utilizador tem a role de 'vendor'
+        // Check if the user has the 'vendor' role
         $user = Auth::user();
         if (!$user->hasRole('vendor')) {
             return response()->json(['error' => 'Acesso negado.'], 403);
         }
 
-        // Obter o vendorId usando a relação Eloquent
+        // Retrieve the vendorId using the Eloquent relationship
         $vendorId = $user->vendor->id ?? null;
         if (!$vendorId) {
             return response()->json(['error' => 'Vendedor não encontrado.'], 404);
         }
 
-        // Buscar todas as lojas associadas ao vendor
+        // Fetch all stores associated with the vendor
         $storeIds = Store::where('vendor_id', $vendorId)->pluck('id');
 
-        // Construir a query
+        // Build the query
         $query = Order::whereHas('stores', function ($q) use ($storeIds) {
             $q->whereIn('stores.id', $storeIds);
         })->with([
@@ -448,7 +451,7 @@ class DashboardController extends Controller
             'created_at'
         ]);
 
-        // Aplicar filtro de pesquisa se o searchTerm for fornecido
+        // Apply search filter if a search term is provided
         if (is_numeric($searchTerm)) {
             $query->where('id', $searchTerm);
         } else {
@@ -457,12 +460,13 @@ class DashboardController extends Controller
             });
         }
 
-        // Retornar resultados paginados
+        // Return paginated results
         $orders = $query->paginate($itemsPerPage);
 
         return response()->json($orders);
     }
 
+    //Edit orders
     public function updateOrder(Request $request, $orderId)
     {
         $validatedData = $request->validate([
@@ -497,6 +501,7 @@ class DashboardController extends Controller
         }
     }
 
+    //Get orders by store id
     public function getOrdersByStore($storeId, Request $request)
     {
         $validatedData = $request->validate([
@@ -509,7 +514,7 @@ class DashboardController extends Controller
             $itemsPerPage = $validatedData['limit'] ?? 10;
             $searchTerm = $validatedData['search'] ?? '';
 
-            // Corrigir a query principal
+            //query to get order by store id
             $query = Order::whereHas('stores', function ($q) use ($storeId) {
                 $q->where('store_id', $storeId);
             })->with([
@@ -529,7 +534,7 @@ class DashboardController extends Controller
                 'created_at'
             ]);
 
-            // Aplicar filtro de pesquisa
+            // Applying the search filter
             if (is_numeric($searchTerm)) {
                 $query->where('id', $searchTerm);
             } else {
@@ -543,39 +548,41 @@ class DashboardController extends Controller
             return response()->json($orders);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Erro ao buscar encomendas: ' . $e->getMessage(),
+                'error' => 'Erro ao Carregar encomendas: ' . $e->getMessage(),
             ], 500);
         }
     }
 
+    //Get vendor by store id
     public function getVendorStores(Request $request)
     {
         try {
-            // Obter o usuário autenticado
+            // Get the authenticated user
             $user = auth()->user();
 
-            // Verificar se o usuário é um vendor
-            $vendor = $user->vendor;  // Supondo que o relacionamento user -> vendor existe
+            // Check if the user is a vendor
+            $vendor = $user->vendor;
 
             if (!$vendor) {
-                return response()->json(['error' => 'Usuário não é um vendor.'], 403);
+                return response()->json(['error' => 'User não é um vendor.'], 403);
             }
 
-            // Buscar todas as lojas associadas ao vendor
+            // Fetch all stores associated with the vendor
             $stores = $vendor->stores()->select('id', 'name')->get();
 
             return response()->json($stores, 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao buscar lojas: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Erro ao Carregar lojas: ' . $e->getMessage()], 500);
         }
     }
 
+    //Cancel order
     public function cancelOrder($orderId)
     {
         try {
             $order = Order::findOrFail($orderId);
 
-            // Verificar se já está cancelada
+            // Check if the order is already canceled
             if ($order->statuses_id === 5) {
                 return response()->json(['message' => 'A encomenda já está cancelada.'], 200);
             }
@@ -590,9 +597,10 @@ class DashboardController extends Controller
         }
     }
 
+    //Get Data for graphs page
     public function getDashboardData(Request $request)
     {
-        // Obter o utilizador autenticado e o seu vendor
+        // Get the authenticated user and their vendor
         $userId = Auth::id();
         $vendor = Vendor::where('user_id', $userId)->first();
 
@@ -600,7 +608,7 @@ class DashboardController extends Controller
             return response()->json(['error' => 'Vendor não encontrado para o utilizador autenticado'], 404);
         }
 
-        // Obter as lojas do vendor
+        // Get the vendor's stores
         $storeIds = Store::where('vendor_id', $vendor->id)->pluck('id');
 
         $today = Carbon::now();
@@ -610,11 +618,11 @@ class DashboardController extends Controller
         $currentYear = $today->year;
         $lastYear = $currentYear - 1;
 
-        // Buscar os IDs dos estados dinamicamente
+        // Fetch status IDs dynamically
         $completedStatusId = Status::where('name', 'Concluído')->first()->id;
         $canceledStatusId = Status::where('name', 'Cancelada')->first()->id;
 
-        // **1. Receita de hoje e comparação com ontem**
+        //  Today's revenue and comparison to yesterday
         $revenueToday = OrderStoreProduct::whereIn('store_id', $storeIds)
             ->whereDate('created_at', $today->toDateString())
             ->sum('final_price');
@@ -627,7 +635,7 @@ class DashboardController extends Controller
             ? round((($revenueToday - $revenueYesterday) / $revenueYesterday) * 100, 2)
             : 0;
 
-        // **2. Receita deste mês e comparação com o mês anterior**
+        // Current month revenue and comparison to last month
         $revenueCurrentMonth = OrderStoreProduct::whereIn('store_id', $storeIds)
             ->whereYear('created_at', $currentYear)
             ->whereMonth('created_at', $currentMonth)
@@ -642,7 +650,7 @@ class DashboardController extends Controller
             ? round((($revenueCurrentMonth - $revenueLastMonth) / $revenueLastMonth) * 100, 2)
             : 0;
 
-        // **3. Receita deste ano e comparação com o ano anterior**
+        // Current year revenue and comparison to last year
         $revenueCurrentYear = OrderStoreProduct::whereIn('store_id', $storeIds)
             ->whereYear('created_at', $currentYear)
             ->sum('final_price');
@@ -655,7 +663,7 @@ class DashboardController extends Controller
             ? round((($revenueCurrentYear - $revenueLastYear) / $revenueLastYear) * 100, 2)
             : 0;
 
-        // **4. Número de encomendas este ano e percentagem de canceladas**
+        // Number of orders this year and percentage of cancellations
         $totalOrdersCurrentYear = Order::whereHas('orderStoreProducts', function ($query) use ($storeIds, $currentYear) {
             $query->whereIn('store_id', $storeIds)
                 ->whereYear('order_store_products.created_at', $currentYear);
@@ -670,7 +678,7 @@ class DashboardController extends Controller
             ? round(($cancelledOrdersCurrentYear / $totalOrdersCurrentYear) * 100, 2)
             : 0;
 
-        // **5. Receita semanal com comparação à semana anterior**
+        // Weekly revenue and comparison to the previous week
         $revenueThisWeek = OrderStoreProduct::whereIn('store_id', $storeIds)
             ->whereBetween('created_at', [
                 $today->startOfWeek()->toDateTimeString(),
@@ -687,7 +695,7 @@ class DashboardController extends Controller
             ? round((($revenueThisWeek - $revenueLastWeek) / $revenueLastWeek) * 100, 2)
             : 0;
 
-        // **6. Receita mensal comparativa por ano (para gráfico de linhas)**
+        // Comparative monthly revenue by year (for line chart)
         $monthlyRevenueCurrentYear = OrderStoreProduct::select(
             DB::raw('MONTH(created_at) as month'),
             DB::raw('SUM(final_price) as total_revenue')
@@ -708,7 +716,7 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
 
-        // **7. Encomendas mensais no ano corrente**
+        // Monthly orders for the current year
         $monthlyOrdersCurrentYear = Order::select(
             DB::raw('MONTH(created_at) as month'),
             DB::raw('COUNT(*) as total_orders')
@@ -721,7 +729,7 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
 
-        // **8. Encomendas mensais no ano anterior**
+        // Monthly orders for the previous year
         $monthlyOrdersLastYear = Order::select(
             DB::raw('MONTH(created_at) as month'),
             DB::raw('COUNT(*) as total_orders')
@@ -734,26 +742,26 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
 
-        // **9. Informações detalhadas por loja**
+        // Detailed information by store
         $storeData = Store::whereIn('id', $storeIds)
             ->with(['orders' => function ($query) {
                 $query->with('orderStoreProducts');
             }])
             ->get()
             ->map(function ($store) use ($completedStatusId, $canceledStatusId) {
-                // Total de encomendas únicas sem duplicações
+                //Total unique orders without duplicates
                 $totalOrders = $store->orders->unique('id')->count();
 
-                // Encomendas concluídas e canceladas sem duplicações
+                // Completed and canceled orders without duplicates
                 $completedOrders = $store->orders->where('statuses_id', $completedStatusId)->unique('id')->count();
                 $canceledOrders = $store->orders->where('statuses_id', $canceledStatusId)->unique('id')->count();
 
-                // Encomendas tratadas (concluídas + canceladas)
+                // Treated orders (completed + canceled)
                 $treatedOrders = $completedOrders + $canceledOrders;
                 $treatedPercentage = $totalOrders > 0 ? round(($treatedOrders / $totalOrders) * 100) : 100;  // Arredondar para inteiro
                 $pendingPercentage = 100 - $treatedPercentage;
 
-                // Receita total sem duplicações
+                // Total revenue without duplicates
                 $totalRevenue = $store->orders->unique('id')->sum(function ($order) {
                     return $order->orderStoreProducts->sum('final_price');
                 });
