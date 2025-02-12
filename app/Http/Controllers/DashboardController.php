@@ -734,59 +734,81 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
 
-        // **9. Informações detalhadas por loja**
-        $storeData = Store::whereIn('id', $storeIds)
-            ->with(['orders' => function ($query) {
-                $query->with('orderStoreProducts');
-            }])
-            ->get()
-            ->map(function ($store) use ($completedStatusId, $canceledStatusId) {
-                // Total de encomendas únicas sem duplicações
-                $totalOrders = $store->orders->unique('id')->count();
+// **9. Informações detalhadas por loja**
+$storeData = Store::whereIn('id', $storeIds)
+    ->with(['orders' => function ($query) {
+        $query->with('orderStoreProducts');
+    }])
+    ->get()
+    ->map(function ($store) use ($completedStatusId, $canceledStatusId) {
+        // Total de encomendas únicas sem duplicações
+        $totalOrders = $store->orders->unique('id')->count();
 
-                // Encomendas concluídas e canceladas sem duplicações
-                $completedOrders = $store->orders->where('statuses_id', $completedStatusId)->unique('id')->count();
-                $canceledOrders = $store->orders->where('statuses_id', $canceledStatusId)->unique('id')->count();
+        // Encomendas concluídas e canceladas sem duplicações
+        $completedOrders = $store->orders->where('statuses_id', $completedStatusId)->unique('id')->count();
+        $canceledOrders = $store->orders->where('statuses_id', $canceledStatusId)->unique('id')->count();
 
-                // Encomendas tratadas (concluídas + canceladas)
-                $treatedOrders = $completedOrders + $canceledOrders;
-                $treatedPercentage = $totalOrders > 0 ? round(($treatedOrders / $totalOrders) * 100) : 100;  // Arredondar para inteiro
-                $pendingPercentage = 100 - $treatedPercentage;
+        // Encomendas tratadas (concluídas + canceladas)
+        $treatedOrders = $completedOrders + $canceledOrders;
 
-                // Receita total sem duplicações
-                $totalRevenue = $store->orders->unique('id')->sum(function ($order) {
-                    return $order->orderStoreProducts->sum('final_price');
-                });
+        // Receita total sem duplicações
+        $totalRevenue = $store->orders->unique('id')->sum(function ($order) {
+            return $order->orderStoreProducts->sum('final_price');
+        });
 
-                return [
-                    'name' => $store->name,
-                    'total_revenue' => round($totalRevenue, 2),  // Arredondar a receita para 2 casas decimais
-                    'completed_percentage' => $completedOrders > 0 ? round(($completedOrders / $totalOrders) * 100) : 0,
-                    'canceled_percentage' => $canceledOrders > 0 ? round(($canceledOrders / $totalOrders) * 100) : 0,
-                    'treated_percentage' => $treatedPercentage,
-                    'pending_percentage' => $pendingPercentage,
-                    'total_orders' => $totalOrders,
-                ];
-            });
+        // Percentagem de encomendas tratadas (corrigida)
+        $handlingIndex = $totalOrders > 0
+            ? round(($treatedOrders / $totalOrders) * 100, 2)
+            : 100; // Se não houver encomendas, assume-se 100%
 
+        return [
+            'name' => $store->name,
+            'total_revenue' => round($totalRevenue, 2),
+            'completed_percentage' => $totalOrders > 0 ? round(($completedOrders / $totalOrders) * 100, 2) : 0,
+            'canceled_percentage' => $totalOrders > 0 ? round(($canceledOrders / $totalOrders) * 100, 2) : 0,
+            'treated_orders' => $treatedOrders,
+            'total_orders' => $totalOrders,
+            'handling_index' => $handlingIndex,
+        ];
+    });
 
-        return response()->json([
-            'revenue_today' => $revenueToday,
-            'today_diff_percentage' => $todayDiffPercentage,
-            'revenue_current_month' => $revenueCurrentMonth,
-            'month_diff_percentage' => $monthDiffPercentage,
-            'revenue_current_year' => $revenueCurrentYear,
-            'year_diff_percentage' => $yearDiffPercentage,
-            'total_orders_current_year' => $totalOrdersCurrentYear,
-            'cancelled_percentage' => $cancelledPercentage,
-            'revenue_this_week' => $revenueThisWeek,
-            'weekly_diff_percentage' => $weeklyDiffPercentage,
-            'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
-            'monthly_revenue_last_year' => $monthlyRevenueLastYear,
-            'annual_orders_current_year' => $monthlyOrdersCurrentYear,
-            'annual_orders_last_year' => $monthlyOrdersLastYear,
-            'stores' => $storeData
-        ]);
+// **Calcular total de encomendas e normalizar percentagem para o gráfico**
+$totalTreatedOrders = $storeData->sum('treated_orders');
+$totalOrdersGlobal = $storeData->sum('total_orders');
+
+$storeData = $storeData->map(function ($store) use ($totalTreatedOrders) {
+    return [
+        'name' => $store['name'],
+        'total_revenue' => $store['total_revenue'],
+        'completed_percentage' => $store['completed_percentage'],
+        'canceled_percentage' => $store['canceled_percentage'],
+        'treated_percentage' => $totalTreatedOrders > 0
+            ? round(($store['treated_orders'] / $totalTreatedOrders) * 100, 2)
+            : 0, // Normalizar para o gráfico de pizza
+        'total_orders' => $store['total_orders'],
+        'handling_index' => $store['handling_index'],
+    ];
+});
+
+return response()->json([
+    'revenue_today' => $revenueToday,
+    'today_diff_percentage' => $todayDiffPercentage,
+    'revenue_current_month' => $revenueCurrentMonth,
+    'month_diff_percentage' => $monthDiffPercentage,
+    'revenue_current_year' => $revenueCurrentYear,
+    'year_diff_percentage' => $yearDiffPercentage,
+    'total_orders_current_year' => $totalOrdersCurrentYear,
+    'cancelled_percentage' => $cancelledPercentage,
+    'revenue_this_week' => $revenueThisWeek,
+    'weekly_diff_percentage' => $weeklyDiffPercentage,
+    'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
+    'monthly_revenue_last_year' => $monthlyRevenueLastYear,
+    'annual_orders_current_year' => $monthlyOrdersCurrentYear,
+    'annual_orders_last_year' => $monthlyOrdersLastYear,
+    'total_orders' => $totalOrdersGlobal, // Corrigido para mostrar o total real
+    'stores' => $storeData
+]);
+
     }
 
 }

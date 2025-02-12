@@ -28,7 +28,6 @@ const updateNavigationWithStores = (navigation) => {
             try {
                 const response = await axios.get("/dashboard/stores/list");
                 setStores(response.data.stores);
-                console.log("response", response.data.stores);
             } catch (error) {
                 console.error("Erro ao carregar as lojas do vendedor:", error);
             }
@@ -68,7 +67,7 @@ const navigation = [
     },
     {
         segment: "dashboard/analises",
-        title: "Dashboard",
+        title: "Painel de Estatísticas",
         icon: <AssessmentIcon />,
     },
     {
@@ -221,7 +220,7 @@ const Dashboard = ({ children }) => {
                             backgroundImage: `url(${background})`, // Caminho da imagem
                             backgroundSize: "cover",
                             backgroundPosition: "center",
-                            opacity: 0.7, // Apenas a imagem fica transparente
+                            opacity: theme.palette.mode === "dark" ? 0.5 : 0.8, // Apenas a imagem fica transparente
                             zIndex: -1, // Mantém o fundo atrás do conteúdo
                         },
                     }}

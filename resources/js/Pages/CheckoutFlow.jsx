@@ -1,36 +1,26 @@
-import { useState, useEffect } from "react";
-import { Box, Button, LinearProgress, Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import { observer } from "mobx-react";
-import { cartStore, homeAddressStore } from "../Stores";
 import { router } from "@inertiajs/react";
 import { AddressStep, AlertBox, ReviewStep } from "../Components";
-import axios from "axios";
-import { usePage } from "@inertiajs/react";
 
 const CheckoutFlow = observer(() => {
+    // State to manage the current step
     const [currentStep, setCurrentStep] = useState(0);
+    // State to manage if the "Next" button is disabled
     const [isNextDisabled, setIsNextDisabled] = useState(true);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const auth = usePage().props.auth;
 
-    const steps = [
-        "Escolher Morada de Envio",
-        "Revisão e Confirmação",
-    ];
-    const progress = (currentStep / (steps.length - 1)) * 100;
+    // Checkout step titles
+    const steps = ["Escolher Morada de Envio", "Revisão e Confirmação"];
 
-    // useEffect(() => {
-    //     if (currentStep === 2) {
-    //         cartStore.clearCart();
-    //     }
-    // }, [currentStep]);
-
+    // Function to handle the "Next" button
     const handleNext = () => {
         if (currentStep < steps.length - 1) {
             setCurrentStep((prev) => prev + 1);
         }
     };
 
+    // Function to handle the "Back" button
     const handleBack = () => {
         if (currentStep === 0) {
             router.get("/carrinho");
@@ -39,6 +29,7 @@ const CheckoutFlow = observer(() => {
         }
     };
 
+    // Function to render the appropriate component based on the current step
     const renderStep = () => {
         switch (currentStep) {
             case 0:
@@ -48,83 +39,6 @@ const CheckoutFlow = observer(() => {
             default:
                 return null;
         }
-    };
-
-    const sendInvoice = async (order) => {
-        try {
-            await axios.post("/send-invoice", {
-                order,
-                user: { email: auth.user.email },
-            });
-        } catch (error) {
-            console.error("Erro ao enviar a fatura:", error);
-            alert("Erro ao enviar a fatura. Verifica a tua conexão.");
-        }
-    };
-
-    const processOrder = () => {
-        const primaryAddress = homeAddressStore.addresses.find(
-            (address) => address.is_primary
-        );
-
-        if (!primaryAddress) {
-            alert("Erro: Nenhuma morada principal encontrada.");
-            return;
-        }
-
-        const orders = Object.keys(cartStore.cart).map((storeId) => {
-            const products = cartStore.cart[storeId].map((item) => ({
-                product_id: item.id,
-                store_id: storeId,
-                price: item.price,
-                discount: item.discount ?? 0,
-                quantity: item.quantity ?? 1,
-                final_price: (
-                    item.price *
-                    (1 - (item.discount ?? 0) / 100) *
-                    item.quantity
-                ).toFixed(2),
-            }));
-
-            const subtotal = cartStore.storeTotals[storeId] || 0;
-            const shippingCosts = cartStore.shippingCosts[storeId] || 0;
-            const total = subtotal + shippingCosts;
-
-            return {
-                user_id: auth.user.id,
-                name: auth.user.first_name + " " + auth.user.last_name,
-                statuses_id: 1, // Pendente
-                street_name: primaryAddress.street_address,
-                phone_number: primaryAddress.phone_number,
-                city: primaryAddress.city,
-                postal_code: primaryAddress.postal_code,
-                comment: "",
-                subtotal: subtotal.toFixed(2),
-                shipping_costs: shippingCosts.toFixed(2),
-                total: total.toFixed(2),
-                products: products,
-            };
-        });
-
-        router.post("/encomendar", { orders }, {
-            onSuccess: (response) => {
-                console.log("Encomenda criada com sucesso!", response);
-                cartStore.clearCart();
-
-                const orderIds = response.props.flash.orders;
-
-                orders.forEach((order, index) => {
-                    order.id = orderIds[index];
-                    sendInvoice(order);
-                });
-
-                setIsProcessing(false);
-            },
-            onError: (errors) => {
-                console.error("Erro ao processar encomenda:", errors);
-                setIsProcessing(false);
-            },
-        });
     };
 
     return (
@@ -138,11 +52,15 @@ const CheckoutFlow = observer(() => {
                 marginBottom: "5%",
             }}
         >
+            {/* Alerts */}
             <AlertBox />
+
+            {/* Title for the checkout step */}
             <Typography variant="h5" fontWeight="bold" gutterBottom>
                 {steps[currentStep]}
             </Typography>
 
+            {/* Checkout step content */}
             <Box
                 sx={{
                     width: "100%",
@@ -169,10 +87,6 @@ const CheckoutFlow = observer(() => {
                     {renderStep()}
                 </Box>
 
-                {currentStep === 1 && (
-                    <Box id="paypal-button-container" sx={{ mt: 2 }}></Box>
-                )}
-
                 <Box
                     sx={{
                         display: "flex",
@@ -182,15 +96,26 @@ const CheckoutFlow = observer(() => {
                         width: "100%",
                     }}
                 >
-                    <LinearProgress variant="determinate" value={progress} />
-
-                    <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                    {/* Buttons */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                        }}
+                    >
                         <Button variant="outlined" onClick={handleBack}>
-                            {currentStep === 0 ? "Voltar ao Carrinho" : "Voltar"}
+                            {currentStep === 0
+                                ? "Voltar ao Carrinho"
+                                : "Voltar"}
                         </Button>
 
                         {currentStep < 1 ? (
-                            <Button variant="contained" onClick={handleNext} disabled={isNextDisabled}>
+                            <Button
+                                variant="contained"
+                                onClick={handleNext}
+                                disabled={isNextDisabled}
+                            >
                                 Avançar
                             </Button>
                         ) : null}

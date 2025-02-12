@@ -7,8 +7,6 @@ import {
     Button,
     useTheme,
     useMediaQuery,
-    Grid,
-    IconButton
 } from "@mui/material";
 import { nearbyShopStore } from "../Stores/nearbyShopStore.js";
 import HomeNearbyStores from "../Components/HomePage/HomeNearbyStores.jsx";
@@ -24,11 +22,10 @@ import bannerImageVendor from "../../../public/images/Banners/BannerVendor.png";
 import HomeBestSellers from "@/Components/HomePage/HomeBestSellers.jsx";
 
 const Home = observer(() => {
+
     const { auth } = usePage().props;
     const theme = useTheme();
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     const [openMapModal, setOpenMapModal] = useState(false);
     const handleOpenMap = () => setOpenMapModal(true);
@@ -39,11 +36,18 @@ const Home = observer(() => {
             navigator.geolocation.getCurrentPosition(
                 ({ coords }) => {
                     const { latitude, longitude } = coords;
-                    nearbyShopStore.fetchNearbyStores(latitude, longitude, 50000);
+                    nearbyShopStore.fetchNearbyStores(
+                        latitude,
+                        longitude,
+                        50000,
+                    );
                 },
                 (error) => {
-                    console.error("Não foi possível obter a localização:", error);
-                }
+                    console.error(
+                        "Não foi possível obter a localização:",
+                        error,
+                    );
+                },
             );
         } else {
             console.error("Geolocalização não suportada.");
@@ -69,7 +73,8 @@ const Home = observer(() => {
                     width: "100%",
                     cursor: "pointer",
                     overflow: "hidden",
-                    transition: "transform 0.3s ease-out, box-shadow 0.3s ease-out",
+                    transition:
+                        "transform 0.3s ease-out, box-shadow 0.3s ease-out",
                     "&:hover": (theme) => ({
                         transform: "scale(1.02)",
                         boxShadow: `0px 8px 20px ${alpha(theme.palette.primary.main, 0.2)}`,
@@ -80,8 +85,8 @@ const Home = observer(() => {
                     const targetRoute = auth?.isVendor
                         ? "/dashboard/stores"
                         : authStore.isAuthenticated
-                            ? "/vendedores/registo"
-                            : "/entrar";
+                          ? "/vendedores/registo"
+                          : "/entrar";
 
                     router.get(targetRoute);
                 }}
@@ -91,8 +96,8 @@ const Home = observer(() => {
                         auth?.isVendor
                             ? bannerImageVendor
                             : authStore.isAuthenticated
-                                ? bannerImageRegistoVendor
-                                : bannerImageGuest
+                              ? bannerImageRegistoVendor
+                              : bannerImageGuest
                     }`}
                     alt="Banner"
                     style={{
@@ -107,18 +112,33 @@ const Home = observer(() => {
 
             {/* Título */}
             <Box sx={{ width: "100%", mb: 1 }}>
-                <Typography variant="h4" sx={{ fontWeight: 700, mb: 3, color: "primary.title", textAlign:"center" }}>
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 700,
+                        mb: 3,
+                        color: "primary.title",
+                        textAlign: "center",
+                    }}
+                >
                     MAIS PERTO DE TI
                 </Typography>
             </Box>
 
             {/* Nearby Stores */}
-            <Box sx={{ display: "flex", flexDirection: smallerThanMedium ? "column-reverse" : "row", m:"auto auto 3% auto", width:"90%" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: smallerThanMedium ? "column-reverse" : "row",
+                    m: "auto auto 3% auto",
+                    width: "90%",
+                }}
+            >
                 <HomeNearbyStores />
             </Box>
 
             <Box sx={{ width: "100%", mb: 1 }}>
-                <HomeBestSellers products={nearbyShopStore.bestProducts}/>
+                <HomeBestSellers products={nearbyShopStore.bestProducts} />
             </Box>
 
             {/* Botão para abrir o mapa */}

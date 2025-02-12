@@ -83,6 +83,17 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 text: "white",
             },
 
+            dashboard: {
+                iconBackground: appStore.themeType === "dark" ? "#ffffff" : "#242424",
+                icon: appStore.themeType === "dark" ? "#242424" : "#ffffff",
+            },
+
+            charts: {
+                main: "#4caf50",
+                secondary: "#FFBB28",
+                terciary: "#FF8042",
+            },
+
             // Custom styles for messages
             message: {
                 success: green[700],
