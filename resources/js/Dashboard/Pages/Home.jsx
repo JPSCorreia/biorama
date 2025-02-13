@@ -31,7 +31,7 @@ const Home = observer(() => {
     vendorStore.setVendorData(auth.user.vendor);
     const vendor = vendorStore.currentVendor;
 
-    const isCompany = vendor.is_company; // Check if the vendor represents a company
+    const isCompany = vendor?.is_company; // Check if the vendor represents a company
 
     // State to handle editing forms visibility
     const [isEditing, setIsEditing] = useState({
@@ -160,8 +160,8 @@ const Home = observer(() => {
                                 border: `1px solid ${theme.palette.primary.main}`,
                             }}
                         >
-                            {vendor.first_name[0]}
-                            {vendor.last_name[0]}
+                            {vendor?.first_name[0]}
+                            {vendor?.last_name[0]}
                         </Avatar>
 
                         {/* Name editing section */}
@@ -197,7 +197,7 @@ const Home = observer(() => {
                                             fontWeight: "bold",
                                         }}
                                     >
-                                        {vendor.first_name}
+                                        {vendor?.first_name}
                                     </Typography>
                                     <Typography
                                         variant={smallerThanMedium ? "h5" : smallerThanLarge ? "h5" : "h4"}
@@ -205,7 +205,7 @@ const Home = observer(() => {
                                             fontWeight: "bold",
                                         }}
                                     >
-                                        {vendor.last_name}
+                                        {vendor?.last_name}
                                     </Typography>
                                     <Tooltip title="Editar nome">
                                         <IconButton
@@ -312,7 +312,7 @@ const Home = observer(() => {
                                                 Email:
                                             </Typography>
                                             <Typography>
-                                                {vendor.email}
+                                                {vendor?.email}
                                             </Typography>
                                         </Box>
                                         <Box
@@ -326,7 +326,7 @@ const Home = observer(() => {
                                                 Telefone:
                                             </Typography>
                                             <Typography>
-                                                {vendor.phone ||
+                                                {vendor?.phone ||
                                                     "Não disponível"}
                                             </Typography>
                                         </Box>
@@ -356,7 +356,7 @@ const Home = observer(() => {
                                                 NIF:
                                             </Typography>
                                             <Typography>
-                                                {vendor.nif}
+                                                {vendor?.nif}
                                             </Typography>
                                         </Box>
                                         <Box
@@ -370,7 +370,7 @@ const Home = observer(() => {
                                                 Data de Nascimento:
                                             </Typography>
                                             <Typography>
-                                                {vendor.date_of_birth ||
+                                                {vendor?.date_of_birth ||
                                                     "Não disponível"}
                                             </Typography>
                                         </Box>
@@ -415,7 +415,7 @@ const Home = observer(() => {
                                                 Gênero:
                                             </Typography>
                                             <Typography>
-                                                {vendor.gender.name ||
+                                                {vendor?.gender?.name ||
                                                     "Não disponível"}
                                             </Typography>
                                         </Box>
@@ -507,7 +507,7 @@ const Home = observer(() => {
                                                     Nome:
                                                 </Typography>
                                                 <Typography>
-                                                    {vendor?.company.name}
+                                                    {vendor?.company?.name}
                                                 </Typography>
                                             </Box>
                                             <Box
@@ -522,8 +522,8 @@ const Home = observer(() => {
                                                 </Typography>
                                                 <Typography>
                                                     {
-                                                        vendor?.company.contacts
-                                                            .website
+                                                        vendor?.company?.contacts
+                                                        ?.website
                                                     }
                                                 </Typography>
                                             </Box>
@@ -554,8 +554,8 @@ const Home = observer(() => {
                                                 </Typography>
                                                 <Typography>
                                                     {
-                                                        vendor?.company.contacts
-                                                            .email
+                                                        vendor?.company?.contacts
+                                                        ?.email
                                                     }
                                                 </Typography>
                                             </Box>
@@ -571,8 +571,8 @@ const Home = observer(() => {
                                                 </Typography>
                                                 <Typography>
                                                     {
-                                                        vendor?.company.contacts
-                                                            .phone
+                                                        vendor?.company?.contacts
+                                                        ?.phone
                                                     }
                                                 </Typography>
                                             </Box>
@@ -602,7 +602,7 @@ const Home = observer(() => {
                                                     NIF:
                                                 </Typography>
                                                 <Typography>
-                                                    {vendor?.company.nif}
+                                                    {vendor?.company?.nif}
                                                 </Typography>
                                             </Box>
                                             <Box
@@ -616,7 +616,7 @@ const Home = observer(() => {
                                                     Setor:
                                                 </Typography>
                                                 <Typography>
-                                                    {vendor?.company.sector}
+                                                    {vendor?.company?.sector}
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -647,11 +647,11 @@ const Home = observer(() => {
                                                 <Typography>
                                                     {
                                                         vendor?.company
-                                                            .addresses?.street
+                                                            ?.addresses?.street
                                                     }{" "}
                                                     {
                                                         vendor?.company
-                                                            .addresses?.number
+                                                            ?.addresses?.number
                                                     }
                                                 </Typography>
                                             </Box>
@@ -668,12 +668,12 @@ const Home = observer(() => {
                                                 <Typography>
                                                     {
                                                         vendor?.company
-                                                            .addresses
+                                                            ?.addresses
                                                             ?.postal_code
                                                     }{" "}
                                                     {
                                                         vendor?.company
-                                                            .addresses?.district
+                                                            ?.addresses?.district
                                                     }
                                                 </Typography>
                                             </Box>
@@ -702,7 +702,7 @@ const Home = observer(() => {
                                                     Data de Fundação:
                                                 </Typography>
                                                 <Typography>
-                                                    {vendor?.company.founded_at}
+                                                    {vendor?.company?.founded_at}
                                                 </Typography>
                                             </Box>
                                             <Box
@@ -718,7 +718,7 @@ const Home = observer(() => {
                                                 <Typography>
                                                     {
                                                         vendor?.company
-                                                            .description
+                                                        ?.description
                                                     }
                                                 </Typography>
                                             </Box>

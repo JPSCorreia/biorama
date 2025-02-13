@@ -44,8 +44,8 @@ class VendorStore {
             }
             if (this.currentVendor.is_company === 1){
                 this.companyDetails = vendorData.company;
-                this.companyContacts = vendorData.company.contacts;
-                this.companyAddresses = vendorData.company.addresses;
+                this.companyContacts = vendorData.company?.contacts;
+                this.companyAddresses = vendorData.company?.addresses;
             }
 
         });
