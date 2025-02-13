@@ -1017,42 +1017,42 @@ class DashboardController extends Controller
         ];
     });
 
-    // // **Calcular total de encomendas e normalizar percentagem para o gráfico**
-    // $totalTreatedOrders = $storeData->sum('treated_orders');
-    // $totalOrdersGlobal = $storeData->sum('total_orders');
+    // **Calcular total de encomendas e normalizar percentagem para o gráfico**
+    $totalTreatedOrders = $storeData->sum('treated_orders');
+    $totalOrdersGlobal = $storeData->sum('total_orders');
 
-    // $storeData = $storeData->map(function ($store) use ($totalTreatedOrders) {
-    //     return [
-    //         'name' => $store['name'],
-    //         'total_revenue' => $store['total_revenue'],
-    //         'completed_percentage' => $store['completed_percentage'],
-    //         'canceled_percentage' => $store['canceled_percentage'],
-    //         'treated_percentage' => $totalTreatedOrders > 0
-    //             ? round(($store['treated_orders'] / $totalTreatedOrders) * 100, 2)
-    //             : 0, // Normalizar para o gráfico de pizza
-    //         'total_orders' => $store['total_orders'],
-    //         'handling_index' => $store['handling_index'],
-    //     ];
-    // });
+    $storeData = $storeData->map(function ($store) use ($totalTreatedOrders) {
+        return [
+            'name' => $store['name'],
+            'total_revenue' => $store['total_revenue'],
+            'completed_percentage' => $store['completed_percentage'],
+            'canceled_percentage' => $store['canceled_percentage'],
+            'treated_percentage' => $totalTreatedOrders > 0
+                ? round(($store['treated_orders'] / $totalTreatedOrders) * 100, 2)
+                : 0, // Normalizar para o gráfico de pizza
+            'total_orders' => $store['total_orders'],
+            'handling_index' => $store['handling_index'],
+        ];
+    });
 
-    // return response()->json([
-    //     'revenue_today' => $revenueToday,
-    //     'today_diff_percentage' => $todayDiffPercentage,
-    //     'revenue_current_month' => $revenueCurrentMonth,
-    //     'month_diff_percentage' => $monthDiffPercentage,
-    //     'revenue_current_year' => $revenueCurrentYear,
-    //     'year_diff_percentage' => $yearDiffPercentage,
-    //     'total_orders_current_year' => $totalOrdersCurrentYear,
-    //     'cancelled_percentage' => $cancelledPercentage,
-    //     'revenue_this_week' => $revenueThisWeek,
-    //     'weekly_diff_percentage' => $weeklyDiffPercentage,
-    //     'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
-    //     'monthly_revenue_last_year' => $monthlyRevenueLastYear,
-    //     'annual_orders_current_year' => $monthlyOrdersCurrentYear,
-    //     'annual_orders_last_year' => $monthlyOrdersLastYear,
-    //     'total_orders' => $totalOrdersGlobal, // Corrigido para mostrar o total real
-    //     'stores' => $storeData
-    // ]);
+    return response()->json([
+        'revenue_today' => $revenueToday,
+        'today_diff_percentage' => $todayDiffPercentage,
+        'revenue_current_month' => $revenueCurrentMonth,
+        'month_diff_percentage' => $monthDiffPercentage,
+        'revenue_current_year' => $revenueCurrentYear,
+        'year_diff_percentage' => $yearDiffPercentage,
+        'total_orders_current_year' => $totalOrdersCurrentYear,
+        'cancelled_percentage' => $cancelledPercentage,
+        'revenue_this_week' => $revenueThisWeek,
+        'weekly_diff_percentage' => $weeklyDiffPercentage,
+        'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
+        'monthly_revenue_last_year' => $monthlyRevenueLastYear,
+        'annual_orders_current_year' => $monthlyOrdersCurrentYear,
+        'annual_orders_last_year' => $monthlyOrdersLastYear,
+        'total_orders' => $totalOrdersGlobal, // Corrigido para mostrar o total real
+        'stores' => $storeData
+    ]);
 
     }
 
