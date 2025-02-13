@@ -22,6 +22,7 @@ const CenterMapOnPostalCode = ({ position }) => {
     }
     return null;
 };
+
 const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
     const theme = useTheme();
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));

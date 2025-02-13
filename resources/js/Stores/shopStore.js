@@ -73,48 +73,118 @@ class ShopStore {
         }
     });
 
-    updateStore = action((id, updatedStore) => {
+    updateStore = action(async (id, updatedStore) => {
         try {
-
-            // this.validateStore(updatedStore); // Validação dos dados da loja
-
-            runInAction(() => {
-                const storeIndex = this.stores.findIndex(
-                    (store) => store.id === id,
-                );
-                if (storeIndex !== -1) {
-                    this.stores[storeIndex] = {
-                        ...this.stores[storeIndex],
-                        ...updatedStore,
-                    };
-                } else {
-                    console.warn(`Loja com ID ${id} não encontrada.`);
-                }
-            });
-        } catch (error) {
-            console.error("Erro na validação ou atualização:", error.message);
-        }
-    });
-
-    async oldUpdateStore(storeId, updatedData) {
-        try {
-            const response = await axios.post(`/dashboard/lojas/editar/${storeId}`, updatedData);
+            const response = await axios.post(
+                `/dashboard/lojas/editar/${id}`,
+                updatedStore,
+            );
 
             if (response.data.success) {
                 runInAction(() => {
-                    // Atualiza o estado local com os dados retornados
-                    this.currentStore = response.data.store;
+                    const storeIndex = this.stores.findIndex(
+                        (store) => store.id === id
+                    );
+
+                    if (storeIndex !== -1) {
+                        const store = this.stores[storeIndex];
+
+                        // Atualizar os campos principais da loja
+                        this.stores[storeIndex] = {
+                            ...store,
+                            name: updatedStore.name ?? store.name,
+                            phone_number: updatedStore.phone_number ?? store.phone_number,
+                            description: updatedStore.description ?? store.description,
+                            email: updatedStore.email ?? store.email,
+                        };
+
+                        // Garantir que existe pelo menos um endereço
+                        if (!store.addresses || store.addresses.length === 0) {
+                            store.addresses = [{}];
+                        }
+
+                        // Atualizar os dados do endereço
+                        const address = { ...store.addresses[0] };
+
+                        if (updatedStore.city) {
+                            address.city = updatedStore.city;
+                        }
+
+                        if (updatedStore.street_address) {
+                            address.street_address = updatedStore.street_address;
+                        }
+
+                        if (updatedStore.postal_code) {
+                            address.postal_code = updatedStore.postal_code;
+                        }
+
+                        if (updatedStore.coordinates) {
+                            const [latitude, longitude] = updatedStore.coordinates
+                                .split(",")
+                                .map(coord => coord.trim());
+
+                            address.latitude = latitude;
+                            address.longitude = longitude;
+                        }
+
+                        // Atualizar a referência completa da loja no array
+                        this.stores[storeIndex] = {
+                            ...this.stores[storeIndex],
+                            addresses: [address],
+                        };
+                    }
                 });
                 return { success: true };
             } else {
-                console.error("Erro ao atualizar a loja:", response.data.message);
+                console.error(
+                    "Erro ao atualizar a loja:",
+                    response.data.message
+                );
                 return { success: false, message: response.data.message };
             }
         } catch (error) {
             console.error("Erro ao enviar atualização da loja:", error);
             return { success: false, error };
         }
-    }
+    });
+
+
+
+    // updateStore = action(async (id, updatedStore) => {
+    //     try {
+    //         const response = await axios.post(
+    //             `/dashboard/lojas/editar/${id}`,
+    //             updatedStore,
+    //         );
+
+    //         if (response.data.success) {
+    //             runInAction(() => {
+    //                 const storeIndex = this.stores.findIndex(
+    //                     (store) => store.id === id,
+    //                 );
+
+    //                 console.log(updatedStore)
+
+    //                 if (storeIndex !== -1) {
+    //                     this.stores[storeIndex] = {
+    //                         ...this.stores[storeIndex],
+    //                         ...updatedStore,
+    //                     };
+    //                 }
+    //             });
+    //             return { success: true };
+    //         } else {
+    //             console.error(
+    //                 "Erro ao atualizar a loja:",
+    //                 response.data.message,
+    //             );
+    //             return { success: false, message: response.data.message };
+    //         }
+    //     } catch (error) {
+    //         console.error("Erro ao enviar atualização da loja:", error);
+    //         return { success: false, error };
+    //     }
+    // });
 
 }
 

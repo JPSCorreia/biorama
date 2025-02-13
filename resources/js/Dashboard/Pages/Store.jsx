@@ -158,10 +158,11 @@ const Store = observer(() => {
             // }
 
             // Enviar para o backend
-            const result = await shopStore.oldUpdateStore(store.id, formData);
+            const result = await shopStore.updateStore(store.id, formDataValues);
+
             if (result.success) {
-                console.log("Loja atualizada com sucesso!");
                 setIsEditing(false);
+                console.log(store)
             } else {
                 console.error("Erro ao atualizar a loja.");
             }
@@ -195,7 +196,7 @@ const Store = observer(() => {
                 }}
             >
                 <Typography variant="h4" fontWeight="bold">
-                    {store?.name || "Nome da Loja"}
+                    {store?.name|| "Nome da Loja"}
                 </Typography>
             </Paper>
             <Paper
