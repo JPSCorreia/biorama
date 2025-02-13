@@ -18,15 +18,29 @@ import {
 import background from "../../images/background.jpg";
 import { shopStore } from "@/Stores";
 import axios from "axios";
+import { observer } from "mobx-react";
+import { autorun } from "mobx";
 
-const Dashboard = ({ children }) => {
+const Dashboard = observer(({ children }) => {
     // Get theme
     const theme = useTheme();
+    const [stores, setStores] = useState([]);
 
     useEffect(() => {
-        shopStore.fetchStores();
-    }, []);
+        const fetchStores = async () => {
+            await shopStore.fetchStores();
+            setStores([...shopStore.stores]); // Atualiza o estado local
+        };
 
+        fetchStores();
+
+        // Adicionar um listener para mudanças no estado do MobX
+        const disposer = autorun(() => {
+            setStores([...shopStore.stores]);
+        });
+
+        return () => disposer(); // Limpar listener quando o componente desmontar
+    }, []);
     // Navigation items
     const navigation = [
         {
@@ -76,9 +90,31 @@ const Dashboard = ({ children }) => {
 
     // Function to update navigation items with stores
     const updateNavigationWithStores = (navigation) => {
-        const [stores, setStores] = useState([]);
 
         // Update the navigation items with the stores
+        if (!shopStore.stores || shopStore.stores.length === 0) {
+            return navigation;
+        }
+
+        return navigation.map((item) => {
+            if (item.segment === "dashboard/lojas" && item.children) {
+                return {
+                    ...item,
+                    children: [
+                        ...item.children,
+                        ...shopStore.stores.map((store) => ({
+                            segment: `${store.id}`,
+                            title: store.name,
+                            icon: <StoreIcon />,
+                        })),
+                    ],
+                };
+            }
+            return item;
+        });
+    };
+
+    const updatedNavigation = useMemo(() => {
         if (!stores || stores.length === 0) {
             return navigation;
         }
@@ -99,12 +135,7 @@ const Dashboard = ({ children }) => {
             }
             return item;
         });
-    };
-
-    const updatedNavigation = updateNavigationWithStores(
-        navigation,
-        shopStore.stores,
-    );
+    }, [stores]); // Recalcular sempre que `stores` mudar
 
     let image_link = authStore.user?.image_profile || "";
 
@@ -247,7 +278,7 @@ const Dashboard = ({ children }) => {
             </DashboardLayout>
         </AppProvider>
     );
-};
+});
 
 // Typechecking props for the Dashboard
 Dashboard.propTypes = {

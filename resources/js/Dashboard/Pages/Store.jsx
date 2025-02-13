@@ -28,7 +28,6 @@ import { shopStore } from "@/Stores/";
 import { DashboardImageCarousel } from "@/Dashboard/Components/";
 import { useEffect } from "react";
 import { usePage } from "@inertiajs/react";
-import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Store = observer(() => {
@@ -39,9 +38,13 @@ const Store = observer(() => {
     const [loading, setLoading] = useState(true);
 
     const storeId =
-        inertiaStore?.id || window.location.pathname.split("/").pop();
+    inertiaStore?.id || window.location.pathname.split("/").pop();
 
-    const store = shopStore.stores[0];
+    // Encontrar o índice da loja com o ID correspondente
+    const storeIndex = shopStore.stores.findIndex((store) => store.id == storeId);
+
+    // Se encontrar a loja, obter os dados
+    const store = storeIndex !== -1 ? shopStore.stores[storeIndex] : null;
 
     if (!store) {
         return <p>Loja não encontrada.</p>;
