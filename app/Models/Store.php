@@ -47,7 +47,7 @@ class Store extends Model
 
     public function reviews()
     {
-        return $this->hasMany(StoreReview::class);
+        return $this->hasMany(StoreReview::class, 'store_id');
     }
 
     public function galleries()

@@ -12,11 +12,10 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ImageCropModal from "./ImageCropModal";
+import ImageCropModal from "../../Components/ImageCropModal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { productStore } from "../Stores/";
-import {fixImagePath} from "@/utils/utils.js";
+import { productStore } from "../../Stores";
 
 const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewProduct }) => {
     const [previewImages, setPreviewImages] = useState([]);

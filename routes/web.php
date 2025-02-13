@@ -192,23 +192,26 @@ Route::middleware(['auth'])->group(function () {
             ->name('vendor.update.company.info');
 
         // Store routes
-        Route::get('store/allstore', [DashboardController::class,'showVendorStores'])
+        Route::get('lojas', [DashboardController::class,'showVendorStores'])
             ->name('dashboard.stores');
-        Route::get('/stores/list', [DashboardController::class,'DashboardVendorStores'])
+        Route::get('/lojas/listar', [DashboardController::class,'DashboardVendorStores'])
             ->name('dashboard.stores.list');
 
         Route::middleware(['auth'])->get('/vendor/stores', [DashboardController::class, 'getVendorStores']);
+
         //Route to show a store
-        Route::get('/store/{id}', [dashboardController::class, 'dashboardShowStore'])
+        Route::get('/lojas/{id}', [dashboardController::class, 'dashboardShowStore'])
             ->name('dashboard.store.show');
 
-        Route::get('/analises', function () {
-            return Inertia::render('Dashboard/Analytics');
-        })->name('dashboard.analytics');
+        Route::get('/estatisticas', function () {
+            return Inertia::render('Dashboard/Statistics');
+        })->name('dashboard.statistics');
 
         Route::get('/encomendas', function () {
             return Inertia::render('Dashboard/Orders');
         })->name('dashboard.orders');
+
+
         Route::get('/orders', [DashboardController::class, 'getOrders'])->name('dashboard.get.orders');
 
         Route::get('/statuses', [StatusController::class, 'getStatuses']);
@@ -221,7 +224,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/data', [DashboardController::class, 'getDashboardData']);
 
-        Route::delete('/store/{id}', [DashboardController::class, 'deleteStore'])
+        Route::delete('/lojas/{id}', [DashboardController::class, 'deleteStore'])
             ->name('dashboard.store.delete');
 
     });
@@ -254,8 +257,3 @@ Route::post('/test-vendor', [AuthController::class, 'vendorRegister']);
 Route::get('/stores/nearby', [StoreController::class, 'getNearbyStores']);
 
 Route::get('/Vendor/info', fn () => Inertia::render('Vendors'))->name('vendor.info');
-
-Route::get('/teste', function () {
-    return Inertia::render('FormStoreRegistration');
-})->name('teste');
-

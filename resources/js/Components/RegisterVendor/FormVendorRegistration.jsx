@@ -11,7 +11,7 @@ import {
     Typography,
     IconButton,
 } from "@mui/material";
-import { vendorRegistrationStore, authStore } from "../Stores";
+import { vendorRegistrationStore, authStore } from "../../Stores";
 import { DatePicker, MobileDatePicker } from "@mui/x-date-pickers";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -19,16 +19,17 @@ import { useEffect, forwardRef, useImperativeHandle } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import CloseIcon from "@mui/icons-material/Close";
 
 const FormVendorRegistration = forwardRef(
     (
         { genders, formErrors, handleCloseCompanyForm, refCompany, isCompany },
-        ref
+        ref,
     ) => {
         const theme = useTheme();
         const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-        const isMediumScreen = useMediaQuery(useTheme().breakpoints.between("sm", "md"));
+        const isMediumScreen = useMediaQuery(
+            useTheme().breakpoints.between("sm", "md"),
+        );
 
         const validationSchema = yup.object().shape({
             first_name: yup.string().required("O nome é obrigatório"),
@@ -49,7 +50,7 @@ const FormVendorRegistration = forwardRef(
                 .test(
                     "is-date",
                     "A data de nascimento deve ser uma data válida",
-                    (value) => value === null || dayjs(value).isValid()
+                    (value) => value === null || dayjs(value).isValid(),
                 )
                 .required("A data de nascimento é obrigatória"),
             gender_id: yup.number().required("O género é obrigatório"),
@@ -89,7 +90,7 @@ const FormVendorRegistration = forwardRef(
                 values: formik.values,
                 handleSubmit: formik.handleSubmit,
             }),
-            [formik]
+            [formik],
         );
 
         useEffect(() => {
@@ -100,7 +101,7 @@ const FormVendorRegistration = forwardRef(
                     Object.keys(formErrors).reduce((acc, key) => {
                         acc[key] = true;
                         return acc;
-                    }, {})
+                    }, {}),
                 );
                 console.log("Revalidar formulário");
                 formik.validateForm();
@@ -110,7 +111,9 @@ const FormVendorRegistration = forwardRef(
         return (
             <LocalizationProvider
                 dateAdapter={AdapterDayjs}
-                adapterLocale={dayjs.locale(navigator.language) || dayjs.locale("pt")}
+                adapterLocale={
+                    dayjs.locale(navigator.language) || dayjs.locale("pt")
+                }
             >
                 <Box
                     sx={{
@@ -136,10 +139,11 @@ const FormVendorRegistration = forwardRef(
                             mb: 2,
                         }}
                     >
-                        <Typography sx={{ fontSize: "2.5rem", fontWeight: "bold" }}>
+                        <Typography
+                            sx={{ fontSize: "2.5rem", fontWeight: "bold" }}
+                        >
                             Dados Pessoais
                         </Typography>
-
                     </Box>
                     {/* Texto explicativo */}
                     <Typography
@@ -150,8 +154,9 @@ const FormVendorRegistration = forwardRef(
                             mb: 2,
                         }}
                     >
-                        *Certifique-se que preenche corretamente os seus dados antes de avançar
-                        no processo de registo enquanto vendedor.
+                        *Certifique-se que preenche corretamente os seus dados
+                        antes de avançar no processo de registo enquanto
+                        vendedor.
                     </Typography>
 
                     <form onSubmit={formik.handleSubmit}>
@@ -190,10 +195,13 @@ const FormVendorRegistration = forwardRef(
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
-                                            formik.touched.email && Boolean(formik.errors.email)
+                                            formik.touched.email &&
+                                            Boolean(formik.errors.email)
                                         }
                                         helperText={
-                                            formik.touched.email ? formik.errors.email : ""
+                                            formik.touched.email
+                                                ? formik.errors.email
+                                                : ""
                                         }
                                         required
                                     />
@@ -208,9 +216,14 @@ const FormVendorRegistration = forwardRef(
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
-                                            formik.touched.nif && Boolean(formik.errors.nif)
+                                            formik.touched.nif &&
+                                            Boolean(formik.errors.nif)
                                         }
-                                        helperText={formik.touched.nif ? formik.errors.nif : ""}
+                                        helperText={
+                                            formik.touched.nif
+                                                ? formik.errors.nif
+                                                : ""
+                                        }
                                         required
                                     />
                                 </Grid>
@@ -224,10 +237,13 @@ const FormVendorRegistration = forwardRef(
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
-                                            formik.touched.phone && Boolean(formik.errors.phone)
+                                            formik.touched.phone &&
+                                            Boolean(formik.errors.phone)
                                         }
                                         helperText={
-                                            formik.touched.phone ? formik.errors.phone : ""
+                                            formik.touched.phone
+                                                ? formik.errors.phone
+                                                : ""
                                         }
                                         required
                                     />
@@ -246,7 +262,9 @@ const FormVendorRegistration = forwardRef(
                                             Boolean(formik.errors.last_name)
                                         }
                                         helperText={
-                                            formik.touched.last_name ? formik.errors.last_name : ""
+                                            formik.touched.last_name
+                                                ? formik.errors.last_name
+                                                : ""
                                         }
                                         required
                                     />
@@ -261,9 +279,14 @@ const FormVendorRegistration = forwardRef(
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
-                                            formik.touched.iban && Boolean(formik.errors.iban)
+                                            formik.touched.iban &&
+                                            Boolean(formik.errors.iban)
                                         }
-                                        helperText={formik.touched.iban ? formik.errors.iban : ""}
+                                        helperText={
+                                            formik.touched.iban
+                                                ? formik.errors.iban
+                                                : ""
+                                        }
                                         required
                                     />
                                 </Grid>
@@ -272,18 +295,30 @@ const FormVendorRegistration = forwardRef(
                                         label="Data de Nascimento"
                                         value={formik.values.date_of_birth}
                                         onChange={(value) =>
-                                            formik.setFieldValue("date_of_birth", value)
+                                            formik.setFieldValue(
+                                                "date_of_birth",
+                                                value,
+                                            )
                                         }
                                         onBlur={() =>
-                                            formik.setFieldTouched("date_of_birth", true)
+                                            formik.setFieldTouched(
+                                                "date_of_birth",
+                                                true,
+                                            )
                                         }
                                         slotProps={{
                                             textField: {
                                                 error:
-                                                    formik.touched.date_of_birth &&
-                                                    Boolean(formik.errors.date_of_birth),
-                                                helperText: formik.touched.date_of_birth
-                                                    ? formik.errors.date_of_birth
+                                                    formik.touched
+                                                        .date_of_birth &&
+                                                    Boolean(
+                                                        formik.errors
+                                                            .date_of_birth,
+                                                    ),
+                                                helperText: formik.touched
+                                                    .date_of_birth
+                                                    ? formik.errors
+                                                          .date_of_birth
                                                     : "",
                                             },
                                         }}
@@ -292,11 +327,13 @@ const FormVendorRegistration = forwardRef(
                                 </Grid>
                                 <Grid item xs={12}>
                                     <FormControl
-                                        sx={{ width: isSmallScreen
+                                        sx={{
+                                            width: isSmallScreen
                                                 ? "80%"
                                                 : isSmallScreen
-                                                    ? "50%"
-                                                    : "80%" }}
+                                                  ? "50%"
+                                                  : "80%",
+                                        }}
                                         margin="normal"
                                         error={
                                             formik.touched.gender_id &&
@@ -316,7 +353,10 @@ const FormVendorRegistration = forwardRef(
                                         >
                                             {Array.isArray(genders) &&
                                                 genders.map((gender) => (
-                                                    <MenuItem key={gender.id} value={gender.id}>
+                                                    <MenuItem
+                                                        key={gender.id}
+                                                        value={gender.id}
+                                                    >
                                                         {gender.name}
                                                     </MenuItem>
                                                 ))}
@@ -359,10 +399,13 @@ const FormVendorRegistration = forwardRef(
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
-                                            formik.touched.email && Boolean(formik.errors.email)
+                                            formik.touched.email &&
+                                            Boolean(formik.errors.email)
                                         }
                                         helperText={
-                                            formik.touched.email ? formik.errors.email : ""
+                                            formik.touched.email
+                                                ? formik.errors.email
+                                                : ""
                                         }
                                         required
                                     />
@@ -373,7 +416,9 @@ const FormVendorRegistration = forwardRef(
                                                 sx={{ width: "95%", mt: 2 }}
                                                 error={
                                                     formik.touched.gender_id &&
-                                                    Boolean(formik.errors.gender_id)
+                                                    Boolean(
+                                                        formik.errors.gender_id,
+                                                    )
                                                 }
                                             >
                                                 <InputLabel id="gender-select-label">
@@ -383,16 +428,31 @@ const FormVendorRegistration = forwardRef(
                                                     labelId="gender-select-label"
                                                     id="gender-select"
                                                     name="gender_id"
-                                                    value={formik.values.gender_id}
-                                                    onChange={formik.handleChange}
+                                                    value={
+                                                        formik.values.gender_id
+                                                    }
+                                                    onChange={
+                                                        formik.handleChange
+                                                    }
                                                     onBlur={formik.handleBlur}
                                                 >
                                                     {Array.isArray(genders) &&
-                                                        genders.map((gender) => (
-                                                            <MenuItem key={gender.id} value={gender.id}>
-                                                                {gender.name}
-                                                            </MenuItem>
-                                                        ))}
+                                                        genders.map(
+                                                            (gender) => (
+                                                                <MenuItem
+                                                                    key={
+                                                                        gender.id
+                                                                    }
+                                                                    value={
+                                                                        gender.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        gender.name
+                                                                    }
+                                                                </MenuItem>
+                                                            ),
+                                                        )}
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -400,7 +460,11 @@ const FormVendorRegistration = forwardRef(
                                             item
                                             xs={12}
                                             md={6}
-                                            sx={{ textAlign: isSmallScreen ? "left" : "right" }}
+                                            sx={{
+                                                textAlign: isSmallScreen
+                                                    ? "left"
+                                                    : "right",
+                                            }}
                                         >
                                             <TextField
                                                 label="NIF"
@@ -411,11 +475,20 @@ const FormVendorRegistration = forwardRef(
                                                 onChange={formik.handleChange}
                                                 onBlur={formik.handleBlur}
                                                 error={
-                                                    formik.touched.nif && Boolean(formik.errors.nif)
+                                                    formik.touched.nif &&
+                                                    Boolean(formik.errors.nif)
                                                 }
-                                                helperText={formik.touched.nif ? formik.errors.nif : ""}
+                                                helperText={
+                                                    formik.touched.nif
+                                                        ? formik.errors.nif
+                                                        : ""
+                                                }
                                                 required
-                                                sx={{ width: isSmallScreen ? "80%" : "70%" }}
+                                                sx={{
+                                                    width: isSmallScreen
+                                                        ? "80%"
+                                                        : "70%",
+                                                }}
                                             />
                                         </Grid>
                                     </Grid>
@@ -436,7 +509,9 @@ const FormVendorRegistration = forwardRef(
                                             Boolean(formik.errors.last_name)
                                         }
                                         helperText={
-                                            formik.touched.last_name ? formik.errors.last_name : ""
+                                            formik.touched.last_name
+                                                ? formik.errors.last_name
+                                                : ""
                                         }
                                         required
                                     />
@@ -450,9 +525,14 @@ const FormVendorRegistration = forwardRef(
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
-                                            formik.touched.iban && Boolean(formik.errors.iban)
+                                            formik.touched.iban &&
+                                            Boolean(formik.errors.iban)
                                         }
-                                        helperText={formik.touched.iban ? formik.errors.iban : ""}
+                                        helperText={
+                                            formik.touched.iban
+                                                ? formik.errors.iban
+                                                : ""
+                                        }
                                         required
                                     />
 
@@ -461,45 +541,87 @@ const FormVendorRegistration = forwardRef(
                                             <Box sx={{ width: "95%", mt: 2 }}>
                                                 <MobileDatePicker
                                                     label="Data de Nascimento"
-                                                    value={formik.values.date_of_birth}
+                                                    value={
+                                                        formik.values
+                                                            .date_of_birth
+                                                    }
                                                     onChange={(value) =>
-                                                        formik.setFieldValue("date_of_birth", value)
+                                                        formik.setFieldValue(
+                                                            "date_of_birth",
+                                                            value,
+                                                        )
                                                     }
                                                     onBlur={() =>
-                                                        formik.setFieldTouched("date_of_birth", true)
+                                                        formik.setFieldTouched(
+                                                            "date_of_birth",
+                                                            true,
+                                                        )
                                                     }
                                                     slotProps={{
                                                         textField: {
                                                             error:
-                                                                formik.touched.date_of_birth &&
-                                                                Boolean(formik.errors.date_of_birth),
-                                                            helperText: formik.touched.date_of_birth
-                                                                ? formik.errors.date_of_birth
+                                                                formik.touched
+                                                                    .date_of_birth &&
+                                                                Boolean(
+                                                                    formik
+                                                                        .errors
+                                                                        .date_of_birth,
+                                                                ),
+                                                            helperText: formik
+                                                                .touched
+                                                                .date_of_birth
+                                                                ? formik.errors
+                                                                      .date_of_birth
                                                                 : "",
                                                         },
                                                     }}
-                                                    sx={{ display: isSmallScreen ? "block" : "none" }}
+                                                    sx={{
+                                                        display: isSmallScreen
+                                                            ? "block"
+                                                            : "none",
+                                                    }}
                                                 />
                                                 <DatePicker
                                                     label="Data de Nascimento"
-                                                    value={formik.values.date_of_birth}
+                                                    value={
+                                                        formik.values
+                                                            .date_of_birth
+                                                    }
                                                     onChange={(value) =>
-                                                        formik.setFieldValue("date_of_birth", value)
+                                                        formik.setFieldValue(
+                                                            "date_of_birth",
+                                                            value,
+                                                        )
                                                     }
                                                     onBlur={() =>
-                                                        formik.setFieldTouched("date_of_birth", true)
+                                                        formik.setFieldTouched(
+                                                            "date_of_birth",
+                                                            true,
+                                                        )
                                                     }
                                                     slotProps={{
                                                         textField: {
                                                             error:
-                                                                formik.touched.date_of_birth &&
-                                                                Boolean(formik.errors.date_of_birth),
-                                                            helperText: formik.touched.date_of_birth
-                                                                ? formik.errors.date_of_birth
+                                                                formik.touched
+                                                                    .date_of_birth &&
+                                                                Boolean(
+                                                                    formik
+                                                                        .errors
+                                                                        .date_of_birth,
+                                                                ),
+                                                            helperText: formik
+                                                                .touched
+                                                                .date_of_birth
+                                                                ? formik.errors
+                                                                      .date_of_birth
                                                                 : "",
                                                         },
                                                     }}
-                                                    sx={{ display: isSmallScreen ? "none" : "block" }}
+                                                    sx={{
+                                                        display: isSmallScreen
+                                                            ? "none"
+                                                            : "block",
+                                                    }}
                                                 />
                                             </Box>
                                         </Grid>
@@ -507,7 +629,11 @@ const FormVendorRegistration = forwardRef(
                                             item
                                             xs={12}
                                             md={6}
-                                            sx={{ textAlign: isSmallScreen ? "left" : "right" }}
+                                            sx={{
+                                                textAlign: isSmallScreen
+                                                    ? "left"
+                                                    : "right",
+                                            }}
                                         >
                                             <TextField
                                                 label="Nrº Telemóvel"
@@ -517,10 +643,13 @@ const FormVendorRegistration = forwardRef(
                                                 onChange={formik.handleChange}
                                                 onBlur={formik.handleBlur}
                                                 error={
-                                                    formik.touched.phone && Boolean(formik.errors.phone)
+                                                    formik.touched.phone &&
+                                                    Boolean(formik.errors.phone)
                                                 }
                                                 helperText={
-                                                    formik.touched.phone ? formik.errors.phone : ""
+                                                    formik.touched.phone
+                                                        ? formik.errors.phone
+                                                        : ""
                                                 }
                                                 sx={{ width: "70%" }}
                                                 required
@@ -534,7 +663,7 @@ const FormVendorRegistration = forwardRef(
                 </Box>
             </LocalizationProvider>
         );
-    }
+    },
 );
 
 export default FormVendorRegistration;

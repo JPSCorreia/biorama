@@ -46,7 +46,7 @@ export const truncateDescription = (text, minLength = 225, maxLength = 275) => {
 
 
 export const fixImagePath = (imagePath) => {
-    if (!imagePath) return "/images/default-image.jpg"; // Coloca uma imagem padrão
+    if (!imagePath) return null; // Coloca uma imagem padrão
     if (imagePath.startsWith("http")) return imagePath; // Se já for uma URL completa, retorna direto
     return `/storage/${imagePath.replace(/^storage\//, "")}`; // Remove prefixos extras
 };

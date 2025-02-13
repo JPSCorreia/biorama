@@ -68,7 +68,7 @@ const ProfileHomeAddress = observer(() => {
                                 flexDirection: "column",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                backgroundColor: "#388e3c26",
+                                // backgroundColor: "#f5f5f5",
                                 border: "2px dashed",
                                 borderColor: theme.palette.primary.main,
                                 borderRadius: "10px",
@@ -81,6 +81,7 @@ const ProfileHomeAddress = observer(() => {
                                 transition: "all 0.3s ease",
                                 "&:hover": {
                                     transform: "scale(1.05)",
+                                    backgroundColor: "#388e3c26",
                                 },
                             }}
                         >

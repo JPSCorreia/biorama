@@ -94,7 +94,6 @@ class OrderStore {
             });
             runInAction(() => {
                 this.orders = response.data.data;
-                console.log("response",response);
                 this.totalPages = response.data.last_page;
                 this.currentPage = response.data.current_page;
             });
@@ -108,7 +107,6 @@ class OrderStore {
         try {
             const response = await axios.get(`/dashboard/vendor/stores`);
             runInAction(() => {
-                console.log("Lojas recebidas:", response.data);  // Verificação
                 this.stores = response.data;
             });
         } catch (error) {
@@ -142,7 +140,6 @@ class OrderStore {
         order.removedProducts.push(productId);
         order.products = order.products.filter(product => product.id !== productId);
 
-        console.log("Produtos removidos:", order.removedProducts);  // Verificação
     }
 
     updateOrderStatus(orderId, newStatusId) {
@@ -245,7 +242,6 @@ class OrderStore {
                 const order = this.orders.find(order => order.id === orderId);
                 if (order) {
                     order.statuses_id = response.data.statuses_id;  // Atualiza o status localmente
-                    console.log("response", response);
                     this.successMessage = "Encomenda cancelada com sucesso.";
 
                 }

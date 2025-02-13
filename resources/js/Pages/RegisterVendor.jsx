@@ -9,7 +9,7 @@ import {
     Step3CreateProduct,
 } from "../Components";
 import { vendorRegistrationStore } from "../Stores";
-import {router, usePage} from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import { observer } from "mobx-react";
 import { useEffect } from "react";
 
@@ -41,7 +41,6 @@ const RegisterVendor = observer(({ genders }) => {
         if (currentStep === 6) {
             router.get("/dashboard/");
             vendorRegistrationStore.clearStore();
-
         }
     }, [currentStep]);
 
@@ -67,7 +66,10 @@ const RegisterVendor = observer(({ genders }) => {
                     // Apenas adiciona ao estado quando todas as imagens forem carregadas
                     if (newImages.length === files.length) {
                         setImages((prevImages) => {
-                            const updatedImages = [...prevImages, ...newImages].slice(0, 3);
+                            const updatedImages = [
+                                ...prevImages,
+                                ...newImages,
+                            ].slice(0, 3);
                             return updatedImages;
                         });
                     }
@@ -87,8 +89,8 @@ const RegisterVendor = observer(({ genders }) => {
             companyFormRef.current.setTouched(
                 Object.keys(companyFormRef.current.values).reduce(
                     (acc, key) => ({ ...acc, [key]: false }),
-                    {}
-                )
+                    {},
+                ),
             );
         }
 
@@ -105,13 +107,15 @@ const RegisterVendor = observer(({ genders }) => {
             personalFormRef.current.setTouched(
                 Object.keys(personalFormRef.current.values).reduce(
                     (acc, key) => ({ ...acc, [key]: true }),
-                    {}
-                )
+                    {},
+                ),
             );
 
             const isPersonalValid = Object.keys(personalErrors).length === 0;
             if (isPersonalValid) {
-                vendorRegistrationStore.setPersonalFormik(personalFormRef.current);
+                vendorRegistrationStore.setPersonalFormik(
+                    personalFormRef.current,
+                );
             }
 
             let companyErrors = {}; // Inicia vazio
@@ -122,11 +126,13 @@ const RegisterVendor = observer(({ genders }) => {
                 companyFormRef.current.setTouched(
                     Object.keys(companyFormRef.current.values).reduce(
                         (acc, key) => ({ ...acc, [key]: true }),
-                        {}
-                    )
+                        {},
+                    ),
                 );
                 if (!companyErrors) {
-                    vendorRegistrationStore.setCompanyFormik(companyFormRef.current);
+                    vendorRegistrationStore.setCompanyFormik(
+                        companyFormRef.current,
+                    );
                 }
             }
 
@@ -137,36 +143,49 @@ const RegisterVendor = observer(({ genders }) => {
                 company: companyErrors,
             }));
 
-
             const isCompanyValid = Object.keys(companyErrors).length === 0;
             if (isCompanyValid) {
-                vendorRegistrationStore.setCompanyFormik(companyFormRef.current);
+                vendorRegistrationStore.setCompanyFormik(
+                    companyFormRef.current,
+                );
             }
 
-            if (isPersonalValid && (vendorRegistrationStore.isCompany ? isCompanyValid : true)) {
+            if (
+                isPersonalValid &&
+                (vendorRegistrationStore.isCompany ? isCompanyValid : true)
+            ) {
                 try {
-                    const response = await vendorRegistrationStore.submitStep1();
+                    const response =
+                        await vendorRegistrationStore.submitStep1();
                     setFormErrors(null);
                     console.log("Resposta da submissão:", response);
-                    if (response && (response.status === 201 || response.status === 200)) {
+                    if (
+                        response &&
+                        (response.status === 201 || response.status === 200)
+                    ) {
                         setCurrentStep((prev) => prev + 1);
                     } else {
-                        console.warn("esposta inesperada. Código de status:", response?.status);
+                        console.warn(
+                            "esposta inesperada. Código de status:",
+                            response?.status,
+                        );
                     }
                 } catch (error) {
                     console.error("Erro ao submeter a loja:", error);
                 }
             } else {
-                console.log("Erros encontrados:", { personalErrors, companyErrors });
+                console.log("Erros encontrados:", {
+                    personalErrors,
+                    companyErrors,
+                });
             }
-        }
-        else if (currentStep === 3) {
+        } else if (currentStep === 3) {
             const storeErrors = await storeFormRef.current.validateForm();
             storeFormRef.current.setTouched(
                 Object.keys(storeFormRef.current.values).reduce(
                     (acc, key) => ({ ...acc, [key]: true }),
-                    {}
-                )
+                    {},
+                ),
             );
 
             setFormErrors((prevErrors) => ({
@@ -179,26 +198,26 @@ const RegisterVendor = observer(({ genders }) => {
                 vendorRegistrationStore.setStoreFormik(storeFormRef.current);
                 vendorRegistrationStore.setStoreImages(images);
                 try {
-                    const response = await vendorRegistrationStore.submitStep2();
+                    const response =
+                        await vendorRegistrationStore.submitStep2();
                     if (response && response.status === 201) {
                         setCurrentStep((prev) => prev + 1);
+                    } else {
+                        console.warn(
+                            "Resposta inesperada. Código de status:",
+                            response?.status,
+                        );
                     }
-                    else {
-                        console.warn("Resposta inesperada. Código de status:", response?.status);
-                    }
-                }
-                catch (error) {
+                } catch (error) {
                     console.error("Erro ao submeter a loja:", error);
                 }
             }
-        }
-        else if (currentStep === 5) {
+        } else if (currentStep === 5) {
             if (vendorRegistrationStore.products.length > 0) {
                 setIsEnableNext(true);
                 setCurrentStep((prev) => prev + 1);
             }
-        }
-        else {
+        } else {
             setCurrentStep((prev) => prev + 1);
         }
     };
@@ -223,16 +242,19 @@ const RegisterVendor = observer(({ genders }) => {
                 return <IntroStep2VendorRegister />;
             case 3:
                 return (
-                    <Step2StoreDetails ref={storeFormRef} formErrors={formErrors} setImages={setImages} images={images} showAlert={showAlert} handleImageUpload={handleImageUpload} />
+                    <Step2StoreDetails
+                        ref={storeFormRef}
+                        formErrors={formErrors}
+                        setImages={setImages}
+                        images={images}
+                        showAlert={showAlert}
+                        handleImageUpload={handleImageUpload}
+                    />
                 );
             case 4:
-                return (
-                    <IntroStep3VendorRegister />
-                );
+                return <IntroStep3VendorRegister />;
             case 5:
-                return (
-                    <Step3CreateProduct />
-                );
+                return <Step3CreateProduct />;
         }
     };
 
@@ -274,9 +296,7 @@ const RegisterVendor = observer(({ genders }) => {
             </Box>
 
             {/* Navigation buttons */}
-            <Box
-                sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
                 <Button
                     variant="contained"
                     onClick={handleNext}

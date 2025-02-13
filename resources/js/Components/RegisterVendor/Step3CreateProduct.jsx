@@ -1,8 +1,15 @@
-import { AddProductCreate } from './';
+import { AddProductCreate } from "..";
 import { observer } from "mobx-react";
-import { vendorRegistrationStore } from "../Stores";
-import { VendorRegistrationProductCard } from "./";
-import { Box, IconButton, MenuItem, Select, useMediaQuery, useTheme } from "@mui/material";
+import { vendorRegistrationStore } from "../../Stores";
+import { VendorRegistrationProductCard } from "@/Dashboard/Components/";
+import {
+    Box,
+    IconButton,
+    MenuItem,
+    Select,
+    useMediaQuery,
+    useTheme,
+} from "@mui/material";
 import { useState } from "react";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -18,9 +25,13 @@ const Step3CreateProduct = observer(() => {
     const products = vendorRegistrationStore?.products || [];
 
     const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = itemsPerPage === "Todos" ? products.length : startIndex + itemsPerPage;
+    const endIndex =
+        itemsPerPage === "Todos" ? products.length : startIndex + itemsPerPage;
     const paginatedProducts = products.slice(startIndex, endIndex);
-    const totalPages = itemsPerPage === "Todos" ? 1 : Math.ceil(products.length / itemsPerPage);
+    const totalPages =
+        itemsPerPage === "Todos"
+            ? 1
+            : Math.ceil(products.length / itemsPerPage);
 
     return (
         <Box
@@ -47,13 +58,19 @@ const Step3CreateProduct = observer(() => {
                     <Box>
                         <IconButton
                             sx={{ marginRight: 1 }}
-                            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                            onClick={() =>
+                                setPage((prev) => Math.max(prev - 1, 1))
+                            }
                         >
                             <ArrowBackIosIcon />
                         </IconButton>
 
                         <IconButton
-                            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                            onClick={() =>
+                                setPage((prev) =>
+                                    Math.min(prev + 1, totalPages),
+                                )
+                            }
                         >
                             <ArrowForwardIosIcon />
                         </IconButton>

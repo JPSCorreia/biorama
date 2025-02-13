@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Box, Paper, Typography, useTheme} from "@mui/material";
-import DashboardAllOrdersCard from "@/Components/DashboardAllOrdersCard.jsx";
-import DashboardStoreOrderCard from "@/Components/DashboardStoreOrderCard.jsx";
-import DashboardAllOrders from "@/Components/DashboardAllOrders.jsx";
-import DashboardStoreOrdersTable from "@/Components/DashboardStoreOrdersTable.jsx";
-import DashboardShowOrderModal from "@/Components/DashboardShowOrderModal.jsx";
-import DashboardOrderEditModal from "@/Components/DashboardOrderEditModal.jsx";
+import { DashboardAllOrders, DashboardAllOrdersCard, DashboardStoreOrderCard, DashboardStoreOrdersTable, DashboardShowOrderModal, DashboardOrderEditModal } from "../Components/";
 import { orderStore } from "@/Stores/orderStore.js";
 import { observer } from "mobx-react";
 

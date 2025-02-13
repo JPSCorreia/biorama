@@ -39,7 +39,7 @@ import {
     Label,
 } from "recharts";
 
-const Analytics = () => {
+const Statistics = () => {
     // State management
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -1027,4 +1027,4 @@ const Analytics = () => {
     );
 };
 
-export default Analytics;
+export default Statistics;

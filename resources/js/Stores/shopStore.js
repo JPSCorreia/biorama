@@ -32,8 +32,6 @@ class ShopStore {
     }
 
 
-
-
     // Define os dados das lojas
     setStoresData(storesData) {
         runInAction(() => {
@@ -59,10 +57,9 @@ class ShopStore {
 
     fetchStores = async () => {
         try {
-            const response = await axios.get('/dashboard/stores/list');
+            const response = await axios.get('/dashboard/lojas/listar');
             this.setStoreData(response.data.stores)
 
-            console.log("response", response.data.stores)
         } catch (error) {
             console.error('Erro ao carregar as lojas do vendedor:', error);
         }
@@ -82,7 +79,6 @@ class ShopStore {
             const response = await axios.post("/create/store", processedData);
 
             if (response.data.success) {
-                console.log("Loja criada com sucesso:", response.data);
             }
             this.stores = response.data.stores;
 
@@ -94,11 +90,10 @@ class ShopStore {
     }
 
     navigateToStore(storeId) {
-        router.get(`/dashboard/store/${storeId}`); // Rota dinâmica para exibir informações da loja
+        router.get(`/dashboard/lojas/${storeId}`); // Rota dinâmica para exibir informações da loja
     }
 
     async updateStore(storeId, updatedData) {
-        console.log("shop store no updated store", updatedData);
         try {
             const response = await axios.post(`/stores/${storeId}/update`, updatedData);
 
@@ -106,7 +101,6 @@ class ShopStore {
                 runInAction(() => {
                     // Atualiza o estado local com os dados retornados
                     this.currentStore = response.data.store;
-                    console.log("informação devolvida", response.data.store)
                 });
                 return { success: true };
             } else {
@@ -136,8 +130,7 @@ class ShopStore {
 
     DeleteStore = async (storeId) => {
         try {
-            const response = await axios.delete(`/dashboard/store/${storeId}`);
-            console.log("response.data", response.data)
+            const response = await axios.delete(`/dashboard/lojas/${storeId}`);
             if (response.data.success) {
                 this.stores = response.data.stores;
 
@@ -149,11 +142,24 @@ class ShopStore {
                     });
                 };
 
-                navigate('/dashboard/store/allstore');
+                navigate('/dashboard/lojas');
             }
         } catch (error) {
             console.error('Erro ao apagar a loja:', error);
         }
+    };
+
+    getStoreById = (storeId) => {
+        return this.stores.find(store => store.id === storeId) || null;
+    };
+
+    updateStoreDataById = (storeId, updatedData) => {
+        runInAction(() => {
+            const storeIndex = this.stores.findIndex(store => store.id === storeId);
+            if (storeIndex !== -1) {
+                this.stores[storeIndex] = { ...this.stores[storeIndex], ...updatedData };
+            }
+        });
     };
 
     // Limpa os dados da loja atual

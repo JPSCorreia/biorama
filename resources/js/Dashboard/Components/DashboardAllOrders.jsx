@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { orderStore } from "@/Stores/orderStore.js";
-import { use } from "react";
 
 /**
  * DashboardAllOrders Component
@@ -27,10 +26,9 @@ import { use } from "react";
  * @param {Function} onEditOrder - Function to handle editing an order.
  */
 const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
-    
+
     const theme = useTheme();
-    
-    
+
     // Fetch orders on component mount
     useEffect(() => {
         orderStore.fetchOrders();
@@ -59,7 +57,7 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
      * @returns {boolean} - True if the order is cancelled, false otherwise.
      */
     const isOrderCancelled = (order) => order.statuses_id === 5;
-    console.log("order", orders);
+
     return (
         <Box sx={{ padding: 2 }}>
             {/* Top bar with title and search field */}

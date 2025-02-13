@@ -15,11 +15,11 @@ import { observer } from "mobx-react";
 import { usePage } from "@inertiajs/react";
 import { useState } from "react";
 import { Edit as EditIcon } from "@mui/icons-material";
-import VendorNameEdtitingForm from "@/Components/VendorNameEdtitingForm.jsx";
 import {
     VendorCompanyEditingForm,
     VendorInfoEditingForm,
-} from "@/Components/index.js";
+    VendorNameEditingForm,
+} from "@/Dashboard/Components/";
 import { vendorStore } from "../../Stores";
 import { authStore } from "../../Stores";
 

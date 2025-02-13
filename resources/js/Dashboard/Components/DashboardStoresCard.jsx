@@ -1,4 +1,4 @@
-import {observer} from "mobx-react";
+import { observer } from "mobx-react";
 import {
     Box,
     Button,
@@ -8,27 +8,24 @@ import {
     Divider,
     Typography,
     Avatar,
-    Rating, useMediaQuery,
+    Rating,
+    useMediaQuery,
 } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import {fixImagePath} from "../utils/utils.js";
-import {shopStore} from "@/Stores/index.js";
+import { fixImagePath } from "../../utils/utils.js";
+import { shopStore } from "@/Stores/index.js";
 import ReactMarkdown from "react-markdown";
-import {useTheme} from "@mui/material/styles";
-
+import { useTheme } from "@mui/material/styles";
 
 /**
  * Component: DashboardStoresCard
  * Description: Displays a card with store details such as name, description, location, and rating.
  * Allows navigation to the store's detail page.
  */
-const DashboardStoresCard = observer(({store, user}) => {
-
+const DashboardStoresCard = observer(({ store, user }) => {
     // Retrieves the first gallery image for background and user's profile image for avatar
-    const backgroundImage =
-        fixImagePath(store?.galleries[0]?.image_link);
-    const profileImage =
-        fixImagePath(user?.image_profile);
+    const backgroundImage = fixImagePath(store?.galleries[0]?.image_link);
+    const profileImage = fixImagePath(user?.image_profile);
 
     // Limits the store description to 150 characters and appends "..." if truncated
     const truncatedDescription =
@@ -48,9 +45,7 @@ const DashboardStoresCard = observer(({store, user}) => {
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: 3,
-                margin: "auto",
-                mt: 5,
-                minHeight: 640,
+                minHeight: 592,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
@@ -60,7 +55,7 @@ const DashboardStoresCard = observer(({store, user}) => {
             <CardMedia
                 component="img"
                 sx={{
-                    height: 150,
+                    height: 120,
                     width: "100%",
                     objectFit: "cover",
                 }}
@@ -72,7 +67,7 @@ const DashboardStoresCard = observer(({store, user}) => {
             <Box
                 sx={{
                     position: "absolute",
-                    top: 100,
+                    top: 70,
                     left: "50%",
                     transform: "translate(-50%, 0%)",
                     zIndex: 2,
@@ -87,11 +82,11 @@ const DashboardStoresCard = observer(({store, user}) => {
                     backgroundColor: "white",
                 }}
             >
-                <Avatar src={profileImage} sx={{width: 76, height: 76}}/>
+                <Avatar src={profileImage} sx={{ width: 76, height: 76 }} />
             </Box>
 
             {/* Store name and city */}
-            <CardContent sx={{textAlign: "center", pt: 6}}>
+            <CardContent sx={{ textAlign: "center", pt: 6 }}>
                 <Typography variant="h6" fontWeight="bold" noWrap>
                     {store?.name || "Loja sem Nome"}
                 </Typography>
@@ -112,14 +107,12 @@ const DashboardStoresCard = observer(({store, user}) => {
             />
 
             {/* Store information section */}
-            <CardContent>
-                <Box sx={{marginBottom: 2}}>
+            <CardContent sx={{ display: "flex", flexDirection: "column",  justifyContent: "flex-end", minHeight: "335px"}}>
+                <Box>
                     {/* Descrição */}
-                    <Box sx={{marginBottom: "2rem", minHeight: "200px"}}>
+                    <Box sx={{ marginBottom: "2rem", minHeight: "200px" }}>
                         <Typography fontWeight="bold">Descrição:</Typography>
-                        <ReactMarkdown>
-                            {truncatedDescription}
-                        </ReactMarkdown>
+                        <ReactMarkdown>{truncatedDescription}</ReactMarkdown>
                     </Box>
 
                     {/* Rating */}
@@ -128,24 +121,26 @@ const DashboardStoresCard = observer(({store, user}) => {
                             display: "flex",
                             flexWrap: "wrap",
                             flexDirection: "row",
-                            marginBottom: 2,
-                            gap: 9,
+                            justifyContent: "space-between",
+                            px: 2
                         }}
                     >
                         <Box>
                             <Typography fontWeight="bold">Rating:</Typography>
                             <Rating
-                                value={Number(store?.rating) || 0}
+                                value={store.reviews.reduce((sum, review) => sum + review.rating, 0) / (store.reviews.length || 1)}
                                 precision={0.5}
                                 readOnly
                             />
                         </Box>
 
                         {/* Button to navigate to store details */}
-                        <Box sx={{
-                            textAlign: "right",
-                            mt: "auto",
-                        }}>
+                        <Box
+                            sx={{
+                                textAlign: "right",
+                                mt: "auto",
+                            }}
+                        >
                             <Button
                                 variant="contained"
                                 color="primary"
@@ -160,7 +155,7 @@ const DashboardStoresCard = observer(({store, user}) => {
                                     padding: 0,
                                 }}
                             >
-                                <RemoveRedEyeIcon/>
+                                <RemoveRedEyeIcon />
                             </Button>
                         </Box>
                     </Box>

@@ -7,12 +7,7 @@ import { ThemeSwitcher } from "../Components";
 import { router, usePage } from "@inertiajs/react";
 import {
     Box,
-    Typography,
-    Button,
-    ListItem,
-    List,
     Tooltip,
-    Avatar,
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import {
@@ -35,7 +30,7 @@ const updateNavigationWithStores = (navigation) => {
     useEffect(() => {
         const fetchStores = async () => {
             try {
-                const response = await axios.get("/dashboard/stores/list");
+                const response = await axios.get("/dashboard/lojas/listar");
                 setStores(response.data.stores);
             } catch (error) {
                 console.error("Erro ao carregar as lojas do vendedor:", error);
@@ -51,7 +46,7 @@ const updateNavigationWithStores = (navigation) => {
     }
 
     return navigation.map((item) => {
-        if (item.segment === "dashboard/store" && item.children) {
+        if (item.segment === "dashboard/lojas" && item.children) {
             return {
                 ...item,
                 children: [
@@ -75,7 +70,7 @@ const navigation = [
         title: "DASHBOARD",
     },
     {
-        segment: "dashboard/analises",
+        segment: "dashboard/estatisticas",
         title: "Painel de Estatísticas",
         icon: <AssessmentIcon />,
     },
@@ -91,13 +86,13 @@ const navigation = [
         kind: "divider",
     },
     {
-        segment: "dashboard/store",
+        segment: "dashboard/lojas",
         title: "Lojas",
         icon: <StoreIcon />,
         children: [
             {
-                segment: "allstore",
-                title: "Todas Lojas",
+                segment: "",
+                title: "Todas as Lojas",
                 icon: <StoreIcon />,
             },
         ],

@@ -44,7 +44,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
             const timestamp = dayjs().format("YYYYMMDD_HHmmss"); // Gera timestamp
             const fileExtension = file.name.split(".").pop(); // Obtém a extensão do ficheiro
             const newFileName = `profile_${timestamp}.${fileExtension}`; // Novo nome único
-
+            console.log(newFileName);
             const renamedFile = new File([file], newFileName, { type: file.type }); // Cria um novo ficheiro com o nome alterado
 
             const objectURL = URL.createObjectURL(renamedFile);
@@ -100,6 +100,7 @@ const ProfileEditModal = observer(({ open, handleClose }) => {
 
             // Se houver imagem carregada, adicionar ao FormData
             if (values.image_profile instanceof File) {
+                console.log('sim tem ficheiro')
                 formData.append("image_profile", values.image_profile);
             }
 

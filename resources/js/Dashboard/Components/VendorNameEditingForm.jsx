@@ -1,11 +1,18 @@
 import { observer } from "mobx-react";
 import { Field, Form, Formik } from "formik";
-import { Box, IconButton, TextField, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import {
+    Box,
+    IconButton,
+    TextField,
+    Tooltip,
+    useMediaQuery,
+    useTheme,
+} from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import * as React from "react";
 import * as Yup from "yup";
 
-const VendorNameEdtitingForm = observer(
+const VendorNameEditingForm = observer(
     ({ handleNameSubmit, vendor, isSmallScreen }) => {
         const namevalidationSchema = Yup.object({
             first_name: Yup.string()
@@ -39,11 +46,14 @@ const VendorNameEdtitingForm = observer(
                         sx={{
                             ml: 2,
                             display: "flex",
-                            width: smallerThanMedium? "270px" : smallerThanLarge? "290px" : "386px",
+                            width: smallerThanMedium
+                                ? "270px"
+                                : smallerThanLarge
+                                  ? "290px"
+                                  : "386px",
                             gap: 2,
                             justifyContent: "flex-start",
                             alignItems: "center",
-
                         }}
                     >
                         {/* Campo Primeiro Nome */}
@@ -51,7 +61,7 @@ const VendorNameEdtitingForm = observer(
                             as={TextField}
                             name="first_name"
                             label="Primeiro Nome"
-                            sx={{ width: "40%"}}
+                            sx={{ width: "40%" }}
                             error={
                                 touched.first_name && Boolean(errors.first_name)
                             }
@@ -63,7 +73,7 @@ const VendorNameEdtitingForm = observer(
                             as={TextField}
                             name="last_name"
                             label="Último Nome"
-                            sx={{ width: "40%"}}
+                            sx={{ width: "40%" }}
                             error={
                                 touched.last_name && Boolean(errors.last_name)
                             }
@@ -94,4 +104,4 @@ const VendorNameEdtitingForm = observer(
     },
 );
 
-export default VendorNameEdtitingForm;
+export default VendorNameEditingForm;

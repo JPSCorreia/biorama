@@ -21,10 +21,9 @@ import {
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DashboardProductModal from "@/Components/DashboardProductModal.jsx";
 import { observer } from "mobx-react";
 import { productStore } from "@/Stores/index.js";
-import DashboardCreateProductModal from "@/Components/DashboardCreateProductModal.jsx";
+import { DashboardCreateProductModal, DashboardProductModal } from "@/Dashboard/Components/";
 
 const DashboardProductList = observer(({ storeId }) => {
     const [page, setPage] = useState(0);
@@ -32,7 +31,10 @@ const DashboardProductList = observer(({ storeId }) => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [initialEditMode, setInitialEditMode] = useState(false);
-    const [deleteDialog, setDeleteDialog] = useState({ open: false, product: null });
+    const [deleteDialog, setDeleteDialog] = useState({
+        open: false,
+        product: null,
+    });
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
@@ -121,18 +123,31 @@ const DashboardProductList = observer(({ storeId }) => {
                 </Box>
             </Box>
             <Box>
-                <Button onClick={handleOpenCreateModal}>Adicionar Produto</Button>
+                <Button onClick={handleOpenCreateModal}>
+                    Adicionar Produto
+                </Button>
             </Box>
 
             {/* Tabela de produtos */}
-            <TableContainer component={Paper} sx={{ mt: 3, boxShadow: 3, borderRadius: 2 }}>
+            <TableContainer
+                component={Paper}
+                sx={{ mt: 3, boxShadow: 3, borderRadius: 2 }}
+            >
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>Nome</strong></TableCell>
-                            <TableCell><strong>Descrição</strong></TableCell>
-                            <TableCell><strong>Preço</strong></TableCell>
-                            <TableCell><strong>Ações</strong></TableCell>
+                            <TableCell>
+                                <strong>Nome</strong>
+                            </TableCell>
+                            <TableCell>
+                                <strong>Descrição</strong>
+                            </TableCell>
+                            <TableCell>
+                                <strong>Preço</strong>
+                            </TableCell>
+                            <TableCell>
+                                <strong>Ações</strong>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -142,13 +157,25 @@ const DashboardProductList = observer(({ storeId }) => {
                                 <TableCell>{product.description}</TableCell>
                                 <TableCell>{product.price} €</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleViewProduct(product)}>
+                                    <IconButton
+                                        onClick={() =>
+                                            handleViewProduct(product)
+                                        }
+                                    >
                                         <VisibilityIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => handleEditProduct(product)}>
+                                    <IconButton
+                                        onClick={() =>
+                                            handleEditProduct(product)
+                                        }
+                                    >
                                         <BorderColorIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => confirmDeleteProduct(product)}>
+                                    <IconButton
+                                        onClick={() =>
+                                            confirmDeleteProduct(product)
+                                        }
+                                    >
                                         <DeleteIcon color="error" />
                                     </IconButton>
                                 </TableCell>
@@ -174,7 +201,7 @@ const DashboardProductList = observer(({ storeId }) => {
                 open={showCreateModal}
                 handleClose={handleCloseCreateModal}
                 storeId={storeId}
-                handleViewProduct={handleViewProduct}  // Passamos a função
+                handleViewProduct={handleViewProduct} // Passamos a função
             />
 
             {/* Modal para visualização/edição de produto */}
@@ -190,7 +217,9 @@ const DashboardProductList = observer(({ storeId }) => {
 
             {/* Diálogo de confirmação de exclusão */}
             <Dialog open={deleteDialog.open} onClose={handleCloseDeleteDialog}>
-                <DialogTitle>Tem a certeza que deseja apagar este produto?</DialogTitle>
+                <DialogTitle>
+                    Tem a certeza que deseja apagar este produto?
+                </DialogTitle>
                 <DialogActions>
                     <Button onClick={handleCloseDeleteDialog} color="primary">
                         Cancelar
