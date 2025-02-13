@@ -119,7 +119,9 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                     sx={{
                         display: "flex",
                         flexDirection: "column",
-                        width: isSmallScreen ? "90%" : "50%",
+
+                        width: isSmallScreen ? "100vh" : "50%",
+                        height: isSmallScreen ? "100vh" : "auto",
                         padding: "20px",
                         borderRadius: "10px",
                         backgroundColor: "background.paper",
@@ -135,7 +137,8 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                     </Box>
 
                     {/* Formulário de criação de produto */}
-                    <form onSubmit={formik.handleSubmit}>
+                    <Box component="form" sx={{display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between"}}onSubmit={formik.handleSubmit}>
+                        <Box>
                         <TextField
                             fullWidth
                             label="Nome do Produto"
@@ -160,7 +163,7 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                             helperText={formik.touched.description && formik.errors.description}
                             sx={{ mb: 2 }}
                         />
-                        <Box sx={{ display: "flex", gap: 2 }}>
+                                                <Box sx={{ display: "flex", gap: 2 }}>
                             <TextField
                                 label="Stock"
                                 name="stock"
@@ -192,9 +195,8 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                                 helperText={formik.touched.discount && formik.errors.discount}
                             />
                         </Box>
-
-                        {/* Imagens de produto */}
-                        <Box sx={{ mt: 4 }}>
+                                                {/* Imagens de produto */}
+                                                <Box sx={{ mt: 4 }}>
                             <Typography variant="h6">Imagens do Produto</Typography>
                             <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                                 {previewImages.map((image, index) => (
@@ -219,13 +221,17 @@ const DashboardCreateProductModal = ({ open, handleClose, storeId, handleViewPro
                                 </IconButton>
                             </Box>
                         </Box>
+                        </Box>
+
+
+
 
                         <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
                             <Button type="submit" variant="contained" color="primary">
                                 Criar Produto
                             </Button>
                         </Box>
-                    </form>
+                    </Box>
                 </Box>
             </Modal>
 

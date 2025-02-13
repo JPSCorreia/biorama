@@ -25,6 +25,7 @@ const DashboardProductModal = observer(
         const isMediumScreen = useMediaQuery(
             theme.breakpoints.between("sm", "md"),
         );
+        const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
 
         const [isEditing, setIsEditing] = useState(initialEditMode || false);
         const [loading, setLoading] = useState(false);
@@ -92,18 +93,16 @@ const DashboardProductModal = observer(
                         left: "50%",
                         transform: "translate(-50%, -50%)",
                         width:
-                            isSmallScreen || isMediumScreen ? "100vw" : "60%",
+                        smallerThanMedium ? "100vw" : "60%",
                         height:
-                            isSmallScreen || isMediumScreen ? "100vh" : "auto",
-                        padding: isSmallScreen || isMediumScreen ? 0 : "20px",
-                        borderRadius:
-                            isSmallScreen || isMediumScreen ? 0 : "10px",
+                        smallerThanMedium ? "100vh" : "auto",
                         backgroundColor: "background.paper",
                         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
                         overflowY: "auto",
                         outline: "none",
                         display: "flex",
                         flexDirection: "column",
+                        p: 3,
                     }}
                 >
                     <Box

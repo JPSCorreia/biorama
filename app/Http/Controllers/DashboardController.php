@@ -9,6 +9,8 @@ use App\Models\OrderStoreProduct;
 use App\Models\Status;
 use App\Models\Store;
 use App\Models\Vendor;
+use App\Models\StoreGallery;
+use App\Models\StoreAddress;
 use App\Notifications\OrderCreated;
 use App\Notifications\OrderStatusUpdated;
 use Carbon\Carbon;
@@ -16,7 +18,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -92,6 +95,238 @@ class DashboardController extends Controller
             'message' => 'Nome de Vendedor actualizado com sucesso!',
             'vendor' => $vendor, // Include updated data
         ], 200);
+    }
+
+    // public function updateStore(Request $request, $id)
+    // {
+    //     Log::info('Recebendo requisição para atualizar loja', ['request' => $request->all()]);
+
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'phone_number' => 'nullable|string|max:20',
+    //         'email' => 'nullable|email|max:255',
+    //         'description' => 'nullable|string',
+    //         'rating' => 'nullable|numeric|min:0|max:5',
+
+    //         // Campos da tabela store_addresses
+    //         'street_address' => 'nullable|string|max:255',
+    //         'city' => 'nullable|string|max:255',
+    //         'postal_code' => 'nullable|string|max:20',
+    //         'coordinates' => 'nullable|string',
+
+    //         // Imagens (permitir arrays vazios)
+    //         'new_images' => 'nullable|array',
+    //         'new_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+
+    //         'delete_images' => 'nullable|array',
+    //         'delete_images.*' => 'integer|exists:store_galleries,id',
+    //     ]);
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         // 🔹 Atualizar os dados da loja
+    //         $store = Store::findOrFail($id);
+    //         $store->update([
+    //             'name' => $validated['name'],
+    //             'phone_number' => $validated['phone_number'] ?? null,
+    //             'email' => $validated['email'] ?? null,
+    //             'description' => $validated['description'] ?? null,
+    //             'rating' => $validated['rating'] ?? 0,
+    //         ]);
+
+    //         // Extrair latitude e longitude corretamente
+    //         $latLng = explode(',', $validated['coordinates']);
+    //         $latitude = isset($latLng[0]) ? trim($latLng[0]) : 0;
+    //         $longitude = isset($latLng[1]) ? trim($latLng[1]) : 0;
+
+    //         // Atualizar ou criar o endereço sem as coordenadas primeiro
+    //         $storeAddress = StoreAddress::updateOrCreate(
+    //             ['store_id' => $store->id],
+    //             [
+    //                 'street_address' => $validated['street_address'] ?? null,
+    //                 'city' => $validated['city'] ?? null,
+    //                 'postal_code' => $validated['postal_code'] ?? null,
+    //             ]
+    //         );
+
+    //         // Atualizar as coordenadas separadamente usando SQL puro
+    //         if ($latitude != 0 && $longitude != 0) {
+    //             DB::statement("UPDATE store_addresses SET coordinates = ST_GeomFromText('POINT($latitude $longitude)') WHERE store_id = ?", [$store->id]);
+    //         }
+
+
+
+    //         // 🔹 Remover imagens antigas da galeria
+    //         $deleteImages = $request->input('delete_images', []);
+    //         if (!is_array($deleteImages)) {
+    //             $deleteImages = explode(',', $deleteImages); // Se vier como string separada por vírgulas
+    //         }
+
+    //         if (!empty($deleteImages)) {
+    //             Log::info('Removendo imagens', ['delete_images' => $deleteImages]);
+    //             $imagesToDelete = StoreGallery::whereIn('id', $deleteImages)->get();
+    //             foreach ($imagesToDelete as $image) {
+    //                 Storage::disk('public')->delete($image->image_path); // Apaga o ficheiro físico
+    //                 $image->delete(); // Apaga do banco de dados
+    //             }
+    //         }
+
+    //         // 🔹 Adicionar novas imagens à galeria (somente se existirem)
+    //         if ($request->hasFile('new_images')) {
+    //             foreach ($request->file('new_images') as $image) {
+    //                 $path = $image->store('store_galleries', 'public');
+    //                 StoreGallery::create([
+    //                     'store_id' => $store->id,
+    //                     'image_path' => $path,
+    //                 ]);
+    //             }
+    //         } else {
+    //             Log::info('Nenhuma nova imagem foi enviada.');
+    //         }
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'message' => 'Loja atualizada com sucesso!',
+    //             'data' => $store->load('galleries', 'addresses'), // Carregar os endereços e galerias também
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //             // Log detalhado do erro
+    //         Log::error('Erro ao atualizar loja', [
+    //             'error' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString(),
+    //             'request' => $request->all()
+    //         ]);
+
+    //         return response()->json([
+    //             'message' => 'Erro ao atualizar a loja.',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    public function updateStore(Request $request, Store $store)
+    {
+        //dd($request);
+        // Validação dos dados recebidos
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone_number' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255',
+            'description' => 'nullable|string',
+            'street_address' => 'required|string|max:255',
+            'city' => 'required|string|max:50',
+            'postal_code' => 'required|string|max:10',
+            'coordinates' => 'required|string',
+            'new_images' => 'nullable|array',
+            'new_images.*' => 'nullable|string',
+            'delete_images' => 'nullable|array', // IDs das imagens a serem apagadas
+
+        ]);
+
+        try {
+            // Separa latitude e longitude
+            [$latitude, $longitude] = explode(',', $validated['coordinates']);
+
+            // Atualiza a loja com os novos dados
+            DB::table('stores')->where('id', $store->id)->update([
+                'name' => $validated['name'],
+                'phone_number' => $validated['phone_number'],
+                'email' => $validated['email'],
+                'description' => $validated['description'],
+            ]);
+
+            // Atualiza a morada da loja
+            $store->addresses()->update([
+                'street_address' => $validated['street_address'],
+                'city' => $validated['city'],
+                'postal_code' => $validated['postal_code'],
+                'coordinates' => DB::raw("ST_GeomFromText('POINT({$longitude} {$latitude})')")
+            ]);
+
+            // Apaga imagens marcadas para exclusão (soft delete)
+            if (!empty($validated['delete_images'])) {
+                $store->galleries()->whereIn('id', $validated['delete_images'])->delete();
+            }
+
+            // processa as novas imagens em base64, se houver
+            if (!empty($validated['new_images'])) {
+                $imageLinks = []; // Array para armazenar os caminhos das novas imagens
+
+                foreach ($validated['new_images'] as $index => $base64Image) {
+                    // Verifica e extrai o tipo da imagem base64
+                    if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+                        $imageType = $matches[1]; // Obtém a extensão do ficheiro
+                        $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
+
+                        if ($imageData === false) {
+                            throw new \Exception("Erro ao decodificar imagem base64.");
+                        }
+
+                        // Gera um nome de ficheiro único
+                        $imageName = 'store_' . $store->id . '_' . uniqid() . '.' . $imageType;
+
+                        // Caminho para armazenar a imagem
+                        $imagePath = "store/{$imageName}";
+
+                        // Salva o ficheiro na pasta pública do storage
+                        Storage::disk('public')->put($imagePath, $imageData);
+
+                        // Guarda o caminho no array
+                        $imageLinks[] = "storage/{$imagePath}";
+
+                        // Registra no banco de dados
+                        $store->galleries()->create([
+                            'image_link' => "storage/{$imagePath}",
+                        ]);
+                    } else {
+                        throw new \Exception("Formato de imagem inválido.");
+                    }
+                }
+            }
+
+            $updatedStore = Store::select(
+                'id',
+                'name',
+                'description',
+                'phone_number',
+                'email',
+                'rating'
+            )
+                ->where('id', $store->id)
+                ->with([
+                    'addresses' => function ($query) {
+                        $query->select(
+                            'id',
+                            'store_id',
+                            'street_address',
+                            'city',
+                            'postal_code',
+                            DB::raw('ST_X(coordinates) as longitude'),
+                            DB::raw('ST_Y(coordinates) as latitude')
+                        );
+                    },
+                    'products',
+                    'reviews',
+                    'galleries'
+                ])
+                ->first();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Loja atualizada com sucesso!',
+                'store' => $updatedStore,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar a loja: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     // Update the rest of the vendor's information
@@ -221,7 +456,7 @@ class DashboardController extends Controller
         return redirect()->route('login')->withErrors(['message' => 'Acesso não autorizado.']);
     }
 
-    //Material UI dashboard component show all stores return in jason
+    //Material UI dashboard component show all stores return in json
     public function DashboardVendorStores(Request $request)
     {
         $user = Auth::user();
@@ -782,43 +1017,44 @@ class DashboardController extends Controller
         ];
     });
 
-// **Calcular total de encomendas e normalizar percentagem para o gráfico**
-$totalTreatedOrders = $storeData->sum('treated_orders');
-$totalOrdersGlobal = $storeData->sum('total_orders');
+    // // **Calcular total de encomendas e normalizar percentagem para o gráfico**
+    // $totalTreatedOrders = $storeData->sum('treated_orders');
+    // $totalOrdersGlobal = $storeData->sum('total_orders');
 
-$storeData = $storeData->map(function ($store) use ($totalTreatedOrders) {
-    return [
-        'name' => $store['name'],
-        'total_revenue' => $store['total_revenue'],
-        'completed_percentage' => $store['completed_percentage'],
-        'canceled_percentage' => $store['canceled_percentage'],
-        'treated_percentage' => $totalTreatedOrders > 0
-            ? round(($store['treated_orders'] / $totalTreatedOrders) * 100, 2)
-            : 0, // Normalizar para o gráfico de pizza
-        'total_orders' => $store['total_orders'],
-        'handling_index' => $store['handling_index'],
-    ];
-});
+    // $storeData = $storeData->map(function ($store) use ($totalTreatedOrders) {
+    //     return [
+    //         'name' => $store['name'],
+    //         'total_revenue' => $store['total_revenue'],
+    //         'completed_percentage' => $store['completed_percentage'],
+    //         'canceled_percentage' => $store['canceled_percentage'],
+    //         'treated_percentage' => $totalTreatedOrders > 0
+    //             ? round(($store['treated_orders'] / $totalTreatedOrders) * 100, 2)
+    //             : 0, // Normalizar para o gráfico de pizza
+    //         'total_orders' => $store['total_orders'],
+    //         'handling_index' => $store['handling_index'],
+    //     ];
+    // });
 
-return response()->json([
-    'revenue_today' => $revenueToday,
-    'today_diff_percentage' => $todayDiffPercentage,
-    'revenue_current_month' => $revenueCurrentMonth,
-    'month_diff_percentage' => $monthDiffPercentage,
-    'revenue_current_year' => $revenueCurrentYear,
-    'year_diff_percentage' => $yearDiffPercentage,
-    'total_orders_current_year' => $totalOrdersCurrentYear,
-    'cancelled_percentage' => $cancelledPercentage,
-    'revenue_this_week' => $revenueThisWeek,
-    'weekly_diff_percentage' => $weeklyDiffPercentage,
-    'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
-    'monthly_revenue_last_year' => $monthlyRevenueLastYear,
-    'annual_orders_current_year' => $monthlyOrdersCurrentYear,
-    'annual_orders_last_year' => $monthlyOrdersLastYear,
-    'total_orders' => $totalOrdersGlobal, // Corrigido para mostrar o total real
-    'stores' => $storeData
-]);
+    // return response()->json([
+    //     'revenue_today' => $revenueToday,
+    //     'today_diff_percentage' => $todayDiffPercentage,
+    //     'revenue_current_month' => $revenueCurrentMonth,
+    //     'month_diff_percentage' => $monthDiffPercentage,
+    //     'revenue_current_year' => $revenueCurrentYear,
+    //     'year_diff_percentage' => $yearDiffPercentage,
+    //     'total_orders_current_year' => $totalOrdersCurrentYear,
+    //     'cancelled_percentage' => $cancelledPercentage,
+    //     'revenue_this_week' => $revenueThisWeek,
+    //     'weekly_diff_percentage' => $weeklyDiffPercentage,
+    //     'monthly_revenue_current_year' => $monthlyRevenueCurrentYear,
+    //     'monthly_revenue_last_year' => $monthlyRevenueLastYear,
+    //     'annual_orders_current_year' => $monthlyOrdersCurrentYear,
+    //     'annual_orders_last_year' => $monthlyOrdersLastYear,
+    //     'total_orders' => $totalOrdersGlobal, // Corrigido para mostrar o total real
+    //     'stores' => $storeData
+    // ]);
 
     }
+
 
 }

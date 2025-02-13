@@ -174,7 +174,7 @@ const Home = observer(() => {
                             }}
                         >
                             {isEditing.vendorName ? (
-                                <VendorNameEdtitingForm
+                                <VendorNameEditingForm
                                     handleNameSubmit={handleNameSubmit}
                                     vendor={vendor}
                                     isSmallScreen={isSmallScreen}

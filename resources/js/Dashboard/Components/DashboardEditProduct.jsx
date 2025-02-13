@@ -86,7 +86,7 @@ const DashboardEditProduct = observer(
             <Box
                 component="form"
                 onSubmit={formik.handleSubmit}
-                sx={{ mt: 3, pt: 3 }}
+                sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
             >
                 <Box
                     sx={{
@@ -231,6 +231,8 @@ const DashboardEditProduct = observer(
                         flexDirection: "row",
                         gap: 2,
                         mt: 4,
+                        justifyContent: "flex-end",
+                        alignSelf: "flex-end",
                     }}
                 >
                     <Button variant="contained" component="label">
@@ -244,9 +246,6 @@ const DashboardEditProduct = observer(
                     </Button>
                     <Button type="submit" variant="contained">
                         Guardar
-                    </Button>
-                    <Button onClick={onCancel} variant="contained">
-                        Cancelar
                     </Button>
                 </Box>
             </Box>

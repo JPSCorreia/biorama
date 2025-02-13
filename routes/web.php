@@ -86,9 +86,6 @@ Route::get('/checkout', fn () => Inertia::render('CheckoutFlow'))->name('checkou
 // Individual store page
 Route::get('/loja/{id}', [StoreController::class, 'showStore'])->name('store.show');
 
-
-Route::post('/stores/{store}/update', [StoreController::class, 'update'])->name('stores.update');
-
 Route::post('/create/store', [StoreController::class, 'Store'])->name('create.store');
 // Guest routes (only accessible when not authenticated)
 Route::middleware('guest')->group(function () {
@@ -179,6 +176,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/encomendas-user', [OrderController::class, 'index'])->name('orders');
     Route::get('/encomenda-user/{id}', [OrderController::class, 'show'])->name('order.show');
 
+
     // Vendor dashboard
     Route::prefix('/dashboard')->group(function () {
 
@@ -196,6 +194,10 @@ Route::middleware(['auth'])->group(function () {
             ->name('dashboard.stores');
         Route::get('/lojas/listar', [DashboardController::class,'DashboardVendorStores'])
             ->name('dashboard.stores.list');
+    Route::post('/lojas/editar/{store}', [StoreController::class, 'update'])->name('stores.update');
+
+
+        // Route::post('/lojas/editar/{loja}', [DashboardController::class, 'updateStore'])->name('edit_store');
 
         Route::middleware(['auth'])->get('/vendor/stores', [DashboardController::class, 'getVendorStores']);
 

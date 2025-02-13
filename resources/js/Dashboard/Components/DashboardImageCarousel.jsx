@@ -6,13 +6,12 @@ import { fixImagePath } from "../../utils/utils.js";
 const DashboardImageCarousel = ({ galleries }) => {
 
     return (
-        <Box sx={{ position: "relative", height: 200, overflow: "hidden" }}>
             <Carousel autoPlay={true} indicators={true}>
                 {galleries?.map((gallery, index) => (
                     <Box
                         key={index}
                         sx={{
-                            height: "300px",
+                            height: "250px",
                             backgroundImage: `url(${fixImagePath(gallery.image_link)})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
@@ -20,7 +19,6 @@ const DashboardImageCarousel = ({ galleries }) => {
                     ></Box>
                 ))}
             </Carousel>
-        </Box>
     );
 };
 

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import ReactMarkdown from "react-markdown";
 
 const DashboardShowProduct = ({ product }) => {
     const theme = useTheme();
-    const isSmallOrMediumScreen = useMediaQuery(theme.breakpoints.down("md")); // Para ecrãs pequenos e médios
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md")); // Para ecrãs pequenos e médios
 
     // Verifica se há imagens na galeria e define a primeira corretamente
     const [selectedImage, setSelectedImage] = useState(
@@ -12,11 +13,12 @@ const DashboardShowProduct = ({ product }) => {
     );
 
     return (
-        <Box>
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: isSmallOrMediumScreen ? "column" : "row",
+                    width: "100%",
+                    alignItems: smallerThanMedium ? "center" : "flex-start",
+                    flexDirection: smallerThanMedium ? "column" : "row",
                     gap: 2,
                 }}
             >
@@ -24,8 +26,8 @@ const DashboardShowProduct = ({ product }) => {
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: isSmallOrMediumScreen ? "column" : "row",
-                        overflowX: isSmallOrMediumScreen ? "auto" : "visible",
+                        flexDirection: smallerThanMedium ? "column" : "row",
+                        // overflowX: smallerThanMedium ? "auto" : "visible",
                         gap: 1,
                     }}
                 >
@@ -40,7 +42,7 @@ const DashboardShowProduct = ({ product }) => {
                                     overflow: "hidden",
                                     border:
                                         selectedImage === image.image_link
-                                            ? "2px solid blue"
+                                            ? `2px solid ${theme.palette.primary.main}`
                                             : "1px solid grey",
                                     cursor: "pointer",
                                 }}
@@ -64,7 +66,7 @@ const DashboardShowProduct = ({ product }) => {
                 {/* **Imagem Principal (Centro)** */}
                 <Box
                     sx={{
-                        width: isSmallOrMediumScreen ? "100%" : "40%",
+                        width: smallerThanMedium ? "100%" : "50%",
                         height: 320,
                         display: "flex",
                         justifyContent: "center",
@@ -90,16 +92,17 @@ const DashboardShowProduct = ({ product }) => {
                         flex: 1,
                         display: "flex",
                         flexDirection: "column",
+                        alignSelf: "flex-start",
+                        justifyContent: "center",
+                        minHeight: "320px",
+                        ml: 2,
                         gap: 2,
-                        width: isSmallOrMediumScreen ? "100%" : "auto",
                     }}
                 >
                     <Typography>
                         <strong>Nome:</strong> {product.name}
                     </Typography>
-                    <Typography>
-                        <strong>Descrição:</strong> {product.description}
-                    </Typography>
+
                     <Typography>
                         <strong>Stock:</strong> {product.stock}
                     </Typography>
@@ -109,9 +112,13 @@ const DashboardShowProduct = ({ product }) => {
                     <Typography>
                         <strong>Preço:</strong> {product.price} €
                     </Typography>
+                    <Box>
+                    <ReactMarkdown>
+                        {product.description}
+                    </ReactMarkdown>
+                    </Box>
                 </Box>
             </Box>
-        </Box>
     );
 };
 

@@ -5,10 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import { authStore } from "@/Stores/index.js";
 import { ThemeSwitcher } from "../Components";
 import { router, usePage } from "@inertiajs/react";
-import {
-    Box,
-    Tooltip,
-} from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import {
     Person as PersonIcon,
@@ -19,103 +16,91 @@ import {
     ExitToApp as ExitToAppIcon,
 } from "@mui/icons-material";
 import background from "../../images/background.jpg";
-import { shopStore } from "@/Stores/index.js";
+import { shopStore } from "@/Stores";
 import axios from "axios";
-
-// Function to update navigation items with stores
-const updateNavigationWithStores = (navigation) => {
-    const [stores, setStores] = useState([]);
-
-    // Function to fetch the stores of the authenticated vendor
-    useEffect(() => {
-        const fetchStores = async () => {
-            try {
-                const response = await axios.get("/dashboard/lojas/listar");
-                setStores(response.data.stores);
-            } catch (error) {
-                console.error("Erro ao carregar as lojas do vendedor:", error);
-            }
-        };
-
-        fetchStores();
-    }, []);
-
-    // Update the navigation items with the stores
-    if (!stores || stores.length === 0) {
-        return navigation;
-    }
-
-    return navigation.map((item) => {
-        if (item.segment === "dashboard/lojas" && item.children) {
-            return {
-                ...item,
-                children: [
-                    ...item.children,
-                    ...stores.map((store) => ({
-                        segment: `${store.id}`,
-                        title: store.name,
-                        icon: <StoreIcon />,
-                    })),
-                ],
-            };
-        }
-        return item;
-    });
-};
-
-// Navigation items
-const navigation = [
-    {
-        kind: "header",
-        title: "DASHBOARD",
-    },
-    {
-        segment: "dashboard/estatisticas",
-        title: "Painel de Estatísticas",
-        icon: <AssessmentIcon />,
-    },
-    {
-        kind: "divider",
-    },
-    {
-        segment: "dashboard",
-        title: "Informação Pessoal",
-        icon: <PersonIcon />,
-    },
-    {
-        kind: "divider",
-    },
-    {
-        segment: "dashboard/lojas",
-        title: "Lojas",
-        icon: <StoreIcon />,
-        children: [
-            {
-                segment: "",
-                title: "Todas as Lojas",
-                icon: <StoreIcon />,
-            },
-        ],
-    },
-    {
-        kind: "divider",
-    },
-    {
-        segment: "dashboard/encomendas",
-        title: "Encomendas",
-        icon: <ShoppingBasketIcon />,
-    },
-    {
-        kind: "divider",
-    },
-];
 
 const Dashboard = ({ children }) => {
     // Get theme
     const theme = useTheme();
 
-    // Fetch stores and update navigation
-    shopStore.setStoresData(usePage().props.stores);
+    useEffect(() => {
+        shopStore.fetchStores();
+    }, []);
+
+    // Navigation items
+    const navigation = [
+        {
+            kind: "header",
+            title: "DASHBOARD",
+        },
+        {
+            segment: "dashboard/estatisticas",
+            title: "Painel de Estatísticas",
+            icon: <AssessmentIcon />,
+        },
+        {
+            kind: "divider",
+        },
+        {
+            segment: "dashboard",
+            title: "Informação Pessoal",
+            icon: <PersonIcon />,
+        },
+        {
+            kind: "divider",
+        },
+        {
+            segment: "dashboard/lojas",
+            title: "Lojas",
+            icon: <StoreIcon />,
+            children: [
+                {
+                    segment: "",
+                    title: "Todas as Lojas",
+                    icon: <StoreIcon />,
+                },
+            ],
+        },
+        {
+            kind: "divider",
+        },
+        {
+            segment: "dashboard/encomendas",
+            title: "Encomendas",
+            icon: <ShoppingBasketIcon />,
+        },
+        {
+            kind: "divider",
+        },
+    ];
+
+    // Function to update navigation items with stores
+    const updateNavigationWithStores = (navigation) => {
+        const [stores, setStores] = useState([]);
+
+        // Update the navigation items with the stores
+        if (!stores || stores.length === 0) {
+            return navigation;
+        }
+
+        return navigation.map((item) => {
+            if (item.segment === "dashboard/lojas" && item.children) {
+                return {
+                    ...item,
+                    children: [
+                        ...item.children,
+                        ...stores.map((store) => ({
+                            segment: `${store.id}`,
+                            title: store.name,
+                            icon: <StoreIcon />,
+                        })),
+                    ],
+                };
+            }
+            return item;
+        });
+    };
+
     const updatedNavigation = updateNavigationWithStores(
         navigation,
         shopStore.stores,
@@ -131,7 +116,6 @@ const Dashboard = ({ children }) => {
     if (!authStore.user?.image_profile?.startsWith("http")) {
         image_link = `${window.location.origin}/${image_link}`;
     }
-
 
     // User information
     const session = {

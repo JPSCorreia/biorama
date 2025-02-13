@@ -17,6 +17,10 @@ import {
     Box,
     TextField,
     Typography,
+    useTheme,
+    useMediaQuery,
+    InputBase,
+    Tooltip,
 } from "@mui/material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -24,8 +28,14 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { observer } from "mobx-react";
 import { productStore } from "@/Stores/index.js";
 import { DashboardCreateProductModal, DashboardProductModal } from "@/Dashboard/Components/";
+import { styled, alpha } from "@mui/material/styles";
+import SearchIcon from "@mui/icons-material/Search";
+import ReactMarkdown from "react-markdown";
 
 const DashboardProductList = observer(({ storeId }) => {
+
+    const theme = useTheme();
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const [page, setPage] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -95,35 +105,68 @@ const DashboardProductList = observer(({ storeId }) => {
         }
     };
 
+    const Search = styled("div")(({ theme }) => ({
+        position: "relative",
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: alpha(theme.palette.common.white, 0.15),
+        "&:hover": {
+            backgroundColor: alpha(theme.palette.common.white, 0.25),
+        },
+        display: "flex",
+        // flexGrow: 1, // Ocupa todo o espaço restante
+        width: smallerThanSmall ? "90%" : "250px",
+    }));
+
+    const StyledInputBase = styled(InputBase)(({ theme }) => ({
+        color: "inherit", // Herda a cor do tema atual
+        width: "100%",
+        "& .MuiInputBase-input": {
+            padding: theme.spacing(1, 1, 1, 0),
+            paddingRight: `calc(1em + ${theme.spacing(4)})`, // Espaço para o ícone
+            paddingLeft: theme.spacing(2), // Espaçamento inicial
+            transition: theme.transitions.create("width"),
+        },
+    }));
+
     return (
-        <>
+        <Box sx={{ mb: 4 }}>
             {/* Barra verde com título e campo de pesquisa */}
-            <Box
+            <Paper
+                elevation={4}
                 sx={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: smallerThanSmall? "center" : "space-between",
                     alignItems: "center",
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.primary.contrastText,
                     mb: 3,
                     p: 2,
-                    backgroundColor: "green",
-                    color: "white",
                     borderRadius: 2,
                 }}
             >
-                <Typography variant="h5">Os meus produtos</Typography>
-                <Box sx={{ display: "flex", gap: 2 }}>
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Pesquisar produto"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ backgroundColor: "white", borderRadius: 1 }}
-                    />
-                </Box>
-            </Box>
-            <Box>
-                <Button onClick={handleOpenCreateModal}>
+                {!smallerThanSmall && <Typography variant="h5" sx={{ fontWeight: "bold" }}>Os meus produtos</Typography>}
+                <Search>
+                <StyledInputBase
+                    placeholder="Pesquisar..."
+                    value={searchTerm}
+                    onChange={(e) => setQuery(e.target.value)}
+                    inputProps={{ "aria-label": "search" }}
+                />
+                {/* Ícone de lupa à direita */}
+                <IconButton
+                    type="submit"
+                    sx={{
+                        position: "absolute",
+                        right: 0,
+                        color: "white",
+                    }}
+                >
+                    <SearchIcon />
+                </IconButton>
+            </Search>
+            </Paper>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button onClick={handleOpenCreateModal} variant="contained">
                     Adicionar Produto
                 </Button>
             </Box>
@@ -142,10 +185,10 @@ const DashboardProductList = observer(({ storeId }) => {
                             <TableCell>
                                 <strong>Descrição</strong>
                             </TableCell>
-                            <TableCell>
+                            <TableCell align="center">
                                 <strong>Preço</strong>
                             </TableCell>
-                            <TableCell>
+                            <TableCell align="center">
                                 <strong>Ações</strong>
                             </TableCell>
                         </TableRow>
@@ -154,9 +197,10 @@ const DashboardProductList = observer(({ storeId }) => {
                         {productStore.products.map((product) => (
                             <TableRow key={product.id}>
                                 <TableCell>{product.name}</TableCell>
-                                <TableCell>{product.description}</TableCell>
-                                <TableCell>{product.price} €</TableCell>
-                                <TableCell>
+                                <TableCell><ReactMarkdown>{product.description}</ReactMarkdown></TableCell>
+                                <TableCell align="center">{product.price} €</TableCell>
+                                <TableCell align="center">
+                                    <Tooltip title="Visualizar">
                                     <IconButton
                                         onClick={() =>
                                             handleViewProduct(product)
@@ -164,6 +208,8 @@ const DashboardProductList = observer(({ storeId }) => {
                                     >
                                         <VisibilityIcon />
                                     </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Editar">
                                     <IconButton
                                         onClick={() =>
                                             handleEditProduct(product)
@@ -171,6 +217,8 @@ const DashboardProductList = observer(({ storeId }) => {
                                     >
                                         <BorderColorIcon />
                                     </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Apagar">
                                     <IconButton
                                         onClick={() =>
                                             confirmDeleteProduct(product)
@@ -178,6 +226,7 @@ const DashboardProductList = observer(({ storeId }) => {
                                     >
                                         <DeleteIcon color="error" />
                                     </IconButton>
+                                    </Tooltip>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -224,12 +273,12 @@ const DashboardProductList = observer(({ storeId }) => {
                     <Button onClick={handleCloseDeleteDialog} color="primary">
                         Cancelar
                     </Button>
-                    <Button onClick={handleDeleteProduct} color="secondary">
+                    <Button onClick={handleDeleteProduct} color="error">
                         Apagar
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </Box>
     );
 });
 

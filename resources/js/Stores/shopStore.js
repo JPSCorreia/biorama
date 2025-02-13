@@ -1,101 +1,104 @@
-import {action, makeObservable, observable, runInAction} from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import { router } from "@inertiajs/react";
 import axios from "axios";
 
 class ShopStore {
     stores = []; // Lista de todas as lojas
-    currentStore = null; // Loja atualmente selecionada
-    storeRating = null; // Rating da loja selecionada
-    storeAddresses = null; // Endereços da loja selecionada
-    storeProducts = null; // Produtos da loja selecionada
-    storeReviews = null; // Avaliações da loja selecionada
-    storeGalleries = null; // Galerias da loja selecionada
 
     constructor() {
         makeObservable(this, {
             stores: observable,
-            currentStore: observable,
-            storeRating: observable,
-            storeAddresses: observable,
-            storeProducts: observable,
-            storeReviews: observable,
-            storeGalleries: observable,
-            DeleteStore:action,
+            fetchStores: action,
+            addStore: action,
+            updateStore: action,
+            deleteStore: action,
         });
 
         makePersistable(this, {
             name: "shopStore",
-            properties: ["stores", "currentStore"],
-            storage: window.sessionStorage, // Dados persistem na sessão
+            properties: ["stores"],
+            storage: window.sessionStorage,
         });
     }
 
-
-    // Define os dados das lojas
-    setStoresData(storesData) {
-        runInAction(() => {
-            if (!this.stores[0] ) {
-                this.stores = storesData;
-            }
-        });
+    validateStore(store) {
+        if (!store.name) throw new Error("O campo _name é obrigatório.");
+        if (!store.phone_number)
+            throw new Error("O campo phone_number é obrigatório.");
+        if (!store.email) throw new Error("O campo email é obrigatório.");
+        if (!store.description)
+            throw new Error("O campo description é obrigatório.");
+        return true;
     }
 
-    // Define os dados da loja selecionada
-    setStoreData(storeData) {
-        runInAction(() => {
-                this.currentStore = storeData;
-
-
-            this.storeRating = storeData?.rating || null;
-            this.storeAddresses = storeData?.addresses || [];
-            this.storeProducts = storeData?.products || [];
-            this.storeReviews = storeData?.reviews || [];
-            this.storeGalleries = storeData?.galleries || [];
-        });
-    }
-
-    fetchStores = async () => {
+    fetchStores = action(async () => {
         try {
-            const response = await axios.get('/dashboard/lojas/listar');
-            this.setStoreData(response.data.stores)
-
+            const response = await axios.get("/dashboard/lojas/listar");
+            runInAction(() => {
+                this.stores = response.data.stores;
+            });
         } catch (error) {
-            console.error('Erro ao carregar as lojas do vendedor:', error);
+            console.error("Erro ao carregar as lojas:", error);
         }
-    };
+    });
 
-    // Cria uma nova loja e o endereço associado
-    async createStore(storeData) {
-
+    addStore = action((store) => {
         try {
-            const processedData = { ...storeData };
+            // this.validateStore(store);
+            runInAction(() => {
+                this.stores.push(store);
+            });
+        } catch (error) {
+            console.error("Erro na validação:", error.message);
+        }
+    });
 
-            if (!storeData.image_link || storeData.image_link.length === 0) {
-                delete processedData.image_link; // Remove o campo se não houver imagens
-            }
-
-            // Envia os dados para o backend
-            const response = await axios.post("/create/store", processedData);
-
+    deleteStore = action(async (storeId) => {
+        try {
+            const response = await axios.delete(`/dashboard/lojas/${storeId}`);
             if (response.data.success) {
+                runInAction(() => {
+                    this.stores = this.stores.filter(
+                        (store) => store.id !== storeId,
+                    );
+                });
+                router.visit("/dashboard/lojas", {
+                    preserveState: true,
+                    preserveScroll: true,
+                });
             }
-            this.stores = response.data.stores;
-
-            return { success: true };
         } catch (error) {
-            console.error("Erro inesperado ao criar a loja Front End:", error.message);
-            return { success: false, message: error.message };
+            console.error("Erro ao apagar a loja:", error);
         }
-    }
+    });
 
-    navigateToStore(storeId) {
-        router.get(`/dashboard/lojas/${storeId}`); // Rota dinâmica para exibir informações da loja
-    }
-
-    async updateStore(storeId, updatedData) {
+    updateStore = action((id, updatedStore) => {
         try {
-            const response = await axios.post(`/stores/${storeId}/update`, updatedData);
+
+            // this.validateStore(updatedStore); // Validação dos dados da loja
+
+            runInAction(() => {
+                const storeIndex = this.stores.findIndex(
+                    (store) => store.id === id,
+                );
+                if (storeIndex !== -1) {
+                    this.stores[storeIndex] = {
+                        ...this.stores[storeIndex],
+                        ...updatedStore,
+                    };
+                } else {
+                    console.warn(`Loja com ID ${id} não encontrada.`);
+                }
+            });
+        } catch (error) {
+            console.error("Erro na validação ou atualização:", error.message);
+        }
+    });
+
+    async oldUpdateStore(storeId, updatedData) {
+        try {
+            const response = await axios.post(`/dashboard/lojas/editar/${storeId}`, updatedData);
 
             if (response.data.success) {
                 runInAction(() => {
@@ -113,74 +116,6 @@ class ShopStore {
         }
     }
 
-    async addreview(reviewData) {
-        try {
-            const response = await axios.post("/addreview", reviewData);
-            if (response.status === 200) {
-                runInAction(() => {
-                    this.storeReviews.push(reviewData);
-                });
-                return { success: true };
-            }
-        } catch (error) {
-            console.error("Erro ao adicionar avaliação:", error);
-            return { success: false, error };
-        }
-    }
-
-    DeleteStore = async (storeId) => {
-        try {
-            const response = await axios.delete(`/dashboard/lojas/${storeId}`);
-            if (response.data.success) {
-                this.stores = response.data.stores;
-
-                // Redireciona para /dashboard/stores
-                const navigate = (path) => {
-                    router.visit(path, {
-                        preserveState: true,
-                        preserveScroll: true,
-                    });
-                };
-
-                navigate('/dashboard/lojas');
-            }
-        } catch (error) {
-            console.error('Erro ao apagar a loja:', error);
-        }
-    };
-
-    getStoreById = (storeId) => {
-        return this.stores.find(store => store.id === storeId) || null;
-    };
-
-    updateStoreDataById = (storeId, updatedData) => {
-        runInAction(() => {
-            const storeIndex = this.stores.findIndex(store => store.id === storeId);
-            if (storeIndex !== -1) {
-                this.stores[storeIndex] = { ...this.stores[storeIndex], ...updatedData };
-            }
-        });
-    };
-
-    // Limpa os dados da loja atual
-    clearStoreData() {
-        runInAction(() => {
-            this.currentStore = null;
-            this.storeRating = null;
-            this.storeAddresses = null;
-            this.storeProducts = null;
-            this.storeReviews = null;
-            this.storeGalleries = null;
-        });
-    }
-
-    // Limpa todas as lojas
-    clearAllStores() {
-        runInAction(() => {
-            this.stores = [];
-            this.clearStoreData();
-        });
-    }
 }
 
 export const shopStore = new ShopStore();

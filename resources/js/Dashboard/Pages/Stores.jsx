@@ -28,8 +28,6 @@ const Stores = observer(() => {
 
     const stores = shopStore.stores;
 
-    console.log(stores)
-
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));

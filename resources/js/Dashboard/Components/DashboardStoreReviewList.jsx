@@ -28,15 +28,15 @@ console.log("user no review", reviews)
     };
 
     return (
-        <TableContainer component={Paper} sx={{ mt: 3, boxShadow: 3, borderRadius: 2 }}>
+        <TableContainer component={Paper} elevation={4} sx={{ mb: 4, p: 2, borderRadius: "6px"  }}>
             <Table>
                 <TableHead>
                     <TableRow>
                         <TableCell><strong>ID</strong></TableCell>
                         <TableCell><strong>Autor</strong></TableCell>
                         <TableCell><strong>Comentário</strong></TableCell>
-                        <TableCell><strong>Avaliação</strong></TableCell>
-                        <TableCell><strong>Data</strong></TableCell>
+                        <TableCell align="center"><strong>Avaliação</strong></TableCell>
+                        <TableCell align="center"><strong>Data</strong></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -45,10 +45,10 @@ console.log("user no review", reviews)
                             <TableCell>{review.id}</TableCell>
                             <TableCell>{review.user?.first_name || "Anónimo"}</TableCell>
                             <TableCell>{review.comment}</TableCell>
-                            <TableCell>
+                            <TableCell align="center">
                                 <Rating value={review.rating} readOnly />
                             </TableCell>
-                            <TableCell>{new Date(review.created_at).toLocaleDateString()}</TableCell>
+                            <TableCell align="center">{new Date(review.created_at).toLocaleDateString()}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

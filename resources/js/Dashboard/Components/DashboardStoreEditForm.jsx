@@ -24,6 +24,9 @@ const CenterMapOnPostalCode = ({ position }) => {
 };
 const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
     const theme = useTheme();
+    const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
+    // console.log("DashboardStoreEditForm Store name:", store.name);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [loading, setLoading] = useState(false);
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -187,26 +190,40 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                 pt: 3,
             }}
         >
+            <TextField
+                label="Descrição"
+                name="description"
+                onChange={formik.handleChange}
+                value={formik.values.description}
+                error={Boolean(formik.errors.description)}
+                helperText={
+                    formik.touched.description && formik.errors.description
+                }
+                fullWidth
+                multiline
+                rows={4}
+            />
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "row",
+                    flexDirection: smallerThanMedium ? "column" : "row",
                     justifyContent: "space-between",
                     width: "100%",
                     gap: 5,
+                    mt: 2,
                 }}
             >
                 <Box
                     sx={{
-                        width: "55%",
+                        width: smallerThanMedium? "100%" : "55%",
                     }}
                 >
                     <Box
                         sx={{
                             display: "flex",
-                            flexDirection: isSmallScreen ? "column" : "row",
-                            gap: 5,
+                            flexDirection: smallerThanMedium ? "column" : "row",
                             mb: 2,
+                            gap: 2,
                         }}
                     >
                         <TextField
@@ -216,9 +233,7 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                             value={formik.values.name}
                             error={Boolean(formik.errors.name)}
                             helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.name && formik.errors.name}
-                                </Box>
+                                formik.touched.name && formik.errors.name
                             }
                             fullWidth
                         />
@@ -229,10 +244,8 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                             value={formik.values.phone_number}
                             error={Boolean(formik.errors.phone_number)}
                             helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.phone_number &&
-                                        formik.errors.phone_number}
-                                </Box>
+                                formik.touched.phone_number &&
+                                formik.errors.phone_number
                             }
                             fullWidth
                         />
@@ -252,32 +265,12 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                             value={formik.values.email}
                             error={Boolean(formik.errors.email)}
                             helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.email &&
-                                        formik.errors.email}
-                                </Box>
+                                formik.touched.email && formik.errors.email
                             }
                             fullWidth
                         />
                     </Box>
-                    <Box>
-                        <TextField
-                            label="Descrição"
-                            name="description"
-                            onChange={formik.handleChange}
-                            value={formik.values.description}
-                            error={Boolean(formik.errors.description)}
-                            helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.description &&
-                                        formik.errors.description}
-                                </Box>
-                            }
-                            fullWidth
-                            multiline
-                            rows={4}
-                        />
-                    </Box>
+
                     <Box
                         sx={{
                             display: "flex",
@@ -293,10 +286,8 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                             value={formik.values.street_address}
                             error={Boolean(formik.errors.street_address)}
                             helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.street_address &&
-                                        formik.errors.street_address}
-                                </Box>
+                                formik.touched.street_address &&
+                                formik.errors.street_address
                             }
                             fullWidth
                         />
@@ -316,9 +307,7 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                             value={formik.values.city}
                             error={Boolean(formik.errors.city)}
                             helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.city && formik.errors.city}
-                                </Box>
+                                formik.touched.city && formik.errors.city
                             }
                             fullWidth
                         />
@@ -329,10 +318,8 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                             value={formik.values.postal_code}
                             error={Boolean(formik.errors.postal_code)}
                             helperText={
-                                <Box sx={{ minHeight: "20px" }}>
-                                    {formik.touched.postal_code &&
-                                        formik.errors.postal_code}
-                                </Box>
+                                formik.touched.postal_code &&
+                                formik.errors.postal_code
                             }
                             fullWidth
                         />
@@ -340,15 +327,14 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                 </Box>
                 <Box
                     sx={{
-                        width: "45%",
+                        width: smallerThanMedium? "100%" : "45%",
                     }}
                 >
                     <Box
                         sx={{
-                            height: "400px",
+                            height: "273px",
                             width: "100%",
                             border: "1px solid #ccc",
-                            borderRadius: "8px",
                             marginBottom: "16px",
                         }}
                     >
@@ -363,7 +349,7 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                                           store.longitude || -9.1355,
                                       ]
                             }
-                            zoom={13}
+                            zoom={12}
                             style={{ height: "100%", width: "100%" }}
                         >
                             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -393,11 +379,13 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                 fullWidth
                 sx={{ display: "none" }}
             />
-            <Box>
-                <Typography variant="h6" sx={{ mt: 4 }}>
+            <Box
+                sx={{ display: "flex", flexDirection: "column", width: "100%" }}
+            >
+                <Typography variant="h6" sx={{ mt: 1 }}>
                     Imagens Existentes
                 </Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
                     {existingImages.map((imageObj, index) => (
                         <Box
                             key={imageObj.id}
@@ -430,10 +418,12 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                 </Box>
 
                 {/* Exibição de novas imagens */}
-                <Typography variant="h6" sx={{ mt: 4 }}>
-                    Novas Imagens
-                </Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {newImages.length > 0 && (
+                    <Typography variant="h6" sx={{ mt: 4 }}>
+                        Novas Imagens
+                    </Typography>
+                )}
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
                     {newImages.map((image, index) => (
                         <Box
                             key={index}
@@ -462,15 +452,29 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                         </Box>
                     ))}
                 </Box>
-                <Box sx={{ gap: 1, display: "flex", flexDirection: "row" }}>
-                    {/* Botão de upload */}
-                    <Box>
+                <Box
+                    sx={{
+                        gap: 2,
+                        display: "flex",
+                        flexDirection: smallerThanSmall? "column" : "row",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <Button
+                        onClick={onCancel}
+                        variant="contained"
+                        color="error"
+                        sx={{ mt: 2, maxWidth: "120px" }}
+                    >
+                        Cancelar
+                    </Button>
+                    <Box sx={{ display: "flex", gap: 2, flexDirection: "row", }}>
                         <Button
                             variant="contained"
                             component="label"
-                            sx={{ mt: 2 }}
+                            sx={{ mt: 2, maxWidth: "180px" }}
                         >
-                            Adicionar Imagens
+                            {!smallerThanSmall? "Adicionar Imagens" : "Imagens"}
                             <input
                                 type="file"
                                 hidden
@@ -478,23 +482,12 @@ const DashboardStoreEditForm = observer(({ store, onCancel, onSubmit }) => {
                                 onChange={handleImageUpload}
                             />
                         </Button>
-                    </Box>
-                    <Box>
                         <Button
                             type="submit"
                             variant="contained"
-                            sx={{ mt: 2 }}
+                            sx={{ mt: 2, maxWidth: "120px" }}
                         >
                             Guardar
-                        </Button>
-                    </Box>
-                    <Box>
-                        <Button
-                            onClick={onCancel}
-                            variant="contained"
-                            sx={{ mt: 2 }}
-                        >
-                            Cancelar
                         </Button>
                     </Box>
                 </Box>
