@@ -100,7 +100,6 @@ const Step3CreateProduct = observer(() => {
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 1fr)", // Sempre 3 colunas
                     gap: 2,
-                    display: "flex",
                     width: "100%",
                     justifyContent: "start",
                 }}
