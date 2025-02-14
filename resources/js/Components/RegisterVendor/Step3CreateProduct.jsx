@@ -1,7 +1,6 @@
 import { AddProductCreate } from "..";
 import { observer } from "mobx-react";
 import { vendorRegistrationStore } from "../../Stores";
-import { VendorRegistrationProductCard } from "@/Dashboard/Components/";
 import {
     Box,
     IconButton,
@@ -13,6 +12,7 @@ import {
 import { useState } from "react";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { VendorRegistrationProductCard } from "@/Components";
 
 const Step3CreateProduct = observer(() => {
     const theme = useTheme();
@@ -37,10 +37,14 @@ const Step3CreateProduct = observer(() => {
         <Box
             sx={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection:  "row",
                 alignItems: "center",
-                width: isSmallScreen ? "100%" : isMediumScreen ? "80%" : "65%",
-                height: "100%",
+                justifyContent: "space-between",
+                width: "100%",
+                // "& > :first-of-type": {
+                //     mb: 4,
+                // },
+                minHeight: "67.6vh",
             }}
         >
             {vendorRegistrationStore.products.length > 5 && (
@@ -96,15 +100,16 @@ const Step3CreateProduct = observer(() => {
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 1fr)", // Sempre 3 colunas
                     gap: 2,
+                    display: "flex",
                     width: "100%",
-                    padding: 2,
+                    justifyContent: "start",
                 }}
             >
                 {/* Card de adicionar produto (sempre antes dos produtos) */}
                 <Box
                     sx={{
                         width: "100%",
-                        height: "200px",
+                        height: "420px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",

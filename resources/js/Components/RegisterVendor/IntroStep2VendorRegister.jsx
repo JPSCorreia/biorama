@@ -4,30 +4,35 @@ const IntroStep2VendorRegister = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+    const smallerThanXl = useMediaQuery(theme.breakpoints.down("xl"));
+
     return (
-        <Box sx={{ mt: 4, px: 2 }}>
             <Box
                 sx={{
-                    width: isSmallScreen || isMediumScreen ? "100%" : "90%",
                     display: "flex",
-                    flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
+                    flexDirection: "row",
+                    alignItems: "center",
                     justifyContent: "space-between",
-                    alignItems: isSmallScreen ? "center" : "flex-start",
-                    m: "auto",
+                    width: "100%",
+                    // "& > :first-of-type": {
+                    //     mb: 4,
+                    // },
+                    minHeight: "67.6vh",
                 }}
             >
 
                 <Box
                     sx={{
                         textAlign: "justify",
-                        width: isSmallScreen
-                            ? "100%"
-                            : isMediumScreen
-                                ? "100%"
-                                : "50%",
                         display: "flex",
+                        justifyContent: "flex-start",
+                        pl: smallerThanXl ? 0 : 8,
+                        mb: smallerThanXl ? 2 : 0,
+                        pt: smallerThanXl? 0 : 6,
+                        flexGrow: 1,
+                        minHeight: "600px",
+                        maxWidth: smallerThanXl ? "100%" : "50%",
                         flexDirection: "column",
-                        m: "auto",
                     }}
                 >
                     <Typography variant="h6" gutterBottom>
@@ -62,15 +67,12 @@ const IntroStep2VendorRegister = () => {
                     src="/images/Fase 2 - registoVendor.png"
                     alt="Imagem ilustrativa de registo"
                     sx={{
-                        width: isSmallScreen || isMediumScreen ? "100%" : "40%",
-                        objectFit: "cover",
-                        borderRadius: "8px",
-                        minHeight: "400px",
-                        mt: isSmallScreen ? "5%" : isMediumScreen ? "0" : "10%",
+                        mt: 2,
+                        maxWidth: "700px",
+                        display: smallerThanXl ? "none" : "block",
                     }}
                 />
             </Box>
-        </Box>
     );
 }
 export default IntroStep2VendorRegister;

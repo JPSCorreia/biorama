@@ -94,6 +94,11 @@ const CustomThemeProvider = observer(({ appStore, children }) => {
                 main: appStore.themeType === "dark" ? "#ffffff" : "#242424",
             },
 
+            button: {
+                register_vendor: appStore.themeType === "dark" ? "#ffffff" : "#ccc"
+            },
+
+
             charts: {
                 main: "#4caf50",
                 secondary: "#FFBB28",

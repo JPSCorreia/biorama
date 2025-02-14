@@ -152,7 +152,6 @@ const FormCompanyRegistration = forwardRef(
                 sx={{
                     mt: 4,
                     width: "100%",
-                    m: "auto",
                     position: "relative",
                     pt: 3,
                     pr: 5,

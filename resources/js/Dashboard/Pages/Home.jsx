@@ -182,7 +182,7 @@ const Home = observer(() => {
                             ) : (
                                 <Box
                                     sx={{
-                                        ml: smallerThanSmall? 0 : 2,
+                                        ml: smallerThanSmall ? 0 : 2,
                                         display: "flex",
                                         flexDirection: "row",
                                         gap: 2,
@@ -192,7 +192,13 @@ const Home = observer(() => {
                                     }}
                                 >
                                     <Typography
-                                        variant={smallerThanMedium ? "h5" : smallerThanLarge ? "h5" : "h4"}
+                                        variant={
+                                            smallerThanMedium
+                                                ? "h5"
+                                                : smallerThanLarge
+                                                  ? "h5"
+                                                  : "h4"
+                                        }
                                         sx={{
                                             fontWeight: "bold",
                                         }}
@@ -200,7 +206,13 @@ const Home = observer(() => {
                                         {vendor?.first_name}
                                     </Typography>
                                     <Typography
-                                        variant={smallerThanMedium ? "h5" : smallerThanLarge ? "h5" : "h4"}
+                                        variant={
+                                            smallerThanMedium
+                                                ? "h5"
+                                                : smallerThanLarge
+                                                  ? "h5"
+                                                  : "h4"
+                                        }
                                         sx={{
                                             fontWeight: "bold",
                                         }}
@@ -232,7 +244,7 @@ const Home = observer(() => {
                     <Box
                         sx={{
                             display: "flex",
-                            flexDirection: smallerThanLarge? "column" : "row",
+                            flexDirection: smallerThanLarge ? "column" : "row",
                             justifyContent: "space-between",
                             width: "100%",
                             height: "100%",
@@ -248,7 +260,13 @@ const Home = observer(() => {
                                 genders={genders}
                             />
                         ) : (
-                            <Box sx={{ mt: 2, px: 4, width: smallerThanLarge ? "100%" : "40%" }}>
+                            <Box
+                                sx={{
+                                    mt: 2,
+                                    px: 4,
+                                    width: smallerThanLarge ? "100%" : "40%",
+                                }}
+                            >
                                 <Box
                                     sx={{
                                         display: "flex",
@@ -258,7 +276,7 @@ const Home = observer(() => {
                                     }}
                                 >
                                     <Typography
-                                    variant={smallerThanLarge? "h6" : "h5"}
+                                        variant={smallerThanLarge ? "h6" : "h5"}
                                         sx={{
                                             fontWeight: "bold",
                                         }}
@@ -423,9 +441,16 @@ const Home = observer(() => {
                                 </Box>
                             </Box>
                         )}
-                        <Divider orientation={smallerThanLarge? "horizontal" : "vertical"} sx={{ mt: 1 }} />
+                        {isCompany? (
+                            <Divider
+                                orientation={
+                                    smallerThanLarge ? "horizontal" : "vertical"
+                                }
+                                sx={{ mt: 1 }}
+                            />
+                        ) : ""}
                         {/* Company information section */}
-                        {isCompany &&
+                        {isCompany?
                             (isEditing.companyInfo ? (
                                 //Company Editing component
                                 <VendorCompanyEditingForm
@@ -440,48 +465,59 @@ const Home = observer(() => {
                                         marginTop: 2,
                                         pr: 4,
                                         pl: smallerThanMedium ? 2 : 6,
-                                        width: smallerThanLarge ? "100%" : "60%",
+                                        width: smallerThanLarge
+                                            ? "100%"
+                                            : "60%",
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            width: "100%",
-                                            alignItems: "center",
-                                            gap: 2,
-                                        }}
-                                    >
-                                        <Typography
-                                            variant={smallerThanMedium ? "h7" : smallerThanLarge ? "h6" : "h5"}
+                                    {isCompany && (
+                                        <Box
                                             sx={{
-                                                fontWeight: "bold",
+                                                display: "flex",
+                                                width: "100%",
+                                                alignItems: "center",
+                                                gap: 2,
                                             }}
                                         >
-                                            Dados da Empresa
-                                        </Typography>
-                                        <Tooltip title="Editar dados">
-                                        <IconButton
+                                            <Typography
+                                                variant={
+                                                    smallerThanMedium
+                                                        ? "h7"
+                                                        : smallerThanLarge
+                                                          ? "h6"
+                                                          : "h5"
+                                                }
+                                                sx={{
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Dados da Empresa
+                                            </Typography>
+                                            <Tooltip title="Editar dados">
+                                                <IconButton
                                                     onClick={() =>
                                                         handleEditToggle(
                                                             "companyInfo",
                                                         )
                                                     }
-                                            sx={{
-                                                height: 40,
-                                                width: 40,
-                                            }}
-                                        >
-                                            <EditIcon
-                                                sx={{
-                                                    color: theme.palette.primary
-                                                        .main,
-                                                }}
-                                            />
-                                        </IconButton>
-                                    </Tooltip>
-                                    </Box>
+                                                    sx={{
+                                                        height: 40,
+                                                        width: 40,
+                                                    }}
+                                                >
+                                                    <EditIcon
+                                                        sx={{
+                                                            color: theme.palette
+                                                                .primary.main,
+                                                        }}
+                                                    />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    )}
 
                                     {/* Display company details like name, email, and address */}
+                                    {isCompany &&
                                     <Box sx={{ mt: 2 }}>
                                         <Box
                                             sx={{
@@ -522,8 +558,8 @@ const Home = observer(() => {
                                                 </Typography>
                                                 <Typography>
                                                     {
-                                                        vendor?.company?.contacts
-                                                        ?.website
+                                                        vendor?.company
+                                                            ?.contacts?.website
                                                     }
                                                 </Typography>
                                             </Box>
@@ -554,8 +590,8 @@ const Home = observer(() => {
                                                 </Typography>
                                                 <Typography>
                                                     {
-                                                        vendor?.company?.contacts
-                                                        ?.email
+                                                        vendor?.company
+                                                            ?.contacts?.email
                                                     }
                                                 </Typography>
                                             </Box>
@@ -571,8 +607,8 @@ const Home = observer(() => {
                                                 </Typography>
                                                 <Typography>
                                                     {
-                                                        vendor?.company?.contacts
-                                                        ?.phone
+                                                        vendor?.company
+                                                            ?.contacts?.phone
                                                     }
                                                 </Typography>
                                             </Box>
@@ -673,7 +709,8 @@ const Home = observer(() => {
                                                     }{" "}
                                                     {
                                                         vendor?.company
-                                                            ?.addresses?.district
+                                                            ?.addresses
+                                                            ?.district
                                                     }
                                                 </Typography>
                                             </Box>
@@ -702,7 +739,10 @@ const Home = observer(() => {
                                                     Data de Fundação:
                                                 </Typography>
                                                 <Typography>
-                                                    {vendor?.company?.founded_at}
+                                                    {
+                                                        vendor?.company
+                                                            ?.founded_at
+                                                    }
                                                 </Typography>
                                             </Box>
                                             <Box
@@ -718,14 +758,15 @@ const Home = observer(() => {
                                                 <Typography>
                                                     {
                                                         vendor?.company
-                                                        ?.description
+                                                            ?.description
                                                     }
                                                 </Typography>
                                             </Box>
                                         </Box>
-                                    </Box>
+                                    </Box>}
                                 </Box>
-                            ))}
+                            )) : ""
+                        }
                     </Box>
                 </Box>
             </Paper>

@@ -14,19 +14,15 @@ const Step1PersonalInfo = forwardRef(
             useTheme().breakpoints.between("sm", "md"),
         );
 
+        const theme = useTheme();
+
         return (
             <Box
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: isSmallScreen
-                        ? "100%"
-                        : isMediumScreen
-                          ? "90%"
-                          : "80%",
-                    "& > :first-of-type": {
-                        mb: 4,
-                    },
+                    justifyContent: "flex-start",
+                    width: "80%",
                     minHeight: "67.6vh",
                 }}
             >
@@ -51,14 +47,11 @@ const Step1PersonalInfo = forwardRef(
                         display: vendorRegistrationStore.isCompany
                             ? "none"
                             : "block",
-                        color: "#000",
-                        borderColor: "#000",
-                        borderRadius: 2,
-                        width: isSmallScreen
-                            ? "75%"
-                            : isMediumScreen
-                              ? "47%"
-                              : "20%",
+                        // color: "#000",
+                        color: theme.palette.text.main,
+                        borderColor: theme.palette.button.register_vendor,
+                        mt: 2,
+                        maxWidth: "240px",
                         fontSize: "0.85rem",
                         textAlign: "center",
                         textTransform: "none",

@@ -63,10 +63,9 @@ class ShopStore {
                         (store) => store.id !== storeId,
                     );
                 });
-                router.visit("/dashboard/lojas", {
-                    preserveState: true,
-                    preserveScroll: true,
-                });
+                setTimeout(() => {
+                    router.visit("/dashboard/lojas", { preserveState: true, preserveScroll: true });
+                }, 50);
             }
         } catch (error) {
             console.error("Erro ao apagar a loja:", error);
@@ -148,6 +147,30 @@ class ShopStore {
         }
     });
 
+        // Cria uma nova loja e o endereço associado
+        async OldCreateStore(storeData) {
+
+            try {
+                const processedData = { ...storeData };
+
+                if (!storeData.image_link || storeData.image_link.length === 0) {
+                    delete processedData.image_link; // Remove o campo se não houver imagens
+                }
+
+                // Envia os dados para o backend
+                const response = await axios.post("/create/store", processedData);
+
+                if (response.data.success) {
+                    console.log("Loja criada com sucesso:", response.data);
+                }
+                this.stores = response.data.stores;
+
+                return { success: true };
+            } catch (error) {
+                console.error("Erro inesperado ao criar a loja Front End:", error.message);
+                return { success: false, message: error.message };
+            }
+        }
 
 
     // updateStore = action(async (id, updatedStore) => {

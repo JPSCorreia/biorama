@@ -12,7 +12,6 @@ import { useTheme } from "@mui/material/styles";
 import ReactMarkdown from "react-markdown";
 import Carousel from "react-material-ui-carousel";
 import { useState } from "react";
-import { cartStore } from "../../Stores";
 import { observer } from "mobx-react";
 
 const VendorRegistrationProductCard = observer(({ product }) => {

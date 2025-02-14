@@ -41,6 +41,7 @@ const Dashboard = observer(({ children }) => {
 
         return () => disposer(); // Limpar listener quando o componente desmontar
     }, []);
+
     // Navigation items
     const navigation = [
         {
@@ -88,31 +89,6 @@ const Dashboard = observer(({ children }) => {
         },
     ];
 
-    // Function to update navigation items with stores
-    const updateNavigationWithStores = (navigation) => {
-
-        // Update the navigation items with the stores
-        if (!shopStore.stores || shopStore.stores.length === 0) {
-            return navigation;
-        }
-
-        return navigation.map((item) => {
-            if (item.segment === "dashboard/lojas" && item.children) {
-                return {
-                    ...item,
-                    children: [
-                        ...item.children,
-                        ...shopStore.stores.map((store) => ({
-                            segment: `${store.id}`,
-                            title: store.name,
-                            icon: <StoreIcon />,
-                        })),
-                    ],
-                };
-            }
-            return item;
-        });
-    };
 
     const updatedNavigation = useMemo(() => {
         if (!stores || stores.length === 0) {

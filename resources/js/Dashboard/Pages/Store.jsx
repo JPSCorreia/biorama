@@ -38,17 +38,15 @@ const Store = observer(() => {
     const [loading, setLoading] = useState(true);
 
     const storeId =
-    inertiaStore?.id || window.location.pathname.split("/").pop();
+        inertiaStore?.id || window.location.pathname.split("/").pop();
 
     // Encontrar o índice da loja com o ID correspondente
-    const storeIndex = shopStore.stores.findIndex((store) => store.id == storeId);
+    const storeIndex = shopStore.stores.findIndex(
+        (store) => store.id == storeId,
+    );
 
     // Se encontrar a loja, obter os dados
     const store = storeIndex !== -1 ? shopStore.stores[storeIndex] : null;
-
-    if (!store) {
-        return <p>Loja não encontrada.</p>;
-    }
 
     // Get media queries
     const smallerThanMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -161,20 +159,36 @@ const Store = observer(() => {
             // }
 
             // Enviar para o backend
-            const result = await shopStore.updateStore(store.id, formDataValues);
+            const result = await shopStore.updateStore(
+                store.id,
+                formDataValues,
+            );
 
             if (result.success) {
                 setIsEditing(false);
-                console.log(store)
+                console.log(store);
             } else {
                 console.error("Erro ao atualizar a loja.");
             }
-
-
         } catch (error) {
             console.error("Erro ao enviar dados para o backend:", error);
         }
     };
+
+    if (!store) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: "500px",
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -199,7 +213,7 @@ const Store = observer(() => {
                 }}
             >
                 <Typography variant="h4" fontWeight="bold">
-                    {store?.name|| "Nome da Loja"}
+                    {store?.name || "Nome da Loja"}
                 </Typography>
             </Paper>
             <Paper

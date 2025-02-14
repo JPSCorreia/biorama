@@ -117,9 +117,8 @@ const FormVendorRegistration = forwardRef(
             >
                 <Box
                     sx={{
-                        mt: 4,
+                        mt: 8,
                         width: "100%",
-                        m: "auto",
                         position: "relative",
                         pt: 3,
                         pr: 5,

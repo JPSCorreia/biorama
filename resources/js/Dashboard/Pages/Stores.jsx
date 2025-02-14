@@ -80,7 +80,7 @@ const Stores = observer(() => {
                 image_link: images,
             };
 
-            const result = await shopStore.createStore(storeData);
+            const result = await shopStore.OldCreateStore(storeData);
 
             if (result.success) {
                 setOpenModal(false);

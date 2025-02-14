@@ -16,6 +16,7 @@ import { fixImagePath } from "../../utils/utils.js";
 import { shopStore } from "@/Stores/index.js";
 import ReactMarkdown from "react-markdown";
 import { useTheme } from "@mui/material/styles";
+import { router } from "@inertiajs/react";
 
 /**
  * Component: DashboardStoresCard
@@ -36,6 +37,14 @@ const DashboardStoresCard = observer(({ store, user }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+    // Function to handle navigation with Inertia.js preserving state and scroll position
+    const navigate = (path) => {
+        router.visit(path, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
 
     return (
         <Card
@@ -107,7 +116,14 @@ const DashboardStoresCard = observer(({ store, user }) => {
             />
 
             {/* Store information section */}
-            <CardContent sx={{ display: "flex", flexDirection: "column",  justifyContent: "flex-end", minHeight: "335px"}}>
+            <CardContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    minHeight: "335px",
+                }}
+            >
                 <Box>
                     {/* Descrição */}
                     <Box sx={{ marginBottom: "2rem", minHeight: "200px" }}>
@@ -122,13 +138,18 @@ const DashboardStoresCard = observer(({ store, user }) => {
                             flexWrap: "wrap",
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            px: 2
+                            px: 2,
                         }}
                     >
                         <Box>
                             <Typography fontWeight="bold">Rating:</Typography>
                             <Rating
-                                value={store.reviews.reduce((sum, review) => sum + review.rating, 0) / (store.reviews.length || 1)}
+                                value={
+                                    store.reviews.reduce(
+                                        (sum, review) => sum + review.rating,
+                                        0,
+                                    ) / (store.reviews.length || 1)
+                                }
                                 precision={0.5}
                                 readOnly
                             />
@@ -145,7 +166,7 @@ const DashboardStoresCard = observer(({ store, user }) => {
                                 variant="contained"
                                 color="primary"
                                 onClick={() =>
-                                    shopStore.navigateToStore(store.id)
+                                    navigate(`/dashboard/lojas/${store.id}`)
                                 }
                                 sx={{
                                     borderRadius: "50%",
