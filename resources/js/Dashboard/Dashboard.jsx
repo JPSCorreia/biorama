@@ -50,7 +50,7 @@ const Dashboard = observer(({ children }) => {
         },
         {
             segment: "dashboard/estatisticas",
-            title: "Painel de Estatísticas",
+            title: "Painel de Controlo",
             icon: <AssessmentIcon />,
         },
         {

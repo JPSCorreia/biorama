@@ -181,7 +181,7 @@ const Statistics = () => {
                 }}
             >
                 <Typography variant="h4" fontWeight="bold">
-                    Painel de Estatísticas
+                    Painel de Controlo
                 </Typography>
             </Paper>
 
