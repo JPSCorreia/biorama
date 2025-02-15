@@ -17,7 +17,7 @@ import { useEffect } from "react";
 
 const RegisterVendor = observer(({ genders }) => {
     // Tracks the current step in the registration process
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep, setCurrentStep] = useState(3);
     const [isEnableNext, setIsEnableNext] = useState(true);
     // Calculates progress percentage
     const progress = (currentStep / 6) * 100;

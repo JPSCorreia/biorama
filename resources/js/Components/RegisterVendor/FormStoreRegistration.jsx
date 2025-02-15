@@ -35,7 +35,7 @@ const FormStoreRegistration = forwardRef(({ formErrors }, ref) => {
             .matches(/^\d{9,15}$/, "Número de telefone inválido")
             .required("Telefone é obrigatório"),
         email: Yup.string().email("Email inválido").required("Email é obrigatório"),
-        description: Yup.string().required("Descrição é obrigatória"),
+        description: Yup.string().nullable("Descrição é obrigatória"),
         street_address: Yup.string().required("Morada é obrigatória"),
         city: Yup.string().required("Localidade é obrigatória"),
         postal_code: Yup.string()
@@ -150,7 +150,7 @@ const FormStoreRegistration = forwardRef(({ formErrors }, ref) => {
     }));
 
     return (
-        <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 2 }}>
             <Box sx={{ display: "flex", flexDirection: isSmallScreen ? "column" : "row", gap: 5 }}>
                 <Box sx={{ width: isSmallScreen ? "100%" : "50%" }}>
                     <Box sx={{ display: "flex", gap: 2, mb:2 }}>
