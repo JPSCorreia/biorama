@@ -14,11 +14,16 @@ import {
     Select,
     MenuItem,
     Alert,
+    useTheme,
+    useMediaQuery,
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { orderStore } from "@/Stores/index.js";
 
 const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
+    const theme = useTheme();
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
+
     useEffect(() => {
         if (isOpen) {
             orderStore.fetchStatuses(); // Garantir que os status estão carregados
@@ -28,9 +33,11 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
 
     if (!order) return null;
 
-    const statusValue = orderStore.statuses.some(status => status.id === order.statuses_id) 
-        ? order.statuses_id 
-        : '';
+    const statusValue = orderStore.statuses.some(
+        (status) => status.id === order.statuses_id,
+    )
+        ? order.statuses_id
+        : "";
 
     const handleSubmit = async () => {
         const orderData = {
@@ -63,25 +70,29 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
     };
 
     return (
-        <Modal open={isOpen} onClose={onClose}>
-            <Box
+        <Modal
+            open={isOpen}
+            onClose={onClose}
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflowY: "auto",
+            }}
+        >
+            <Paper
+                elevation={4}
                 sx={{
                     position: "absolute",
+                    display: "flex",
+                    flexDirection: "column",
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    backgroundColor: "white",
-                    boxShadow: 24,
                     p: 4,
                     borderRadius: 2,
-                    width: "100vw", // Padrão para ocupar toda a largura
-                    height: "100vh", // Padrão para ocupar toda a altura
-                    overflowY: "auto", // Adiciona rolagem se necessário
-
-                    "@media (min-width: 900px)": {
-                        width: "900px", // Largura fixa em ecrãs grandes
-                        height: "auto", // Ajusta altura ao conteúdo em ecrãs grandes
-                    },
+                    width: smallerThanSmall ? "100%" : "60%",
+                    overflowY: "auto",
                 }}
             >
                 <Typography variant="h5" sx={{ mb: 2 }}>
@@ -166,7 +177,7 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
                     </Table>
                 </TableContainer>
 
-                <Typography variant="h6" sx={{ mt: 3 }}>
+                <Typography variant="h6" sx={{ mt: 3, alignSelf: "flex-end" }}>
                     Total {calculateTotal()} €
                 </Typography>
 
@@ -188,7 +199,7 @@ const DashboardOrderEditModal = observer(({ order, isOpen, onClose }) => {
                         Guardar
                     </Button>
                 </Box>
-            </Box>
+            </Paper>
         </Modal>
     );
 });
