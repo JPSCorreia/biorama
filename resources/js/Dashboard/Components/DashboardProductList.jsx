@@ -27,13 +27,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { observer } from "mobx-react";
 import { productStore } from "@/Stores/index.js";
-import { DashboardCreateProductModal, DashboardProductModal } from "@/Dashboard/Components/";
+import {
+    DashboardCreateProductModal,
+    DashboardProductModal,
+} from "@/Dashboard/Components/";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import ReactMarkdown from "react-markdown";
 
 const DashboardProductList = observer(({ storeId }) => {
-
     const theme = useTheme();
     const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const [page, setPage] = useState(0);
@@ -135,7 +137,9 @@ const DashboardProductList = observer(({ storeId }) => {
                 elevation={4}
                 sx={{
                     display: "flex",
-                    justifyContent: smallerThanSmall? "center" : "space-between",
+                    justifyContent: smallerThanSmall
+                        ? "center"
+                        : "space-between",
                     alignItems: "center",
                     backgroundColor: theme.palette.primary.main,
                     color: theme.palette.primary.contrastText,
@@ -144,26 +148,58 @@ const DashboardProductList = observer(({ storeId }) => {
                     borderRadius: 2,
                 }}
             >
-                {!smallerThanSmall && <Typography variant="h5" sx={{ fontWeight: "bold" }}>Os meus produtos</Typography>}
-                <Search>
-                <StyledInputBase
-                    placeholder="Pesquisar..."
-                    value={searchTerm}
-                    onChange={(e) => setQuery(e.target.value)}
-                    inputProps={{ "aria-label": "search" }}
-                />
-                {/* Ícone de lupa à direita */}
-                <IconButton
-                    type="submit"
+                {!smallerThanSmall && (
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                        Os meus produtos
+                    </Typography>
+                )}
+                <Box
                     sx={{
-                        position: "absolute",
-                        right: 0,
-                        color: "white",
+                        position: "relative",
+                        borderRadius: theme.shape.borderRadius,
+                        backgroundColor: alpha(
+                            theme.palette.common.white,
+                            0.15,
+                        ),
+                        "&:hover": {
+                            backgroundColor: alpha(
+                                theme.palette.common.white,
+                                0.25,
+                            ),
+                        },
+                        display: "flex",
+                        // flexGrow: 1, // Ocupa todo o espaço restante
+                        width: smallerThanSmall ? "90%" : "250px",
+                        borderRadius: "8px",
                     }}
                 >
-                    <SearchIcon />
-                </IconButton>
-            </Search>
+                    <InputBase
+                        sx={{        color: "inherit", // Herda a cor do tema atual
+                            width: "100%",
+                            "& .MuiInputBase-input": {
+                                padding: theme.spacing(1, 1, 1, 0),
+                                paddingRight: `calc(1em + ${theme.spacing(4)})`, // Espaço para o ícone
+                                paddingLeft: theme.spacing(2), // Espaçamento inicial
+                                transition: theme.transitions.create("width")
+                            }}
+                        }
+                        placeholder="Pesquisar..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        inputProps={{ "aria-label": "search" }}
+                    />
+                    {/* Ícone de lupa à direita */}
+                    <IconButton
+                        type="submit"
+                        sx={{
+                            position: "absolute",
+                            right: 0,
+                            color: "white",
+                        }}
+                    >
+                        <SearchIcon />
+                    </IconButton>
+                </Box>
             </Paper>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button onClick={handleOpenCreateModal} variant="contained">
@@ -174,7 +210,7 @@ const DashboardProductList = observer(({ storeId }) => {
             {/* Tabela de produtos */}
             <TableContainer
                 component={Paper}
-                sx={{ mt: 3, boxShadow: 3, borderRadius: 2 }}
+                sx={{ mt: 3, borderRadius: "8px" }}
             >
                 <Table>
                     <TableHead>
@@ -197,35 +233,41 @@ const DashboardProductList = observer(({ storeId }) => {
                         {productStore.products.map((product) => (
                             <TableRow key={product.id}>
                                 <TableCell>{product.name}</TableCell>
-                                <TableCell><ReactMarkdown>{product.description}</ReactMarkdown></TableCell>
-                                <TableCell align="center">{product.price} €</TableCell>
+                                <TableCell>
+                                    <ReactMarkdown>
+                                        {product.description}
+                                    </ReactMarkdown>
+                                </TableCell>
+                                <TableCell align="center">
+                                    {product.price} €
+                                </TableCell>
                                 <TableCell align="center">
                                     <Tooltip title="Visualizar">
-                                    <IconButton
-                                        onClick={() =>
-                                            handleViewProduct(product)
-                                        }
-                                    >
-                                        <VisibilityIcon />
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={() =>
+                                                handleViewProduct(product)
+                                            }
+                                        >
+                                            <VisibilityIcon />
+                                        </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Editar">
-                                    <IconButton
-                                        onClick={() =>
-                                            handleEditProduct(product)
-                                        }
-                                    >
-                                        <BorderColorIcon />
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={() =>
+                                                handleEditProduct(product)
+                                            }
+                                        >
+                                            <BorderColorIcon />
+                                        </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Apagar">
-                                    <IconButton
-                                        onClick={() =>
-                                            confirmDeleteProduct(product)
-                                        }
-                                    >
-                                        <DeleteIcon color="error" />
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={() =>
+                                                confirmDeleteProduct(product)
+                                            }
+                                        >
+                                            <DeleteIcon color="error" />
+                                        </IconButton>
                                     </Tooltip>
                                 </TableCell>
                             </TableRow>

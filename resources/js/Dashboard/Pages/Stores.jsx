@@ -218,15 +218,13 @@ const Stores = observer(() => {
                                     top: "50%",
                                     left: "50%",
                                     transform: "translate(-50%, -50%)",
-                                    width: isSmallScreen
-                                        ? "100%"
-                                        : isMediumScreen
-                                          ? "100%"
-                                          : "50%",
+                                    width: "100%",
+                                    maxWidth: 1200,
                                     bgcolor: "background.paper",
+                                    borderRadius: "8px",
+                                    overflowY: "auto",
+                                    maxHeight: "98vh",
                                     borderRadius: "10px",
-                                    boxShadow: 24,
-                                    p: 4,
                                 }}
                             >
                                 <DashboardStoreStep2
@@ -239,7 +237,9 @@ const Stores = observer(() => {
                                 <Box
                                     sx={{
                                         display: "flex",
-                                        justifyContent: "center",
+                                        justifyContent: "flex-end",
+                                        p: 3,
+                                        pt: 0,
                                     }}
                                 >
                                     <Button

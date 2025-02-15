@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -10,12 +10,16 @@ import {
     Button,
     Box,
     Pagination,
-    TextField,
+    InputBase,
     Typography,
+    IconButton,
     useTheme,
+    useMediaQuery,
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { orderStore } from "@/Stores/orderStore.js";
+import SearchIcon from "@mui/icons-material/Search";
+import { alpha } from "@mui/material/styles";
 
 /**
  * DashboardAllOrders Component
@@ -26,13 +30,18 @@ import { orderStore } from "@/Stores/orderStore.js";
  * @param {Function} onEditOrder - Function to handle editing an order.
  */
 const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
-
     const theme = useTheme();
+    const smallerThanSmall = useMediaQuery(theme.breakpoints.down("sm"));
+    const [searchTerm, setSearchTerm] = useState("");
 
     // Fetch orders on component mount
     useEffect(() => {
         orderStore.fetchOrders();
     }, []);
+
+    useEffect(() => {
+        orderStore.fetchOrders(searchTerm);
+    }, [searchTerm]);
 
     /**
      * Handles sorting orders by a specific field.
@@ -59,39 +68,92 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
     const isOrderCancelled = (order) => order.statuses_id === 5;
 
     return (
-        <Box sx={{ padding: 2 }}>
+        <Box
+            sx={{
+                width: "96%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
             {/* Top bar with title and search field */}
-            <Box
+            <Paper
+                elevation={4}
                 sx={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: smallerThanSmall
+                        ? "center"
+                        : "space-between",
                     alignItems: "center",
-                    marginBottom: 2,
                     backgroundColor: theme.palette.primary.main,
-                    padding: 2,
-                    borderRadius: "12px",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    color: theme.palette.primary.contrastText,
+                    mb: 3,
+                    p: 2,
+                    borderRadius: 2,
+                    width: "100%",
                 }}
             >
-                <Typography variant="h5" sx={{ color: "white" }}>
-                    Encomendas
-                </Typography>
-
-                {/* Search field */}
-                <TextField
-                    label="Search by email or order ID"
-                    variant="outlined"
+                {!smallerThanSmall && (
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                        Todas as Lojas
+                    </Typography>
+                )}
+                <Box
                     sx={{
-                        width: "300px",
-                        backgroundColor: "white",
+                        position: "relative",
+                        borderRadius: theme.shape.borderRadius,
+                        backgroundColor: alpha(
+                            theme.palette.common.white,
+                            0.15,
+                        ),
+                        "&:hover": {
+                            backgroundColor: alpha(
+                                theme.palette.common.white,
+                                0.25,
+                            ),
+                        },
+                        display: "flex",
+                        // flexGrow: 1, // Ocupa todo o espaço restante
+                        width: smallerThanSmall ? "90%" : "250px",
                         borderRadius: "8px",
                     }}
-                    onChange={(e) => orderStore.searchOrders(e.target.value)}
-                />
-            </Box>
+                >
+                    <InputBase
+                        sx={{
+                            color: "inherit", // Herda a cor do tema atual
+                            width: "100%",
+                            "& .MuiInputBase-input": {
+                                padding: theme.spacing(1, 1, 1, 0),
+                                paddingRight: `calc(1em + ${theme.spacing(4)})`, // Espaço para o ícone
+                                paddingLeft: theme.spacing(2), // Espaçamento inicial
+                                transition: theme.transitions.create("width"),
+                            },
+                        }}
+                        placeholder="Pesquisar..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        inputProps={{ "aria-label": "search" }}
+                    />
+                    {/* Ícone de lupa à direita */}
+                    <IconButton
+                        type="submit"
+                        sx={{
+                            position: "absolute",
+                            right: 0,
+                            color: "white",
+                        }}
+                    >
+                        <SearchIcon />
+                    </IconButton>
+                </Box>
+            </Paper>
 
             {/* Orders table */}
-            <TableContainer component={Paper}>
+            <TableContainer
+                component={Paper}
+                sx={{ mt: 3, display: "flex", borderRadius: "8px" }}
+            >
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -99,7 +161,7 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                 onClick={() => handleSort("id")}
                                 style={{ cursor: "pointer" }}
                             >
-                                Nº da Encomenda{" "}
+                                Nº{" "}
                                 {orderStore.sortField === "id"
                                     ? orderStore.sortOrder === "asc"
                                         ? "↑"
@@ -161,7 +223,7 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                         : "↓"
                                     : ""}
                             </TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell align="center">Ações</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -192,20 +254,27 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                     {parseFloat(order.total || 0).toFixed(2)} €
                                 </TableCell>
                                 <TableCell>
-                                    <Box sx={{ display: "flex", gap: 1 }}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            gap: 1,
+                                            justifyContent: "center",
+                                        }}
+                                    >
                                         <Button
                                             variant="outlined"
+                                            size="small"
                                             onClick={() => onViewOrder(order)}
-                                            sx={{ mr: 1 }}
                                         >
-                                            View
+                                            Ver
                                         </Button>
                                         <Button
                                             variant="outlined"
                                             color="primary"
+                                            size="small"
                                             onClick={() => onEditOrder(order)}
                                         >
-                                            Edit
+                                            Editar
                                         </Button>
                                         <Button
                                             variant="outlined"
@@ -215,6 +284,7 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                                 handleCancelOrder(order.id)
                                             }
                                             sx={{
+                                                width: "90px",
                                                 borderColor: isOrderCancelled(
                                                     order,
                                                 )
@@ -235,8 +305,8 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
                                             }}
                                         >
                                             {isOrderCancelled(order)
-                                                ? "Cancelled"
-                                                : "Cancel"}
+                                                ? "Cancelada"
+                                                : "Cancelar"}
                                         </Button>
                                     </Box>
                                 </TableCell>
@@ -249,10 +319,11 @@ const DashboardAllOrders = observer(({ orders, onViewOrder, onEditOrder }) => {
             {/* Pagination */}
             {orderStore.totalPages > 1 && (
                 <Pagination
+                    color="primary"
                     count={orderStore.totalPages}
                     page={orderStore.currentPage}
                     onChange={(e, value) => orderStore.changePage(value)}
-                    sx={{ marginTop: 2 }}
+                    sx={{ my: 2 }}
                 />
             )}
         </Box>

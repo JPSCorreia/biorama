@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import {Box, Paper, Typography, useTheme} from "@mui/material";
-import { DashboardAllOrders, DashboardAllOrdersCard, DashboardStoreOrderCard, DashboardStoreOrdersTable, DashboardShowOrderModal, DashboardOrderEditModal } from "../Components/";
+import React, { useEffect, useState } from "react";
+import { Box, Paper, Typography, useTheme, useMediaQuery } from "@mui/material";
+import {
+    DashboardAllOrders,
+    DashboardAllOrdersCard,
+    DashboardStoreOrderCard,
+    DashboardStoreOrdersTable,
+    DashboardShowOrderModal,
+    DashboardOrderEditModal,
+} from "../Components/";
 import { orderStore } from "@/Stores/orderStore.js";
 import { observer } from "mobx-react";
 
@@ -14,6 +21,7 @@ const Orders = observer(() => {
     const [isViewModalOpen, setViewModalOpen] = useState(false);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const smallerThanLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
     useEffect(() => {
         orderStore.fetchOrders(searchTerm, currentPage, itemsPerPage);
@@ -50,90 +58,56 @@ const Orders = observer(() => {
     };
 
     return (
-        <Box sx={{
-                   width: "95%",
-                   m: "auto",
-                   display: "flex",
-                   flexDirection: "column",
-                   gap: 2,
-                   borderRadius: "10px",
-                   overflow: "hidden",
-               }}>
-            <Box></Box>
-            <Box sx={{
-                    width: "100%",
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                mt: 4,
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            {/* Header Section */}
+            <Paper
+                elevation={4}
+                sx={{
+                    width: "96%",
                     backgroundColor: theme.palette.primary.main,
                     color: theme.palette.primary.contrastText,
-                    padding: "12px 24px",
+                    padding: 2,
                     borderRadius: "8px",
-                    textAlign: "left",
-                    fontWeight: "bold",
-                    fontSize: "1.5rem",
-                    boxShadow: 3,
-                    zIndex: 2,
                 }}
             >
-                <Typography variant="h4" fontWeight="bold" >
+                <Typography variant="h4" fontWeight="bold">
                     Encomendas
                 </Typography>
-            </Box>
+            </Paper>
 
             <Box
                 sx={{
-                    display: 'flex',
+                    display: "flex",
+                    my: 4,
                     gap: 2,
-                    flexWrap: 'wrap', // Permite quebra de linha quando necessário
-                    justifyContent: 'center', // Centraliza os itens horizontalmente
-                    width: '100%',
-                    padding: '20px',
-                }}>
-                <Box
-                    sx={{
-                        flex: '1 1 100%', // 100% no layout mobile
-                        minWidth: '100%',
-                        '@media (min-width: 600px)': {
-                            flex: '1 1 45%', // 45% da largura se houver espaço suficiente
-                            minWidth: '45%',
-                        },
-                        '@media (min-width: 900px)': {
-                            flex: '1 1 30%', // 30% para 3 cards ou mais em telas maiores
-                            minWidth: '30%',
-                        },
-                    }}
-                >
-                    <DashboardAllOrdersCard
-                        totalOrders={orderStore.totalOrders}
-                        onViewAllOrders={handleViewAllOrders}
-                    />
-                </Box>
-
+                    flexWrap: "wrap", // Permite quebra de linha quando necessário
+                    justifyContent: "center", // Centraliza os itens horizontalmente
+                    width: "100%",
+                }}
+            >
+                <DashboardAllOrdersCard
+                    totalOrders={orderStore.totalOrders}
+                    onViewAllOrders={handleViewAllOrders}
+                />
                 {orderStore.stores.length > 0 &&
                     orderStore.stores.map((store) => (
-                        <Box
-                            key={store.id}
-                            sx={{
-                                flex: '1 1 100%', // Mobile: ocupa toda a largura
-                                minWidth: '100%',
-                                '@media (min-width: 600px)': {
-                                    flex: '1 1 45%', // 2 cards por linha em telas médias
-                                    minWidth: '45%',
-                                },
-                                '@media (min-width: 900px)': {
-                                    flex: '1 1 30%', // 3 cards por linha em telas grandes
-                                    minWidth: '30%',
-                                },
-                            }}
-                        >
-                            <DashboardStoreOrderCard
-                                store={store}
-                                onViewStoreOrders={() => handleViewStoreOrders(store)}
-                            />
-                        </Box>
+                        <DashboardStoreOrderCard
+                            store={store}
+                            onViewStoreOrders={() =>
+                                handleViewStoreOrders(store)
+                            }
+                        />
                     ))}
             </Box>
 
-
-            <Box sx={{ marginTop: 4 }}>
                 {viewingAllOrders ? (
                     <DashboardAllOrders
                         orders={orderStore.orders}
@@ -151,7 +125,6 @@ const Orders = observer(() => {
                         onPageChange={(page) => setCurrentPage(page)}
                     />
                 )}
-            </Box>
 
             <DashboardShowOrderModal
                 order={selectedOrder}

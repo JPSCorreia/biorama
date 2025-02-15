@@ -296,7 +296,10 @@ const RegisterVendor = observer(({ genders }) => {
             </Box>
 
             {/* Navigation buttons */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+            <Box
+                sx={{ display: "flex", justifyContent: currentStep === 0 ? "flex-end" : "space-between", mb: 2 }}
+            >
+                {currentStep > 0 && <Button variant="contained">Recuar</Button>}
                 <Button
                     variant="contained"
                     onClick={handleNext}

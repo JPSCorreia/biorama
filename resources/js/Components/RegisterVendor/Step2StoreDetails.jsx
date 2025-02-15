@@ -314,7 +314,7 @@ const Step2StoreDetails = forwardRef(
                         width: "90%",
                         position: "relative",
                         mt: -5,
-                        mb: 7,
+                        mb: 2,
                     }}
                 >
                     <Box
